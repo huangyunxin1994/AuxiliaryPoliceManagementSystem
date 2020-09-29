@@ -19,6 +19,7 @@
       :columns="columns"
       :dataSource="dataSource"
       :rowKey="rowKey"
+      :scroll="scroll"
       :pagination="pagination"
       :expandedRowKeys="expandedRowKeys"
       :expandedRowRender="expandedRowRender"
@@ -56,7 +57,15 @@ export default {
     },
     selectedRows: Array,
     expandedRowKeys: Array,
-    expandedRowRender: Function
+    expandedRowRender: Function,
+    scroll: {
+      type: Object,
+      default() {
+        return {
+           x : 400
+        }
+      }
+    },
   },
   data () {
     return {
