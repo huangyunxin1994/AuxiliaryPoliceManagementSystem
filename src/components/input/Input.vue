@@ -1,5 +1,5 @@
 <template>
-  <a-input
+  <a-input-search
     :addon-after="addonAfter"
     :addon-before="addonBefore"
     :default-value="defaultValue"
@@ -11,6 +11,7 @@
     :suffix="suffix || lenSuffix"
     :type="type"
     :allow-clear="allowClear"
+    :placeholder="placeHolder"
     v-model="sValue"
     :value="value"
     @change="onChange"
@@ -21,17 +22,17 @@
     <template :slot="slot" v-for="slot in Object.keys($slots)">
       <slot :name="slot"></slot>
     </template>
-  </a-input>
+  </a-input-search>
 </template>
 
 <script>
   export default {
-    name: 'IInput',
+    name: 'Input',
     model: {
       prop: 'value',
       event: 'change.value'
     },
-    props: ['addonAfter', 'addonBefore', 'defaultValue', 'disabled', 'id', 'maxLength', 'prefix', 'size', 'suffix', 'type', 'value', 'allowClear'],
+    props: ['addonAfter', 'addonBefore', 'defaultValue', 'disabled', 'id', 'maxLength', 'prefix', 'size', 'suffix', 'type', 'value', 'allowClear', 'placeHolder'],
     data() {
       return {
         sValue: this.value || this.defaultValue || ''

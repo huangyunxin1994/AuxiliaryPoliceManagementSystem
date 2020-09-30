@@ -69,7 +69,9 @@ export default {
     }
   },
   mounted () {
-    this.fn()
+    this.fn.then(r=>{
+      console.log(73)
+    })
     this.record && this.form.setFieldsValue(pick(this.record, fields))
   },
   methods: {

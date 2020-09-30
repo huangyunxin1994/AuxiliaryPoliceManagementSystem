@@ -109,6 +109,7 @@ export default {
       })
     },
     afterLogin(res) {
+      console.log(res)
       this.logging = false
       const loginRes = res.data
       if (loginRes.code >= 0) {
@@ -121,7 +122,7 @@ export default {
         getRoutesConfig().then(result => {
           const routesConfig = result.data.data
           loadRoutes({router: this.$router, store: this.$store, i18n: this.$i18n}, routesConfig)
-          this.$router.push('/demo')
+          this.$router.push('/')
           this.$message.success(loginRes.message, 3)
         })
       } else {

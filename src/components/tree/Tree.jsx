@@ -38,8 +38,8 @@ export default {
     renderSearch () {
       return (
         <Search
-          placeholder="input search text"
-          style="width: 100%; margin-bottom: 1rem; margin-top: 1rem"
+          placeholder="请输入要搜索的内容"
+          style="width: 100%; margin-bottom: 1rem;"
         />
       )
     },

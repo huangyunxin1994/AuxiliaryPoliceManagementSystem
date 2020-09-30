@@ -53,4 +53,7 @@ export default {
 
 <style lang="less" scoped>
 @import "index";
+h1{
+  font-weight: 600;
+}
 </style>
