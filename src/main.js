@@ -4,6 +4,7 @@ import {initRouter} from './router'
 import './theme/index.less'
 import Antd from 'ant-design-vue'
 import Viser from 'viser-vue'
+import Dialog from '@/components/Dialog'
 import '@/mock'
 import store from './store'
 import 'animate.css/source/animate.css'
@@ -18,6 +19,7 @@ Vue.use(Antd)
 Vue.config.productionTip = false
 Vue.use(Viser)
 Vue.use(Plugins)
+Vue.use(Dialog)//this.$dialog
 
 bootstrap({router, store, i18n, message: Vue.prototype.$message})
 
