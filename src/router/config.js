@@ -24,15 +24,15 @@ const options = {
       path: '/',
       name: '首页',
       component: TabsView,
-      redirect: 'demo',
+      redirect: 'home',
       children: [
         {
-          path: 'demo',
+          path: 'home',
           name: '首页',
           meta: {
             icon: 'home'
           },
-          component: () => import('@/pages/demo')
+          component: () => import('@/pages/home/home')
         },
         {
           path: 'parent1',
@@ -40,7 +40,7 @@ const options = {
           meta: {
             icon: 'user',
           },
-          component: BlankView,
+          component: PageView,
           children: [
             {
               path: 'demo1',
@@ -163,12 +163,34 @@ const options = {
           component: () => import('@/pages/demo')
         },
         {
-          path: 'parent10',
+          path: 'setting',
           name: '系统设置',
           meta: {
             icon: 'setting'
           },
-          component: () => import('@/pages/demo')
+          component: BlankView,
+          children: [
+            {
+              path: 'organ',
+              name: '组织管理',
+              component: () => import('@/pages/setting/organManage/OrganManage'),
+            },
+            {
+              path: 'positionAndLevel',
+              name: '岗位与职级管理',
+              component: () => import('@/pages/setting/positionAndLevel/PositionAndLevel'),
+            },
+            {
+              path: 'salaryItem',
+              name: '工资项管理',
+              component: () => import('@/pages/setting/salaryItem/SalaryItem'),
+            },
+            {
+              path: 'otherDeploy',
+              name: '其他配置项',
+              component: () => import('@/pages/setting/otherDeploy/OtherDeploy'),
+            }
+          ]
         },
         {
           path: 'exception',
