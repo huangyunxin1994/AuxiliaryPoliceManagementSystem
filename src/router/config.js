@@ -44,7 +44,7 @@ const options = {
           children: [
             {
               path: 'demo1',
-              name: '演示页面1',
+              name: '辅警资料',
               component: () => import('@/pages/demo'),
             }
           ]

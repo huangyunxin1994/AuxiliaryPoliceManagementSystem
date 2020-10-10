@@ -47,16 +47,21 @@ export default {
     loading: [Boolean, Object],
     columns: Array,
     dataSource: Array,
+    // 表格行 key 的取值，可以是字符串或一个函数
     rowKey: {
       type: [String, Function],
       default: 'key'
     },
+    // 是否显示分页
     pagination: {
       type: [Object, Boolean],
       default: true
     },
+    // 选择后进行操作，完成后清空选择，通过 rowSelection.selectedRowKeys 来控制选中项。
     selectedRows: Array,
+    // 展开的行，控制属性
     expandedRowKeys: Array,
+    // 额外的展开行
     expandedRowRender: Function,
     scroll: {
       type: Object,

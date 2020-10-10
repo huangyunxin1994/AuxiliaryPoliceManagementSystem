@@ -76,7 +76,17 @@ export default {
     onOk () {
       console.log('监听了 modal ok 事件')
       return new Promise(resolve => {
-        resolve(true)
+        const { form: { validateFields } } = this
+        this.visible = true
+        validateFields((errors, values) => {
+          if (!errors) {
+            console.log('values', values)
+             resolve(true)
+          }else{
+             resolve(false)
+          }
+        })
+       
       })
     },
     onCancel () {
@@ -86,13 +96,7 @@ export default {
       })
     },
     handleSubmit () {
-      const { form: { validateFields } } = this
-      this.visible = true
-      validateFields((errors, values) => {
-        if (!errors) {
-          console.log('values', values)
-        }
-      })
+      
     }
   }
 }
