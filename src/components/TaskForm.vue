@@ -69,9 +69,7 @@ export default {
     }
   },
   mounted () {
-    this.fn.then(r=>{
-      console.log(73)
-    })
+    
     this.record && this.form.setFieldsValue(pick(this.record, fields))
   },
   methods: {
@@ -83,11 +81,16 @@ export default {
         validateFields((errors, values) => {
           if (!errors) {
             console.log('values', values)
-             resolve(true)
-          }else{
-             resolve(false)
+            let result = this.fn(values)
+            result.then(r=>{
+              console.log(r)
+              resolve(true)
+            })
+          }else {
+            resolve(false)
           }
         })
+       
        
       })
     },

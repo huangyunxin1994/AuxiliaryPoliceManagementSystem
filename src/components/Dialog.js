@@ -46,22 +46,19 @@ export default (Vue) => {
         handleClose () {
           handle(this.$refs._component.onCancel, () => {
             this.visible = false
-            this.$refs._component.$emit('close',dialogInstance)
-            this.$refs._component.$emit('cancel',dialogInstance)
+            // this.$refs._component.$emit('close',dialogInstance)
+            this.$refs._component.$emit('cancel')
+            dialogInstance.$destroy()
             
           })
         },
         handleOk () {
           handle(this.$refs._component.onOK || this.$refs._component.onOk, () => {
             this.visible = false
-            this.$refs._component.$emit('close',dialogInstance)
-            this.$refs._component.$emit('ok',dialogInstance)
-          })
-        },
-        handleDestroy(){
-          handle(this.$refs._component.onOK || this.$refs._component.onOk || this.$refs._component.onCancel, () => {
+            
+            // this.$refs._component.$emit('close',dialogInstance)
+            this.$refs._component.$emit('ok')
             dialogInstance.$destroy()
-            console.log('Modal Is Destroyed!')
           })
         }
       },
@@ -88,7 +85,6 @@ export default (Vue) => {
             }
           })
         })
-        console.log(ModalProps.attrs)
         const componentModel = componentProps && componentProps.model
         if (componentModel) {
           delete componentProps.model
@@ -102,8 +98,6 @@ export default (Vue) => {
             ...((componentProps && componentProps.on) || componentProps)
           })
         })
-        console.log(componentProps)
-        console.log(ComponentProps.attrs)
         return h(Modal, ModalProps, [h(component, ComponentProps)])
       }
     }).$mount(dialogDiv)

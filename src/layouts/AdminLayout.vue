@@ -34,7 +34,7 @@ import SideMenu from '../components/menu/SideMenu'
 import Setting from '../components/setting/Setting'
 import {mapState, mapMutations, mapGetters} from 'vuex'
 
-const minHeight = window.innerHeight - 64 - 24 - 122
+const minHeight = window.innerHeight - 64 - 24 - 45
 
 export default {
   name: 'AdminLayout',
