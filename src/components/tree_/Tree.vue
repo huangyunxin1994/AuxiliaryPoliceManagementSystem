@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a-input-search v-if="allowSearch" style="margin-bottom: 8px" placeholder="Search" @change="onChange" />
+        <a-input-search v-if="allowSearch" style="margin-bottom: 8px" placeholder="请输入搜索内容" @change="onChange" />
         <a-tree
         class="custom-tree"
         :expanded-keys="expandedKeys"
