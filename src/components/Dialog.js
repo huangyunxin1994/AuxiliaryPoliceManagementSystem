@@ -32,7 +32,8 @@ export default (Vue) => {
     const dialogInstance = new Vue({
       data () {
         return {
-          visible: true
+          visible: true,
+          loading:false
         }
       },
       router: _vm.$router,
@@ -47,18 +48,22 @@ export default (Vue) => {
           handle(this.$refs._component.onCancel, () => {
             this.visible = false
             // this.$refs._component.$emit('close',dialogInstance)
-            this.$refs._component.$emit('cancel')
-            dialogInstance.$destroy()
+            this.$refs._component.$emit('cancel',dialogInstance)
             
+          })
+        },
+        handleSubmit () {
+          handle(this.$refs._component.onSubmit, () => {
+            this.loading=true
+            this.handleOk()
           })
         },
         handleOk () {
           handle(this.$refs._component.onOK || this.$refs._component.onOk, () => {
+            this.loading=false
             this.visible = false
-            
             // this.$refs._component.$emit('close',dialogInstance)
-            this.$refs._component.$emit('ok')
-            dialogInstance.$destroy()
+            this.$refs._component.$emit('ok',dialogInstance)
           })
         }
       },
@@ -72,13 +77,14 @@ export default (Vue) => {
           attrs: Object.assign({}, {
             ...(modalProps.attrs || modalProps)
           }, {
-            visible: this.visible
+            visible: this.visible,
+            confirmLoading:this.loading
           }),
           on: Object.assign({}, {
             ...(modalProps.on || modalProps)
           }, {
             ok: () => {
-              that.handleOk()
+              that.handleSubmit()
             },
             cancel: () => {
               that.handleClose()
