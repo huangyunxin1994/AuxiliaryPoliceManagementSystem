@@ -17,7 +17,8 @@
       <!-- 输入框  -->
       <a-input
         v-model="form[item.name]"
-        v-if="item.type == 'input'"
+        v-if="item.type=='input'"
+        :disabled="item.disabled"
         :placeholder="item.placeholder"
       />
       <!-- 下拉框 -->
@@ -86,6 +87,16 @@
         tree-default-expand-all
       >
       </a-tree-select>
+      <a-upload
+          name="file"
+          :multiple="true"
+          action=""
+          :before-upload="beforeUpload"
+          :show-upload-list="false"
+          v-else-if="item.type == 'upload'"
+        >
+        <a-button type="primary">选择文件</a-button>
+      </a-upload>
     </a-form-model-item>
   </a-form-model>
 </template>
@@ -200,6 +211,18 @@ export default {
         
         });
       
+    },
+    onCancel () {
+      console.log('监听了 modal cancel 事件')
+      return new Promise(resolve => {
+        resolve(true)
+      })
+    },
+    // 上传文件
+    beforeUpload(file){
+      console.log(file)
+      let name = file.name
+      console.log(name)
     },
   },
 };
