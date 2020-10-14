@@ -68,7 +68,7 @@
         </a-col>
       </a-row>
       <div class="table-operator" style="margin-bottom: 24px">
-        <a-button type="primary" icon="plus">新建</a-button>
+        <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
         <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -83,6 +83,7 @@
       <s-table
         ref="table"
         rowKey="key"
+        
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :rowSelection="rowSelection"
@@ -103,6 +104,7 @@
         </span>
       </s-table>
     </a-card>
+    <form-step ref="modal" title="新建请假记录" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
   </div>
 </template>
 
@@ -110,6 +112,7 @@
 import { mapState } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/TaskForm";
+import formStep from "@/components/stepForm/StepForm";
 const tree = [{
     'key': 'key-01',
     'title': '研发中心',
@@ -199,15 +202,83 @@ const tree = [{
     }]
   }]
   }]
+const formTitle = [
+  {
+    label: "请假类型",
+    name: "type",
+    type: "select",
+    placeholder: "请选择请假类型",
+    select:[
+      {value:1 ,name:"事假"},
+      {value:2 ,name:"病假"},
+      {value:3 ,name:"调休"},
+      {value:4 ,name:"年假"},
+      {value:5 ,name:"婚假"},
+      {value:6 ,name:"产假"},
+      {value:7 ,name:"陪产假"},
+      {value:8 ,name:"哺乳假"},
+      {value:9 ,name:"丧假"},
+    ]
+  },
+  {
+    label: "开始时间",
+    name: "startTime",
+    type: "picker",
+    placeholder: "请选择请假开始时间",
+  },
+  {
+    label: "结束时间",
+    name: "endTime",
+    type: "picker",
+    placeholder: "请选择请假结束时间",
+  },
+  {
+    label: "请假原因",
+    name: "reason",
+    type: "textarea",
+    placeholder: "请输入请假原因",
+  }
+];
+const stepTitle = [{title:'选择人员'},{title:'填写请假信息'}]
+const rules = {
+  type: [
+    { required: true, message: "请选择请假类型", trigger: "change" },
+  ],
+  startTime: [
+    { required: true, message: "请选择请假开始时间", trigger: "change" },
+  ],
+  endTime: [
+    { required: true, message: "请选择请假结束时间", trigger: "change" },
+  ],
+  reason: [{ required: true, message: "请输入请假原因", trigger: "blur" }],
+};
+const submitFun = ()=>{
+  return new Promise((resolve) => {
+              resolve({
+                data: [],
+                pageSize: 10,
+                pageNo: 1,
+                totalPage: 1,
+                totalCount: 10,
+              });
+            }).then((res) => {
+              return res;
+            });
+}
 export default {
   name: "AskForLeave",
   components: {
     STable,
     TaskForm,
+    formStep
   },
   data() {
     return {
         tree,
+        formTitle,
+        rules,
+        stepTitle,
+        submitFun,
         value:null,
         replaceFields:{
             children:'children',
@@ -329,6 +400,9 @@ export default {
     };
   },
   methods: {
+    handleAdd(){
+      this.$refs.modal.visible=true
+    },
     handleEdit(record) {
       console.log(record);
     },

@@ -73,6 +73,7 @@ export default (Vue) => {
         if (modalModel) {
           delete modalProps.model
         }
+        console.log(modalProps)
         const ModalProps = Object.assign({}, modalModel && { model: modalModel } || {}, {
           attrs: Object.assign({}, {
             ...(modalProps.attrs || modalProps)
@@ -92,6 +93,7 @@ export default (Vue) => {
           })
         })
         const componentModel = componentProps && componentProps.model
+        console.log(componentModel)
         if (componentModel) {
           delete componentProps.model
         }

@@ -107,7 +107,6 @@ export default {
             this.selectedNode = e.node.dataRef
             let params = {}
             params[this.replaceFields.key] = this.selectedKeys[0]
-            console.log(params)
             this.$emit('loadTreeNode',params)
         },
         //编辑
@@ -137,7 +136,6 @@ export default {
                 if (node.children) {
                     this.initData(node.children);
                 }
-                console.log(this.dataList)
             }
         },
         //搜索
@@ -156,7 +154,6 @@ export default {
                 searchValue: value,
                 autoExpandParent: true,
             });
-            console.log(this.expandedKeys)
         },
         /**
          * 获得父节点key
@@ -182,7 +179,6 @@ export default {
                     }
                 }
             }
-            console.log(parentKey)
             return parentKey;
         }
     },

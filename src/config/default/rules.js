@@ -93,12 +93,12 @@ export function validateIdNo(rule, value,callback) {
 
 // // 是否邮箱
 export function validateEMail(rule, value,callback) {
-    constreg =/^([a-zA-Z0-9]+[-_\.]?)+@[a-zA-Z0-9]+\.[a-z]+$/;
+    const reg =/^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/;
         if(value==''||value==undefined||value==null){
             callback();
         }else{
             if(!reg.test(value)){
-                callback(newError('请输入正确的邮箱'));
+                callback(new Error('请输入正确的邮箱'));
             } else {
                 callback();
             }

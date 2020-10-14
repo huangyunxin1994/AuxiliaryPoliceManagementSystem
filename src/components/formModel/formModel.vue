@@ -39,7 +39,8 @@
       <a-date-picker
         v-model="form[item.name]"
         v-else-if="item.type == 'picker'"
-        show-time
+        :show-time="{ format: 'HH:mm:ss' }"
+        format="YYYY-MM-DD HH:mm:ss"
         type="date"
         :placeholder="item.placeholder"
         style="width: 100%"
@@ -92,7 +93,7 @@
           :multiple="true"
           action=""
           :before-upload="beforeUpload"
-          :show-upload-list="false"
+          :show-upload-list="true"
           v-else-if="item.type == 'upload'"
         >
         <a-button type="primary">选择文件</a-button>
@@ -148,7 +149,8 @@ export default {
       },
       other: "",
       form: {},
-      dataSource: []
+      dataSource: [],
+      fileList:[]
     };
   },
   created() {
@@ -164,7 +166,6 @@ export default {
         pick(this.record, this.dataSource)
       );
     }
-    console.log(this.form)
   },
   methods: {
     change(e){
@@ -176,6 +177,7 @@ export default {
        return new Promise((resolve) => {
           this.$refs.ruleForm.validate((valid) => {
             if (valid) {
+              this.form.fileList = Object.assign([],this.fileList);
                resolve(true);
             } else {
               console.log("error submit!!");
@@ -193,19 +195,21 @@ export default {
     onOk() {
       console.log("监听了 modal ok 事件");
       return new Promise((resolve) => {
+        
             setTimeout(()=>{
-              const result = this.submitFun(this.form);
-                result
-                  .then((res) => {
-                    console.log(res);
-                    this.resetForm()
-                    this.$message.success('成功');
-                    resolve(true);
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                    resolve(true);
-                  });
+              resolve(true);
+              // const result = this.submitFun(this.form);
+              //   result
+              //     .then((res) => {
+              //       console.log(res);
+              //       this.resetForm()
+              //       this.$message.success('成功');
+              //       resolve(true);
+              //     })
+              //     .catch((err) => {
+              //       console.log(err);
+              //       resolve(true);
+              //     });
             },3000)
           
         
@@ -220,9 +224,8 @@ export default {
     },
     // 上传文件
     beforeUpload(file){
-      console.log(file)
-      let name = file.name
-      console.log(name)
+      this.fileList=[...this.fileList, file];
+      return false
     },
   },
 };

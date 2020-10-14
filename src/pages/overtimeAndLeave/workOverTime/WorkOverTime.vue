@@ -49,7 +49,7 @@
         </a-col>
       </a-row>
       <div class="table-operator" style="margin-bottom: 24px">
-        <a-button type="primary" icon="plus">新建</a-button>
+        <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
         <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -84,6 +84,7 @@
         </span>
       </s-table>
     </a-card>
+    <form-step ref="modal" title="新建加班记录" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
   </div>
 </template>
 
@@ -91,6 +92,7 @@
 import { mapState } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/TaskForm";
+import formStep from "@/components/stepForm/StepForm";
 const tree = [{
     'key': 'key-01',
     'title': '研发中心',
@@ -180,15 +182,81 @@ const tree = [{
     }]
   }]
   }]
+const formTitle = [
+  {
+    label: "开始时间",
+    name: "startTime",
+    type: "picker",
+    placeholder: "请选择加班开始时间",
+  },
+  {
+    label: "结束时间",
+    name: "endTime",
+    type: "picker",
+    placeholder: "请选择加班结束时间",
+  },
+  {
+    label: "时长(小时)",
+    name: "duration",
+    type: "input",
+    disabled:true,
+  },
+  {
+    label: "法定假日",
+    name: "holiday",
+    type: "select",
+    select:[
+      {name:"是", value:1},
+      {name:"否", value:2}
+    ]
+  },
+  {
+    label: "加班原因",
+    name: "reason",
+    type: "textarea",
+    placeholder: "请输入加班原因",
+  }
+];
+const stepTitle = [{title:'选择人员'},{title:'填写加班信息'}]
+const rules = {
+  holiday: [
+    { required: true, message: "请选择是否法定假日", trigger: "change" },
+  ],
+  startTime: [
+    { required: true, message: "请选择加班开始时间", trigger: "change" },
+  ],
+  endTime: [
+    { required: true, message: "请选择加班结束时间", trigger: "change" },
+  ],
+  reason: [{ required: true, message: "请输入加班原因", trigger: "blur" }],
+};
+const submitFun = ()=>{
+  return new Promise((resolve) => {
+              resolve({
+                data: [],
+                pageSize: 10,
+                pageNo: 1,
+                totalPage: 1,
+                totalCount: 10,
+              });
+            }).then((res) => {
+              return res;
+            });
+}
 export default {
   name: "AskForLeave",
   components: {
     STable,
     TaskForm,
+    formStep
   },
   data() {
     return {
         tree,
+        formTitle,
+        rules,
+        stepTitle,
+        submitFun,
         value:null,
         replaceFields:{
             children:'children',
@@ -310,6 +378,9 @@ export default {
     };
   },
   methods: {
+    handleAdd(){
+      this.$refs.modal.visible=true
+    },
     handleEdit(record) {
       console.log(record);
     },

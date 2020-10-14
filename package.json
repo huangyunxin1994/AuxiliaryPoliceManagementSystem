@@ -33,7 +33,7 @@
     "vue-router": "^3.3.4",
     "vuedraggable": "^2.23.2",
     "vuex": "^3.4.0",
-    "xlsx": "^0.16.7"
+    "xlsx": "^0.16.8"
   },
   "devDependencies": {
     "@ant-design/colors": "^4.0.1",
