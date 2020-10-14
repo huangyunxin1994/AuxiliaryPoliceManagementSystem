@@ -163,9 +163,19 @@ const options = {
           component: BlankView,
           children: [
             {
-              path: 'demo2',
-              name: '演示页面2',
-              component: () => import('@/pages/demo'),
+              path: 'workovertime',
+              name: '加班管理',
+              component: () => import('@/pages/overtimeAndLeave/workOverTime/WorkOverTime'),
+            },
+            {
+              path: 'askforleave',
+              name: '请假管理',
+              component: () => import('@/pages/overtimeAndLeave/askForLeave/AskForLeave'),
+            },
+            {
+              path: 'overtimeleavecount',
+              name: '加班,请假统计',
+              component: () => import('@/pages/overtimeAndLeave/overtimeLeaveCount/OvertimeLeaveCount'),
             }
           ]
         },
@@ -175,7 +185,19 @@ const options = {
           meta: {
             icon: 'folder'
           },
-          component: () => import('@/pages/demo')
+          component: BlankView,
+          children: [
+            {
+              path: 'filecenter',
+              name: '文档中心',
+              component: () => import('@/pages/fileAndNotice/fileCenter/FileCenter'),
+            },
+            {
+              path: 'notice',
+              name: '通知公告',
+              component: () => import('@/pages/fileAndNotice/notice/Notice'),
+            }
+          ]
         },
         {
           path: 'setting',

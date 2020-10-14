@@ -14,12 +14,12 @@
         >
             <a-icon slot="switcherIcon" type="down" />
             <template slot="custom" slot-scope="item">
-                <span v-if="item.title.indexOf(searchValue) > -1">
-                    {{ item.title.substr(0, item.title.indexOf(searchValue)) }}{{ showCount ? '（'+item.count+'）' : ''}}
-                <span style="color: #f50">{{ searchValue }}</span>
-                    {{ item.title.substr(item.title.indexOf(searchValue) + searchValue.length) }}{{ showCount ? '（'+item.count+'）' : ''}}
+                <span v-if="item[replaceFields.title].indexOf(searchValue) > -1">
+                    {{ item[replaceFields.title].substr(0, item[replaceFields.title].indexOf(searchValue)) }}
+                    <span style="color: #f50">{{ searchValue }}</span>
+                    {{ item[replaceFields.title].substr(item[replaceFields.title].indexOf(searchValue) + searchValue.length) }}{{ showCount ? '（'+item.count+'）' : ''}}
                 </span>
-                <span v-else>{{ item.title }}{{ showCount ? '（'+item.count+'）' : ''}}</span>
+                <span v-else>{{ item[replaceFields.title] }}{{ showCount ? '（'+item.count+'）' : ''}}</span>
                 <a-dropdown :trigger="['click']" v-if="allowEdit">
                     <a class="btn" @click="e => e.stopPropagation()"><a-icon type="ellipsis" /></a>
                     <a-menu slot="overlay">
@@ -41,20 +41,7 @@
 </template>
 
 <script>
-const getParentKey = (key, tree) => {
-  let parentKey;
-  for (let i = 0; i < tree.length; i++) {
-    const node = tree[i];
-    if (node.children) {
-      if (node.children.some(item => item.key === key)) {
-        parentKey = node.key;
-      } else if (getParentKey(key, node.children)) {
-        parentKey = getParentKey(key, node.children);
-      }
-    }
-  }
-  return parentKey;
-};
+
 export default {
     props:{
       //树数据 类型：数组|Array
@@ -98,8 +85,8 @@ export default {
     },
     data() {
         return {
-            showLine: true,
             selectedKeys:[],
+            selectedNode:{},
             dataList:[],
             searchValue:'',
             expandedKeys:[],
@@ -115,46 +102,43 @@ export default {
             this.expandedKeys = expandedKeys;
             this.autoExpandParent = false;
         },
-        onSelect(selectedKeys) {
+        onSelect(selectedKeys,e) {
             this.selectedKeys = selectedKeys
+            this.selectedNode = e.node.dataRef
             let params = {}
-            params.key = this.selectedKeys
+            params[this.replaceFields.key] = this.selectedKeys[0]
+            console.log(params)
             this.$emit('loadTreeNode',params)
         },
         //编辑
         edit(){
-            let params = {}
-            params.key = this.selectedKeys
-            this.$emit('editTreeNode',params)
+            this.$emit('editTreeNode',this.selectedNode)
         },
         //新增
         add(){
-            let params = {}
-            params.key = this.selectedKeys
-            this.$emit('addTreeNode',params)
+            this.$emit('addTreeNode',this.selectedNode)
         },
         //删除
         remove(){
-            let params = {}
-            params.key = this.selectedKeys
-            this.$emit('removeTreeNode',params)
+            this.$emit('removeTreeNode',this.selectedNode)
         },
         //重置
         reload(){
             this.selectedKeys=[]
+            this.selectedNode={}
             this.$emit('reloadTreeNode')
         },
         initData(data){
             for (let i = 0; i < data.length; i++) {
                 const node = data[i];
-                const key = node.key;
-                const title = node.title;
+                const key = node[this.replaceFields.key];
+                const title = node[this.replaceFields.title];
                 this.dataList.push({ key, title });
                 if (node.children) {
                     this.initData(node.children);
                 }
+                console.log(this.dataList)
             }
-            console.log(this.dataList)
         },
         //搜索
         onChange(e) {
@@ -162,18 +146,44 @@ export default {
             const expandedKeys = this.dataList
                 .map(item => {
                 if (value&&item.title.indexOf(value) > -1) {
-                    return getParentKey(item.key, this.dataSource);
+                    return this.getParentKey(item.key, this.dataSource);
                 }
                 return null;
                 })
                 .filter((item, i, self) => item && self.indexOf(item) === i);
-            console.log(expandedKeys)
             Object.assign(this, {
                 expandedKeys,
                 searchValue: value,
                 autoExpandParent: true,
             });
             console.log(this.expandedKeys)
+        },
+        /**
+         * 获得父节点key
+         * @param key 
+         * @param tree
+         */
+        getParentKey(key,tree){
+            console.log(key)
+            console.log(tree)
+            let parentKey;
+            for (let i = 0; i < tree.length; i++) {
+                const node = tree[i];
+                if (node.children) {
+                   console.log(this.replaceFields.key) 
+                   node.children.some(item => {
+                        item[this.replaceFields.key] == key
+                        console.log(item[this.replaceFields.key] +","+key)
+                   })
+                    if (node.children.some(item => item[this.replaceFields.key] == key)) {
+                        parentKey = node[this.replaceFields.key];
+                    } else if (this.getParentKey(key, node.children)) {
+                        parentKey = this.getParentKey(key, node.children);
+                    }
+                }
+            }
+            console.log(parentKey)
+            return parentKey;
         }
     },
 };
