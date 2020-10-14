@@ -1,6 +1,6 @@
 import TabsView from '@/layouts/tabs/TabsView'
 import BlankView from '@/layouts/BlankView'
-import PageView from '@/layouts/PageView'
+// import PageView from '@/layouts/PageView'
 
 // 路由配置
 const options = {
@@ -40,12 +40,12 @@ const options = {
           meta: {
             icon: 'user',
           },
-          component: PageView,
+          component: BlankView,
           children: [
             {
               path: 'demo1',
               name: '辅警资料',
-              component: () => import('@/pages/demo'),
+              component: () => import('@/pages/demo/Demo'),
             }
           ]
         },
@@ -55,12 +55,12 @@ const options = {
           meta: {
             icon: 'solution'
           },
-          component: PageView,
+          component: BlankView,
           children: [
             {
               path: 'demo2',
-              name: '演示页面2',
-              component: () => import('@/pages/demo'),
+              name: '合同管理',
+              component: () => import('@/pages/contract/contract'),
             }
           ]
         },
@@ -70,12 +70,27 @@ const options = {
           meta: {
             icon: 'hourglass'
           },
-          component: PageView,
+          component: BlankView,
           children: [
             {
-              path: 'demo2',
-              name: '演示页面2',
-              component: () => import('@/pages/demo'),
+              path: 'rank',
+              name: '职级管理',
+              component: () => import('@/pages/personadmin/rank'),
+            },
+            {
+              path: 'post',
+              name: '岗位管理',
+              component: () => import('@/pages/personadmin/post'),
+            },
+            {
+              path: 'dimission',
+              name: '离职管理',
+              component: () => import('@/pages/personadmin/dimission'),
+            },
+            {
+              path: 'profession',
+              name: '专业技术辅警资格管理',
+              component: () => import('@/pages/personadmin/profession'),
             }
           ]
         },
@@ -85,7 +100,7 @@ const options = {
           meta: {
             icon: 'pay-circle'
           },
-          component: PageView,
+          component: BlankView,
           children: [
             {
               path: 'demo2',
@@ -100,7 +115,7 @@ const options = {
           meta: {
             icon: 'desktop'
           },
-          component: PageView,
+          component: BlankView,
           children: [
             {
               path: 'demo2',
@@ -115,7 +130,7 @@ const options = {
           meta: {
             icon: 'idcard'
           },
-          component: PageView,
+          component: BlankView,
           children: [
             {
               path: 'demo2',
@@ -130,7 +145,7 @@ const options = {
           meta: {
             icon: 'thunderbolt'
           },
-          component: PageView,
+          component: BlankView,
           children: [
             {
               path: 'demo2',
@@ -145,7 +160,7 @@ const options = {
           meta: {
             icon: 'calculator'
           },
-          component: PageView,
+          component: BlankView,
           children: [
             {
               path: 'demo2',

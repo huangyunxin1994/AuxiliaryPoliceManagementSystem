@@ -92,18 +92,18 @@ export function validateIdNo(rule, value,callback) {
 }
 
 // // 是否邮箱
-// export function validateEMail(rule, value,callback) {
-//     const reg =/^([a-zA-Z0-9]+[-_\.]?)+@[a-zA-Z0-9]+\.[a-z]+$/;
-//     if(value==''||value==undefined||value==null){
-//       callback();
-//     }else{
-//       if (!reg.test(value)){
-//         callback(new Error('请输入正确的邮箱'));
-//       } else {
-//         callback();
-//       }
-//     }
-// }
+export function validateEMail(rule, value,callback) {
+    constreg =/^([a-zA-Z0-9]+[-_\.]?)+@[a-zA-Z0-9]+\.[a-z]+$/;
+        if(value==''||value==undefined||value==null){
+            callback();
+        }else{
+            if(!reg.test(value)){
+                callback(newError('请输入正确的邮箱'));
+            } else {
+                callback();
+            }
+        }
+}
 
 // 验证内容是否包含英文数字以及下划线
 export function isPassword(rule, value, callback) {
@@ -141,44 +141,6 @@ export const onePoint = (rule, value, callback) => {
       callback();
     }
 };
-export const rulue = {
-    nameReq: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-    name: [{ required: false, message: '必填项不能为空', trigger: 'blur' }],
-    changeNameReq: [{ required: true, message: '必填项不能为空', trigger: 'change' }],
-    changeName: [{ required: false, message: '必填项不能为空', trigger: 'change' }],
-    chockArrReq: [
-        {
-            type: 'array',
-            required: true,
-            message: '选项不能为空',
-            trigger: 'change',
-        },
-    ],
-    chockArr: [
-        {
-            type: 'array',
-            required: false,
-            message: '选项不能为空',
-            trigger: 'change',
-        },
-    ]
-
-    // name: [{ required: true, message: '请输入人员姓名', trigger: 'blur' }],
-    // region: [{ required: true, message: '请选择学位', trigger: 'change' }],
-    // time: [{ required: true, message: '请选择入学时间', trigger: 'change' }],
-    // type: [
-    //     {
-    //         type: 'array',
-    //         required: true,
-    //         message: '请选择爱好特长',
-    //         trigger: 'change',
-    //     },
-    // ],
-    // resource: [
-    //     { required: true, message: '请选择性别', trigger: 'change' },
-    // ],
-    // desc: [{ required: true, message: '请输入备注', trigger: 'blur' }],
-}
 
 
 

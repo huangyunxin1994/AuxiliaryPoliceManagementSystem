@@ -104,6 +104,9 @@ export default {
       Object.assign(this.localPagination, {
         showSizeChanger: val
       })
+    },
+    data(){
+      this.loadData()
     }
   },
   created () {
@@ -136,6 +139,7 @@ export default {
      * @param {Object} sorter 排序条件
      */
     loadData (pagination, filters, sorter) {
+      console.log(139)
       this.localLoading = true
       const parameter = Object.assign({
         pageNo: (pagination && pagination.current) ||
@@ -155,8 +159,11 @@ export default {
       const result = this.data(parameter)
       // 对接自己的通用数据接口需要修改下方代码中的 r.pageNo, r.totalCount, r.data
       // eslint-disable-next-line
+      console.log(result)
       if ((typeof result === 'object' || typeof result === 'function') && typeof result.then === 'function') {
         result.then(r => {
+          console.log("返回数据")
+          console.log(r)
           this.localPagination = this.showPagination && Object.assign({}, this.localPagination, {
             current: r.pageNo, // 返回结果中的当前分页数
             total: r.totalCount, // 返回结果中的总记录数
@@ -184,6 +191,13 @@ export default {
           this.localLoading = false
         })
       }
+    },
+    /**
+     * 用于前端特殊导入数据
+     * @param newDataSource
+     */
+    changeDataForImport (newDataSource) {
+      this.localDataSource = this.localDataSource.concat(newDataSource)
     },
     initTotalList (columns) {
       const totalList = []

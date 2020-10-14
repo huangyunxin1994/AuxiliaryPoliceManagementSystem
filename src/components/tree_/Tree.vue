@@ -191,7 +191,7 @@ export default {
             top: 0;
             right: 10px;
             font-size: 20px;
-            z-index: 1050;
+            z-index: 1;
             color:@text-color
         }
         /deep/ .btnReload {
@@ -199,7 +199,7 @@ export default {
             top: 0;
             right: 10px;
             font-size: 14px;
-            z-index: 1050;
+            z-index: 1;
             color:@text-color
         }
     }
