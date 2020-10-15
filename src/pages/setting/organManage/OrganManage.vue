@@ -15,44 +15,59 @@
           </ant-tree>
         </a-col>
         <a-col :md="24" :lg="17" :xl="19" :xxl="20">
-          <a-row :gutter="24">
-            <a-col :md="8" :sm="24">
-              <span style="width: 100px">关键词搜索：</span>
-              <a-input
-                style="width: calc(100% - 100px); margin-bottom: 24px"
-                placeHolder="请输入要搜索的内容"
-              />
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <span style="width: 100px">角色：</span>
-              <a-select
-                default-value=""
-                style="width: calc(100% - 100px); margin-bottom: 24px"
-                @change="handleChange"
-              >
-                <a-select-option value=""> 全部 </a-select-option>
-                <a-select-option value="1"> 人员资料管理员 </a-select-option>
-                <a-select-option value="2">合同管理员</a-select-option>
-                <a-select-option value="3"> 人事管理员 </a-select-option>
-                <a-select-option value="4"> 工资管理员 </a-select-option>
-                <a-select-option value="5">培训管理员</a-select-option>
-                <a-select-option value="6"> 证件装备管理员 </a-select-option>
-                <a-select-option value="7"> 奖励与追责管理员 </a-select-option>
-                <a-select-option value="8">文档与公告管理员</a-select-option>
-              </a-select>
-            </a-col>
-            <a-col :md="8" :sm="24" style="margin-bottom: 24px">
-              <span class="table-page-search-submitButtons">
-                <a-button type="primary" @click="$refs.table.refresh(true)"
-                  >查询</a-button
-                >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="() => (this.queryParam = {})"
-                  >重置</a-button
-                >
-              </span>
-            </a-col>
+          <a-row>
+            <div class="table-page-search-wrapper">
+              <a-form layout="inline">
+                <a-row :gutter="48">
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="模糊查询">
+                      <a-input placeholder="请输入要查询的关键词" />
+                    </a-form-item>
+                  </a-col>
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="角色选择">
+                      <a-select default-value="" @change="handleChange">
+                        <a-select-option value=""> 全部 </a-select-option>
+                        <a-select-option value="1">
+                          人员资料管理员
+                        </a-select-option>
+                        <a-select-option value="2">合同管理员</a-select-option>
+                        <a-select-option value="3">
+                          人事管理员
+                        </a-select-option>
+                        <a-select-option value="4">
+                          工资管理员
+                        </a-select-option>
+                        <a-select-option value="5">培训管理员</a-select-option>
+                        <a-select-option value="6">
+                          证件装备管理员
+                        </a-select-option>
+                        <a-select-option value="7">
+                          奖励与追责管理员
+                        </a-select-option>
+                        <a-select-option value="8"
+                          >文档与公告管理员</a-select-option
+                        >
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                  <a-col :md="8" :sm="24">
+                    <span class="table-page-search-submitButtons">
+                      <a-button
+                        type="primary"
+                        @click="$refs.table.refresh(true)"
+                        >查询</a-button
+                      >
+                      <a-button
+                        style="margin-left: 8px"
+                        @click="() => (queryParam = {})"
+                        >重置</a-button
+                      >
+                    </span>
+                  </a-col>
+                </a-row>
+              </a-form>
+            </div>
           </a-row>
           <div class="table-operator" style="margin-bottom: 24px">
             <a-button type="primary" icon="plus" @click="handleAdd"

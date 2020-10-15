@@ -1,5 +1,5 @@
 <template>
-<a-modal v-model="visible" :title="title" on-ok="handleOk" :width="700" @cancel="handleCancel" :maskClosable="false" :destroyOnClose="true">
+<a-modal v-model="visible" :title="title" on-ok="handleOk" :width="900" @cancel="handleCancel" :maskClosable="false" :destroyOnClose="true">
       <template slot="footer">
         <a-button v-show="current === 0"  @click="nextStep">下一页</a-button>
         <a-button v-show="current === 1"  style="margin-left: 8px" @click="prevStep">上一页</a-button>

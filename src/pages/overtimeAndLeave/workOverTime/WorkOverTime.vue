@@ -1,53 +1,68 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
-      <a-row :gutter="24">
-        <a-col :md="6" :sm="24">
-          <span style="width: 100px">关键词搜索：</span>
-          <a-input
-            style="width: calc(100% - 100px); margin-bottom: 24px"
-            placeHolder="请输入要搜索的内容"
-          />
-        </a-col>
-        <a-col :md="6" :sm="24">
-          <span style="width: 100px">组织：</span>
-          <a-tree-select
-                v-model="value"
-                style="width: calc(100% - 100px);margin-bottom: 24px"
-                :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                :tree-data="tree"
-                :allowClear="true"
-                :replaceFields="replaceFields"
-                placeholder="请选择组织"
-                tree-default-expand-all
-            >
-            </a-tree-select>
-        </a-col>
-        <a-col :md="6" :sm="24">
-          <span style="width: 100px">是否审批：</span>
-          <a-select
-            default-value=""
-            style="width: calc(100% - 100px); margin-bottom: 24px"
-            @change="handleChange"
-          >
-            <a-select-option value=""> 全部 </a-select-option>
-            <a-select-option value="1"> 是 </a-select-option>
-            <a-select-option value="2"> 否 </a-select-option>
-          </a-select>
-        </a-col>
-        <a-col :md="6" :sm="24" style="margin-bottom: 24px">
-          <span class="table-page-search-submitButtons">
-            <a-button type="primary" @click="$refs.table.refresh(true)"
-              >查询</a-button
-            >
-            <a-button
-              style="margin-left: 8px"
-              @click="() => (this.queryParam = {})"
-              >重置</a-button
-            >
-          </span>
-        </a-col>
-      </a-row>
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="模糊查询">
+                <a-input placeholder="请输入要查询的关键词" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="组织选择">
+                <a-tree-select
+                  v-model="value"
+                  style="width: 100%"
+                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                  :tree-data="tree"
+                  :allowClear="true"
+                  :replaceFields="replaceFields"
+                  placeholder="请选择组织"
+                  tree-default-expand-all
+                >
+                </a-tree-select>
+              </a-form-item>
+            </a-col>
+            <template v-if="advanced">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="是否审批">
+                  <a-select
+                    default-value=""
+                    style="width: 100%"
+                    @change="handleChange"
+                  >
+                    <a-select-option value=""> 全部 </a-select-option>
+                    <a-select-option value="1"> 是 </a-select-option>
+                    <a-select-option value="2"> 否 </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </template>
+            <a-col :md="(!advanced && 8) || 24" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="
+                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                "
+              >
+                <a-button type="primary" @click="$refs.table.refresh(true)"
+                  >查询</a-button
+                >
+                <a-button
+                  style="margin-left: 8px"
+                  @click="() => (queryParam = {})"
+                  >重置</a-button
+                >
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? "收起" : "展开" }}
+                  <a-icon :type="advanced ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
         <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -91,8 +106,8 @@
 <script>
 import { mapState } from "vuex";
 import STable from "@/components/Table_/";
-import TaskForm from "@/components/TaskForm";
 import formStep from "@/components/stepForm/StepForm";
+import TaskForm from "@/components/formModel/formModel";
 const tree = [{
     'key': 'key-01',
     'title': '研发中心',
@@ -204,7 +219,7 @@ const formTitle = [
   {
     label: "法定假日",
     name: "holiday",
-    type: "select",
+    type: "radio",
     select:[
       {name:"是", value:1},
       {name:"否", value:2}
@@ -215,6 +230,94 @@ const formTitle = [
     name: "reason",
     type: "textarea",
     placeholder: "请输入加班原因",
+  }
+];
+const formCheckTitle = [
+  
+  {
+    label: "姓名",
+    name: "policeName",
+    type: "text",
+    smCol: { span: 12 },
+    labelCol:{
+      xs: { span: 24 },
+      sm: { span: 14 }
+    },
+    wrapperCol:{
+      xs: { span: 24 },
+      sm: { span: 10 }
+    }
+  },
+  
+  {
+    label: "警员编号",
+    name: "number",
+    type: "text",
+    smCol: { span: 12 },
+    
+  },
+  {
+    label: "开始时间",
+    name: "startTime",
+    type: "text",
+    smCol: { span: 12 },
+    labelCol:{
+      xs: { span: 24 },
+      sm: { span: 14 }
+    },
+    wrapperCol:{
+      xs: { span: 24 },
+      sm: { span: 10 }
+    }
+  },
+  {
+    label: "结束时间",
+    name: "endTime",
+    type: "text",
+    smCol: { span: 12 }
+  },
+  {
+    label: "时长(小时)",
+    name: "duration",
+    type: "text",
+    smCol: { span: 12 },
+    labelCol:{
+      xs: { span: 24 },
+      sm: { span: 14 }
+    },
+    wrapperCol:{
+      xs: { span: 24 },
+      sm: { span: 10 }
+    }
+  },
+  {
+    label: "法定假日",
+    name: "holiday",
+    type: "text",
+    select:[
+      {name:"是", value:'1'},
+      {name:"否", value:'2'}
+    ],
+    smCol: { span: 12 },
+  },
+  {
+    label: "加班原因",
+    name: "reason",
+    type: "text",
+  },
+  {
+    label: "是否通过",
+    name: "approvalResults",
+    type: "radio",
+    select:[
+      {name:"是", value:1},
+      {name:"否", value:2}
+    ]
+  },
+  {
+    label: "审批备注",
+    name: "approvalRemake",
+    type: "textarea",
   }
 ];
 const stepTitle = [{title:'选择人员'},{title:'填写加班信息'}]
@@ -257,6 +360,8 @@ export default {
         rules,
         stepTitle,
         submitFun,
+        // 高级搜索 展开/关闭
+      advanced: false,
         value:null,
         replaceFields:{
             children:'children',
@@ -383,6 +488,31 @@ export default {
     },
     handleEdit(record) {
       console.log(record);
+      let formProps = {
+        record: record,
+        formTitle: formCheckTitle,
+        submitFun: () => {
+          return new Promise((resolve) => {
+            resolve({
+              data: [],
+              pageSize: 10,
+              pageNo: 1,
+              totalPage: 1,
+              totalCount: 10,
+            });
+          }).then((res) => {
+            return res;
+          });
+        },
+      };
+      let modalProps = {
+        title: "编辑",
+        width: 700,
+        centered: true,
+        maskClosable: false,
+        okText: "提交",
+      };
+      this.openModal(TaskForm, formProps, modalProps);
     },
     handleChange(e) {
       console.log(e);
@@ -392,6 +522,38 @@ export default {
       this.selectedRows = selectedRows;
       console.log(this.selectedRowKeys);
       console.log(this.selectedRows);
+    },
+    /**
+     * 表单弹窗
+     * @param form form模板页面，通过import引入
+     * @param formProps form配置项 Object
+     * @param modalProps 弹窗配置项 Object
+     */
+    openModal(form, formProps, modalProps) {
+      const defaultModalProps = {
+        on: {
+          ok() {
+            console.log("ok 回调");
+          },
+          cancel() {
+            console.log("cancel 回调");
+          },
+          close() {
+            console.log("modal close 回调");
+          },
+        },
+      };
+      formProps = Object.assign(formProps, defaultModalProps);
+      this.$dialog(
+        form,
+        // component props
+        formProps,
+        // modal props
+        modalProps
+      );
+    },
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
     },
   },
   filters: {

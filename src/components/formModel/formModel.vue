@@ -7,13 +7,16 @@
     :wrapper-col="wrapperCol"
     :layout="layout"
   >
-    <a-form-model-item
-      v-for="(item, index) in formTitle"
-      :key="index"
+  <a-row>
+    <a-col :xs="item.xsCol||24" :sm="item.smCol||24" v-for="(item, index) in formTitle" :key="index">
+      <a-form-model-item
+      :labelCol="item.labelCol"
+      :wrapperCol="item.wrapperCol"
       :label="item.label"
       :prop="item.name"
       :ref="item.refName"
     >
+      <span v-if="item.type=='text'">{{form[item.name]}}</span>
       <!-- 输入框  -->
       <a-input
         v-model="form[item.name]"
@@ -24,6 +27,7 @@
       <!-- 下拉框 -->
       <a-select
         v-model="form[item.name]"
+        :disabled="item.disabled"
         v-else-if="item.type == 'select'"
         :placeholder="item.placeholder"
       >
@@ -39,28 +43,29 @@
       <a-date-picker
         v-model="form[item.name]"
         v-else-if="item.type == 'picker'"
+        :disabled="item.disabled"
         :show-time="{ format: 'HH:mm:ss' }"
-        format="YYYY-MM-DD HH:mm:ss"
+        valueFormat	="YYYY-MM-DD HH:mm:ss"
         type="date"
         :placeholder="item.placeholder"
         style="width: 100%"
       />
       <!-- 开关 -->
-      <a-switch v-else-if="item.type == 'switch'" v-model="form[item.name]" />
+      <a-switch :disabled="item.disabled" v-else-if="item.type == 'switch'" v-model="form[item.name]" />
       <!-- 复选框组 -->
-      <a-checkbox-group v-model="form[item.name]" @change="change" v-else-if="item.type == 'checkboxgroup'" :style=" item.showBgc ? 'background:rgba(0,0,0,.02);' : ''" style="padding:10px">
+      <a-checkbox-group v-model="form[item.name]" :disabled="item.disabled" @change="change" v-else-if="item.type == 'checkboxgroup'" :style=" item.showBgc ? 'background:rgba(0,0,0,.02);' : ''" style="padding:10px">
         <a-row>
           <a-col :span="12" v-for="(i,j) in item.select" :key="j">
-            <a-checkbox :value="i.value">
+            <a-checkbox :value="i.value || i.name">
               {{i.name}}
             </a-checkbox>
           </a-col>
         </a-row>
       </a-checkbox-group>
        <!-- 复选框 -->
-      <a-checkbox v-model="form[item.name]" v-else-if="item.type == 'checkbox'"/>
+      <a-checkbox v-model="form[item.name]" :disabled="item.disabled" v-else-if="item.type == 'checkbox'"/>
       <!-- 单选框 -->
-      <a-radio-group v-model="form[item.name]" v-else-if="item.type == 'radio'">
+      <a-radio-group v-model="form[item.name]" :disabled="item.disabled" v-else-if="item.type == 'radio'">
         <a-radio
           v-for="(i, j) in item.select"
           :key="j"
@@ -73,13 +78,16 @@
       <a-input
         v-model="form[item.name]"
         type="textarea"
+        :autoSize="{ minRows: 4, maxRows: 6 }"
+        :disabled="item.disabled"
         v-else-if="item.type == 'textarea'"
         :placeholder="item.placeholder"
       />
       <!-- 树选择 -->
       <a-tree-select
         v-else-if="item.type == 'treeSelect'"
-        v-model="form[item.name]"
+        v-model="form[item.name]" 
+        :disabled="item.disabled"
         :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
         :tree-data="item.select"
         :allowClear="true"
@@ -91,6 +99,7 @@
       <a-upload
           name="file"
           :multiple="true"
+          :disabled="item.disabled"
           action=""
           :before-upload="beforeUpload"
           :show-upload-list="true"
@@ -99,6 +108,9 @@
         <a-button type="primary">选择文件</a-button>
       </a-upload>
     </a-form-model-item>
+    </a-col>
+  </a-row>
+    
   </a-form-model>
 </template>
 <script>
@@ -121,6 +133,24 @@ export default {
       type: Object,
       default: null,
     },
+    labelCol: {
+      type: Object,
+       default(){
+          return{
+            xs: { span: 24 },
+            sm: { span: 7 }
+          }
+        }
+    },
+      wrapperCol: {
+        type: Object,
+        default(){
+          return{
+            xs: { span: 24 },
+            sm: { span: 13 }
+          }
+        }
+    },
     replaceFields: {
       type: Object,
       default() {
@@ -139,14 +169,7 @@ export default {
   },
   data() {
     return {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 7 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 13 },
-      },
+      
       other: "",
       form: {},
       dataSource: [],

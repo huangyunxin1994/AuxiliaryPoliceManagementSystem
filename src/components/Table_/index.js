@@ -250,6 +250,7 @@ export default {
       )
     },
     renderAlert () {
+      console.log(this.selectedRows)
       // 绘制统计列数据
       const needTotalItems = this.needTotalList.map((item) => {
         return (<span style="margin-right: 12px">
@@ -269,6 +270,7 @@ export default {
         <a-alert showIcon={true} style="margin-bottom: 16px">
           <template slot="message">
             <span style="margin-right: 12px">已选择: <a style="font-weight: 600">{this.selectedRows.length}</a></span>
+            
             {needTotalItems}
             {clearItem}
           </template>
