@@ -58,13 +58,18 @@
         </a-col>
         <a-col :md="24" :lg="16" :xl="20">
           <a-card :bordered="true">
+            <div class="saveBtn">
+              <a-button type="primary" @click="saveBtn">保存</a-button>
+            </div>
+          </a-card>
+          <a-card :bordered="true">
             <div class="baseMess">
               <div class="title">
                 <div class="position-and-level-title" :style="{'border-color':theme.color}">基础资料</div>
-                <a-button type="primary">保存</a-button>
               </div>
               <div>
                 <a-form-model 
+                  ref="ruleForm"
                   :model="form" 
                   :label-col="labelCol" 
                   :rules="baseRules"
@@ -73,7 +78,7 @@
                   <a-row :gutter="24">
                     <a-col v-for="(item,index) in baseMessTitle" :key="index" :md="24" :lg="12" :xl="12" :xxl="6" >
                       <a-form-model-item :label="item.label" :labelCol="{span: 7}" :wrapperCol="{span: 13}" :prop="item.title">
-                        <a-input v-model="form[item.title]" v-if="item.type=='input'" />
+                        <a-input v-model="form[item.title]" v-if="item.type=='input'" :disabled="item.disabled"/>
                         <a-select v-model="form[item.title]" :placeholder="item.placeholder" v-else-if="item.type=='select'">
                           <a-select-option  v-for="(i,j) in item.select" :key="j" :value='i.name'>
                             {{i.name}}
@@ -143,12 +148,13 @@
                 </div>
                 <standard-table
                   ref="table"
-                  rowKey="key"
+                  :rowKey="(record)=> record.id"
                   :columns="studyColumns"
                   :data="studySource"
                   :showPagination="false"
                 >
                   <template
+                  
                     slot="status"
                     slot-scope="status">
                     <a-badge :status="status" :text="status | statusFilter"/>
@@ -500,23 +506,23 @@ const rules = {
           awardTime:'',
         },
         baseMessTitle:[
-          {title:'number',label:'辅警编号',type:'input',placeholder:'请输入辅警编号'}, //
-          {title:'name',label:'姓名',type:'input',placeholder:'请输入辅警姓名'}, //
-          {title:'idCard',label:'身份证号',type:'input',placeholder:'请输入身份证号'}, //
-          {title:'phone',label:'手机号码',type:'input',placeholder:'请输入手机号码'}, //
+          {title:'number',label:'辅警编号',type:'input',placeholder:'请输入辅警编号',disabled:false}, //
+          {title:'name',label:'姓名',type:'input',placeholder:'请输入辅警姓名',disabled:false}, //
+          {title:'idCard',label:'身份证号',type:'input',placeholder:'请输入身份证号',disabled:false}, //
+          {title:'phone',label:'手机号码',type:'input',placeholder:'请输入手机号码',disabled:false}, //
           {title:'organization',label:'所属组织',type:'select',placeholder:'请选择所属组织'}, 
           {title:'post',label:'所属岗位',type:'select',placeholder:'请选择所属岗位'},
           {title:'rank',label:'所属职级',type:'select',placeholder:'请选择所属职级'},
-          {title:'nation',label:'民族',type:'input',placeholder:'请输入民族'},//
+          {title:'nation',label:'民族',type:'input',placeholder:'请输入民族',disabled:false},//
           {title:'education',label:'学历',type:'select',placeholder:'请选择学历',select:[{name:'专科'},{name:'本科'},{name:'硕士'},{name:'博士'},{name:'博士后'}]},//
-          {title:'nativePlace',label:'籍贯',type:'input',placeholder:'请输入籍贯'},//
-          {title:'height',label:'身高(cm)',type:'input',placeholder:'请输入身高'},
+          {title:'nativePlace',label:'籍贯',type:'input',placeholder:'请输入籍贯',disabled:false},//
+          {title:'height',label:'身高(cm)',type:'input',placeholder:'请输入身高',disabled:false},
           {title:'entryTime',label:'入职时间',type:'time',placeholder:'请选择入职时间'},//
           {title:'politicalStatus',label:'政治面貌',type:'select',placeholder:'请选择政治面貌',select:[{name:'团员'},{name:'党员'},{name:'民主人士'},{name:'群众'}]},//
-          {title:'birthday',label:'出生日期',type:'input',placeholder:'请输入出生日期'},//
-          {title:'sex',label:'性别',type:'input',placeholder:'请输入性别'},//
-          {title:'age',label:'年龄',type:'input',placeholder:'请输入年龄'},//
-          {title:'tenureStatus',label:'工龄',type:'input',placeholder:'请输入工龄'} //  //
+          {title:'birthday',label:'出生日期',type:'input',placeholder:'请输入出生日期',disabled:true},//
+          {title:'sex',label:'性别',type:'input',placeholder:'请输入性别',disabled:true},//
+          {title:'age',label:'年龄',type:'input',placeholder:'请输入年龄',disabled:true},//
+          {title:'tenureStatus',label:'工龄',type:'input',placeholder:'请输入工龄',disabled:true} //  //
         ],
         studyColumns: studyColumns,
         workColumns:workColumns,
@@ -560,7 +566,6 @@ const rules = {
             return res
           })
         },
-
         allTableData:[],
         imageUrl:'',// 用来存放图片的路径
         allTableTitle:[],// 所有的title
@@ -709,10 +714,10 @@ const rules = {
             j.key = k
           })
         })
+        console.log(tdata)
         this.$refs.table.changeDataForImport(tdata[0])
         this.$refs.worktable.changeDataForImport(tdata[1])
         this.$refs.familytable.changeDataForImport(tdata[2])
-        
       },
       // 点击删除
       del(key){
@@ -778,6 +783,21 @@ const rules = {
         }
         this.modal(param,option)
       },
+
+      // 点击保存按钮
+      saveBtn(){
+        console.log("保存按钮")
+        this.$refs.ruleForm.validate(valid => {
+          if (valid) {
+            // alert('submit!');
+            console.log(' submit!!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+        // console.log(this.familySource)
+      }
     },
     mounted(){
       this.getBaseRules()
@@ -788,6 +808,10 @@ const rules = {
 
 <style scoped lang="less">
   @import "index";
+  .saveBtn{
+    display: flex;
+    justify-content: flex-end;
+  }
   .position-and-level-title{
  
     border-style: solid;

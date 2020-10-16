@@ -118,9 +118,19 @@ const options = {
           component: BlankView,
           children: [
             {
-              path: 'demo2',
-              name: '演示页面2',
-              component: () => import('@/pages/demo'),
+              path: 'education',
+              name: '培训管理',
+              component: () => import('@/pages/education/education'),
+            },
+            {
+              path: 'newEducation',
+              name: '新建培训',
+              component: () => import('@/pages/education/newEducation/newEducation'),
+            },
+            {
+              path: 'educationDetails',
+              name: '培训详情',
+              component: () => import('@/pages/education/educationDetails/educationDetails'),
             }
           ]
         },
@@ -133,9 +143,14 @@ const options = {
           component: BlankView,
           children: [
             {
-              path: 'demo2',
-              name: '演示页面2',
-              component: () => import('@/pages/demo'),
+              path: 'equipageAdmin',
+              name: '装备管理',
+              component: () => import('@/pages/equipage/equipageAdmin/equipageAdmin'),
+            },
+            {
+              path: 'papersAdmin',
+              name: '证件管理',
+              component: () => import('@/pages/equipage/papersAdmin/papersAdmin'),
             }
           ]
         },
