@@ -148,7 +148,7 @@
                 </div>
                 <standard-table
                   ref="table"
-                  :rowKey="(record)=> record.id"
+                  :rowKey="(record)=> record.school"
                   :columns="studyColumns"
                   :data="studySource"
                   :showPagination="false"

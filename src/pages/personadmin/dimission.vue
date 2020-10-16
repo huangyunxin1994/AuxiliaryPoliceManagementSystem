@@ -4,11 +4,11 @@
             <a-row :gutter="24">
                 <a-col :md="24" :lg="24" :xl="24" :xxl="24">
                     <a-row :gutter="24">
-                        <a-col :md="6" :sm="24">
+                        <a-col :md="8" :sm="24">
                             <span style="width:100px">关键词搜索：</span>
                             <a-input style="width: calc(100% - 100px);margin-bottom: 24px" placeHolder="请输入要搜索的内容"/>
                         </a-col>
-                        <a-col :md="6" :sm="24">
+                        <a-col :md="8" :sm="24">
                             <span style="width:100px">装备证件是否回收:</span>
                             <a-select default-value="jack" style="width: calc(100% - 200px);margin-bottom: 24px" @change="handleChange">
                                 <a-select-option value="jack">
@@ -22,16 +22,45 @@
                                 </a-select-option>
                             </a-select>
                         </a-col>
-                        <a-col :md="6" :sm="24">
+                        <a-col :md="8" :sm="24" v-if="advanced">
                             <span style="width:100px">离职生效时间:</span>
                             <a-date-picker @change="onChange" />
                         </a-col>
-                        <a-col :md="6" :sm="24" style="margin-bottom: 24px" >
-                          <span class="table-page-search-submitButtons" >
-                            <a-button type="primary" @click="newDimission" :disabled="selectedRows.length == 0">新建离职</a-button>
+                        <a-col :md="(!advanced && 8) || 24" :sm="24">
+                          <span
+                            class="table-page-search-submitButtons"
+                            :style="
+                              (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                            "
+                          >
+                            <a-button type="primary" @click="$refs.table.refresh(true)"
+                              >查询</a-button
+                            >
+                            <a-button
+                              style="margin-left: 8px"
+                              @click="() => (queryParam = {})"
+                              >重置</a-button
+                            >
+                            <a @click="toggleAdvanced" style="margin-left: 8px">
+                              {{ advanced ? "收起" : "展开" }}
+                              <a-icon :type="advanced ? 'up' : 'down'" />
+                            </a>
                           </span>
                         </a-col>
                     </a-row>
+                    <div class="table-operator" style="margin-bottom: 24px">
+                      <a-button type="primary" icon="plus" @click="newDimission" :disabled="selectedRows.length == 0">新建离职</a-button>
+                      <a-dropdown v-if="selectedRowKeys.length > 0">
+                        <a-menu slot="overlay">
+                          <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+                          <!-- lock | unlock -->
+                          <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+                        </a-menu>
+                        <a-button style="margin-left: 8px">
+                          批量操作 <a-icon type="down" />
+                        </a-button>
+                      </a-dropdown>
+                    </div>
                       <s-table
                         ref="table"
                         rowKey="key"
@@ -185,6 +214,8 @@
           },
           selectedRowKeys: [],
           selectedRows: [],
+          // 高级搜索 展开/关闭
+          advanced: false,
       }
     },
     methods:{
@@ -261,14 +292,17 @@
         )
       },
       //修改装备状态
-        confirm(e) {
-            console.log(e);
-            this.$message.success('修改成功');
-        },
-        cancel(e) {
-            console.log(e);
-            this.$message.error('已取消');
-        },
+      confirm(e) {
+          console.log(e);
+          this.$message.success('修改成功');
+      },
+      cancel(e) {
+          console.log(e);
+          this.$message.error('已取消');
+      },
+      toggleAdvanced() {
+        this.advanced = !this.advanced;
+      },
     },
     filters: {
       equState (status) {

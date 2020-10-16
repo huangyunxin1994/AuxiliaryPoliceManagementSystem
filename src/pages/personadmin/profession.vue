@@ -15,21 +15,50 @@
                 </a-col>
                 <a-col :md="24" :lg="17" :xl="19" :xxl="20">
                     <a-row :gutter="24">
-                        <a-col :md="6" :sm="24">
+                        <a-col :md="8" :sm="24">
                             <span style="width:100px">关键词搜索：</span>
                             <a-input style="width: calc(100% - 100px);margin-bottom: 24px" placeHolder="请输入要搜索的内容"/>
                         </a-col>
-                        <a-col :md="6" :sm="24">
+                        <a-col :md="8" :sm="24">
                             <span style="width:100px">日期:</span>
                             <a-date-picker @change="onChange" />
                         </a-col>
-                        <a-col :md="6" :sm="24" style="margin-bottom: 24px" >
-                          <span class="table-page-search-submitButtons" >
-                            <!-- <a-button type="primary" @click="$refs.table.refresh(true)">续约合同</a-button> -->
-                            <a-button type="primary" @click="addPerson">新增任职人员</a-button>
+                        
+                        <a-col :md="(!advanced && 8) || 24" :sm="24">
+                          <span
+                            class="table-page-search-submitButtons"
+                            :style="
+                              (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                            "
+                          >
+                            <a-button type="primary" @click="$refs.table.refresh(true)"
+                              >查询</a-button
+                            >
+                            <a-button
+                              style="margin-left: 8px"
+                              @click="() => (queryParam = {})"
+                              >重置</a-button
+                            >
+                            <a @click="toggleAdvanced" style="margin-left: 8px">
+                              {{ advanced ? "收起" : "展开" }}
+                              <a-icon :type="advanced ? 'up' : 'down'" />
+                            </a>
                           </span>
                         </a-col>
                     </a-row>
+                    <div class="table-operator" style="margin-bottom: 24px">
+                        <a-button type="primary" icon="plus" @click="addPerson">新增任职人员</a-button>
+                        <a-dropdown v-if="selectedRowKeys.length > 0">
+                          <a-menu slot="overlay">
+                            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+                            <!-- lock | unlock -->
+                            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+                          </a-menu>
+                          <a-button style="margin-left: 8px">
+                            批量操作 <a-icon type="down" />
+                          </a-button>
+                        </a-dropdown>
+                      </div>
                       <s-table
                         ref="table"
                         rowKey="key"
@@ -162,6 +191,8 @@
           openKeys: ['key-01'],
           tree,
           loading:false,
+          // 高级搜索 展开/关闭
+          advanced: false,
           scheduleColumns: [
             {
               title: '序号',
@@ -448,7 +479,10 @@
       //日期框筛选
       onChange(date, dateString){
           console.log(date, dateString);
-      }
+      },
+      toggleAdvanced() {
+        this.advanced = !this.advanced;
+      },
     },
     filters: {
       statusFilter (status) {

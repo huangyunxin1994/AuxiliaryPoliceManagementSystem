@@ -15,77 +15,76 @@
                 </a-col>
                 <a-col :md="24" :lg="17" :xl="19" :xxl="20">
                     <a-row :gutter="24">
-                        <a-col :md="8" :sm="24">
+                        <a-col :md="6" :sm="24">
                             <span style="width:100px">关键词搜索：</span>
                             <a-input style="width: calc(100% - 100px);margin-bottom: 24px" placeHolder="请输入要搜索的内容"/>
                         </a-col>
-                        <a-col :md="8" :sm="24">
-                            <span style="width:100px">是否失效:</span>
+                        <a-col :md="6" :sm="24">
+                            <span style="width:100px">岗位:</span>
+                            <a-select default-value="jack" style="width: calc(100% - 100px);margin-bottom: 24px" @change="handleChange">
+                                <!-- <a-select-option value="jack">
+                                    哈哈哈
+                                </a-select-option> -->
+                            </a-select>
+                        </a-col>
+                        <a-col :md="6" :sm="24">
+                            <span style="width:100px">是否专业辅警:</span>
                             <a-select default-value="jack" style="width: calc(100% - 100px);margin-bottom: 24px" @change="handleChange">
                                 <a-select-option value="jack">
                                     全部
                                 </a-select-option>
-                                <a-select-option value="a">
+                                <a-select-option value="1">
                                     是
                                 </a-select-option>
-                                <a-select-option value="b">
+                                <a-select-option value="2">
                                     否
                                 </a-select-option>
                             </a-select>
                         </a-col>
-                        <a-col :md="(!advanced && 8) || 24" :sm="24">
-                          <span
-                            class="table-page-search-submitButtons"
-                            :style="
-                              (advanced && { float: 'right', overflow: 'hidden' }) || {}
-                            "
-                          >
-                            <a-button type="primary" @click="$refs.table.refresh(true)"
-                              >查询</a-button
-                            >
-                            <a-button
-                              style="margin-left: 8px"
-                              @click="() => (queryParam = {})"
-                              >重置</a-button
-                            >
-                            <a @click="toggleAdvanced" style="margin-left: 8px">
-                              {{ advanced ? "收起" : "展开" }}
-                              <a-icon :type="advanced ? 'up' : 'down'" />
-                            </a>
-                          </span>
+                        <a-col :md="6" :sm="24" style="margin-bottom: 24px">
+                            <span class="table-page-search-submitButtons">
+                                <a-button type="primary" @click="$refs.table.refresh(true)"
+                                >查询</a-button
+                                >
+                                <a-button
+                                style="margin-left: 8px"
+                                @click="() => (this.queryParam = {})"
+                                >重置</a-button
+                                >
+                            </span>
                         </a-col>
                     </a-row>
                     <div class="table-operator" style="margin-bottom: 24px">
-                      <a-button type="primary" @click="changePost" :disabled="selectedRows.length == 0">调动岗位与组织</a-button>
-                      <a-dropdown v-if="selectedRowKeys.length > 0">
-                        <a-menu slot="overlay">
-                          <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-                          <!-- lock | unlock -->
-                          <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-                        </a-menu>
-                        <a-button style="margin-left: 8px">
-                          批量操作 <a-icon type="down" />
-                        </a-button>
-                      </a-dropdown>
+                      <a-button type="primary" icon="vertical-align-bottom" style="margin-right: 10px" >批量导入</a-button>
+                      <a-button type="primary" icon="plus" @click="addPerson">新增人员</a-button>
                     </div>
-                      <s-table
-                        ref="table"
-                        rowKey="key"
-                        :columns="scheduleColumns"
-                        :data="loadScheduleData"
-                        :rowSelection="rowSelection"
-                        :scroll="{y:600}"
-                        showPagination="auto">
+                    <s-table
+                      ref="table"
+                      rowKey="key"
+                      :columns="scheduleColumns"
+                      :data="loadScheduleData"
+                      :rowSelection="rowSelection"
+                      :scroll="{y:600}"
+                      showPagination="auto">
 
-                        <template
-                          slot="status"
-                          slot-scope="status">
-                          <a-badge :status="status" :text="status | statusFilter"/>
-                        </template>
-                        <span slot="action" slot-scope="text, record">
-                          <a @click="handleEdit (record)">查看</a>
-                        </span>
-                      </s-table>
+                      <template
+                        slot="status"
+                        slot-scope="status">
+                        <a-badge :status="status" :text="status | statusFilter"/>
+                      </template>
+                      <span slot="action" slot-scope="text, record">
+                        <a-popconfirm
+                            title="该人员的登录密码将重置为123456，是否继续？"
+                            ok-text="确认"
+                            cancel-text="取消"
+                            @confirm="confirm (record)"
+                            @cancel="cancel"
+                            v-if="text !=1"
+                        >
+                            <a href="#">重置</a>
+                        </a-popconfirm>
+                      </span>
+                    </s-table>
                 </a-col>
             </a-row>
        </a-card>
@@ -199,8 +198,6 @@
           openKeys: ['key-01'],
           tree,
           loading:false,
-          // 高级搜索 展开/关闭
-          advanced: false,
           scheduleColumns: [
             {
               title: '序号',
@@ -229,20 +226,43 @@
             {
               title: '岗位',
               dataIndex: 'post',
-              key: 'post',
-              width: 100,
+              key: 'post'
             },
             {
-              title: '生效日期',
-              dataIndex: 'date',
-              key: 'date',
-              width: 100
+              title: '职级',
+              dataIndex: 'rank',
+              key: 'rank'
             },
             {
-              title: '审批人',
-              dataIndex: 'principal',
-              key: 'principal',
-              width: 100
+              title: '工龄',
+              dataIndex: 'seniority',
+              key: 'seniority'
+            },
+            {
+              title: '年龄',
+              dataIndex: 'age',
+              key: 'age'
+            },
+            {
+              title: '性别',
+              dataIndex: 'sex',
+              key: 'sex'
+            },
+            {
+              title: '政治面貌',
+              dataIndex: 'politicalStatus',
+              key: 'politicalStatus'
+            },
+            {
+              title: '学历',
+              dataIndex: 'education',
+              key: 'education'
+            },
+            {
+              title: '是否专业辅警',
+              dataIndex: 'status',
+              key: 'status',
+              scopedSlots: { customRender: 'status' }
             },
             {
               title: '操作',
@@ -259,16 +279,17 @@
                     width: 60,
                 },
                 {
-                    title: '所属组织',
-                    dataIndex: 'organ',
-                    key: 'organ',
-                    width: 180,
+                    title: '职级',
+                    dataIndex: 'rank',
+                    key: 'rank',
+                    width: 80,
                 },
                 {
-                    title: '所属岗位',
-                    dataIndex: 'post',
-                    key: 'post',
-                    width: 100
+                    title: '变动类型',
+                    dataIndex: 'status',
+                    key: 'status',
+                    width: 100,
+                    scopedSlots: { customRender: 'status' }
                 },
                 {
                     title: '生效时间',
@@ -277,7 +298,7 @@
                     width: 100,
                 },
                 {
-                    title: '调动原因',
+                    title: '变动原因',
                     dataIndex: 'cause',
                     key: 'cause',
                     width: 150,
@@ -292,19 +313,19 @@
           diaData:[
               {
                   key: '1',
-                  organ: '仙湖分局',
-                  post: '交通辅警',
+                  rank: '阿斯顿发',
+                  status: 'processing',
                   date: '2020-05-02',
                   cause: '作风优良',
-                  principal:'李四'
+                  principal:'张三'
               },
               {
                   key: '2',
-                  organ: '南宁总局',
-                  post: '进来撒经多方',
+                  rank: '阿斯顿发',
+                  status: 'error',
                   date: '2020-05-02',
                   cause: '贪污腐败',
-                  principal:'李四'
+                  principal:'张三'
               }
           ],
           loadScheduleData: () => {
@@ -313,14 +334,17 @@
                 data: [
                   {
                     key: '1',
-                    account: 'admin',
                     name: '管理员',
                     code: 'FJ0584',
                     organ: '青秀区东葛路派出所',
-                    post:'哈哈哈',
-                    cause:'勤劳',
-                    date:'2020-02-16',
-                    principal:'张三'
+                    post:'技术岗',
+                    rank:'哈哈职级',
+                    seniority:'3年',
+                    age:'22岁',
+                    sex:'男',
+                    politicalStatus:'团员',
+                    education:'本科',
+                    status:'processing'
                   },
                   {
                     key: '2',
@@ -328,32 +352,14 @@
                     name: '李四',
                     code: 'FJ0585',
                     organ: '青秀区东葛路派出所',
-                    post:'哈哈哈',
-                    cause:'勤劳',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '3',
-                    account: 'test',
-                    name: '王五',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    post:'哈哈哈',
-                    cause:'结党营私',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '4',
-                    account: 'test',
-                    name: '张三',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    post:'哈哈哈',
-                    cause:'结党营私',
-                    date:'2020-02-16',
-                    principal:'张三'
+                    post:'技术岗',
+                    rank:'哈哈职级',
+                    seniority:'3年',
+                    age:'22岁',
+                    sex:'男',
+                    politicalStatus:'团员',
+                    education:'本科',
+                    status:'error'
                   }
                 ],
                 pageSize: 10,
@@ -368,18 +374,14 @@
           selectedRowKeys: [],
           selectedRows: [],
           extension:[
-                {label:'姓名',name:'name',type:'input',placeholder:'请输入姓名',disabled:true},
-                {label:'原组织',name:'beforeOrg',type:'input',placeholder:'请输入变动前职级',disabled:true},
-                {label:'原岗位',name:'beforePost',type:'input',placeholder:'请输入变动前职级',disabled:true},
-                {label:'生效日期',name:'date',type:'picker',placeholder:'请选择变动原因'},
-                {label:'调动后组织',name:'organ',type:'select',placeholder:'请选择变动后职级'},
-                {label:'调动后岗位拟',name:'post',type:'select',placeholder:'请选择调动后岗位拟'},
-                {label:'变动原因',name:'cause',type:'textarea',placeholder:'请输入变动原因'},
-                
+                {label:'姓名',name:'name',type:'input',refName:'name',placeholder:'请输入姓名',disabled:true},
+                {label:'变动前职级',name:'beforeRank',type:'input',refName:'beforeRank',placeholder:'请输入变动前职级',disabled:true},
+                {label:'变动后职级',name:'rank',type:'select',refName:'rank',placeholder:'请选择变动后职级'},
+                {label:'变动原因',name:'cause',type:'input',refName:'cause',placeholder:'请输入变动原因'},
+                {label:'生效日期',name:'date',type:'picker',refName:'date',placeholder:'请选择变动原因'}
           ],
           changeRankRules:{
-            post:[{ required: true, message: '请选择变动后岗位', trigger: 'change'}],
-            organ:[{ required: true, message: '请选择变动后组织', trigger: 'change'}],
+            rank:[{ required: true, message: '请选择变动后职级', trigger: 'change'}],
             cause: [{ required: true, message: '请输入变动原因', trigger: 'blur'}],
             date: [{ required: true, message: '请选择生效日期', trigger: 'change' }]
           }
@@ -393,7 +395,7 @@
             diaData:this.diaData
         }
         let option = {
-            title: '个人岗位历史',
+            title: '职级历史',
             width: 1000,
             centered: true,
             maskClosable: false,
@@ -440,15 +442,15 @@
         this.selectedRows = selectedRows
       },
 
-      // 岗位调动
-      changePost(){
+      // 职级变更
+      changeRank(){
         console.log(this.selectedRows)
         let param ={
             formTitle:this.extension,
             rules:this.changeRankRules
         }
         let option = {
-            title: '岗位调动',
+            title: '职级变更',
             width: 500,
             centered: true,
             maskClosable: false,
@@ -482,16 +484,25 @@
           option
         )
       },
-      
-      toggleAdvanced() {
-        this.advanced = !this.advanced;
+      // 重置密码
+      confirm(e) {
+          console.log(e);
+          this.$message.success('修改成功');
       },
+      cancel(e) {
+          console.log(e);
+          this.$message.error('已取消');
+      },
+      // 新增人员
+      addPerson(){
+        this.$router.push('/parent1/demo1')
+      }
     },
     filters: {
       statusFilter (status) {
         const statusMap = {
-          'processing': '晋升',
-          'error': '降级'
+          'processing': '是',
+          'error': '否'
         }
         return statusMap[status]
       }
@@ -509,5 +520,5 @@
 </script>
 
 <style scoped lang="less">
-@import "index";
+@import "../index";
 </style>

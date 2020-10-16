@@ -1,57 +1,80 @@
 <template>
     <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
         <a-card :bordered="false">
-            <a-row :gutter="24">
-                <a-col :md="24" :lg="24" :xl="24" :xxl="24">
-                    <a-row :gutter="24">
-                        <a-col :sm="24" :md="10" :lg="8" :xl="5" :xxl="6" >
-                            <span style="width:100px">关键词搜索：</span>
-                            <a-input style="width: calc(100% - 100px);margin-bottom: 24px" placeHolder="请输入要搜索的内容"/>
-                        </a-col>
-                        <a-col :sm="24" :md="12"  :lg="12" :xl="8" :xxl="5" >
-                            <span style="width: 100px">组织：</span>
-                            <a-tree-select
-                                v-model="value"
-                                style="width: calc(100% - 100px);margin-bottom: 24px"
-                                :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                                :tree-data="tree"   
-                                :allowClear="true"
-                                :replaceFields="replaceFields"
-                                placeholder="请选择组织"
-                                tree-default-expand-all
-                            >
-                            </a-tree-select>
-                        </a-col>
-                        <a-col :sm="24" :md="12" :lg="12" :xl="8" :xxl="6" style="margin-bottom: 24px">
-                            <span style="width:100px">配发日期：</span>
-                            <a-date-picker @change="onChange" />
-                        </a-col>
-                        <a-col :sm="24" :md="12" :lg="12" :xl="8" :xxl="6" style="margin-bottom: 24px">
-                            <span style="width:100px">回收日期：</span>
-                            <a-date-picker @change="onChange" />
-                        </a-col>
-                        <a-col :sm="24" :md="12"  :lg="12" :xl="6" :xxl="6"  style="margin-bottom: 24px" >
-                          <span class="table-page-search-submitButtons" >
-                            <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                            <a-button style="margin-left: 8px" @click="() => (this.queryParam = {})">重置</a-button>
-                          </span>
-                        </a-col>
-                    </a-row>
-                      <s-table
-                        ref="table"
-                        rowKey="key"
-                        :columns="scheduleColumns"
-                        :data="loadScheduleData"
-                        :scroll="{y:600}"
-                        showPagination="auto">
-                        <template
-                          slot="action"
-                          slot-scope="equState">
-                          <a-badge :status="equState" :text="equState | statusFilter"/>
-                        </template>
-                      </s-table>
+          <div class="table-page-search-wrapper">
+            <a-form layout="inline">
+              <a-row :gutter="48">
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="关键词搜索">
+                    <a-input placeholder="请输入要查询的关键词" />
+                  </a-form-item>
                 </a-col>
-            </a-row>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="组织选择">
+                    <a-tree-select
+                      v-model="value"
+                      style="width: 100%"
+                      :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                      :tree-data="tree"
+                      :allowClear="true"
+                      :replaceFields="replaceFields"
+                      placeholder="请选择组织"
+                      tree-default-expand-all
+                    >
+                    </a-tree-select>
+                  </a-form-item>
+                </a-col>
+                <template v-if="advanced">
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="配发日期">
+                      <a-date-picker @change="onChange" style="width: 100%"/>
+                    </a-form-item>
+                  </a-col>
+                </template>
+                <template v-if="advanced">
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="回收日期">
+                      <a-date-picker @change="onChange" style="width: 100%"/>
+                    </a-form-item>
+                  </a-col>
+                </template>
+                <a-col :md="(!advanced && 8) || 24" :sm="24">
+                  <span
+                    class="table-page-search-submitButtons"
+                    :style="
+                      (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                    "
+                  >
+                    <a-button type="primary" @click="$refs.table.refresh(true)"
+                      >查询</a-button
+                    >
+                    <a-button
+                      style="margin-left: 8px"
+                      @click="() => (queryParam = {})"
+                      >重置</a-button
+                    >
+                    <a @click="toggleAdvanced" style="margin-left: 8px">
+                      {{ advanced ? "收起" : "展开" }}
+                      <a-icon :type="advanced ? 'up' : 'down'" />
+                    </a>
+                  </span>
+                </a-col>
+              </a-row>
+            </a-form>
+          </div>
+          <s-table
+            ref="table"
+            rowKey="key"
+            :columns="scheduleColumns"
+            :data="loadScheduleData"
+            :scroll="{y:600}"
+            showPagination="auto">
+            <template
+              slot="action"
+              slot-scope="equState">
+              <a-badge :status="equState" :text="equState | statusFilter"/>
+            </template>
+          </s-table>
         </a-card>
     </div>
 </template>
@@ -158,6 +181,7 @@ export default {
           loading:false,
           tree,
           value:null,
+          advanced:false,
           scheduleColumns: [
             {
               title: '序号',
@@ -174,7 +198,8 @@ export default {
             {
               title: '辅警编号',
               dataIndex: 'code',
-              key: 'code'
+              key: 'code',
+              width: 100
             },
             {
               title: '所属组织',
@@ -185,17 +210,20 @@ export default {
             {
               title: '配发日期',
               dataIndex: 'allotmentDate',
-              key: 'allotmentDate'
+              key: 'allotmentDate',
+              width: 100
             },
             {
               title: '有效期限',
               dataIndex: 'validity',
-              key: 'validity'
+              key: 'validity',
+              width: 100
             },
             {
               title: '回收日期',
               dataIndex: 'recycleDate',
-              key: 'recycleDate'
+              key: 'recycleDate',
+              width: 100
             },
             {
               title: '证件描述',
@@ -259,6 +287,9 @@ export default {
         onChange(){
 
         },
+        toggleAdvanced(){
+          this.advanced = !this.advanced;
+        }
     },
     filters: {
       statusFilter (status) {

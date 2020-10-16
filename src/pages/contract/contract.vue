@@ -16,21 +16,21 @@
         </a-col>
         <a-col :md="24" :lg="17" :xl="19" :xxl="20">
           <a-row :gutter="24">
-            <a-col :md="6" :sm="24">
+            <a-col :md="8" :sm="24">
               <span style="width: 100px">关键词搜索：</span>
               <a-input
                 style="width: calc(100% - 100px); margin-bottom: 24px"
                 placeHolder="请输入要搜索的内容"
               />
             </a-col>
-            <a-col :md="6" :sm="24">
+            <a-col :md="8" :sm="24">
               <span style="width: 100px">合同终止日期:</span>
               <a-range-picker
                 style="width: calc(100% - 100px); margin-bottom: 24px"
                 @change="onChange"
               />
             </a-col>
-            <a-col :md="6" :sm="24">
+            <a-col :md="8" :sm="24" v-if="advanced">
               <span style="width: 100px">即将到期:</span>
               <a-select
                 default-value="lucy"
@@ -42,10 +42,30 @@
                 <a-select-option value="disabled"> 否 </a-select-option>
               </a-select>
             </a-col>
-            <a-col :md="6" :sm="24" style="margin-bottom: 24px">
-              <span class="table-page-search-submitButtons">
-                <!-- <a-button type="primary" @click="$refs.table.refresh(true)">续约合同</a-button> -->
+            <a-col :md="(!advanced && 8) || 24" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="
+                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                "
+              >
+                <a-button type="primary" @click="$refs.table.refresh(true)"
+                  >查询</a-button
+                >
                 <a-button
+                  style="margin-left: 8px"
+                  @click="() => (queryParam = {})"
+                  >重置</a-button
+                >
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? "收起" : "展开" }}
+                  <a-icon :type="advanced ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
+          </a-row>
+          <div class="table-operator" style="margin-bottom: 24px" >
+              <a-button
                   type="primary"
                   @click="extensionCon"
                   :disabled="selectedRows.length == 0"
@@ -57,20 +77,16 @@
                   @click="newContract"
                   >新建合同</a-button
                 >
-              </span>
-            </a-col>
-          </a-row>
-          <!-- <div class="table-operator" style="margin-bottom: 24px" >
-                        <a-dropdown v-if="selectedRowKeys.length > 0">
-                          <a-menu slot="overlay">
-                            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-                            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-                          </a-menu>
-                          <a-button style="margin-left: 8px">
-                            批量操作 <a-icon type="down" />
-                          </a-button>
-                        </a-dropdown>
-                      </div> -->
+              <a-dropdown v-if="selectedRowKeys.length > 0">
+                <a-menu slot="overlay">
+                  <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+                  <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+                </a-menu>
+                <a-button style="margin-left: 8px">
+                  批量操作 <a-icon type="down" />
+                </a-button>
+              </a-dropdown>
+            </div>
           <s-table
             ref="table"
             rowKey="key"
@@ -281,6 +297,8 @@ export default {
       rules,
       stepTitle,
       submitFun,
+      // 高级搜索 展开/关闭
+      advanced: false,
       openKeys: ["key-01"],
       tree,
       loading: false,
@@ -728,6 +746,9 @@ export default {
         // modal props
         option
       );
+    },
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
     },
   },
   filters: {

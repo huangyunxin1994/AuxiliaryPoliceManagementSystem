@@ -1,77 +1,88 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
-      <a-row :gutter="24">
-        <a-col :sm="24" :md="12"  :lg="12" :xl="6" :xxl="5">
-          <span style="width: 100px">关键词搜索：</span>
-          <a-input
-            style="width: calc(100% - 100px); margin-bottom: 24px"
-            placeHolder="请输入要搜索的内容"
-          />
-        </a-col>
-        <a-col :sm="24" :md="12"  :lg="12" :xl="6" :xxl="5">
-          <span style="width: 100px">组织：</span>
-          <a-tree-select
-                v-model="value"
-                style="width: calc(100% - 100px);margin-bottom: 24px"
-                :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                :tree-data="tree"
-                :allowClear="true"
-                :replaceFields="replaceFields"
-                placeholder="请选择组织"
-                tree-default-expand-all
-            >
-            </a-tree-select>
-        </a-col>
-        <a-col :sm="24" :md="12"  :lg="12" :xl="6" :xxl="5">
-          <span style="width: 100px">状态：</span>
-          <a-select
-            default-value=""
-            style="width: calc(100% - 100px); margin-bottom: 24px"
-            @change="handleChange"
-          >
-            <a-select-option value=""> 全部： </a-select-option>
-            <a-select-option value="1"> 是 </a-select-option>
-            <a-select-option value="2"> 否 </a-select-option>
-          </a-select>
-        </a-col>
-        <a-col :sm="24" :md="12"  :lg="12" :xl="6" :xxl="5">
-          <span style="width: 100px">培训方式：</span>
-          <a-select
-            default-value=""
-            style="width: calc(100% - 100px); margin-bottom: 24px"
-            @change="handleChange"
-          >
-            <a-select-option value=""> 全部 </a-select-option>
-            <a-select-option value="1"> 离岗培训 </a-select-option>
-            <a-select-option value="2"> 在岗培训 </a-select-option>
-          </a-select>
-        </a-col>
-        <a-col :sm="24" :md="12"  :lg="12" :xl="6" :xxl="4" style="margin-bottom: 24px">
-          <span class="table-page-search-submitButtons">
-            <a-button type="primary" @click="$refs.table.refresh(true)"
-              >查询</a-button
-            >
-            <a-button
-              style="margin-left: 8px"
-              @click="() => (this.queryParam = {})"
-              >重置</a-button
-            >
-          </span>
-        </a-col>
-      </a-row>
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="关键词搜索">
+                <a-input placeholder="请输入要查询的关键词" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="组织选择">
+                <a-tree-select
+                  v-model="value"
+                  style="width: 100%"
+                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                  :tree-data="tree"
+                  :allowClear="true"
+                  :replaceFields="replaceFields"
+                  placeholder="请选择组织"
+                  tree-default-expand-all
+                >
+                </a-tree-select>
+              </a-form-item>
+            </a-col>
+            <template v-if="advanced">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="状态">
+                  <a-select default-value="" @change="handleChange">
+                    <a-select-option value=""> 全部： </a-select-option>
+                    <a-select-option value="1"> 是 </a-select-option>
+                    <a-select-option value="2"> 否 </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </template>
+            <template v-if="advanced">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="培训方式">
+                  <a-select default-value="" @change="handleChange">
+                    <a-select-option value=""> 全部 </a-select-option>
+                    <a-select-option value="1"> 离岗培训 </a-select-option>
+                    <a-select-option value="2"> 在岗培训 </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </template>
+            <a-col :md="(!advanced && 8) || 24" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="
+                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                "
+              >
+                <a-button type="primary" @click="$refs.table.refresh(true)"
+                  >查询</a-button
+                >
+                <a-button
+                  style="margin-left: 8px"
+                  @click="() => (queryParam = {})"
+                  >重置</a-button
+                >
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? "收起" : "展开" }}
+                  <a-icon :type="advanced ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="delete" style="margin-right: 10px" :disabled="selectedRowKeys.length == 0">删除培训</a-button>
         <a-button type="primary" icon="plus">新建培训</a-button>
-        <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
+        <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+            <!-- lock | unlock -->
             <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px">
             批量操作 <a-icon type="down" />
           </a-button>
-        </a-dropdown> -->
+        </a-dropdown>
       </div>
       <s-table
         ref="table"
@@ -202,6 +213,8 @@ export default {
     return {
         tree,
         value:null,
+        // 高级搜索 展开/关闭
+        advanced: false,
         replaceFields:{
             children:'children',
             title:'title',
@@ -319,6 +332,9 @@ export default {
       this.selectedRows = selectedRows;
       console.log(this.selectedRowKeys);
       console.log(this.selectedRows);
+    },
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
     },
   },
   filters: {

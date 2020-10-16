@@ -2,7 +2,7 @@ import TabsView from '@/layouts/tabs/TabsView'
 import BlankView from '@/layouts/BlankView'
 // import PageView from '@/layouts/PageView'
 
-// 路由配置
+// 管理路由配置
 const options = {
   routes: [
     {
@@ -21,7 +21,8 @@ const options = {
       component: () => import('@/pages/exception/403'),
     },
     {
-      path: '/',
+      //管理页面路由配置
+      path: 'sys',
       name: '首页',
       component: TabsView,
       redirect: 'home',
@@ -46,6 +47,11 @@ const options = {
               path: 'demo1',
               name: '辅警资料',
               component: () => import('@/pages/demo/Demo'),
+            },
+            {
+              path: 'baseMess',
+              name: '基础资料',
+              component: () => import('@/pages/demo/baseMess/baseMess'),
             }
           ]
         },
@@ -280,6 +286,69 @@ const options = {
             // },
           },
           component: () => import('@/pages/demo')
+        }
+      ]
+    },
+    {
+      path: '/',
+      name: '基础资料',
+      component: TabsView,
+      redirect: 'demo1',
+      children: [
+        {
+          path: 'baseMess',
+          name: '基础资料',
+          meta: {
+            icon: 'user'
+          },
+          component: BlankView,
+          children: [
+            {
+              path: 'demo1',
+              name: '基础资料',
+              component: () => import('@/pages/subsystem/baseMess/baseMess')
+            }
+          ]
+        },
+        {
+          path: 'parent2',
+          name: '业务信息',
+          meta: {
+            icon: 'solution'
+          },
+          component: BlankView,
+          children: [
+            {
+              path: 'demo2',
+              name: '奖励与责任追究',
+              component: () => import('@/pages/contract/contract'),
+            },
+            {
+              path: 'demo3',
+              name: '合同与工资信息',
+              component: () => import('@/pages/contract/contract'),
+            },
+            {
+              path: 'demo4',
+              name: '人事信息',
+              component: () => import('@/pages/contract/contract'),
+            },
+            {
+              path: 'demo5',
+              name: '培训记录',
+              component: () => import('@/pages/contract/contract'),
+            },
+            {
+              path: 'demo6',
+              name: '证件装备',
+              component: () => import('@/pages/contract/contract'),
+            },
+            {
+              path: 'demo7',
+              name: '加班与请假',
+              component: () => import('@/pages/contract/contract'),
+            }
+          ]
         }
       ]
     }

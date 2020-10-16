@@ -1,106 +1,130 @@
 <template>
     <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
         <a-card :bordered="false">
-            <a-row :gutter="24">
-                <a-col :md="24" :lg="24" :xl="24" :xxl="24">
-                    <a-row :gutter="24">
-                        <a-col :sm="24" :md="10" :lg="8" :xl="5" :xxl="6" >
-                            <span style="width:100px">关键词搜索：</span>
-                            <a-input style="width: calc(100% - 100px);margin-bottom: 24px" placeHolder="请输入要搜索的内容"/>
-                        </a-col>
-                        <a-col :sm="24" :md="12"  :lg="12" :xl="8" :xxl="5" >
-                            <span style="width: 100px">组织：</span>
-                            <a-tree-select
-                                v-model="value"
-                                style="width: calc(100% - 100px);margin-bottom: 24px"
-                                :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                                :tree-data="tree"
-                                :allowClear="true"
-                                :replaceFields="replaceFields"
-                                placeholder="请选择组织"
-                                tree-default-expand-all
-                            >
-                            </a-tree-select>
-                        </a-col>
-                        <a-col :sm="24" :md="12" :lg="12" :xl="8" :xxl="6" style="margin-bottom: 24px">
-                            <span style="width:100px">配发日期：</span>
-                            <a-date-picker @change="onChange" />
-                        </a-col>
-                        <a-col :sm="24" :md="12" :lg="12" :xl="8" :xxl="6" style="margin-bottom: 24px">
-                            <span style="width:100px">有效期限：</span>
-                            <a-date-picker @change="onChange" />
-                        </a-col>
-                        <a-col :sm="24" :md="12" :lg="12" :xl="8" :xxl="6" style="margin-bottom: 24px">
-                            <span style="width:100px">状态：</span>
-                            <a-select default-value="jack" style="width: calc(100% - 200px);" @change="handleChange">
-                                <a-select-option value="jack">
-                                    全部
-                                </a-select-option>
-                                <a-select-option value="a">
-                                    是
-                                </a-select-option>
-                                <a-select-option value="b">
-                                    否
-                                </a-select-option>
-                            </a-select>
-                        </a-col>
-                        <a-col :sm="24" :md="12" :lg="12" :xl="8" :xxl="6" style="margin-bottom: 24px"> 
-                            <span style="width:100px">证件类型：</span>
-                            <a-select default-value="jack" style="width: calc(100% - 200px);" @change="handleChange">
-                                <a-select-option value="jack">
-                                    全部
-                                </a-select-option>
-                                <a-select-option value="a">
-                                   正常
-                                </a-select-option>
-                                <a-select-option value="b">
-                                    逾期未回收
-                                </a-select-option>
-                            </a-select>
-                        </a-col>
-                        <a-col :sm="24" :md="12"  :lg="12" :xl="6" :xxl="6"  style="margin-bottom: 24px" >
-                          <span class="table-page-search-submitButtons" >
-                            <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                            <a-button style="margin-left: 8px" @click="() => (this.queryParam = {})">重置</a-button>
-                          </span>
-                        </a-col>
-                    </a-row>
-                    <a-row :gutter="24">
-                        <a-col :md="6" :sm="24" style="margin-bottom: 24px" >
-                          <span class="table-page-search-submitButtons" >
-                            
-                            <a-button type="primary" icon="delete" style="margin-right: 10px" v-if="selectedRowKeys.length == 0" disabled>证件回收</a-button>
-                            <a-popconfirm
-                              title="确认回收所选证件?"
-                              ok-text="确认"
-                              cancel-text="取消"
-                              @confirm="confirm"
-                              @cancel="cancel"
-                              v-else
-                            >
-                              <a-button type="primary" icon="delete" style="margin-right: 10px">证件回收</a-button>
-                            </a-popconfirm>
-                            <a-button type="primary" icon="plus" @click="newPagers">新增发放</a-button>
-                          </span>
-                        </a-col>
-                    </a-row>
-                      <s-table
-                        ref="table"
-                        rowKey="key"
-                        :columns="scheduleColumns"
-                        :data="loadScheduleData"
-                        :rowSelection="rowSelection"
-                        :scroll="{y:600}"
-                        showPagination="auto">
-                        <template
-                          slot="action"
-                          slot-scope="equState">
-                          <!-- {{equState}} -->
-                          <a-badge :status="equState" :text="equState | statusFilter"/>
-                        </template>
-                      </s-table>
+          <div class="table-page-search-wrapper">
+            <a-form layout="inline">
+              <a-row :gutter="48">
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="关键词搜索">
+                    <a-input placeholder="请输入要查询的关键词" />
+                  </a-form-item>
                 </a-col>
-            </a-row>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="组织选择">
+                    <a-tree-select
+                      v-model="value"
+                      style="width: 100%"
+                      :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                      :tree-data="tree"
+                      :allowClear="true"
+                      :replaceFields="replaceFields"
+                      placeholder="请选择组织"
+                      tree-default-expand-all
+                    >
+                    </a-tree-select>
+                  </a-form-item>
+                </a-col>
+                <template v-if="advanced">
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="配发日期">
+                      <a-date-picker @change="onChange" style="width: 100%"/>
+                    </a-form-item>
+                  </a-col>
+                </template>
+                <template v-if="advanced">
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="有效日期">
+                      <a-date-picker @change="onChange" style="width: 100%"/>
+                    </a-form-item>
+                  </a-col>
+                </template>
+                <template v-if="advanced">
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="状态">
+                      <a-select default-value="" @change="handleChange">
+                        <a-select-option value=""> 全部 </a-select-option>
+                        <a-select-option value="1">正常</a-select-option>
+                        <a-select-option value="2">逾期未回收</a-select-option>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                </template>
+                <template v-if="advanced">
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="证件类型">
+                      <a-select default-value="" @change="handleChange">
+                        <a-select-option value=""> 全部 </a-select-option>
+                        <a-select-option value="1">正常</a-select-option>
+                        <a-select-option value="2">逾期未回收</a-select-option>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                </template>
+                <a-col :md="(!advanced && 8) || 24" :sm="24">
+                  <span
+                    class="table-page-search-submitButtons"
+                    :style="
+                      (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                    "
+                  >
+                    <a-button type="primary" @click="$refs.table.refresh(true)"
+                      >查询</a-button
+                    >
+                    <a-button
+                      style="margin-left: 8px"
+                      @click="() => (queryParam = {})"
+                      >重置</a-button
+                    >
+                    <a @click="toggleAdvanced" style="margin-left: 8px">
+                      {{ advanced ? "收起" : "展开" }}
+                      <a-icon :type="advanced ? 'up' : 'down'" />
+                    </a>
+                  </span>
+                </a-col>
+              </a-row>
+            </a-form>
+          </div>
+          <div class="table-operator" style="margin-bottom: 24px">
+            <span class="table-page-search-submitButtons" >
+              <a-button type="primary" icon="delete" style="margin-right: 10px" v-if="selectedRowKeys.length == 0" disabled>证件回收</a-button>
+              <a-popconfirm
+                title="确认回收所选证件?"
+                ok-text="确认"
+                cancel-text="取消"
+                @confirm="confirm"
+                @cancel="cancel"
+                v-else
+              >
+                <a-button type="primary" icon="delete" style="margin-right: 10px">证件回收</a-button>
+              </a-popconfirm>
+              <a-button type="primary" icon="plus" @click="newPagers">新增发放</a-button>
+            </span>
+            <a-dropdown v-if="selectedRowKeys.length > 0">
+              <a-menu slot="overlay">
+                <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+                <!-- lock | unlock -->
+                <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+              </a-menu>
+              <a-button style="margin-left: 8px">
+                批量操作 <a-icon type="down" />
+              </a-button>
+            </a-dropdown>
+          </div>
+          <s-table
+            ref="table"
+            rowKey="key"
+            :columns="scheduleColumns"
+            :data="loadScheduleData"
+            :rowSelection="rowSelection"
+            :scroll="{y:600}"
+            showPagination="auto">
+            <template
+              slot="action"
+              slot-scope="equState">
+              <!-- {{equState}} -->
+              <a-badge :status="equState" :text="equState | statusFilter"/>
+            </template>
+          </s-table>  
         </a-card>
         <form-step ref="modal" title="新增发放证件" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
     </div>
@@ -257,6 +281,7 @@ export default {
           rules,
           stepTitle,
           submitFun,
+          advanced:false,
           openKeys: ['key-01'],
           loading:false,
           tree,
@@ -277,7 +302,8 @@ export default {
             {
               title: '辅警编号',
               dataIndex: 'code',
-              key: 'code' 
+              key: 'code' ,
+              width: 100,
             },
             {
               title: '所属组织',
@@ -288,28 +314,33 @@ export default {
             {
               title: '配发日期',
               dataIndex: 'allotmentDate',
-              key: 'allotmentDate'
+              key: 'allotmentDate',
+              width: 100,
             },
             {
               title: '有效期限',
               dataIndex: 'validity',
-              key: 'validity'
+              key: 'validity',
+              width: 100,
             },
             {
               title: '状态',
               dataIndex: 'equState',
               key: 'equState',
-              scopedSlots: {customRender: 'action'}
+              scopedSlots: {customRender: 'action'},
+              width: 100,
             },
             {
               title: '证件类型',
               dataIndex: 'papersStyle',
-              key: 'papersStyle'
+              key: 'papersStyle',
+              width: 100,
             },
             {
               title: '发放人',
               dataIndex: 'issuer',
-              key: 'issuer'
+              key: 'issuer',
+              width: 100,
             }
           ],
           
@@ -389,7 +420,10 @@ export default {
         // 新增发放
         newPagers(){
           this.$refs.modal.visible=true
-        }
+        },
+        toggleAdvanced() {
+          this.advanced = !this.advanced;
+        },
     },
     filters: {
       statusFilter (status) {
