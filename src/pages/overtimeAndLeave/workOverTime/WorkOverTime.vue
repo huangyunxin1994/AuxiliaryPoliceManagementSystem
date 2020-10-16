@@ -294,10 +294,10 @@ const formCheckTitle = [
     label: "法定假日",
     name: "holiday",
     type: "text",
-    select:[
-      {name:"是", value:'1'},
-      {name:"否", value:'2'}
-    ],
+    filter:{
+      1:'是' ,
+      2:'否' ,
+    },
     smCol: { span: 12 },
   },
   {
@@ -393,18 +393,21 @@ export default {
           dataIndex: "organizationName",
           key: "organizationName",
           width: 180,
+          ellipsis: true,
         },
         {
           title: "开始时间",
           dataIndex: "startTime",
           key: "startTime",
           width: 150,
+          ellipsis: true,
         },
         {
           title: "结束时间",
           dataIndex: "endTime",
           key: "endTime",
           width: 150,
+          ellipsis: true,
         },
         {
           title: "时长(小时)",

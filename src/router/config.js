@@ -56,7 +56,7 @@ const options = {
           ]
         },
         {
-          path: 'parent2',
+          path: 'contract',
           name: '合同管理',
           meta: {
             icon: 'solution'
@@ -116,7 +116,7 @@ const options = {
           ]
         },
         {
-          path: 'parent5',
+          path: 'education',
           name: '教育培训',
           meta: {
             icon: 'desktop'
@@ -141,7 +141,7 @@ const options = {
           ]
         },
         {
-          path: 'parent6',
+          path: 'cardequip',
           name: '证件装备管理',
           meta: {
             icon: 'idcard'
@@ -176,7 +176,7 @@ const options = {
           ]
         },
         {
-          path: 'parent8',
+          path: 'workandleave',
           name: '加班与请销假',
           meta: {
             icon: 'calculator'
@@ -201,8 +201,8 @@ const options = {
           ]
         },
         {
-          path: 'parent9',
-          name: '文档中心',
+          path: 'filenotice',
+          name: '文档公告',
           meta: {
             icon: 'folder'
           },
@@ -250,43 +250,43 @@ const options = {
             }
           ]
         },
-        {
-          path: 'exception',
-          name: '异常页',
-          meta: {
-            icon: 'warning',
-          },
-          component: BlankView,
-          children: [
-            {
-              path: '404',
-              name: 'Exp404',
-              component: () => import('@/pages/exception/404')
-            },
-            {
-              path: '403',
-              name: 'Exp403',
-              component: () => import('@/pages/exception/403')
-            },
-            {
-              path: '500',
-              name: 'Exp500',
-              component: () => import('@/pages/exception/500')
-            }
-          ]
-        },
-        {
-          name: '验权页面',
-          path: 'auth/demo',
-          meta: {
-            icon: 'file-ppt',
-            // authority: {
-            //   permission: 'form',
-            //   role: 'manager'
-            // },
-          },
-          component: () => import('@/pages/demo')
-        }
+      //   {
+      //     path: 'exception',
+      //     name: '异常页',
+      //     meta: {
+      //       icon: 'warning',
+      //     },
+      //     component: BlankView,
+      //     children: [
+      //       {
+      //         path: '404',
+      //         name: 'Exp404',
+      //         component: () => import('@/pages/exception/404')
+      //       },
+      //       {
+      //         path: '403',
+      //         name: 'Exp403',
+      //         component: () => import('@/pages/exception/403')
+      //       },
+      //       {
+      //         path: '500',
+      //         name: 'Exp500',
+      //         component: () => import('@/pages/exception/500')
+      //       }
+      //     ]
+      //   },
+      //   {
+      //     name: '验权页面',
+      //     path: 'auth/demo',
+      //     meta: {
+      //       icon: 'file-ppt',
+      //       // authority: {
+      //       //   permission: 'form',
+      //       //   role: 'manager'
+      //       // },
+      //     },
+      //     component: () => import('@/pages/demo')
+      //   }
       ]
     },
     {

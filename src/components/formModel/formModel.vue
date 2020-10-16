@@ -16,7 +16,7 @@
       :prop="item.name"
       :ref="item.refName"
     >
-      <span v-if="item.type=='text'">{{form[item.name]}}</span>
+      <span v-if="item.type=='text'">{{item.filter&&item.filter[form[item.name]]||form[item.name]}}</span>
       <!-- 输入框  -->
       <a-input
         v-model="form[item.name]"
@@ -100,6 +100,7 @@
           name="file"
           :multiple="true"
           :disabled="item.disabled"
+          :default-file-list="form[item.name]"
           action=""
           :before-upload="beforeUpload"
           :show-upload-list="true"
@@ -200,7 +201,6 @@ export default {
        return new Promise((resolve) => {
           this.$refs.ruleForm.validate((valid) => {
             if (valid) {
-              this.form.fileList = Object.assign([],this.fileList);
                resolve(true);
             } else {
               console.log("error submit!!");
@@ -247,7 +247,7 @@ export default {
     },
     // 上传文件
     beforeUpload(file){
-      this.fileList=[...this.fileList, file];
+      this.form.fileList=[...this.fileList, file];
       return false
     },
   },

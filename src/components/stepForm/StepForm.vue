@@ -72,8 +72,12 @@ export default {
   },
   methods: {
     nextStep () {
-      if (this.current < 2) {
-        this.current += 1
+      if(this.$refs.person.rightColumnsData.length>0){
+        if (this.current < 2) {
+          this.current += 1
+        }
+      }else{
+        this.$message.warning('请先选择至少一位人员');
       }
     },
     prevStep () {
@@ -87,9 +91,8 @@ export default {
     },
     handleOk(params) {
       this.loading=true
-      this.$refs.person.selectedRows
       let form = {
-        personData:this.$refs.person.selectedRows,
+        personData:this.$refs.person.rightColumnsData,
         formData:params
       }
       console.log(params)

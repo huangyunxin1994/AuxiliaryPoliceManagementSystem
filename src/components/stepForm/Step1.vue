@@ -34,58 +34,50 @@
                 重置
               </a-button>
             </a-col>
-            <a-col :span="24">
-              <a-transfer
-                :rowKey="record => record.id"
-                :dataSource="mockData"
-                :target-keys="targetKeys"
-                :operations="['添加', '移除']"
-                :list-style="{
-                  width: '43.33333%',
-                }"
-                :disabled="disabled"
-                :show-search="showSearch"
-                :show-select-all="false"
-                @change="onChange"
-              >
-                <template
-                  slot="children"
-                  slot-scope="{
-                    props: {
-                      direction,
-                      filteredItems,
-                      selectedKeys,
-                      disabled: listDisabled,
-                    },
-                    on: { itemSelectAll, itemSelect },
-                  }"
-                >
-                  <a-table
-                    :row-selection="
-                      getRowSelection({
-                        disabled: listDisabled,
-                        selectedKeys,
-                        itemSelectAll,
-                        itemSelect,
-                      })"
-                    :columns="direction === 'left' ? leftColumns : rightColumns"
-                    :data-source="filteredItems"
-                    :scroll="{ y: 250, x: 100 }"
-                    :loading="loading"
+            <a-col :md="12" :sm="24">
+              <s-table
+                    ref="table"
+                    :rowKey="(record)=>record.id"
+                    :columns="leftColumns"
+                    :data="leftColumnsData"
+                    :rowSelection="rowSelection"
+                    :scroll="{ y: 300, x: 150 }"
+                    showPagination="auto"
                     size="small"
-                    :style="{ pointerEvents: listDisabled ? 'none' : null }"
-                    :custom-row="
-                      ({ key, disabled: itemDisabled }) => ({
-                        on: {
-                          click: () => {
-                            if (itemDisabled || listDisabled) return;
-                            itemSelect(key, !selectedKeys.includes(key));
-                          },
-                        },
-                      })"
-                  />
-                </template>
-              </a-transfer>
+                >
+                     <template slot="title" >
+                         <a-row>
+                             <a-col :span="12">
+                                 可选择人员
+                             </a-col>
+                             <a-col :span="12" style="text-align:right">
+                                 <a-button type="primary" size="small" :disabled="selectedLeftRows.length===0" @click="handleAdd">添加</a-button>
+                             </a-col>
+                         </a-row>
+      
+    </template>
+                </s-table>
+            </a-col>
+            <a-col :md="12" :sm="24">
+                <a-table 
+                    :rowKey="(record)=>record.id" 
+                    :columns="rightColumns" 
+                    :data-source="rightColumnsData" 
+                    size="small" 
+                     :scroll="{ y: 300, x: 150 }"
+                    :pagination="false"
+                    :rowSelection="rowRightSelection">
+                    <template slot="title" >
+                         <a-row>
+                             <a-col :span="12">
+                                 已选择选择人员
+                             </a-col>
+                             <a-col :span="12" style="text-align:right">
+                                 <a-button type="primary" size="small" :disabled="selectedRightRows.length===0" @click="handleDel">移除</a-button>
+                             </a-col>
+                         </a-row>
+                          </template>
+                </a-table>
             </a-col>
           </a-row>
         </a-form>
@@ -96,36 +88,46 @@
 
 <script>
 import antTree from "@/components/tree_/Tree";
-import difference from "lodash/difference";
-
+import STable from "@/components/Table_"
 
 const leftTableColumns = [
   {
     title: "姓名",
     dataIndex: "name",
+    key:"name",
     width: 100,
   },
   {
     title: "辅警编号",
     dataIndex: "number",
+     key:"number",
     width: 100,
   },
   {
     title: "所属组织",
-    dataIndex: "description",
-    width: 100,
+    dataIndex: "organizationName",
+     key:"organizationName",
+    width: 300,
   },
 ];
 const rightTableColumns = [
   {
     title: "姓名",
     dataIndex: "name",
+    key:"name",
     width: 100,
   },
   {
     title: "辅警编号",
     dataIndex: "number",
+     key:"number",
     width: 100,
+  },
+  {
+    title: "所属组织",
+    dataIndex: "organizationName",
+     key:"organizationName",
+    width: 300,
   },
 ];
 const tree = [
@@ -234,16 +236,92 @@ const tree = [
 export default {
   name: "Step1",
   components: {
-    antTree
+    antTree,
+    STable
   },
   data() {
     return {
-      mockData:[],
-      targetKeys: [],
-      disabled: false,
-      showSearch: true,
       leftColumns: leftTableColumns,
+      leftColumnsData: () => {
+        return new Promise((resolve) => {
+          resolve({
+            data: [
+              {
+                id: "15656",
+                name: "辅警1",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              },
+              {
+                id: "16585",
+                name: "辅警2",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              },
+              {
+                id: "15648",
+                name: "辅警3",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              },
+              {
+                id: "59542",
+                name: "辅警4",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              },
+              {
+                id: "156563",
+                name: "辅警5",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              },
+              {
+                id: "165855",
+                name: "辅警6",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              },
+              {
+                id: "156487",
+                name: "辅警7",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              },
+              {
+                id: "595428",
+                name: "辅警8",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              },
+              {
+                id: "156569",
+                name: "辅警9",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              },
+              {
+                id: "1658510",
+                name: "辅警10",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              }
+            ],
+            pageSize: 10,
+            pageNo: 1,
+            totalPage: 1,
+            totalCount: 10,
+          });
+        }).then((res) => {
+            this.tableData = res.data
+            res.data = res.data.filter(x => !this.rightColumnsData.some(i=>i.id===x.id))
+            console.log(res.data)
+          return res;
+        });
+      },
       rightColumns: rightTableColumns,
+      rightColumnsData:[],
+      tableData:[],
       value: "",
       replaceFields: {
         children: "children",
@@ -254,71 +332,100 @@ export default {
       tree,
       loading: false,
       searchVal: "",
-      selectedRowKeys: [],
-      selectedRows: [],
+      selectedLeftRowKeys: [],
+      selectedLeftRows: [],
+      selectedRightRowKeys: [],
+      selectedRightRows:[]
     };
   },
   mounted(){
-      const mockData = [];
-        for (let i = 0; i < 20; i++) {
-        mockData.push({
-            id: `${i * 6}`,
-            key:"",
-            title:"",
-            name: `张三${i + 1}`,
-            number:"FJ0512",
-            description: `组织${i + 1}`,
-        });
-        }
-
-        const originTargetKeys = mockData
-        .filter((item) => +item.id % 3 > 1)
-        .map((item) => item.id);
-        this.mockData=mockData;
-        this.targetKeys=originTargetKeys;
+      
         },
         
   methods: {
-    onChange(nextTargetKeys) {
-      this.targetKeys = nextTargetKeys;
-    },
-
-    triggerDisable(disabled) {
-      this.disabled = disabled;
-    },
-
-    triggerShowSearch(showSearch) {
-      this.showSearch = showSearch;
-    },
-    getRowSelection({ disabled, selectedKeys, itemSelectAll, itemSelect }) {
-      return {
-        getCheckboxProps: (item) => ({
-          props: { disabled: disabled || item.disabled },
-        }),
-        onSelectAll(selected, selectedRows) {
-          const treeSelectedKeys = selectedRows
-            .filter((item) => !item.disabled)
-            .map(({ key }) => key);
-          const diffKeys = selected
-            ? difference(treeSelectedKeys, selectedKeys)
-            : difference(selectedKeys, treeSelectedKeys);
-          itemSelectAll(diffKeys, selected);
-        },
-        onSelect({ key }, selected) {
-          itemSelect(key, selected);
-        },
-        selectedRowKeys: selectedKeys,
-      };
-    },
-    nextStep() {
-      this.$emit("nextStep");
-    },
+      handleAdd(){
+          this.rightColumnsData=[...this.rightColumnsData,
+          ...this.tableData.filter(x => this.selectedLeftRows.some(i=>i.id===x.id))]
+          this.selectedLeftRows=[]
+            this.selectedRightRows=[]
+           this.selectedLeftRowKeys=[]
+            this.selectedRightRowKeys=[]
+          this.$refs.table.refresh(true)
+      },
+      handleDel(){
+          let arr = this.rightColumnsData
+          let delArr = this.selectedRightRows
+          delArr.map(i=>{
+               arr.splice(
+                    arr.findIndex(x => i.id === x.id)
+                ,1)
+          })
+            this.selectedLeftRows=[]
+            this.selectedRightRows=[]
+           this.selectedLeftRowKeys=[]
+            this.selectedRightRowKeys=[]
+         console.log( this.selectedLeftRowKeys)
+          this.$refs.table.refresh(true)
+      },
     // 搜索
     onSearch() {
-      console.log(this.searchVal);
-      console.log(this.targetKeys)
+        console.log(331)
+      this.leftColumnsData= () => {
+        return new Promise((resolve) => {
+          resolve({
+            data: [
+              {
+                id: "56565",
+                name: "辅警11",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              },
+              {
+                id: "89898",
+                name: "辅警12",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+              }
+            ],
+            pageSize: 10,
+            pageNo: 1,
+            totalPage: 1,
+            totalCount: 10,
+          });
+        }).then((res) => {
+            this.tableData = res.data
+            res.data = res.data.filter(x => !this.rightColumnsData.some(i=>i.id===x.id))
+          return res;
+        });
+        
+      }
       
     },
+    onSelectChange(selectedRowKeys, selectedRows) {
+      
+      this.selectedLeftRowKeys = selectedRowKeys;
+      this.selectedLeftRows = selectedRows;
+      console.log(this.selectedLeftRows)
+    },
+    onRightSelectChange(selectedRowKeys, selectedRows) {
+      this.selectedRightRowKeys = selectedRowKeys;
+      this.selectedRightRows = selectedRows;
+    },
+  },
+  computed:{
+      rowSelection() {
+      return {
+          selectedRowKeys: this.selectedLeftRowKeys ,
+          selectedRows: this.selectedLeftRows ,
+        onChange: this.onSelectChange,
+      };
+    },
+    rowRightSelection(){
+        return {
+            selectedRowKeys: this.selectedRightRowKeys ,
+        onChange: this.onRightSelectChange,
+      };
+    }
   }
 };
 </script>

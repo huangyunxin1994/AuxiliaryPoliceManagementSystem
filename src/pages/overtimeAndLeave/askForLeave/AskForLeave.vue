@@ -99,7 +99,6 @@
       <s-table
         ref="table"
         rowKey="key"
-        :alert="true"
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :rowSelection="rowSelection"
@@ -134,7 +133,7 @@
 <script>
 import { mapState } from "vuex";
 import STable from "@/components/Table_/";
-import TaskForm from "@/components/TaskForm";
+import TaskForm from "@/components/formModel/formModel";
 import formStep from "@/components/stepForm/StepForm";
 const tree = [
   {
@@ -276,6 +275,101 @@ const formTitle = [
     placeholder: "请输入请假原因",
   },
 ];
+const formCheckTitle = [
+  
+  {
+    label: "姓名",
+    name: "policeName",
+    type: "text",
+    smCol: { span: 12 },
+    labelCol:{
+      xs: { span: 24 },
+      sm: { span: 14 }
+    },
+    wrapperCol:{
+      xs: { span: 24 },
+      sm: { span: 10 }
+    }
+  },
+  
+  {
+    label: "警员编号",
+    name: "number",
+    type: "text",
+    smCol: { span: 12 },
+    
+  },
+  {
+    label: "开始时间",
+    name: "startTime",
+    type: "text",
+    smCol: { span: 12 },
+    labelCol:{
+      xs: { span: 24 },
+      sm: { span: 14 }
+    },
+    wrapperCol:{
+      xs: { span: 24 },
+      sm: { span: 10 }
+    }
+  },
+  {
+    label: "结束时间",
+    name: "endTime",
+    type: "text",
+    smCol: { span: 12 }
+  },
+  {
+    label: "时长(小时)",
+    name: "duration",
+    type: "text",
+    smCol: { span: 12 },
+    labelCol:{
+      xs: { span: 24 },
+      sm: { span: 14 }
+    },
+    wrapperCol:{
+      xs: { span: 24 },
+      sm: { span: 10 }
+    }
+  },
+  {
+    label: "请假类型",
+    name: "type",
+    type: "text",
+    filter:{
+      1: "事假",
+      2: "病假",
+      3: "调休",
+      4: "年假",
+      5: "婚假",
+      6: "产假",
+      7: "陪产假",
+      8: "哺乳假",
+      9: "丧假",
+    },
+    smCol: { span: 12 },
+  },
+  {
+    label: "请假原因",
+    name: "reason",
+    type: "text",
+  },
+  {
+    label: "是否通过",
+    name: "approvalResults",
+    type: "radio",
+    select:[
+      {name:"是", value:1},
+      {name:"否", value:2}
+    ]
+  },
+  {
+    label: "审批备注",
+    name: "approvalRemake",
+    type: "textarea",
+  }
+];
 const stepTitle = [{ title: "选择人员" }, { title: "填写请假信息" }];
 const rules = {
   type: [{ required: true, message: "请选择请假类型", trigger: "change" }],
@@ -347,18 +441,21 @@ export default {
           dataIndex: "organizationName",
           key: "organizationName",
           width: 180,
+          ellipsis: true,
         },
         {
           title: "开始时间",
           dataIndex: "startTime",
           key: "startTime",
           width: 150,
+          ellipsis: true,
         },
         {
           title: "结束时间",
           dataIndex: "endTime",
           key: "endTime",
           width: 150,
+          ellipsis: true,
         },
         {
           title: "时长(小时)",
@@ -440,8 +537,34 @@ export default {
     handleAdd() {
       this.$refs.modal.visible = true;
     },
+    //请假审批
     handleEdit(record) {
       console.log(record);
+      let formProps = {
+        record: record,
+        formTitle: formCheckTitle,
+        submitFun: () => {
+          return new Promise((resolve) => {
+            resolve({
+              data: [],
+              pageSize: 10,
+              pageNo: 1,
+              totalPage: 1,
+              totalCount: 10,
+            });
+          }).then((res) => {
+            return res;
+          });
+        },
+      };
+      let modalProps = {
+        title: "编辑",
+        width: 700,
+        centered: true,
+        maskClosable: false,
+        okText: "提交",
+      };
+      this.openModal(TaskForm, formProps, modalProps);
     },
     handleChange(e) {
       console.log(e);
@@ -454,6 +577,35 @@ export default {
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
+    },
+    /**
+     * 表单弹窗
+     * @param form form模板页面，通过import引入
+     * @param formProps form配置项 Object
+     * @param modalProps 弹窗配置项 Object
+     */
+    openModal(form, formProps, modalProps) {
+      const defaultModalProps = {
+        on: {
+          ok() {
+            console.log("ok 回调");
+          },
+          cancel() {
+            console.log("cancel 回调");
+          },
+          close() {
+            console.log("modal close 回调");
+          },
+        },
+      };
+      formProps = Object.assign(formProps, defaultModalProps);
+      this.$dialog(
+        form,
+        // component props
+        formProps,
+        // modal props
+        modalProps
+      );
     },
   },
   filters: {

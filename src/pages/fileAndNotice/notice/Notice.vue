@@ -37,6 +37,7 @@
       </a-row>
       <div class="table-operator">
         <a-button type="primary" icon="plus" style="margin-bottom: 24px"
+        @click="handleAdd"
           >新建</a-button
         >
         <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -74,6 +75,37 @@
 <script>
 import { mapState } from "vuex";
 import STable from "@/components/Table_/";
+import TaskForm from "@/components/formModel/formModel";
+const formTitle = [
+  {
+    label: "标题",
+    name: "title",
+    type: "input",
+    placeholder: "请输入标题",
+  },
+  {
+    label: "到期时间",
+    name: "expireDate",
+    type: "picker",
+    placeholder: "请选择到期时间",
+  },
+  
+  {
+    label: "公告内容",
+    name: "content",
+    type: "textarea",
+    placeholder: "请输入公告内容",
+  },
+  {
+    label: "上传文件",
+    name: "uploadFile",
+    type: "upload",
+  },
+];
+const rules = {
+  title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+  content: [{ required: true, message: "请输入公告内容", trigger: "blur" }],
+};
 export default {
   name: "OrganManage",
   components: {
@@ -174,12 +206,33 @@ export default {
       console.log(this.selectedRowKeys);
       console.log(this.selectedRows);
     },
-    handEditLevel(id) {
-      console.log(id);
-      this.levelList.find((i) => {
-        if (i.id == id) i.edit = !i.edit;
-      });
-      this.$message.info("This is a normal message");
+    //新增文件
+    handleAdd() {
+      let formProps = {
+        formTitle: formTitle,
+        rules:rules,
+        submitFun: () => {
+          return new Promise((resolve) => {
+            resolve({
+              data: [],
+              pageSize: 10,
+              pageNo: 1,
+              totalPage: 1,
+              totalCount: 10,
+            });
+          }).then((res) => {
+            return res;
+          });
+        },
+      };
+      let modalProps = {
+        title: "新建",
+        width: 700,
+        centered: true,
+        maskClosable: false,
+        okText: "提交",
+      };
+      this.openModal(TaskForm, formProps, modalProps);
     },
     del(row) {
       this.$confirm({
@@ -200,6 +253,35 @@ export default {
           console.log("Cancel");
         },
       });
+    },
+    /**
+     * 表单弹窗
+     * @param form form模板页面，通过import引入
+     * @param formProps form配置项 Object
+     * @param modalProps 弹窗配置项 Object
+     */
+    openModal(form, formProps, modalProps) {
+      const defaultModalProps = {
+        on: {
+          ok() {
+            console.log("ok 回调");
+          },
+          cancel() {
+            console.log("cancel 回调");
+          },
+          close() {
+            console.log("modal close 回调");
+          },
+        },
+      };
+      formProps = Object.assign(formProps, defaultModalProps);
+      this.$dialog(
+        form,
+        // component props
+        formProps,
+        // modal props
+        modalProps
+      );
     },
   },
   filters: {
