@@ -293,7 +293,7 @@ const options = {
       path: '/',
       name: '基础资料',
       component: TabsView,
-      redirect: 'demo1',
+      redirect: '/baseMess/demo1',
       children: [
         {
           path: 'baseMess',
@@ -321,7 +321,7 @@ const options = {
             {
               path: 'demo2',
               name: '奖励与责任追究',
-              component: () => import('@/pages/contract/contract'),
+              component: () => import('@/pages/subsystem/businessMess/awardAndDuty'),
             },
             {
               path: 'demo3',

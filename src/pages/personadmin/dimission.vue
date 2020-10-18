@@ -1,93 +1,88 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
        <a-card :bordered="false">
-            <a-row :gutter="24">
-                <a-col :md="24" :lg="24" :xl="24" :xxl="24">
-                    <a-row :gutter="24">
-                        <a-col :md="8" :sm="24">
-                            <span style="width:100px">关键词搜索：</span>
-                            <a-input style="width: calc(100% - 100px);margin-bottom: 24px" placeHolder="请输入要搜索的内容"/>
-                        </a-col>
-                        <a-col :md="8" :sm="24">
-                            <span style="width:100px">装备证件是否回收:</span>
-                            <a-select default-value="jack" style="width: calc(100% - 200px);margin-bottom: 24px" @change="handleChange">
-                                <a-select-option value="jack">
-                                    全部
-                                </a-select-option>
-                                <a-select-option value="a">
-                                    是
-                                </a-select-option>
-                                <a-select-option value="b">
-                                    否
-                                </a-select-option>
-                            </a-select>
-                        </a-col>
-                        <a-col :md="8" :sm="24" v-if="advanced">
-                            <span style="width:100px">离职生效时间:</span>
-                            <a-date-picker @change="onChange" />
-                        </a-col>
-                        <a-col :md="(!advanced && 8) || 24" :sm="24">
-                          <span
-                            class="table-page-search-submitButtons"
-                            :style="
-                              (advanced && { float: 'right', overflow: 'hidden' }) || {}
-                            "
-                          >
-                            <a-button type="primary" @click="$refs.table.refresh(true)"
-                              >查询</a-button
-                            >
-                            <a-button
-                              style="margin-left: 8px"
-                              @click="() => (queryParam = {})"
-                              >重置</a-button
-                            >
-                            <a @click="toggleAdvanced" style="margin-left: 8px">
-                              {{ advanced ? "收起" : "展开" }}
-                              <a-icon :type="advanced ? 'up' : 'down'" />
-                            </a>
-                          </span>
-                        </a-col>
-                    </a-row>
-                    <div class="table-operator" style="margin-bottom: 24px">
-                      <a-button type="primary" icon="plus" @click="newDimission" :disabled="selectedRows.length == 0">新建离职</a-button>
-                      <a-dropdown v-if="selectedRowKeys.length > 0">
-                        <a-menu slot="overlay">
-                          <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-                          <!-- lock | unlock -->
-                          <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-                        </a-menu>
-                        <a-button style="margin-left: 8px">
-                          批量操作 <a-icon type="down" />
-                        </a-button>
-                      </a-dropdown>
-                    </div>
-                      <s-table
-                        ref="table"
-                        rowKey="key"
-                        :columns="scheduleColumns"
-                        :data="loadScheduleData"
-                        :rowSelection="rowSelection"
-                        :scroll="{y:600}"
-                        showPagination="auto">
-                        
-                        <span slot="action" slot-scope="text, record">
-                            <span>{{text==1?'已回收':'未回收'}}</span>
-                            <a-divider type="vertical" v-if="text !=1" />
-                            <!-- <a @click="handleEdit (record)" v-if="text !=1">修改</a> -->
-                            <a-popconfirm
-                                title="是否将此人员的证件装备回收状态改为“已回收”?"
-                                ok-text="是"
-                                cancel-text="否"
-                                @confirm="confirm (record)"
-                                @cancel="cancel"
-                                v-if="text !=1"
-                            >
-                                <a href="#">修改</a>
-                            </a-popconfirm>
-                        </span>
-                      </s-table>
-                </a-col>
-            </a-row>
+			<div class="table-page-search-wrapper">
+				<a-form layout="inline">
+					<a-row :gutter="48">
+						<a-col :md="8" :sm="24">
+							<a-form-item label="关键词搜索">
+								<a-input placeholder="请输入要查询的关键词" />
+							</a-form-item>
+						</a-col>
+						<a-col :md="8" :sm="24">
+							<a-form-item label="装备证件是否回收">
+								<a-select default-value="" @change="handleChange">
+									<a-select-option value=""> 全部： </a-select-option>
+									<a-select-option value="1"> 是 </a-select-option>
+									<a-select-option value="2"> 否 </a-select-option>
+								</a-select>
+							</a-form-item>
+						</a-col>
+						<template v-if="advanced">
+							<a-col :md="8" :sm="24">
+								<a-form-item label="离职生效时间">
+									<a-date-picker @change="onChange" />
+								</a-form-item>
+							</a-col>
+						</template>
+						<a-col :md="(!advanced && 8) || 24" :sm="24">
+							<span
+								class="table-page-search-submitButtons"
+								:style="
+								(advanced && { float: 'right', overflow: 'hidden' }) || {}
+								">
+								<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+								<a-button
+									style="margin-left: 8px"
+									@click="() => (queryParam = {})"
+								>重置</a-button
+								>
+								<a @click="toggleAdvanced" style="margin-left: 8px">
+								{{ advanced ? "收起" : "展开" }}
+								<a-icon :type="advanced ? 'up' : 'down'" />
+								</a>
+							</span>
+						</a-col>
+					</a-row>
+				</a-form>
+			</div>
+			<div class="table-operator" style="margin-bottom: 24px">
+				<a-button type="primary" icon="plus" @click="newDimission" :disabled="selectedRows.length == 0">新建离职</a-button>
+				<a-dropdown v-if="selectedRowKeys.length > 0">
+					<a-menu slot="overlay">
+						<a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+						<!-- lock | unlock -->
+						<a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+					</a-menu>
+					<a-button style="margin-left: 8px">
+						批量操作 <a-icon type="down" />
+					</a-button>
+				</a-dropdown>
+			</div>
+			<s-table
+				ref="table"
+				rowKey="key"
+				:columns="scheduleColumns"
+				:data="loadScheduleData"
+				:rowSelection="rowSelection"
+				:scroll="{y:600}"
+				showPagination="auto">
+				<span slot="action" slot-scope="text, record">
+					<span>{{text==1?'已回收':'未回收'}}</span>
+					<a-divider type="vertical" v-if="text !=1" />
+					<!-- <a @click="handleEdit (record)" v-if="text !=1">修改</a> -->
+					<a-popconfirm
+						title="是否将此人员的证件装备回收状态改为“已回收”?"
+						ok-text="是"
+						cancel-text="否"
+						@confirm="confirm (record)"
+						@cancel="cancel"
+						v-if="text !=1"
+					>
+						<a href="#">修改</a>
+					</a-popconfirm>
+				</span>
+			</s-table>
        </a-card>
   </div>
 </template>

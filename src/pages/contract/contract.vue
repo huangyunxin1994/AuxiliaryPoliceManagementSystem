@@ -15,96 +15,90 @@
           </ant-tree>
         </a-col>
         <a-col :md="24" :lg="17" :xl="19" :xxl="20">
-          <a-row :gutter="24">
-            <a-col :md="8" :sm="24">
-              <span style="width: 100px">关键词搜索：</span>
-              <a-input
-                style="width: calc(100% - 100px); margin-bottom: 24px"
-                placeHolder="请输入要搜索的内容"
-              />
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <span style="width: 100px">合同终止日期:</span>
-              <a-range-picker
-                style="width: calc(100% - 100px); margin-bottom: 24px"
-                @change="onChange"
-              />
-            </a-col>
-            <a-col :md="8" :sm="24" v-if="advanced">
-              <span style="width: 100px">即将到期:</span>
-              <a-select
-                default-value="lucy"
-                style="width: calc(100% - 100px); margin-bottom: 24px"
-                @change="handleChange"
-              >
-                <a-select-option value="jack"> 全部 </a-select-option>
-                <a-select-option value="lucy"> 是 </a-select-option>
-                <a-select-option value="disabled"> 否 </a-select-option>
-              </a-select>
-            </a-col>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="
-                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
-                "
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)"
-                  >查询</a-button
-                >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
-                  >重置</a-button
-                >
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? "收起" : "展开" }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-          <div class="table-operator" style="margin-bottom: 24px" >
-              <a-button
-                  type="primary"
-                  @click="extensionCon"
-                  :disabled="selectedRows.length == 0"
-                  >续约合同</a-button
-                >
-                <a-button
-                  type="primary"
-                  style="margin-left: 8px"
-                  @click="newContract"
-                  >新建合同</a-button
-                >
-              <a-dropdown v-if="selectedRowKeys.length > 0">
-                <a-menu slot="overlay">
-                  <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-                  <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-                </a-menu>
-                <a-button style="margin-left: 8px">
-                  批量操作 <a-icon type="down" />
-                </a-button>
-              </a-dropdown>
-            </div>
-          <s-table
-            ref="table"
-            rowKey="key"
-            :columns="scheduleColumns"
-            :data="loadScheduleData"
-            :rowSelection="rowSelection"
-            :scroll="{ y: 600 }"
-            :showPagination="true"
-          >
-            <template slot="status" slot-scope="status">
-              <a-badge :status="status" :text="status | statusFilter" />
-            </template>
-            <span slot="action" slot-scope="text, record">
-              <a @click="handleEdit(record)">查看历史合同</a>
-              <!-- <a-divider type="vertical"/>
-                          <a @click="handleEdit (record)">重置密码</a> -->
-            </span>
-          </s-table>
+			<div class="table-page-search-wrapper">
+				<a-form layout="inline">
+					<a-row :gutter="48">
+						<a-col :md="8" :sm="24">
+							<a-form-item label="关键词搜索">
+								<a-input placeholder="请输入要查询的关键词" />
+							</a-form-item>
+						</a-col>
+						<a-col :md="8" :sm="24">
+							<a-form-item label="合同终止日期">
+								<a-date-picker @change="onChange" style="width: 100%"/>
+							</a-form-item>
+						</a-col>
+						<template v-if="advanced">
+							<a-col :md="8" :sm="24">
+								<a-form-item label="即将到期">
+									<a-select default-value="" @change="handleChange">
+										<a-select-option value=""> 全部 </a-select-option>
+										<a-select-option value="1"> 是 </a-select-option>
+										<a-select-option value="2"> 否 </a-select-option>
+									</a-select>
+								</a-form-item>
+							</a-col>
+						</template>
+						<a-col :md="(!advanced && 8) || 24" :sm="24">
+							<span
+								class="table-page-search-submitButtons"
+								:style="
+								(advanced && { float: 'right', overflow: 'hidden' }) || {}
+								">
+								<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+								<a-button
+									style="margin-left: 8px"
+									@click="() => (queryParam = {})"
+								>重置</a-button
+								>
+								<a @click="toggleAdvanced" style="margin-left: 8px">
+								{{ advanced ? "收起" : "展开" }}
+								<a-icon :type="advanced ? 'up' : 'down'" />
+								</a>
+							</span>
+						</a-col>
+					</a-row>
+				</a-form>
+			</div>
+			<div class="table-operator" style="margin-bottom: 24px" >
+				<a-button
+					type="primary"
+					@click="extensionCon"
+					:disabled="selectedRows.length == 0"
+				>续约合同</a-button>
+				<a-button
+					type="primary"
+					style="margin-left: 8px"
+					@click="newContract"
+				>新建合同</a-button>
+				<a-dropdown v-if="selectedRowKeys.length > 0">
+				<a-menu slot="overlay">
+					<a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+					<a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+				</a-menu>
+				<a-button style="margin-left: 8px">
+					批量操作 <a-icon type="down" />
+				</a-button>
+				</a-dropdown>
+			</div>
+			<s-table
+				ref="table"
+				rowKey="key"
+				:columns="scheduleColumns"
+				:data="loadScheduleData"
+				:rowSelection="rowSelection"
+				:scroll="{ y: 600 }"
+				:showPagination="true"
+			>
+				<template slot="status" slot-scope="status">
+					<a-badge :status="status" :text="status | statusFilter" />
+				</template>
+				<span slot="action" slot-scope="text, record">
+					<a @click="handleEdit(record)">查看历史合同</a>
+					<!-- <a-divider type="vertical"/>
+								<a @click="handleEdit (record)">重置密码</a> -->
+				</span>
+			</s-table>
         </a-col>
       </a-row>
     </a-card>

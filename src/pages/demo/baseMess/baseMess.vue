@@ -14,77 +14,127 @@
                     </ant-tree>
                 </a-col>
                 <a-col :md="24" :lg="17" :xl="19" :xxl="20">
-                    <a-row :gutter="24">
-                        <a-col :md="6" :sm="24">
-                            <span style="width:100px">关键词搜索：</span>
-                            <a-input style="width: calc(100% - 100px);margin-bottom: 24px" placeHolder="请输入要搜索的内容"/>
-                        </a-col>
-                        <a-col :md="6" :sm="24">
-                            <span style="width:100px">岗位:</span>
-                            <a-select default-value="jack" style="width: calc(100% - 100px);margin-bottom: 24px" @change="handleChange">
-                                <!-- <a-select-option value="jack">
-                                    哈哈哈
-                                </a-select-option> -->
-                            </a-select>
-                        </a-col>
-                        <a-col :md="6" :sm="24">
-                            <span style="width:100px">是否专业辅警:</span>
-                            <a-select default-value="jack" style="width: calc(100% - 100px);margin-bottom: 24px" @change="handleChange">
-                                <a-select-option value="jack">
-                                    全部
-                                </a-select-option>
-                                <a-select-option value="1">
-                                    是
-                                </a-select-option>
-                                <a-select-option value="2">
-                                    否
-                                </a-select-option>
-                            </a-select>
-                        </a-col>
-                        <a-col :md="6" :sm="24" style="margin-bottom: 24px">
-                            <span class="table-page-search-submitButtons">
-                                <a-button type="primary" @click="$refs.table.refresh(true)"
-                                >查询</a-button
-                                >
-                                <a-button
-                                style="margin-left: 8px"
-                                @click="() => (this.queryParam = {})"
-                                >重置</a-button
-                                >
-                            </span>
-                        </a-col>
-                    </a-row>
-                    <div class="table-operator" style="margin-bottom: 24px">
-                      <a-button type="primary" icon="vertical-align-bottom" style="margin-right: 10px" >批量导入</a-button>
-                      <a-button type="primary" icon="plus" @click="addPerson">新增人员</a-button>
-                    </div>
-                    <s-table
-                      ref="table"
-                      rowKey="key"
-                      :columns="scheduleColumns"
-                      :data="loadScheduleData"
-                      :rowSelection="rowSelection"
-                      :scroll="{y:600}"
-                      showPagination="auto">
-
-                      <template
-                        slot="status"
-                        slot-scope="status">
-                        <a-badge :status="status" :text="status | statusFilter"/>
-                      </template>
-                      <span slot="action" slot-scope="text, record">
-                        <a-popconfirm
-                            title="该人员的登录密码将重置为123456，是否继续？"
-                            ok-text="确认"
-                            cancel-text="取消"
-                            @confirm="confirm (record)"
-                            @cancel="cancel"
-                            v-if="text !=1"
-                        >
-                            <a href="#">重置</a>
-                        </a-popconfirm>
-                      </span>
-                    </s-table>
+					<div class="table-page-search-wrapper">
+						<a-form layout="inline">
+							<a-row :gutter="48">
+								<a-col :md="8" :sm="24">
+									<a-form-item label="关键词搜索">
+										<a-input placeholder="请输入要查询的关键词" />
+									</a-form-item>
+								</a-col>
+								<a-col :md="8" :sm="24">
+									<a-form-item label="岗位">
+										<a-select default-value="" @change="handleChange">
+											<a-select-option value=""> 全部： </a-select-option>
+											<a-select-option value="1"> 是 </a-select-option>
+											<a-select-option value="2"> 否 </a-select-option>
+										</a-select>
+									</a-form-item>
+								</a-col>
+								<template v-if="advanced">
+									<a-col :md="8" :sm="24">
+										<a-form-item label="是否专业辅警">
+											<a-select default-value="" @change="handleChange">
+												<a-select-option value=""> 全部 </a-select-option>
+												<a-select-option value="1"> 是 </a-select-option>
+												<a-select-option value="2"> 否 </a-select-option>
+											</a-select>
+										</a-form-item>
+									</a-col>
+								</template>
+								<template v-if="advanced">
+									<a-col :md="8" :sm="24">
+										<a-form-item label="职级">
+											<a-select default-value="" @change="handleChange">
+												<a-select-option value=""> 全部 </a-select-option>
+												<a-select-option value="1"> 是 </a-select-option>
+												<a-select-option value="2"> 否 </a-select-option>
+											</a-select>
+										</a-form-item>
+									</a-col>
+								</template>
+								<template v-if="advanced">
+									<a-col :md="8" :sm="24">
+										<a-form-item label="学历">
+											<a-select default-value="" @change="handleChange">
+												<a-select-option value=""> 全部 </a-select-option>
+												<a-select-option value="1"> 专科 </a-select-option>
+												<a-select-option value="2"> 本科 </a-select-option>
+												<a-select-option value="3"> 硕士 </a-select-option>
+												<a-select-option value="4"> 博士 </a-select-option>
+												<a-select-option value="5"> 博士后 </a-select-option>
+											</a-select>
+										</a-form-item>
+									</a-col>
+								</template>
+								<template v-if="advanced">
+									<a-col :md="8" :sm="24">
+										<a-form-item label="工龄">
+											<a-input placeholder="请输入工龄" />
+										</a-form-item>
+									</a-col>
+								</template>
+								<a-col :md="(!advanced && 8) || 24" :sm="24">
+									<span
+										class="table-page-search-submitButtons"
+										:style="
+										(advanced && { float: 'right', overflow: 'hidden' }) || {}
+										">
+										<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+										<a-button
+											style="margin-left: 8px"
+											@click="() => (queryParam = {})"
+										>重置</a-button
+										>
+										<a @click="toggleAdvanced" style="margin-left: 8px">
+										{{ advanced ? "收起" : "展开" }}
+										<a-icon :type="advanced ? 'up' : 'down'" />
+										</a>
+									</span>
+								</a-col>
+								<div class="table-operator" style="margin-bottom: 24px" >
+									<a-button type="primary" icon="vertical-align-bottom" style="margin-right: 10px" >批量导入</a-button>
+									<a-button type="primary" icon="plus" @click="addPerson">新增人员</a-button>
+									<a-dropdown v-if="selectedRowKeys.length > 0">
+									<a-menu slot="overlay">
+										<a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+										<a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+									</a-menu>
+									<a-button style="margin-left: 8px">
+										批量操作 <a-icon type="down" />
+									</a-button>
+									</a-dropdown>
+								</div>
+							</a-row>
+						</a-form>
+					</div>
+					<s-table
+						ref="table"
+						rowKey="key"
+						:columns="scheduleColumns"
+						:data="loadScheduleData"
+						:rowSelection="rowSelection"
+						:scroll="{y:600}"
+						showPagination="auto">
+					
+						<template
+							slot="status"
+							slot-scope="status">
+							<a-badge :status="status" :text="status | statusFilter"/>
+						</template>
+						<span slot="action" slot-scope="text, record">
+							<a-popconfirm
+								title="该人员的登录密码将重置为123456，是否继续？"
+								ok-text="确认"
+								cancel-text="取消"
+								@confirm="confirm (record)"
+								@cancel="cancel"
+								v-if="text !=1"
+							>
+								<a href="#">重置</a>
+							</a-popconfirm>
+						</span>
+					</s-table>
                 </a-col>
             </a-row>
        </a-card>
@@ -226,42 +276,50 @@
             {
               title: '岗位',
               dataIndex: 'post',
-              key: 'post'
+              key: 'post',
+				width:100
             },
             {
               title: '职级',
               dataIndex: 'rank',
-              key: 'rank'
+              key: 'rank',
+				width:100
             },
             {
               title: '工龄',
               dataIndex: 'seniority',
-              key: 'seniority'
+              key: 'seniority',
+				width:100
             },
             {
               title: '年龄',
               dataIndex: 'age',
-              key: 'age'
+              key: 'age',
+				width:100
             },
             {
               title: '性别',
               dataIndex: 'sex',
-              key: 'sex'
+              key: 'sex',
+				width:100
             },
             {
               title: '政治面貌',
               dataIndex: 'politicalStatus',
-              key: 'politicalStatus'
+              key: 'politicalStatus',
+				width:100
             },
             {
               title: '学历',
               dataIndex: 'education',
-              key: 'education'
+              key: 'education',
+				width:100
             },
             {
               title: '是否专业辅警',
               dataIndex: 'status',
               key: 'status',
+				width:100,
               scopedSlots: { customRender: 'status' }
             },
             {
@@ -384,7 +442,8 @@
             rank:[{ required: true, message: '请选择变动后职级', trigger: 'change'}],
             cause: [{ required: true, message: '请输入变动原因', trigger: 'blur'}],
             date: [{ required: true, message: '请选择生效日期', trigger: 'change' }]
-          }
+          },
+		advanced:false
       }
     },
     methods:{
@@ -496,7 +555,11 @@
       // 新增人员
       addPerson(){
         this.$router.push('/parent1/demo1')
-      }
+      },
+		// 展开收缩
+		toggleAdvanced() {
+			this.advanced = !this.advanced;
+		},
     },
     filters: {
       statusFilter (status) {
