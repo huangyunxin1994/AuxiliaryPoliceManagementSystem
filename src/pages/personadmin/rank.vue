@@ -1,87 +1,100 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
        <a-card :bordered="false">
-            <a-row :gutter="24">
-                <a-col :lg="7" :xl="5" :xxl="4">
-                    <ant-tree 
-                      :dataSource="tree" 
-                      :allowEdit="false" 
-                      :allowReload="true"
-                      :allowSearch="true"
-                      @editTreeNode="editTreeNode" 
-                      @addTreeNode="addTreeNode" 
-                      @removeTreeNode="removeTreeNode">
-                    </ant-tree>
-                </a-col>
-                <a-col :md="24" :lg="17" :xl="19" :xxl="20">
-                    <a-row :gutter="24">
-                        <a-col :md="8" :sm="24">
-                            <span style="width:100px">关键词搜索：</span>
-                            <a-input style="width: calc(100% - 100px);margin-bottom: 24px" placeHolder="请输入要搜索的内容"/>
-                        </a-col>
-                        <a-col :md="8" :sm="24">
-                            <span style="width:100px">职级:</span>
-                            <a-select default-value="jack" style="width: calc(100% - 100px);margin-bottom: 24px" @change="handleChange">
-                                <!-- <a-select-option value="jack">
-                                    哈哈哈
-                                </a-select-option> -->
-                            </a-select>
-                        </a-col>
-                        <a-col :md="(!advanced && 8) || 24" :sm="24">
-                          <span
-                            class="table-page-search-submitButtons"
-                            :style="
-                              (advanced && { float: 'right', overflow: 'hidden' }) || {}
-                            "
-                          >
-                            <a-button type="primary" @click="$refs.table.refresh(true)"
-                              >查询</a-button
-                            >
-                            <a-button
-                              style="margin-left: 8px"
-                              @click="() => (queryParam = {})"
-                              >重置</a-button
-                            >
-                            <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
-                              {{ advanced ? "收起" : "展开" }}
-                              <a-icon :type="advanced ? 'up' : 'down'" />
-                            </a> -->
-                          </span>
-                        </a-col>
-                      </a-row>
-                      <div class="table-operator" style="margin-bottom: 24px">
-                        <a-button type="primary" @click="changeRank" :disabled="selectedRows.length == 0">变更职级</a-button>
-                        <a-dropdown v-if="selectedRowKeys.length > 0">
-                          <a-menu slot="overlay">
-                            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-                            <!-- lock | unlock -->
-                            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-                          </a-menu>
-                          <a-button style="margin-left: 8px">
-                            批量操作 <a-icon type="down" />
-                          </a-button>
-                        </a-dropdown>
-                      </div>
-                      <s-table
-                        ref="table"
-                        rowKey="key"
-                        :columns="scheduleColumns"
-                        :data="loadScheduleData"
-                        :rowSelection="rowSelection"
-                        :scroll="{y:600}"
-                        showPagination="auto">
-
-                        <template
-                          slot="status"
-                          slot-scope="status">
-                          <a-badge :status="status" :text="status | statusFilter"/>
-                        </template>
-                        <span slot="action" slot-scope="text, record">
-                          <a @click="handleEdit (record)">查看</a>
-                        </span>
-                      </s-table>
-                </a-col>
-            </a-row>
+			<a-row :gutter="24">
+				<a-col :lg="7" :xl="5" :xxl="4">
+					<ant-tree
+						:dataSource="tree" 
+						:allowEdit="false" 
+						:allowReload="true"
+						:allowSearch="true"
+						@editTreeNode="editTreeNode" 
+						@addTreeNode="addTreeNode" 
+						@removeTreeNode="removeTreeNode">
+					</ant-tree>
+				</a-col>
+				<a-col :md="24" :lg="17" :xl="19" :xxl="20">
+					<div class="table-page-search-wrapper">
+						<a-form layout="inline">
+							<a-row :gutter="48">
+								<a-col :md="8" :sm="24">
+									<a-form-item label="关键词搜索">
+										<a-input placeholder="请输入要查询的关键词" />
+									</a-form-item>
+								</a-col>
+								<a-col :md="8" :sm="24">
+									<a-form-item label="岗位">
+										<a-select default-value="" @change="handleChange">
+											<a-select-option value=""> 全部： </a-select-option>
+											<a-select-option value="1"> 是 </a-select-option>
+											<a-select-option value="2"> 否 </a-select-option>
+										</a-select>
+									</a-form-item>
+								</a-col>
+								<template v-if="advanced">
+									<a-col :md="8" :sm="24">
+										<a-form-item label="变动类型">
+											<a-select default-value="" @change="handleChange">
+												<a-select-option value=""> 全部 </a-select-option>
+												<a-select-option value="1"> 晋升 </a-select-option>
+												<a-select-option value="2"> 降级 </a-select-option>
+											</a-select>
+										</a-form-item>
+									</a-col>
+								</template>
+								<a-col :md="(!advanced && 8) || 24" :sm="24">
+									<span
+										class="table-page-search-submitButtons"
+										:style="
+										(advanced && { float: 'right', overflow: 'hidden' }) || {}
+										">
+										<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+										<a-button
+											style="margin-left: 8px"
+											@click="() => (queryParam = {})"
+										>重置</a-button
+										>
+										<a @click="toggleAdvanced" style="margin-left: 8px">
+										{{ advanced ? "收起" : "展开" }}
+										<a-icon :type="advanced ? 'up' : 'down'" />
+										</a>
+									</span>
+								</a-col>
+							</a-row>
+						</a-form>
+					</div>
+					<div class="table-operator" style="margin-bottom: 24px" >
+						<a-button type="primary" @click="changeRank" :disabled="selectedRows.length == 0">变更职级</a-button>
+						<a-dropdown v-if="selectedRowKeys.length > 0">
+						<a-menu slot="overlay">
+							<a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
+							<a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+						</a-menu>
+						<a-button style="margin-left: 8px">
+							批量操作 <a-icon type="down" />
+						</a-button>
+						</a-dropdown>
+					</div>
+					<s-table
+						ref="table"
+						rowKey="key"
+						:columns="scheduleColumns"
+						:data="loadScheduleData"
+						:rowSelection="rowSelection"
+						:scroll="{y:600}"
+						showPagination="auto">
+					
+						<template
+							slot="status"
+							slot-scope="status">
+							<a-badge :status="status" :text="status | statusFilter"/>
+						</template>
+						<span slot="action" slot-scope="text, record">
+							<a @click="handleEdit (record)">查看</a>
+						</span>
+					</s-table>
+				</a-col>
+			</a-row>	
        </a-card>
   </div>
 </template>
