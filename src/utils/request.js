@@ -1,5 +1,6 @@
 import axios from 'axios'
 import Cookie from 'js-cookie'
+// import Qs from 'qs'
 
 // 跨域认证信息 header 名
 const xsrfHeaderName = 'Authorization'
@@ -8,6 +9,7 @@ axios.defaults.timeout = 5000
 axios.defaults.withCredentials= true
 axios.defaults.xsrfHeaderName= xsrfHeaderName
 axios.defaults.xsrfCookieName= xsrfHeaderName
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 // 认证类型
 const AUTH_TYPE = {

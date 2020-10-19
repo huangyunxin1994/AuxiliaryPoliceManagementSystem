@@ -1,5 +1,7 @@
-import userService from './user'
+import userService from './user/index'
+import overTimeService from './OvertimeLeaveController/index'
 
-export {
-  userService
+export default{
+  userService,
+  overTimeService
 }
