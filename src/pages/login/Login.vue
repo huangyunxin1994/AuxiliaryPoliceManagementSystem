@@ -75,7 +75,7 @@
 
 <script>
 import CommonLayout from '@/layouts/CommonLayout'
-import {login, getRoutesConfig} from '@/services/user'
+// import {login} from '@/services/user'
 import {setAuthorization} from '@/utils/request'
 import {loadRoutes} from '@/utils/routerUtil'
 import {mapMutations} from 'vuex'
@@ -104,7 +104,8 @@ export default {
           this.logging = true
           const name = this.form.getFieldValue('name')
           const password = this.form.getFieldValue('password')
-          login(name, password).then(this.afterLogin)
+          // login(name, password).then(this.afterLogin)
+          this.$api.userService.login(name, password).then(this.afterLogin)
         }
       })
     },
@@ -119,8 +120,8 @@ export default {
         this.setRoles(roles)
         setAuthorization({token: loginRes.data.token, expireAt: new Date(loginRes.data.expireAt)})
         // 获取路由配置
-        getRoutesConfig().then(result => {
-          const routesConfig = result.data.data
+        this.$api.userService.getRoutesConfig().then(result => {
+          const routesConfig = result.data
           loadRoutes({router: this.$router, store: this.$store, i18n: this.$i18n}, routesConfig)
           this.$router.push('/')
           this.$message.success(loginRes.message, 3)

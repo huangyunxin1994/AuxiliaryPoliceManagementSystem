@@ -24,7 +24,7 @@
 
 <script>
 import {mapGetters} from 'vuex'
-import {logout} from '@/services/user'
+// import {userApi} from '@/services/api'
 
 export default {
   name: 'HeaderAvatar',
@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     logout() {
-      logout()
+      this.$api.userService.logout()
       this.$router.push('/login')
     }
   }
