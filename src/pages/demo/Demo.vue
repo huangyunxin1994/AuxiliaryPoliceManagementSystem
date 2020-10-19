@@ -78,7 +78,8 @@
                   <a-row :gutter="24">
                     <a-col v-for="(item,index) in baseMessTitle" :key="index" :md="24" :lg="12" :xl="12" :xxl="6" >
                       <a-form-model-item :label="item.label" :labelCol="{span: 7}" :wrapperCol="{span: 13}" :prop="item.title">
-                        <a-input v-model="form[item.title]" v-if="item.type=='input'" :disabled="item.disabled"/>
+                        <a-input v-model="form[item.title]" v-if="item.type=='input' && item.title == 'idCard'" @blur.native.capture="getIdData"/>
+                        <a-input v-model="form[item.title]" v-if="item.type=='input' && item.title != 'idCard'" :disabled="item.disabled"/>
                         <a-select v-model="form[item.title]" :placeholder="item.placeholder" v-else-if="item.type=='select'">
                           <a-select-option  v-for="(i,j) in item.select" :key="j" :value='i.name'>
                             {{i.name}}
@@ -90,7 +91,8 @@
                           type="date"
                           placeholder="请选择入职时间"
                           style="width: 100%;"
-                          v-else-if="item.type=='time'"
+                          v-else-if="item.type=='time' && item.title == 'entryTime'"
+                          @change="getDate"
                         />
                       </a-form-model-item>
                     </a-col>
@@ -229,7 +231,7 @@
   import fromModel from '@/components/formModel/formModel'
   import StandardTable from '@/components/Table_/'
 
-  // import {rulue} from '@/config/default/rules'
+  import {validateIdNo,validatePhone} from '@/config/default/rules'
   const studyColumns = [
   {
     title: '毕业院校',
@@ -500,7 +502,7 @@ const rules = {
           birthday:'',
           sex:'',
           age:'',
-          tenureStatus:'',
+          seniority:'',
           awardContent:'',
           awardUnit:'',
           awardTime:'',
@@ -522,7 +524,7 @@ const rules = {
           {title:'birthday',label:'出生日期',type:'input',placeholder:'请输入出生日期',disabled:true},//
           {title:'sex',label:'性别',type:'input',placeholder:'请输入性别',disabled:true},//
           {title:'age',label:'年龄',type:'input',placeholder:'请输入年龄',disabled:true},//
-          {title:'tenureStatus',label:'工龄',type:'input',placeholder:'请输入工龄',disabled:true} //  //
+          {title:'seniority',label:'工龄(年)',type:'input',placeholder:'请输入工龄',disabled:true} //  //
         ],
         studyColumns: studyColumns,
         workColumns:workColumns,
@@ -584,10 +586,20 @@ const rules = {
       getBaseRules(){
         let myrules = {}
         this.baseMessTitle.forEach((item)=>{
-          if(item.title == 'number'  || item.title == 'name' || item.title == 'idCard' || item.title == 'phone' || item.title == 'nation'){
+          if(item.title == 'number'  || item.title == 'name'  || item.title == 'nation'){
             myrules[item.title] = [{ required: true, message: '请输入必填项', trigger: 'blur' }]
+          }else if(item.title == 'idCard'){
+            myrules[item.title] = [
+              { required: true, message: '请输入必填项', trigger: 'blur' },
+              { validator: validateIdNo, trigger: 'blur' }
+            ]
+          }else if(item.title == 'phone'){
+            myrules[item.title] = [
+              { required: true, message: '请输入必填项', trigger: 'blur' },
+              { validator: validatePhone, trigger: 'blur' }
+            ]
           }else if(item.title == 'organization' || item.title == 'post' || item.title == 'rank' || item.title == 'education' || item.title == 'politicalStatus' ){
-            myrules[item.title] = [{ required: true, message: '请选择学位', trigger: 'change'}]
+            myrules[item.title] = [{ required: true, message: '请选择必填项', trigger: 'change'}]
           }else if(item.title == 'entryTime'){
             myrules[item.title] = [{ required: true, message: '请选择日期', trigger: 'change' }]
           }
@@ -797,6 +809,55 @@ const rules = {
           }
         });
         // console.log(this.familySource)
+      },
+      // 获取身份证里面的信息
+      getIdData(){
+        console.log("获取到身份证里的信息")
+        let mess = this.IdCard(this.form.idCard)
+        console.log(mess)
+        this.form.birthday = mess.birth
+        this.form.sex = mess.sex
+        this.form.age = mess.age 
+      },
+      IdCard(UUserCard) {
+        // 获取生日
+        let birth = UUserCard.substring(6, 10) + "-" + UUserCard.substring(10, 12) + "-" + UUserCard.substring(12, 14);
+        // 获取性别
+        let sex = ''
+        if (parseInt(UUserCard.substr(16, 1)) % 2 == 1) {
+            //男
+            sex = "男"
+            // return "男";
+        } else {
+            //女
+            sex = "女"
+            // return "女";
+        }
+        // 获取年龄
+        var myDate = new Date();
+        var month = myDate.getMonth() + 1;
+        var day = myDate.getDate();
+        var age = myDate.getFullYear() - UUserCard.substring(6, 10) - 1;
+        if (UUserCard.substring(10, 12) < month || UUserCard.substring(10, 12) == month && UUserCard.substring(12, 14) <= day) {
+            age++;
+        }
+        let obj = {
+          birth:birth,
+          sex:sex,
+          age:age
+        }
+        return obj
+      },
+      //获取入职时间，计算工龄
+      getDate(date, dateString) {
+        let year = this.compareDate(dateString)
+        year = Math.ceil(year * 10) / 10
+        this.form.seniority = year 
+      },
+      compareDate (date) {
+        var d1= new Date(date); d1 = Date.parse(d1);
+        var d2 = Date.parse(new Date());
+        return (d2 - d1) / 1000 / 60 / 60 / 24 / 365
       }
     },
     mounted(){

@@ -1,7 +1,7 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
-		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">奖励信息</div>
+		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">加班记录 </div>
 		<div class="table-page-search-wrapper">
 			<a-form layout="inline">
 				<a-row :gutter="48">
@@ -31,6 +31,9 @@
 				</a-row>
 			</a-form>
 		</div>
+        <div class="table-operator" style="margin-bottom: 24px">
+            <a-button type="primary" icon="clock-circle"   style="margin-right: 10px" @click="overtime">申请加班</a-button>
+        </div>
 		<s-table
 			ref="table"
 			rowKey="key"
@@ -42,7 +45,7 @@
 		</s-table>
     </a-card>
     <a-card :bordered="false">
-      <div class="position-and-level-title" :style="{ 'border-color': theme.color }">责任追究信息</div>
+      <div class="position-and-level-title" :style="{ 'border-color': theme.color }">请假记录</div>
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
@@ -75,6 +78,9 @@
           </a-row>
         </a-form>
       </div>
+      <div class="table-operator" style="margin-bottom: 24px">
+        <a-button type="primary" icon="clock-circle"   style="margin-right: 10px" @click="vacate">申请请假</a-button>
+      </div>
       <s-table
         ref="table"
         rowKey="key"
@@ -92,10 +98,12 @@
 <script>
 import { mapState } from "vuex";
 import STable from "@/components/Table_/";
+import fromModel from "@/components/formModel/formModel";
 export default {
   name: "OrganManage",
   components: {
     STable,
+    fromModel
   },
   data() {
     return {
@@ -115,35 +123,28 @@ export default {
           width: 60,
         },
         {
-          title: "奖励原因",
+          title: "配发日期",
           dataIndex: "name",
           key: "name",
           ellipsis: true,
           width: 100,
         },
         {
-          title: "奖励批准机关",
+          title: "有效日期  ",
           dataIndex: "num",
           key: "num",
           ellipsis: true,
           width: 150
         },
         {
-          title: "奖励批准日期",
+          title: "状态",
           dataIndex: "organizationName",
           key: "organizationName",
           ellipsis: true,
           width: 100
         },
         {
-          title: "荣誉称号授予单位",
-          dataIndex: "num",
-          key: "num",
-          ellipsis: true,
-          width: 150
-        },
-        {
-          title: "荣誉称号级别",
+          title: "证件描述",
           dataIndex: "num",
           key: "num",
           ellipsis: true,
@@ -184,21 +185,28 @@ export default {
           width: 60,
         },
         {
-          title: "原因",
+          title: "配发日期",
           dataIndex: "name",
           key: "name",
           ellipsis: true,
           width: 200,
         },
         {
-          title: "批准日期",
+          title: "有效日期",
           dataIndex: "num",
           key: "num",
           ellipsis: true,
           width: 100
         },
         {
-          title: "批准单位",
+          title: "状态",
+          dataIndex: "organizationName",
+          key: "organizationName",
+          ellipsis: true,
+          width: 150
+        },
+        {
+          title: "装备描述",
           dataIndex: "organizationName",
           key: "organizationName",
           ellipsis: true,
@@ -248,36 +256,154 @@ export default {
         },
         labelCol: { span: 4 },
         wrapperCol: { span: 14 },
+        overtimeModel: [
+          {
+            label: "开始时间",
+            name: "startTime",
+            type: "picker",
+            placeholder: "请选择开始时间"
+          },
+          {
+            label: "结束时间",
+            name: "endTime",
+            type: "picker",
+            placeholder: "请选择结束时间",
+          },
+          {
+            label: "时长(小时)",
+            name: "duration",
+            type: "input",
+            placeholder: "请输入时长",
+          },
+          {
+            label: "法定假日",
+            name: "statutoryHoliday",
+            type: "select",
+            placeholder: "请选择法定假日",
+          },
+          {
+            label: "加班原因",
+            name: "cause",
+            type: "textarea",
+            placeholder: "请输入加班原因",
+          }
+        ],
+        overtimeRules:{
+          startTime: [
+            { required: true, message: "请选择开始时间", trigger: "change"},
+          ],
+          endTime: [
+            { required: true, message: "请选择结束时间", trigger: "change"},
+          ],
+          duration: [
+            { required: true, message: "请输入请假时长", trigger: "blur"},
+          ],
+          statutoryHoliday: [
+            { required: true, message: "请选择法定假日", trigger: "change"},
+          ],
+          cause: [
+            { required: true, message: "请输入加班原因", trigger: "blur"},
+          ]
+        },
+        vacateModel: [
+          {
+            label: "请假类型",
+            name: "vacateType",
+            type: "select",
+            placeholder: "请选择请假类型"
+          },
+          {
+            label: "开始时间",
+            name: "startTime",
+            type: "picker",
+            placeholder: "请选择开始时间"
+          },
+          {
+            label: "结束时间",
+            name: "endTime",
+            type: "picker",
+            placeholder: "请选择结束时间",
+          },
+          {
+            label: "加班原因",
+            name: "cause",
+            type: "textarea",
+            placeholder: "请输入加班原因",
+          }
+        ],
+        vacateRules:{
+          vacateType:[
+            { required: true, message: "请选择请假类型", trigger: "change"},
+          ],
+          startTime: [
+            { required: true, message: "请选择开始时间", trigger: "change"},
+          ],
+          endTime: [
+            { required: true, message: "请选择结束时间", trigger: "change"},
+          ],
+          cause: [
+            { required: true, message: "请输入加班原因", trigger: "blur"},
+          ]
+        }
     };
   },
   methods: {
-    
-    onCredSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedCredRowKeys = selectedRowKeys;
-      this.selectedCredRows = selectedRows;
+    // 加班
+    overtime(){
+      let param = {
+        formTitle: this.overtimeModel,
+        rules: this.overtimeRules,
+      };
+      let option = {
+        title: "加班申请",
+        width: 500,
+        centered: true,
+        maskClosable: false,
+        okText: "提交",
+      };
+      this.modal(param, option, fromModel);
     },
-    onEqupSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedEqupRowKeys = selectedRowKeys;
-      this.selectedEqupRows = selectedRows;
+    // 请假
+    vacate(){
+      let param = {
+        formTitle: this.vacateModel,
+        rules: this.vacateRules,
+      };
+      let option = {
+        title: "请假申请",
+        width: 500,
+        centered: true,
+        maskClosable: false,
+        okText: "提交",
+      };
+      this.modal(param, option, fromModel);
     },
-
-    // 开始时间和结束时间
-    onChange(date, dateString) {
-      console.log(date, dateString);
-    },
-
-    // 点击完成
-    submit(){
-
-    },
-    // 点击删除人员
-    confirm(e) {
-        console.log(e);
-        this.$message.success('删除成功');
-    },
-    cancel(e) {
-        console.log(e);
-        this.$message.error('已取消删除');
+    // 弹窗
+    modal(obj, option, model) {
+      const defaultProps = {
+        on: {
+          ok() {
+            // console.log('ok 回调')
+          },
+          cancel() {
+            // e.handleDestroy()
+            // console.log('cancel 回调')
+          },
+          close() {
+            // e.handleDestroy()
+            // console.log('modal close 回调')
+          },
+        },
+      };
+      let formProps = Object.assign(obj, defaultProps);
+      console.log(formProps);
+      this.$dialog(
+        model,
+        // form props
+        formProps,
+        // modal props
+        option
+      );
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;

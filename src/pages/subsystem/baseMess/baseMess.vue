@@ -6,66 +6,60 @@
               <div class="position-and-level-title" :style="{'border-color':theme.color}">基础资料</div>
             </div>
             <div>
-				<a-row :gutter="24">
-					<c-col :xs="24" :sm="3" :md="3" :lg="3" :xl="3" :xxl="6">
-						<div class="avatar">
-							<img  src="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png">
-						</div>  
-					</c-col>
-					<c-col :xs="24" :sm="24" :md="18" :lg="18" :xl="18" :xxl="18">
-						<a-form-model
-							ref="ruleForm"
-							:model="form" 
-							:label-col="labelCol" 
-							:wrapper-col="wrapperCol" 
-							class="baseForm">
-							<a-row :gutter="24">
-								<a-col v-for="(item,index) in baseMessTitle" :key="index" :md="24" :lg="12" :xl="12" :xxl="6" >
-								<a-form-model-item :label="item.label" :labelCol="{span: 7}" :wrapperCol="{span: 13}" :prop="item.title">
-									<a-input v-model="form[item.title]"  disabled/>
-								</a-form-model-item>
-								</a-col>
-							</a-row>
-							<a-row :gutter="24">
-								<a-col :md="24" :lg="12" :xl="12" :xxl="6" >
-								<a-form-model-item label="是否是专业辅警" :labelCol="{span: 10}" :wrapperCol="{span: 13}">
-									<a-radio-group v-model="isSpecialty">
-									<a-radio value="true">
-										是
-									</a-radio>
-									<a-radio value="false">
-										否
-									</a-radio>
-									</a-radio-group>
-								</a-form-model-item>
-								</a-col>
-							</a-row>
-							<a-row :gutter="24" v-if="isSpecialty=='true'">
-								<a-col :md="24" :lg="12" :xl="12" :xxl="6">
-								<a-form-model-item label="专业技术职业资格" :labelCol="{span: 10}" :wrapperCol="{span: 13}">
-									<a-input v-model="form.awardContent" />
-								</a-form-model-item>
-								</a-col>
-								<a-col :md="24" :lg="12" :xl="12" :xxl="6">
-								<a-form-model-item label="资格审批单位" :labelCol="{span: 7}" :wrapperCol="{span: 13}">
-									<a-input v-model="form.awardUnit" />
-								</a-form-model-item>
-								</a-col>
-								<a-col :md="24" :lg="12" :xl="12" :xxl="6">
-								<a-form-model-item label="获得资格日期" :labelCol="{span: 7}" :wrapperCol="{span: 13}">
-									<a-date-picker
-										v-model="form.awardTime"
-										show-time
-										type="date"
-										placeholder="请选择时间"
-										style="width: 100%;"
-									/>
-								</a-form-model-item>
-								</a-col>
-							</a-row>
-						</a-form-model>
-					</c-col>
-				</a-row>
+            <a-row :gutter="24">
+              <a-col :xs="24" :sm="24" :md="4" :lg="4" :xl="4" :xxl="4">
+                <div class="avatar">
+                  <img  src="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png">
+                </div>  
+              </a-col>
+              <a-col :xs="24" :sm="24" :md="18" :lg="18" :xl="18" :xxl="18">
+                <a-form-model
+                  ref="ruleForm"
+                  :model="form" 
+                  :label-col="labelCol" 
+                  :wrapper-col="wrapperCol" 
+                  class="baseForm">
+                  <a-row :gutter="24">
+                    <a-col v-for="(item,index) in baseMessTitle" :key="index" :md="24" :lg="12" :xl="12" :xxl="8" >
+                    <a-form-model-item :label="item.label" :labelCol="{span: 7}" :wrapperCol="{span: 13}" :prop="item.title">
+                      <a-input v-model="form[item.title]"  disabled/>
+                    </a-form-model-item>
+                    </a-col>
+                  </a-row>
+                  <!-- <a-row :gutter="24">
+                    <a-col :md="24" :lg="12" :xl="12" :xxl="6" >
+                    <a-form-model-item label="是否是专业辅警" :labelCol="{span: 10}" :wrapperCol="{span: 13}">
+                      <a-radio-group v-model="isSpecialty">
+                      <a-radio value="true">
+                        是
+                      </a-radio>
+                      <a-radio value="false">
+                        否
+                      </a-radio>
+                      </a-radio-group>
+                    </a-form-model-item>
+                    </a-col>
+                  </a-row> -->
+                  <a-row :gutter="24" >
+                    <a-col :md="24" :lg="12" :xl="12" :xxl="8">
+                    <a-form-model-item label="专业技术职业资格" :labelCol="{xs:{span: 24},sm:{span: 8},md:{span:8},lg:{span:11}}" :wrapperCol="{xs:{span: 24},sm:{span: 16},md:{span:16},lg:{span:13}}">
+                      <a-input v-model="form.awardContent" disabled />
+                    </a-form-model-item>
+                    </a-col>
+                    <a-col :md="24" :lg="12" :xl="12" :xxl="8">
+                    <a-form-model-item label="资格审批单位" :labelCol="{span: 8}" :wrapperCol="{span: 13}">
+                      <a-input v-model="form.awardUnit" disabled />
+                    </a-form-model-item>
+                    </a-col>
+                    <a-col :md="24" :lg="12" :xl="12" :xxl="8">
+                    <a-form-model-item label="获得资格日期" :labelCol="{span: 8}" :wrapperCol="{span: 13}">
+                      <a-input v-model="form.awardTime" disabled />
+                    </a-form-model-item>
+                    </a-col>
+                  </a-row>
+                </a-form-model>
+              </a-col>
+            </a-row>
             </div>
           </div>
         </a-card>

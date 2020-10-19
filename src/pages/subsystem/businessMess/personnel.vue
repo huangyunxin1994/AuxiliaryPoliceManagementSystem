@@ -1,7 +1,7 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
-		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">奖励信息</div>
+		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">职级调动</div>
 		<div class="table-page-search-wrapper">
 			<a-form layout="inline">
 				<a-row :gutter="48">
@@ -34,15 +34,15 @@
 		<s-table
 			ref="table"
 			rowKey="key"
-			:columns="credColumns"
-			:data="loadCredData"
+			:columns="rankColumns"
+			:data="rankData"
 			:scroll="{ y: 600, x: 650 }"
 			showPagination="auto"
 		>
 		</s-table>
     </a-card>
     <a-card :bordered="false">
-      <div class="position-and-level-title" :style="{ 'border-color': theme.color }">责任追究信息</div>
+      <div class="position-and-level-title" :style="{ 'border-color': theme.color }">岗位变动</div>
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
@@ -78,8 +78,56 @@
       <s-table
         ref="table"
         rowKey="key"
-        :columns="dutyColumns"
-        :data="dutyData"
+        :columns="postColumns"
+        :data="postData"
+        :scroll="{ y: 600, x: 650 }"
+        showPagination="auto"
+      >
+      </s-table>
+      
+    </a-card>
+    <a-card :bordered="false">
+      <div class="position-and-level-title" :style="{ 'border-color': theme.color }">专业技术辅警资格信息</div>
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="关键词搜索">
+                <a-input placeholder="请输入要查询的关键词" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="(!advanced && 8) || 24" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="
+                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                "
+              >
+                <a-button type="primary" @click="$refs.table.refresh(true)"
+                  >查询</a-button
+                >
+                <a-button
+                  style="margin-left: 8px"
+                  @click="() => (queryParam = {})"
+                  >重置</a-button
+                >
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? "收起" : "展开" }}
+                  <a-icon :type="advanced ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+      <div class="table-operator" style="margin-bottom: 24px">
+        <a-button type="primary" icon="upload"  style="margin-right: 10px">导出</a-button>
+      </div>
+      <s-table
+        ref="table"
+        rowKey="key"
+        :columns="professionColumns"
+        :data="professionData"
         :scroll="{ y: 600, x: 650 }"
         showPagination="auto"
       >
@@ -107,7 +155,7 @@ export default {
           key:'key',
           value: 'key'
       },
-      credColumns: [
+      rankColumns: [
         {
           title: "序号",
           dataIndex: "key",
@@ -115,42 +163,35 @@ export default {
           width: 60,
         },
         {
-          title: "奖励原因",
+          title: "职级",
           dataIndex: "name",
           key: "name",
           ellipsis: true,
           width: 100,
         },
         {
-          title: "奖励批准机关",
+          title: "变动类型",
           dataIndex: "num",
           key: "num",
           ellipsis: true,
           width: 150
         },
         {
-          title: "奖励批准日期",
+          title: "变动原因",
           dataIndex: "organizationName",
           key: "organizationName",
           ellipsis: true,
           width: 100
         },
         {
-          title: "荣誉称号授予单位",
+          title: "生效日期",
           dataIndex: "num",
           key: "num",
           ellipsis: true,
           width: 150
-        },
-        {
-          title: "荣誉称号级别",
-          dataIndex: "num",
-          key: "num",
-          ellipsis: true,
-          width: 150
-        },
+        }
       ],
-      loadCredData: () => {
+      rankData: () => {
         return new Promise((resolve) => {
           resolve({
             data: [
@@ -176,7 +217,7 @@ export default {
           return res;
         });
       },
-      dutyColumns:[
+      postColumns:[
         {
           title: "序号",
           dataIndex: "key",
@@ -184,28 +225,90 @@ export default {
           width: 60,
         },
         {
-          title: "原因",
+          title: "组织",
+          dataIndex: "organizationName",
+          key: "organizationName",
+          ellipsis: true,
+          width: 150
+        },
+        {
+          title: "岗位",
+          dataIndex: "name",
+          key: "name",
+          ellipsis: true,
+          width: 100,
+        },
+        {
+          title: "调动原因",
           dataIndex: "name",
           key: "name",
           ellipsis: true,
           width: 200,
         },
         {
-          title: "批准日期",
+          title: "生效日期",
           dataIndex: "num",
           key: "num",
           ellipsis: true,
           width: 100
+        }
+      ],
+      postData:() => {
+        return new Promise((resolve) => {
+          resolve({
+            data: [
+              {
+                key: "1",
+                name: "张三",
+                num:'123456',
+                organizationName: "青秀分局"
+              },
+              {
+                key: "2",
+                name: "李四",
+                num:'123456',
+                organizationName: "仙湖分局"
+              },
+            ],
+            pageSize: 10,
+            pageNo: 1,
+            totalPage: 1,
+            totalCount: 10,
+          });
+        }).then((res) => {
+          return res;
+        });
+      },
+      professionColumns:[
+        {
+          title: "序号",
+          dataIndex: "key",
+          key: "key",
+          width: 60,
         },
         {
-          title: "批准单位",
+          title: "专业技术任职资格",
           dataIndex: "organizationName",
           key: "organizationName",
           ellipsis: true,
           width: 150
+        },
+        {
+          title: "资格审批单位",
+          dataIndex: "name",
+          key: "name",
+          ellipsis: true,
+          width: 100,
+        },
+        {
+          title: "获得资格日期",
+          dataIndex: "num",
+          key: "num",
+          ellipsis: true,
+          width: 100
         }
       ],
-      dutyData:() => {
+      professionData:() => {
         return new Promise((resolve) => {
           resolve({
             data: [

@@ -1,7 +1,7 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
-		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">奖励信息</div>
+		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">证件信息 </div>
 		<div class="table-page-search-wrapper">
 			<a-form layout="inline">
 				<a-row :gutter="48">
@@ -42,7 +42,7 @@
 		</s-table>
     </a-card>
     <a-card :bordered="false">
-      <div class="position-and-level-title" :style="{ 'border-color': theme.color }">责任追究信息</div>
+      <div class="position-and-level-title" :style="{ 'border-color': theme.color }">装备信息</div>
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
@@ -115,35 +115,28 @@ export default {
           width: 60,
         },
         {
-          title: "奖励原因",
+          title: "配发日期",
           dataIndex: "name",
           key: "name",
           ellipsis: true,
           width: 100,
         },
         {
-          title: "奖励批准机关",
+          title: "有效日期  ",
           dataIndex: "num",
           key: "num",
           ellipsis: true,
           width: 150
         },
         {
-          title: "奖励批准日期",
+          title: "状态",
           dataIndex: "organizationName",
           key: "organizationName",
           ellipsis: true,
           width: 100
         },
         {
-          title: "荣誉称号授予单位",
-          dataIndex: "num",
-          key: "num",
-          ellipsis: true,
-          width: 150
-        },
-        {
-          title: "荣誉称号级别",
+          title: "证件描述",
           dataIndex: "num",
           key: "num",
           ellipsis: true,
@@ -184,21 +177,28 @@ export default {
           width: 60,
         },
         {
-          title: "原因",
+          title: "配发日期",
           dataIndex: "name",
           key: "name",
           ellipsis: true,
           width: 200,
         },
         {
-          title: "批准日期",
+          title: "有效日期",
           dataIndex: "num",
           key: "num",
           ellipsis: true,
           width: 100
         },
         {
-          title: "批准单位",
+          title: "状态",
+          dataIndex: "organizationName",
+          key: "organizationName",
+          ellipsis: true,
+          width: 150
+        },
+        {
+          title: "装备描述",
           dataIndex: "organizationName",
           key: "organizationName",
           ellipsis: true,

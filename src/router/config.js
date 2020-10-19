@@ -290,7 +290,7 @@ const options = {
       ]
     },
     {
-      path: '/',
+      path: 'subsystem',
       name: '基础资料',
       component: TabsView,
       redirect: '/baseMess/demo1',
@@ -326,27 +326,27 @@ const options = {
             {
               path: 'demo3',
               name: '合同与工资信息',
-              component: () => import('@/pages/contract/contract'),
+              component: () => import('@/pages/subsystem/businessMess/contract'),
             },
             {
               path: 'demo4',
               name: '人事信息',
-              component: () => import('@/pages/contract/contract'),
+              component: () => import('@/pages/subsystem/businessMess/personnel'),
             },
             {
               path: 'demo5',
               name: '培训记录',
-              component: () => import('@/pages/contract/contract'),
+              component: () => import('@/pages/subsystem/businessMess/education'),
             },
             {
               path: 'demo6',
               name: '证件装备',
-              component: () => import('@/pages/contract/contract'),
+              component: () => import('@/pages/subsystem/businessMess/equipage'),
             },
             {
               path: 'demo7',
               name: '加班与请假',
-              component: () => import('@/pages/contract/contract'),
+              component: () => import('@/pages/subsystem/businessMess/vacate'),
             }
           ]
         }
