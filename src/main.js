@@ -6,6 +6,7 @@ import Antd from 'ant-design-vue'
 import Viser from 'viser-vue'
 import Dialog from '@/components/Dialog'
 import '@/mock'
+import api from "./services"
 import store from './store'
 import 'animate.css/source/animate.css'
 import Plugins from '@/plugins'
@@ -22,7 +23,7 @@ Vue.config.productionTip = false
 Vue.use(Viser)
 Vue.use(Plugins)
 Vue.use(Dialog)//this.$dialog
-
+Vue.prototype.$api = api;
 bootstrap({router, store, i18n, message: Vue.prototype.$message})
 
 new Vue({

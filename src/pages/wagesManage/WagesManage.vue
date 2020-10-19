@@ -201,7 +201,7 @@ const tree = [
   },
 ];
 export default {
-  name: "OvertimeLeaveCount",
+  name: "WagesManage",
   components:{
     STable
   },

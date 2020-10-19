@@ -453,33 +453,14 @@ export default {
           width: 100,
         },
       ],
-      loadScheduleData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                policeName: "辅警1",
-                name: "管理员",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-                startTime: "2020-06-18 09:00:00",
-                endTime: "2020-06-18 18:00:00",
-                duration: "7",
-                holiday: "1",
-                reason: "加班",
-                approvalResults: "通过",
-                approvalRemake: "通过",
-              }
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      //查询参数
+      queryParam:{},
+      loadScheduleData: (parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.queryParam)
+        return this.$api.overTimeService.getOverTimeLeave(requestParameters)
+          .then(res => {
+            return res.result
+          })
       },
       selectedRowKeys: [],
       selectedRows: [],

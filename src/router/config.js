@@ -22,7 +22,7 @@ const options = {
     },
     {
       //管理页面路由配置
-      path: 'sys',
+      path: '/',
       name: '首页',
       component: TabsView,
       redirect: 'home',
@@ -101,7 +101,7 @@ const options = {
           ]
         },
         {
-          path: 'parent4',
+          path: 'wagesManage',
           name: '工资管理',
           meta: {
             icon: 'pay-circle'
@@ -109,9 +109,9 @@ const options = {
           component: BlankView,
           children: [
             {
-              path: 'demo2',
-              name: '演示页面2',
-              component: () => import('@/pages/demo'),
+              path: 'wagesManage',
+              name: '工资条发放',
+              component: () => import('@/pages/wagesManage/WagesManage'),
             }
           ]
         },
