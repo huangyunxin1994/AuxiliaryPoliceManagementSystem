@@ -20,7 +20,7 @@
 					<a-row :gutter="48">
 						<a-col :md="8" :sm="24">
 							<a-form-item label="关键词搜索">
-								<a-input placeholder="请输入要查询的关键词" />
+								<a-input placeholder="请输入要查询的关键词" v-model="keyword" />
 							</a-form-item>
 						</a-col>
 						<a-col :md="8" :sm="24">
@@ -45,7 +45,8 @@
 								:style="
 								(advanced && { float: 'right', overflow: 'hidden' }) || {}
 								">
-								<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+								<!-- <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button> -->
+                <a-button type="primary" @click="search">查询</a-button>
 								<a-button
 									style="margin-left: 8px"
 									@click="() => (queryParam = {})"
@@ -115,109 +116,7 @@ import fromModel from "@/components/formModel/formModel";
 import diaHisContract from "@/components/diaHisContract/diaHisContract";
 // import diaNewContract from "@/components/diaNewContract/diaNewContract"
 import formStep from "@/components/stepForm/StepForm";
-const tree = [
-  {
-    key: "key-01",
-    title: "研发中心",
-    icon: "mail",
-    count: "10",
-    scopedSlots: { title: "custom" },
-    children: [
-      {
-        key: "key-01-01",
-        title: "后端组",
-        icon: null,
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-01-01-01",
-            title: "JAVA",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-01-02",
-            title: "PHP",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-01-03",
-            title: "Golang",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-        ],
-      },
-      {
-        key: "key-01-02",
-        title: "前端组",
-        icon: null,
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-01-02-01",
-            title: "React",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-02-02",
-            title: "Vue",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-02-03",
-            title: "Angular",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-        ],
-      },
-      {
-        key: "key-02",
-        title: "财务部",
-        icon: "dollar",
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-02-01",
-            title: "会计核算",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-02-02",
-            title: "成本控制",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-02-03",
-            title: "内部控制",
-            icon: null,
-            scopedSlots: { title: "custom" },
-            children: [
-              {
-                key: "key-02-03-01",
-                title: "财务制度建设",
-                icon: null,
-                scopedSlots: { title: "custom" },
-              },
-              {
-                key: "key-02-03-02",
-                title: "会计核算",
-                icon: null,
-                scopedSlots: { title: "custom" },
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+
 const formTitle = [
   {
     label: "姓名",
@@ -266,16 +165,16 @@ const rules = {
 };
 const submitFun = ()=>{
   return new Promise((resolve) => {
-              resolve({
-                data: [],
-                pageSize: 10,
-                pageNo: 1,
-                totalPage: 1,
-                totalCount: 10,
-              });
-            }).then((res) => {
-              return res;
-            });
+    resolve({
+      data: [],
+      pageSize: 10,
+      pageNo: 1,
+      totalPage: 1,
+      totalCount: 10,
+    });
+  }).then((res) => {
+    return res;
+  });
 }
 export default {
   name: "OrganManage",
@@ -294,7 +193,7 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       openKeys: ["key-01"],
-      tree,
+      tree:[],
       loading: false,
       scheduleColumns: [
         {
@@ -347,179 +246,12 @@ export default {
           width: 150,
         },
       ],
-      loadScheduleData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                account: "admin",
-                name: "管理员",
-                code: "FJ0584",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "processing",
-              },
-              {
-                key: "2",
-                account: "test",
-                name: "李四",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "processing",
-              },
-              {
-                key: "3",
-                account: "test",
-                name: "王五",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "processing",
-              },
-              {
-                key: "4",
-                account: "test",
-                name: "张三",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "processing",
-              },
-              {
-                key: "5",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "6",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "7",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "8",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "9",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "10",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "11",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "12",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "13",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "14",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "15",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-              {
-                key: "16",
-                account: "test",
-                name: "赵六",
-                code: "FJ0585",
-                organ: "青秀区东葛路派出所",
-                post: "辅警",
-                phone: "13584585258",
-                status: "error",
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 60,
-          });
-        }).then((res) => {
-          return res;
-        });
+      queryParams:{},
+      loadScheduleData: params => {
+        let param = Object.assign(params,this.queryParams)
+        return this.$api.contractService.getContractData(param).then((res)=>{
+          console.log(res)
+        })
       },
       selectedRowKeys: [],
       selectedRows: [],
@@ -546,6 +278,10 @@ export default {
           refName: "uploadFile",
         },
       ],
+      // 模糊搜索关键字
+      keyword:'',
+      isExpire:'',//是否到期
+      endTime:'',//合同终止日期
     };
   },
   methods: {
@@ -578,8 +314,10 @@ export default {
     handleTitleClick(item) {
       console.log("handleTitleClick", item);
     },
+    // 是否即将到期
     handleChange(e) {
       console.log(e);
+      this.isExpire = e
     },
     //编辑树节点
     editTreeNode(params) {
@@ -664,10 +402,7 @@ export default {
       console.log(this.selectedRows);
     },
 
-    // 时间框选择
-    onChange(date, dateString) {
-      console.log(date, dateString);
-    },
+    
     // 续约合同
     extensionCon() {
       console.log(this.selectedRows);
@@ -744,6 +479,30 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+    // 时间框选择
+    onChange(date, dateString) {
+      console.log(date, dateString);
+      this.endTime = dateString
+    },
+    // 点击查询筛选按钮
+    search(){
+      this.queryParams = {
+        currentPage:1,
+        startTime:'',
+        endTime:'',
+        isExpire:this.isExpire,
+        pageSize:10,
+        state:'',
+        time:this.endTime,
+        type:''
+      }
+      this.$refs.table.refresh(true)
+    },
+    // 获取到组织树信息
+    getTreeData(data){
+      console.log("******************************")
+      this.tree = data
+    }
   },
   filters: {
     statusFilter(status) {
@@ -769,6 +528,9 @@ export default {
       };
     },
   },
+  mounted(){
+    // this.getOrganization()
+  }
 };
 </script>
 

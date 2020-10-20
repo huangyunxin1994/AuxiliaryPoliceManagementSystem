@@ -447,5 +447,5 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "../index";
+@import "./index";
 </style>

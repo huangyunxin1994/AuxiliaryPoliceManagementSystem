@@ -45,17 +45,16 @@
                     showPagination="auto"
                     size="small"
                 >
-                     <template slot="title" >
-                         <a-row>
-                             <a-col :span="12">
-                                 可选择人员
-                             </a-col>
-                             <a-col :span="12" style="text-align:right">
-                                 <a-button type="primary" size="small" :disabled="selectedLeftRows.length===0" @click="handleAdd">添加</a-button>
-                             </a-col>
-                         </a-row>
-      
-    </template>
+                  <template slot="title" >
+                      <a-row>
+                          <a-col :span="12">
+                              可选择人员
+                          </a-col>
+                          <a-col :span="12" style="text-align:right">
+                              <a-button type="primary" size="small" :disabled="selectedLeftRows.length===0" @click="handleAdd">添加</a-button>
+                          </a-col>
+                      </a-row>
+                  </template>
                 </s-table>
             </a-col>
             <a-col :md="12" :sm="24">

@@ -45,7 +45,7 @@
 export default {
     props:{
       //树数据 类型：数组|Array
-      dataSource:Array,
+    //   dataSource:Array,
       //是否节点占据一行 类型：布尔值|Boolean
       blockNode:{
           type:Boolean,
@@ -71,17 +71,28 @@ export default {
           type:Boolean,
           default:true
       },
+
       //
       replaceFields:{
           type:Object,
           default(){
               return {
                     children:'children',
-                    title:'title',
-                    key:'key'
+                    title:'name',
+                    key:'id'
               }
           }
+      },
+      // 加载数据方法
+      getTreeData:{
+        type:Function
       }
+    },
+    watch:{
+        dataSource(newV,oldV) {
+            // do something
+            console.log(newV,oldV)
+        } 
     },
     data() {
         return {
@@ -90,13 +101,44 @@ export default {
             dataList:[],
             searchValue:'',
             expandedKeys:[],
-            autoExpandParent:true
+            autoExpandParent:true,
+            filterTree:'',
+            dataSource:[]
         };
     },
     mounted(){
+        this.$api.organizationService.getOrganization().then((res)=>{
+            let tree = res.data.data.data
+            tree.forEach(item => {
+                item.scopedSlots = { title: "custom" }
+            })
+            this.dataSource = this.filterArray(res.data.data.data)
+            console.log(this.dataSource)
+            // this.$emit("getTreeData",this.filterTree)
+        })
         this.initData(this.dataSource)
     },
     methods: {
+        filterArray(data) {
+            data.forEach(function (item) {
+                delete item.children;
+            });
+            var map = {};
+            data.forEach(function (item) {
+                map[item.id] = item;
+            });
+            var val = [];
+            data.forEach(function (item) {
+                var parent = map[item.parentId] || map[item.code];
+                if (parent) {
+                    (parent.children || (parent.children = [])).push(item);
+                } else {
+                    val.push(item);
+                }
+            });
+            console.log(val);
+            return val;
+        },
         onExpand(expandedKeys) {
             console.log(expandedKeys)
             this.expandedKeys = expandedKeys;
