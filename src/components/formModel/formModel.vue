@@ -16,7 +16,7 @@
       :prop="item.name"
       :ref="item.refName"
     >
-      <span v-if="item.type=='text'">{{item.filter&&item.filter[form[item.name]]||form[item.name]}}</span>
+      <span v-if="item.type=='text'">{{form[item.name]}}</span>
       <!-- 输入框  -->
       <a-input
         v-model="form[item.name]"
@@ -180,15 +180,25 @@ export default {
   created() {
     
   },
+  watch:{
+    record(val){
+      this.form = Object.assign(
+        JSON.parse(JSON.stringify(val)) ,
+        pick(val, this.dataSource)
+      );
+    }
+  },
   mounted() {
     this.formTitle.forEach((i) => {
       this.dataSource.push(i.name);
     });
     if (this.record) {
+      console.log(this.record)
       this.form = Object.assign(
         JSON.parse(JSON.stringify(this.record)) ,
         pick(this.record, this.dataSource)
       );
+      console.log("*********"+JSON.stringify(this.form))
     }
   },
   methods: {

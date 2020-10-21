@@ -67,7 +67,16 @@ export default {
     };
   },
   mounted() {
-    this.initData();
+    this.$api.organizationService.getOrganization().then((res)=>{
+        let tree = res.data.data.data
+        tree.forEach(item => {
+            item.scopedSlots = { title: "custom" }
+        })
+        this.tree = filterArray(res.data.data.data)
+        console.log(this.tree);
+        // this.$emit("getTreeData",this.filterTree)
+    })
+    // this.initData();
   },
   methods: {
     initData() {
@@ -106,6 +115,7 @@ export default {
       console.log(this.tree);
     },
     change(value) {
+      // 将组织id传出去
       console.log(value);
       let val = "";
       if (Array.isArray(value)) {

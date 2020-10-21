@@ -49,7 +49,7 @@
                 <a-button type="primary" @click="search">查询</a-button>
 								<a-button
 									style="margin-left: 8px"
-									@click="() => (queryParam = {})"
+									@click="resetSearch"
 								>重置</a-button
 								>
 								<a @click="toggleAdvanced" style="margin-left: 8px">
@@ -103,7 +103,7 @@
         </a-col>
       </a-row>
     </a-card>
-    <form-step ref="modal" title="新增合同" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
+    <form-step ref="modal" title="新增合同" formTitleName="name" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
   </div>
 </template>
 
@@ -121,9 +121,10 @@ const formTitle = [
   {
     label: "姓名",
     name: "name",
-    type: "input",
+    type: "text",
     refName: "name",
     placeholder: "请输入所在单位",
+    disabled:true
   },
   {
     label: "合同起始日期",
@@ -134,16 +135,24 @@ const formTitle = [
   },
   {
     label: "合同期限(月)",
-    name: "deadline",
+    name: "contractPeriod",
     type: "input",
-    refName: "deadline",
+    refName: "contractPeriod",
     placeholder: "请输入合同期限",
   },
   {
+    label: "合同结束日期",
+    name: "endDate",
+    type: "input",
+    refName: "endDate",
+    placeholder: "请输入合同期限",
+    disabled:true
+  },
+  {
     label: "试用结束日期",
-    name: "endData",
+    name: "probation",
     type: "picker",
-    refName: "endData",
+    refName: "probation",
     placeholder: "请选择工作结束日期",
   },
   {
@@ -151,6 +160,7 @@ const formTitle = [
     name: "uploadFile",
     type: "upload",
     refName: "uploadFile",
+    disabled:true
   },
 ];
 const stepTitle = [{title:'选择人员'},{title:'填写合同信息'}]
@@ -163,19 +173,7 @@ const rules = {
   ],
   deadline: [{ required: true, message: "请输入合同期限", trigger: "blur" }],
 };
-const submitFun = ()=>{
-  return new Promise((resolve) => {
-    resolve({
-      data: [],
-      pageSize: 10,
-      pageNo: 1,
-      totalPage: 1,
-      totalCount: 10,
-    });
-  }).then((res) => {
-    return res;
-  });
-}
+
 export default {
   name: "OrganManage",
   components: {
@@ -189,7 +187,13 @@ export default {
       formTitle,
       rules,
       stepTitle,
-      submitFun,
+      submitFun:(params,file)=>{
+        // let param = Object.assign(params,this.queryParams)
+        return this.$api.contractService.addContractData(params,file).then((res)=>{
+          return res.data
+        })
+        
+      },
       // 高级搜索 展开/关闭
       advanced: false,
       openKeys: ["key-01"],
@@ -250,7 +254,7 @@ export default {
       loadScheduleData: params => {
         let param = Object.assign(params,this.queryParams)
         return this.$api.contractService.getContractData(param).then((res)=>{
-          console.log(res)
+          return res.data
         })
       },
       selectedRowKeys: [],
@@ -497,6 +501,13 @@ export default {
         type:''
       }
       this.$refs.table.refresh(true)
+    },
+    // 点击重置
+    resetSearch(){
+      this.isExpire = ''
+      this.endTime = ''
+      this.keyword = ''
+      this.queryParams = {}
     },
     // 获取到组织树信息
     getTreeData(data){

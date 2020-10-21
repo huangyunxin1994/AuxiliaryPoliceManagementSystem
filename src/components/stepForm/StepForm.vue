@@ -10,7 +10,7 @@
         </a-steps>
         <div class="content">
           <step1 ref="person" v-show="current === 0" @nextStep="nextStep"></step1>
-          <step2 ref="form" v-show="current === 1" :submitFun="submitFun" :formTitle="formTitle" :record="record" :rules="rules" @nextStep="nextStep" @prevStep="prevStep" @handleOk="handleOk"></step2>
+          <step2 ref="form" v-show="current === 1" :submitFun="submitFun" :formTitle="nowFormTitle" :record="selcetPersonName" :rules="rules" @nextStep="nextStep" @prevStep="prevStep" @handleOk="handleOk"></step2>
         </div>
     </a-modal>
 </template>
@@ -62,21 +62,76 @@ export default {
       type: String,
       default: "horizontal",
     },
+    formTitleName:{
+      type: String,
+      default: "name",
+    }
   },
   data () {
     return {
       visible:false,
       current: 0,
-      loading:false
+      loading:false,
+      selcetPersonName:{},
+      selcetPersonId:[],
+      nowFormTitle:[],
+      file:''
     }
+  },
+  created(){
+this.nowFormTitle = this.formTitle
   },
   methods: {
     nextStep () {
-      if(this.$refs.person.rightColumnsData.length>0){
+      if(this.$refs.person.rightColumnsData.length>1){
+        let arrName = ''
+        let arrId = []
+        this.$refs.person.rightColumnsData.forEach((item,index)=>{
+          // arrName.push(item.name)
+          if(index == 0){
+            arrName = item.name
+          }else{
+            arrName = arrName.concat("," + item.name)
+          }
+          // arrName = item.name + "," 
+          arrId.push(item.id)
+        })
+        this.selcetPersonName[this.formTitleName] = arrName.slice(0,arrName.length-1)
+        this.selcetPersonId = arrId
+        
+        this.nowFormTitle.forEach((item)=>{
+          if(item.type == 'upload'){
+            item.disabled = true
+          }
+        })
+        console.log(this.nowFormTitle)
         if (this.current < 2) {
           this.current += 1
         }
-      }else{
+        this.$refs.form.loadData()
+      }else if(this.$refs.person.rightColumnsData.length == 1){
+        let arrName = ''
+        let arrId = []
+        this.$refs.person.rightColumnsData.forEach((item)=>{
+          // arrName.push(item.name)
+          arrName = item.name + "," 
+          arrId.push(item.id)
+        })
+        this.selcetPersonName.name = arrName
+        this.selcetPersonId = arrId
+        if (this.current < 2) {
+          this.current += 1
+        }
+        this.nowFormTitle = this.formTitle
+        this.nowFormTitle.forEach((item)=>{
+          if(item.type == 'upload'){
+            item.disabled = false
+          }
+        })
+        console.log(this.nowFormTitle)
+         this.$refs.form.loadData()
+      }
+      else{
         this.$message.warning('请先选择至少一位人员');
       }
     },
@@ -91,11 +146,20 @@ export default {
     },
     handleOk(params) {
       this.loading=true
-      let form = {
-        personData:this.$refs.person.rightColumnsData,
-        formData:params
-      }
+      // let form = {
+      //   personData:this.$refs.person.rightColumnsData,
+      //   formData:params
+      // }
       console.log(params)
+      
+      // let newparams = {
+      //   startDate:params.startDate,
+      //   probation:params.probation,
+      //   contractPeriod:params.contractPeriod,
+      //   endDate:params.probation
+      // }
+      params.endDate = '2020-16-15'
+      params.policeId = this.selcetPersonId 
       console.log("1监听了 modal ok 事件");
       if(params.fileList){
         const formData = new FormData();
@@ -103,15 +167,15 @@ export default {
           formData.append('files[]', file);
         });
         console.log(formData)
-        form.fileData = formData
+        // form.fileData = formData
+        this.file = formData
       }
+      console.log(this.file)
       setTimeout(()=>{
-        const result = this.submitFun(form);
+        const result = this.submitFun(params,this.file);
           result
             .then((res) => {
-              console.log(form)
-              console.log(res);
-              this.$message.success('成功');
+              this.$message.success(res.msg);
               this.handleCancel()
             })
             .catch((err) => {

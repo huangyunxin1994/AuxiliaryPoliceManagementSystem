@@ -15,7 +15,7 @@
             </a-col>
             <a-col :md="16" :sm="24">
               <a-form-item label="组织选择">
-                <a-tree-select
+                <!-- <a-tree-select
                   v-model="value"
                   style="width: 100%"
                   :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
@@ -25,7 +25,11 @@
                   placeholder="请选择组织"
                   tree-default-expand-all
                 >
-                </a-tree-select>
+                </a-tree-select> -->
+                <tree-select 
+                  ref="treeSelect"
+                  @handleTreeChange="handleTreeChange"
+                ></tree-select>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24" style="margin-bottom:24px">
@@ -75,7 +79,7 @@
                                  <a-button type="primary" size="small" :disabled="selectedRightRows.length===0" @click="handleDel">移除</a-button>
                              </a-col>
                          </a-row>
-                          </template>
+                    </template>
                 </a-table>
             </a-col>
           </a-row>
@@ -88,6 +92,7 @@
 <script>
 import antTree from "@/components/tree_/Tree";
 import STable from "@/components/Table_"
+import treeSelect from "@/components/treeSelect/TreeSelect"
 
 const leftTableColumns = [
   {
@@ -99,7 +104,7 @@ const leftTableColumns = [
   {
     title: "辅警编号",
     dataIndex: "number",
-     key:"number",
+    key:"number",
     width: 100,
   },
   {
@@ -236,87 +241,22 @@ export default {
   name: "Step1",
   components: {
     antTree,
-    STable
+    STable,
+    treeSelect
   },
   data() {
     return {
       leftColumns: leftTableColumns,
-      leftColumnsData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                id: "15656",
-                name: "辅警1",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              },
-              {
-                id: "16585",
-                name: "辅警2",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              },
-              {
-                id: "15648",
-                name: "辅警3",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              },
-              {
-                id: "59542",
-                name: "辅警4",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              },
-              {
-                id: "156563",
-                name: "辅警5",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              },
-              {
-                id: "165855",
-                name: "辅警6",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              },
-              {
-                id: "156487",
-                name: "辅警7",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              },
-              {
-                id: "595428",
-                name: "辅警8",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              },
-              {
-                id: "156569",
-                name: "辅警9",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              },
-              {
-                id: "1658510",
-                name: "辅警10",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              }
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-            this.tableData = res.data
-            res.data = res.data.filter(x => !this.rightColumnsData.some(i=>i.id===x.id))
-            console.log(res.data)
-          return res;
-        });
+      queryParams:{
+        organizationId:''
+      },
+      leftColumnsData: params => {
+        let param = Object.assign(params,this.queryParams)
+        return this.$api.auxiliaryPoliceService.getAuxiliaryPoliceData(param).then((res)=>{
+          this.tableData=res.data.data.list;
+          res.data.data.list=res.data.data.list.filter(x=>!this.rightColumnsData.some(i=>i.id===x.id))
+          return res.data
+        })
       },
       rightColumns: rightTableColumns,
       rightColumnsData:[],
@@ -334,17 +274,21 @@ export default {
       selectedLeftRowKeys: [],
       selectedLeftRows: [],
       selectedRightRowKeys: [],
-      selectedRightRows:[]
+      selectedRightRows:[],
+      organizationId:'',//组织树选择的组织id
     };
   },
   mounted(){
       
-        },
+  },
         
   methods: {
       handleAdd(){
           this.rightColumnsData=[...this.rightColumnsData,
           ...this.tableData.filter(x => this.selectedLeftRows.some(i=>i.id===x.id))]
+          
+          console.log(this.selectedLeftRows)
+          console.log(this.selectedRightRows)
           this.selectedLeftRows=[]
             this.selectedRightRows=[]
            this.selectedLeftRowKeys=[]
@@ -410,6 +354,10 @@ export default {
       this.selectedRightRowKeys = selectedRowKeys;
       this.selectedRightRows = selectedRows;
     },
+    // 获得组织选择的组织id
+    handleTreeChange(data){
+      this.organizationId = data
+    }
   },
   computed:{
       rowSelection() {
