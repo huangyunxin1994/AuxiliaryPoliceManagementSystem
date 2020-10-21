@@ -21,7 +21,8 @@ const contractService = {
         const endDate =  DateAdd('m',params.contractPeriod,new Date(params.startDate))
         params.endDate = moment(endDate).format('YYYY-MM-DD')
         const contract = params;
-        const policeId = params.policeId
+        const policeId=[]
+        params.police.map( i => policeId.push(i.id))
         const para = {
             contract:contract,
             policeId:policeId

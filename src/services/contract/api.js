@@ -1,5 +1,8 @@
 //跨域代理前缀
-const API_PROXY_PREFIX='/api'
+const API_PROXY_PREFIX={
+  lk:'/api/lk',
+  rzh:'/api/rzh'
+}
 const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX
 // const BASE_URL = process.env.VUE_APP_API_BASE_URL
 module.exports = {
@@ -9,6 +12,6 @@ module.exports = {
   // POSTBYUSER:`${BASE_URL}/OvertimeLeave/OvertimeLeave/Statistics`,//管理员新增辅警请假或加班申请
   // STATISTICS:`${BASE_URL}/OvertimeLeave/OvertimeLeave/user`,//获取加班或请假统计分页列表
 
-  GETDATA:`${BASE_URL}/contract/`,//获取合同管理信息列表
-  POSTdATA:`${BASE_URL}/contract/`,//获取合同管理信息列表
+  GETDATA:`${BASE_URL.lk}/contract/`,//获取合同管理信息列表
+  POSTdATA:`${BASE_URL.lk}/contract/`,//获取合同管理信息列表
 }

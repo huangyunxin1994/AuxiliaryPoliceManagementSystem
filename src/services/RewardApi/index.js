@@ -1,6 +1,6 @@
 import {GETREWARDS,POSREWARD,DELETEREWARD,GETREWARD} from './api'
 import {request, METHOD} from '@/utils/request'
-import Qs from 'qs'
+// import Qs from 'qs'
 
 const rewardService = {
     /**
@@ -17,16 +17,33 @@ const rewardService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     postReward(params) {
-        return request(POSREWARD, METHOD.POST, Qs.stringify(params))
+        let reward = Object.assign({},params)
+         delete reward.police
+        let police = []
+        params.police.map(i =>{
+            let params ={}
+            const {id,name,number,organizationName,organizationId} = i
+            params.id = id
+            params.name = name
+            params.number = number
+            params.organizationName = organizationName
+            params.organizationId = organizationId
+            police.push(params)
+        })
+        const para = {
+            reward:reward,
+            police:police
+        }
+        return request(POSREWARD, METHOD.POST, para)
     },
     /**
      * 根据id删除奖励信息
-     * @param id 删除的证件或装备id
+     * @param params 删除的证件或装备id
      * @returns {Promise<AxiosResponse<T>>}
      */
-    deleteReward(id) {
-        const DELETERERSFLWARD = DELETEREWARD+ id
-        return request(DELETERERSFLWARD, METHOD.DELETE)
+    deleteReward(params) {
+        console.log(params)
+        return request(DELETEREWARD, METHOD.DELETE, {data:params} )
     },
     /**
      * 根据辅警id查询奖励信息

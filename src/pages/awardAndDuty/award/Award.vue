@@ -6,7 +6,10 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="模糊查询">
-                <a-input placeholder="请输入要查询的关键词" />
+                <a-input
+                  v-model="queryParam.name"
+                  placeholder="请输入要查询的关键词"
+                />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -16,13 +19,8 @@
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="配发日期">
-                  <a-range-picker  style="width: 100%"/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="有效期限">
-                   <a-range-picker  style="width: 100%"/>
+                <a-form-item label="授予日期">
+                  <a-range-picker style="width: 100%" />
                 </a-form-item>
               </a-col>
             </template>
@@ -36,9 +34,7 @@
                 <a-button type="primary" @click="$refs.table.refresh(true)"
                   >查询</a-button
                 >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                <a-button style="margin-left: 8px" @click="refreshTable"
                   >重置</a-button
                 >
                 <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -53,10 +49,10 @@
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
         <a-dropdown v-if="selectedRowKeys.length > 0">
-          <a-menu slot="overlay">
-            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-            <!-- lock | unlock -->
-            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
+          <a-menu slot="overlay"  @click="handleDel">
+            <a-menu-item key="1"
+              ><a-icon type="delete" />删除</a-menu-item
+            >
           </a-menu>
           <a-button style="margin-left: 8px">
             批量操作 <a-icon type="down" />
@@ -65,25 +61,13 @@
       </div>
       <s-table
         ref="table"
-        rowKey="key"
+        :rowKey="(record) => record.id"
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :rowSelection="rowSelection"
         :scroll="{ y: 550, x: 800 }"
         showPagination="auto"
       >
-        <template slot="type" slot-scope="type">
-          <span>{{ type | typeFilter }}</span>
-        </template>
-        <template slot="isEnable" slot-scope="isEnable">
-          <a-badge
-            :status="isEnable == '1' ? 'processing' : 'error'"
-            :text="isEnable | statusFilter"
-          />
-        </template>
-        <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">审批</a>
-        </span>
       </s-table>
     </a-card>
     <form-step
@@ -93,6 +77,7 @@
       :rules="rules"
       :stepTitle="stepTitle"
       :submitFun="submitFun"
+      @refreshTable="refreshTable"
     ></form-step>
   </div>
 </template>
@@ -102,162 +87,51 @@ import { mapState } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import formStep from "@/components/stepForm/StepForm";
-import treeSelect from "@/components/treeSelect/TreeSelect"
+import treeSelect from "@/components/treeSelect/TreeSelect";
 const formTitle = [
   {
-    label: "请假类型",
-    name: "type",
-    type: "select",
-    placeholder: "请选择请假类型",
-    select: [
-      { value: 1, name: "事假" },
-      { value: 2, name: "病假" },
-      { value: 3, name: "调休" },
-      { value: 4, name: "年假" },
-      { value: 5, name: "婚假" },
-      { value: 6, name: "产假" },
-      { value: 7, name: "陪产假" },
-      { value: 8, name: "哺乳假" },
-      { value: 9, name: "丧假" },
-    ],
-  },
-  {
-    label: "开始时间",
-    name: "startTime",
-    type: "picker",
-    placeholder: "请选择请假开始时间",
-  },
-  {
-    label: "结束时间",
-    name: "endTime",
-    type: "picker",
-    placeholder: "请选择请假结束时间",
-  },
-  {
-    label: "请假原因",
+    label: "奖励原因",
     name: "reason",
     type: "textarea",
-    placeholder: "请输入请假原因",
-  },
-];
-const formCheckTitle = [
-  
-  {
-    label: "姓名",
-    name: "policeName",
-    type: "text",
-    smCol: { span: 12 },
-    labelCol:{
-      xs: { span: 24 },
-      sm: { span: 14 }
-    },
-    wrapperCol:{
-      xs: { span: 24 },
-      sm: { span: 10 }
-    }
-  },
-  
-  {
-    label: "警员编号",
-    name: "number",
-    type: "text",
-    smCol: { span: 12 },
-    
+    placeholder: "请输入奖励原因",
   },
   {
-    label: "开始时间",
-    name: "startTime",
-    type: "text",
-    smCol: { span: 12 },
-    labelCol:{
-      xs: { span: 24 },
-      sm: { span: 14 }
-    },
-    wrapperCol:{
-      xs: { span: 24 },
-      sm: { span: 10 }
-    }
+    label: "奖励批准机关",
+    name: "approvalAuthority",
+    type: "input",
+    placeholder: "请输入奖励批准机关",
   },
   {
-    label: "结束时间",
+    label: "荣誉称号名称",
     name: "endTime",
-    type: "text",
-    smCol: { span: 12 }
+    type: "input",
+    placeholder: "请输入荣誉称号名称",
   },
   {
-    label: "时长(小时)",
-    name: "duration",
-    type: "text",
-    smCol: { span: 12 },
-    labelCol:{
-      xs: { span: 24 },
-      sm: { span: 14 }
-    },
-    wrapperCol:{
-      xs: { span: 24 },
-      sm: { span: 10 }
-    }
+    label: "授予日期",
+    name: "approvalDate",
+    type: "picker",
+    placeholder: "请选择奖励授予日期",
   },
   {
-    label: "请假类型",
-    name: "type",
-    type: "text",
-    filter:{
-      1: "事假",
-      2: "病假",
-      3: "调休",
-      4: "年假",
-      5: "婚假",
-      6: "产假",
-      7: "陪产假",
-      8: "哺乳假",
-      9: "丧假",
-    },
-    smCol: { span: 12 },
+    label: "荣誉称号授予单位",
+    name: "company",
+    type: "input",
+    placeholder: "请输入荣誉称号授予单位",
   },
   {
-    label: "请假原因",
-    name: "reason",
-    type: "text",
+    label: "荣誉称号级别",
+    name: "honoraryTitle",
+    type: "input",
+    placeholder: "请输入荣誉称号级别",
   },
-  {
-    label: "是否通过",
-    name: "approvalResults",
-    type: "radio",
-    select:[
-      {name:"是", value:1},
-      {name:"否", value:2}
-    ]
-  },
-  {
-    label: "审批备注",
-    name: "approvalRemake",
-    type: "textarea",
-  }
 ];
-const stepTitle = [{ title: "选择人员" }, { title: "填写请假信息" }];
+const stepTitle = [{ title: "选择人员" }, { title: "填写奖励信息" }];
 const rules = {
-  type: [{ required: true, message: "请选择请假类型", trigger: "change" }],
-  startTime: [
-    { required: true, message: "请选择请假开始时间", trigger: "change" },
+  reason: [{ required: true, message: "请输入奖励原因", trigger: "change" }],
+  approvalDate: [
+    { required: true, message: "请选择奖励授予日期", trigger: "change" },
   ],
-  endTime: [
-    { required: true, message: "请选择请假结束时间", trigger: "change" },
-  ],
-  reason: [{ required: true, message: "请输入请假原因", trigger: "blur" }],
-};
-const submitFun = () => {
-  return new Promise((resolve) => {
-    resolve({
-      data: [],
-      pageSize: 10,
-      pageNo: 1,
-      totalPage: 1,
-      totalCount: 10,
-    });
-  }).then((res) => {
-    return res;
-  });
 };
 export default {
   name: "AskForLeave",
@@ -265,14 +139,18 @@ export default {
     STable,
     TaskForm,
     formStep,
-    treeSelect
+    treeSelect,
   },
   data() {
     return {
       formTitle,
       rules,
       stepTitle,
-      submitFun,
+      submitFun: (parameter) => {
+        return this.$api.rewardService.postReward(parameter).then((res) => {
+          return res.data;
+        });
+      },
       // 高级搜索 展开/关闭
       advanced: false,
       value: null,
@@ -291,9 +169,9 @@ export default {
         },
         {
           title: "姓名",
-          dataIndex: "policeName",
-          key: "policeName",
-          width: 100,
+          dataIndex: "name",
+          key: "name",
+          width: 80,
         },
         {
           title: "警员编号",
@@ -305,51 +183,54 @@ export default {
           title: "组织",
           dataIndex: "organizationName",
           key: "organizationName",
-          width: 180,
+          width: 150,
           ellipsis: true,
         },
         {
           title: "奖励说明",
-          dataIndex: "startTime",
-          key: "startTime",
+          dataIndex: "reason",
+          key: "reason",
           ellipsis: true,
         },
         {
           title: "奖励批准机关",
-          dataIndex: "endTime",
-          key: "endTime",
+          dataIndex: "approvalAuthority",
+          key: "approvalAuthority",
           width: 150,
           ellipsis: true,
         },
         {
-          title: "奖励批准日期",
-          dataIndex: "duration",
-          key: "duration",
-          width: 100,
+          title: "授予日期",
+          dataIndex: "approvalDate",
+          key: "approvalDate",
+          width: 180,
         },
         {
           title: "荣誉称号授予单位",
-          dataIndex: "type",
-          key: "type",
+          dataIndex: "company",
+          key: "company",
           width: 150,
         },
         {
           title: "荣誉称号级别",
-          dataIndex: "reason",
-          key: "reason",
-          width: 100,
-        }
+          dataIndex: "honoraryTitle",
+          key: "honoraryTitle",
+          width: 150,
+        },
       ],
       //查询条件参数
-      queryParam:{},
+      queryParam: {
+        name: "",
+        organizationId: "",
+      },
       loadScheduleData: (parameter) => {
         const requestParameters = Object.assign({}, parameter, this.queryParam);
         return this.$api.rewardService
           .getRewardList(requestParameters)
           .then((res) => {
-            res.data.data.list.map((i,k)=>{
-              i.key=k+1
-            })
+            res.data.data.list.map((i, k) => {
+              i.key = k + 1;
+            });
             return res.data;
           });
       },
@@ -366,7 +247,7 @@ export default {
       console.log(record);
       let formProps = {
         record: record,
-        formTitle: formCheckTitle,
+        formTitle: formTitle,
         submitFun: () => {
           return new Promise((resolve) => {
             resolve({
@@ -431,10 +312,42 @@ export default {
         modalProps
       );
     },
-    handleTreeChange(val){
-      this.value = val
-      console.log("this.value = " + this.value)
-    }
+    handleTreeChange(val) {
+      this.queryParam.organizationId = val;
+    },
+    handleDel(e) {
+        console.log(e)
+      const _this = this;
+      this.$confirm({
+        title: "警告",
+        content: `真的要删除吗?`,
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          console.log(_this);
+          _this.$api.rewardService
+            .deleteReward({ list:_this.selectedRowKeys })
+            .then((res) => {
+              if (res.data.code == 0) {
+                _this.$message.success(res.data.msg);
+                _this.$refs.table.refresh();
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
+        },
+        onCancel() {},
+      });
+    },
+    //重新加载
+    refreshTable() {
+      this.$refs.table.refresh(true);
+    },
   },
   filters: {
     statusFilter(status) {

@@ -37,11 +37,18 @@ console.log(process.env.VUE_APP_API_BASE_URL)
 module.exports = {
   devServer: {
     proxy: {
-      '/api': { //此处要与 /services/api.js 中的 API_PROXY_PREFIX 值保持一致
-        target: 'http://192.168.1.8:8181',//process.env.VUE_APP_API_BASE_URL,
+      '/api/lk': { //此处要与 /services/api.js 中的 API_PROXY_PREFIX 值保持一致
+        target: process.env.VUE_APP_API_BASE_URL,
         changeOrigin: true,
         pathRewrite: {
-          '^/api': ''
+          '^/api/lk': ''
+        }
+      },
+      '/api/rzh': { //此处要与 /services/api.js 中的 API_PROXY_PREFIX 值保持一致
+        target: process.env.VUE_APP_API_BASE_URL2,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/rzh': ''
         }
       }
     }

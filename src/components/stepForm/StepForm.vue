@@ -106,7 +106,6 @@ export default {
       current: 0,
       loading: false,
       selcetPersonName: {},
-      selcetPersonId: [],
       nowFormTitle: [],
       file: "",
     };
@@ -119,17 +118,14 @@ export default {
       const columnData = this.$refs.person.rightColumnsData;
       if (columnData.length > 0) {
         let arrName = "";
-        let arrId = [];
         columnData.forEach((item) => {
           arrName = item.name + ",";
-          arrId.push(item.id);
         });
         this.selcetPersonName[this.formTitleName] = arrName.slice(
           0,
           arrName.length - 1
         );
         this.$refs.form.loadData()
-        this.selcetPersonId = arrId;
         if (columnData.length > 1) {
           this.nowFormTitle.forEach((item) => {
             if (item.type == "upload") {
@@ -154,15 +150,14 @@ export default {
       this.$refs.form.nextStep();
     },
     handleOk(params) {
-      // this.loading=true
-      // console.log(params);
-      // params.endDate = "2020-16-15";
-      params.policeId = this.selcetPersonId;
+      this.loading=true
+      params.police = this.$refs.person.rightColumnsData;
       setTimeout(() => {
         const result = this.submitFun(params);
         result
           .then((res) => {
             this.$message.success(res.msg);
+            this.$emit('refreshTable')
             this.handleCancel();
           })
           .catch((err) => {
