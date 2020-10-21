@@ -1,5 +1,7 @@
 import {GETDATA,POSTdATA} from './api'
 import {request, METHOD} from '@/utils/request'
+import {DateAdd} from '@/utils/util'
+import moment from 'moment'
 
 const contractService = {
     /**
@@ -15,12 +17,21 @@ const contractService = {
         return request(GETDATA, METHOD.GET, params)
     },
     // 批量添加合同信息
-    addContractData(obj){
+    addContractData(params){
+        const endDate =  DateAdd('m',params.contractPeriod,new Date(params.startDate))
+        params.endDate = moment(endDate).format('YYYY-MM-DD')
+        const contract = params;
+        const policeId = params.policeId
         const para = {
-            contract:obj,
-            policeId:obj.policeId
-          }
-        return request(POSTdATA, METHOD.POST, para)
+            contract:contract,
+            policeId:policeId
+        }
+        const formData = new FormData();
+        formData.append("file", params.fileList[0]);
+        formData.append("requestBody", JSON.stringify(para) );
+        // form.fileData = formData
+        return request(POSTdATA, METHOD.POST, formData)
+        
     },
 }
 

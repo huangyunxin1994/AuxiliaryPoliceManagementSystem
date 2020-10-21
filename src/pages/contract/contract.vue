@@ -131,22 +131,14 @@ const formTitle = [
     name: "startDate",
     type: "picker",
     refName: "startDate",
-    placeholder: "请选择工作起始日期",
+    placeholder: "请选择工作起始日期"
   },
   {
     label: "合同期限(月)",
     name: "contractPeriod",
     type: "input",
     refName: "contractPeriod",
-    placeholder: "请输入合同期限",
-  },
-  {
-    label: "合同结束日期",
-    name: "endDate",
-    type: "input",
-    refName: "endDate",
-    placeholder: "请输入合同期限",
-    disabled:true
+    placeholder: "请输入合同期限"
   },
   {
     label: "试用结束日期",
@@ -160,7 +152,6 @@ const formTitle = [
     name: "uploadFile",
     type: "upload",
     refName: "uploadFile",
-    disabled:true
   },
 ];
 const stepTitle = [{title:'选择人员'},{title:'填写合同信息'}]
@@ -252,7 +243,7 @@ export default {
       ],
       queryParams:{},
       loadScheduleData: params => {
-        let param = Object.assign(params,this.queryParams)
+        let param = Object.assign(params)
         return this.$api.contractService.getContractData(param).then((res)=>{
           return res.data
         })

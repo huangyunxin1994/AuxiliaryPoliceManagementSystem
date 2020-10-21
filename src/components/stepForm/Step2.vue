@@ -53,7 +53,7 @@
                     v-model="form[item.name]"
                     v-else-if="item.type == 'picker'"
                     :disabled="item.disabled"
-                    :show-time="{ format: 'HH:mm:ss' }"
+                    :show-time="item.showTime&&{ format: 'HH:mm:ss' }||false"
                     valueFormat="YYYY-MM-DD HH:mm:ss"
                     type="date"
                     :placeholder="item.placeholder"
@@ -216,10 +216,18 @@ export default {
     this.formTitle.forEach((i) => {
           this.dataSource.push(i.name);
     });
-    console.log("this.dataSource.length = " + this.dataSource.length)
     this.loadData()
+    
   },
   methods: {
+    loadData(){
+      if (this.record) {
+          this.form = Object.assign(
+            JSON.parse(JSON.stringify(this.record)) ,
+            pick(this.record, this.dataSource)
+          );
+        }
+    },
     nextStep() {
       console.log(this.form)
       this.$refs.ruleForm.validate((valid) => {
@@ -235,21 +243,12 @@ export default {
     prevStep() {
       this.$emit("prevStep");
     },
-    loadData(){
-        if (this.record) {
-          this.form = Object.assign(
-            JSON.parse(JSON.stringify(this.record)) ,
-            pick(this.record, this.dataSource)
-          );
-          console.log(this.form)
-        }
-    },
     // 上传文件
     beforeUpload(file){
       this.form.fileList=[...this.fileList, file];
       return false
     },
-  },
+  }
 };
 </script>
 
