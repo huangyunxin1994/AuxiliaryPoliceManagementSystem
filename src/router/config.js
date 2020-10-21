@@ -31,7 +31,7 @@ const options = {
           path: 'home',
           name: '首页',
           meta: {
-            icon: 'home'
+            icon: 'home',
           },
           component: () => import('@/pages/home/home')
         },
@@ -40,12 +40,16 @@ const options = {
           name: '辅警资料',
           meta: {
             icon: 'user',
+           
           },
           component: BlankView,
           children: [
             {
               path: 'demo1',
               name: '辅警资料',
+              meta: {
+                invisible: true
+              },
               component: () => import('@/pages/demo/Demo'),
             },
             {
@@ -131,11 +135,17 @@ const options = {
             {
               path: 'newEducation',
               name: '新建培训',
+              meta: {
+                invisible: true
+              },
               component: () => import('@/pages/education/newEducation/newEducation'),
             },
             {
               path: 'educationDetails',
               name: '培训详情',
+              meta: {
+                invisible: true
+              },
               component: () => import('@/pages/education/educationDetails/educationDetails'),
             }
           ]
@@ -161,17 +171,22 @@ const options = {
           ]
         },
         {
-          path: 'parent7',
-          name: '奖励与责任追究',
+          path: 'awardduty',
+          name: '奖励与追责',
           meta: {
             icon: 'thunderbolt'
           },
           component: BlankView,
           children: [
             {
-              path: 'demo2',
-              name: '演示页面2',
-              component: () => import('@/pages/demo'),
+              path: 'award',
+              name: '奖励管理',
+              component: () => import('@/pages/awardAndDuty/award/Award'),
+            },
+            {
+              path: 'duty',
+              name: '责任追究',
+              component: () => import('@/pages/awardAndDuty/duty/Duty'),
             }
           ]
         },

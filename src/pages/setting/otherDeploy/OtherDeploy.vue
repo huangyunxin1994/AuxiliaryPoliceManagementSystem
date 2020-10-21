@@ -72,7 +72,7 @@
           </div>
           <s-table
             ref="table"
-            rowKey="key"
+            :rowKey="(record)=>record.id"
             :columns="credColumns"
             :data="loadCredData"
             :rowSelection="rowCredSelection"
@@ -113,7 +113,7 @@
           </div>
           <s-table
             ref="table"
-            rowKey="key"
+            :rowKey="(record)=>record.id"
             :columns="equpColumns"
             :data="loadEqupData"
             :rowSelection="rowEqupSelection"
@@ -228,57 +228,23 @@ export default {
           width: 150,
         },
       ],
-      loadCredData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "证件1",
-                remake: "证件1",
-                type: 1,
-              },
-              {
-                key: "2",
-                name: "证件2",
-                remake: "证件2",
-                type: 1,
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      // 查询条件参数
+      queryEParam: {},
+      queryCParam: {},
+      loadCredData: (parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.queryCParam)
+        return this.$api.otherItemsService.getCredDataList(requestParameters)
+          .then(res => {
+            return res.data
+          })
       },
-      loadEqupData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "装备1",
-                remake: "装备1",
-                type: 1,
-              },
-              {
-                key: "2",
-                name: "装备2",
-                remake: "装备2",
-                type: 1,
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      
+      loadEqupData: (parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.queryEParam)
+        return this.$api.otherItemsService.getEqupDataList(requestParameters)
+          .then(res => {
+            return res.data
+          })
       },
       selectedCredRowKeys: [],
       selectedCredRows: [],
@@ -290,6 +256,12 @@ export default {
         { id: 3, edit: false, name: "三级" },
       ],
     };
+  },
+  created(){
+    this.$api.otherItemsService.getCommDataList()
+          .then(res => {
+            console.log(res)
+          })
   },
   methods: {
     /**

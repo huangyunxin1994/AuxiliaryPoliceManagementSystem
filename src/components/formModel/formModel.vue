@@ -228,22 +228,22 @@ export default {
     onOk() {
       console.log("监听了 modal ok 事件");
       return new Promise((resolve) => {
-        
             setTimeout(()=>{
               resolve(true);
-              // const result = this.submitFun(this.form);
-              //   result
-              //     .then((res) => {
-              //       console.log(res);
-              //       this.resetForm()
-              //       this.$message.success('成功');
-              //       resolve(true);
-              //     })
-              //     .catch((err) => {
-              //       console.log(err);
-              //       resolve(true);
-              //     });
-            },3000)
+              const result = this.submitFun(this.form);
+                result
+                  .then((res) => {
+                    console.log(res);
+                    this.resetForm()
+                    this.$message.success(res.msg);
+                    resolve(true);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                     this.$message.success(err.msg);
+                    resolve(true);
+                  });
+            },1000)
           
         
         });

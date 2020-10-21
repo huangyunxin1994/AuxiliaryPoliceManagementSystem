@@ -16,36 +16,13 @@
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="是否审批">
-                  <a-select
-                    default-value=""
-                    style="width: 100%"
-                    @change="handleChange"
-                  >
-                    <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option value="1"> 是 </a-select-option>
-                    <a-select-option value="2"> 否 </a-select-option>
-                  </a-select>
+                <a-form-item label="配发日期">
+                  <a-range-picker  style="width: 100%"/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
-                <a-form-item label="请假类型">
-                  <a-select
-                    default-value=""
-                    style="width: 100%"
-                    @change="handleChange"
-                  >
-                    <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option value="1"> 事假 </a-select-option>
-                    <a-select-option value="2"> 病假 </a-select-option>
-                    <a-select-option value="3"> 调休 </a-select-option>
-                    <a-select-option value="4"> 年假 </a-select-option>
-                    <a-select-option value="5"> 婚假 </a-select-option>
-                    <a-select-option value="6"> 产假 </a-select-option>
-                    <a-select-option value="7"> 陪产假 </a-select-option>
-                    <a-select-option value="8"> 哺乳假 </a-select-option>
-                    <a-select-option value="9"> 丧假 </a-select-option>
-                  </a-select>
+                <a-form-item label="有效期限">
+                   <a-range-picker  style="width: 100%"/>
                 </a-form-item>
               </a-col>
             </template>
@@ -332,71 +309,49 @@ export default {
           ellipsis: true,
         },
         {
-          title: "开始时间",
+          title: "奖励说明",
           dataIndex: "startTime",
           key: "startTime",
-          width: 150,
           ellipsis: true,
         },
         {
-          title: "结束时间",
+          title: "奖励批准机关",
           dataIndex: "endTime",
           key: "endTime",
           width: 150,
           ellipsis: true,
         },
         {
-          title: "时长(小时)",
+          title: "奖励批准日期",
           dataIndex: "duration",
           key: "duration",
           width: 100,
         },
         {
-          title: "请假类型",
+          title: "荣誉称号授予单位",
           dataIndex: "type",
           key: "type",
-          scopedSlots: { customRender: "type" },
           width: 150,
         },
         {
-          title: "请假原因",
+          title: "荣誉称号级别",
           dataIndex: "reason",
           key: "reason",
-          ellipsis: true,
-        },
-        {
-          title: "审批结果",
-          dataIndex: "approvalResults",
-          key: "approvalResults",
           width: 100,
-        },
-        {
-          title: "审批备注",
-          dataIndex: "approvalRemake",
-          key: "approvalRemake",
-          ellipsis: true,
-        },
-        {
-          title: "审批人",
-          dataIndex: "name",
-          key: "name",
-          width: 100,
-        },
-        {
-          table: "操作",
-          dataIndex: "action",
-          scopedSlots: { customRender: "action" },
-          width: 100,
-        },
+        }
       ],
-      //查询参数
-      queryParam:{type:2},
+      //查询条件参数
+      queryParam:{},
       loadScheduleData: (parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
-        return this.$api.overTimeService.getOverTimeLeave(requestParameters)
-          .then(res => {
-            return res.data
-          })
+        const requestParameters = Object.assign({}, parameter, this.queryParam);
+        return this.$api.rewardService
+          .getRewardList(requestParameters)
+          .then((res) => {
+            res.data.data.list.map((i,k)=>{
+              i.key=k+1
+            })
+            return res.data;
+          });
       },
       selectedRowKeys: [],
       selectedRows: [],

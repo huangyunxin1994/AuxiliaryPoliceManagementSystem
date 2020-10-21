@@ -86,11 +86,11 @@
           </div>
           <s-table
             ref="table"
-            rowKey="key"
+            :rowKey="(record)=>record.id"
             :columns="scheduleColumns"
             :data="loadScheduleData"
             :rowSelection="rowSelection"
-            :scroll="{ y: 600, x: 1300 }"
+            :scroll="{ y: 600, x: 800 }"
             showPagination="auto"
           >
             <template slot="isEnable" slot-scope="isEnable">
@@ -355,120 +355,127 @@ export default {
       // 查询条件参数
       queryParam: {},
       loadScheduleData: (parameter) => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                account: "admin",
-                name: "管理员",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-                postName: "辅警",
-                phone: "13584585258",
-                isEnable: ["1"],
-              },
-              {
-                key: "2",
-                account: "test",
-                name: "李四",
-                number: "FJ0585",
-                organizationName: "青秀区东葛路派出所",
-                postName: "辅警",
-                phone: "13584585258",
-                isEnable: ["1"],
-              },
-              {
-                key: "3",
-                account: "test",
-                name: "王五",
-                number: "FJ0585",
-                organizationName: "青秀区东葛路派出所",
-                postName: "辅警",
-                phone: "13584585258",
-                isEnable: ["1"],
-              },
-              {
-                key: "4",
-                account: "test",
-                name: "张三",
-                number: "FJ0585",
-                organizationName: "青秀区东葛路派出所",
-                postName: "辅警",
-                phone: "13584585258",
-                isEnable: ["1"],
-              },
-              {
-                key: "5",
-                account: "test",
-                name: "赵六",
-                number: "FJ0585",
-                organizationName: "青秀区东葛路派出所",
-                postName: "辅警",
-                phone: "13584585258",
-                isEnable: ["2"],
-              },
-              {
-                key: "6",
-                account: "test",
-                name: "赵六",
-                number: "FJ0585",
-                organizationName: "青秀区东葛路派出所",
-                postName: "辅警",
-                phone: "13584585258",
-                isEnable: ["2"],
-              },
-              {
-                key: "7",
-                account: "test",
-                name: "赵六",
-                number: "FJ0585",
-                organizationName: "青秀区东葛路派出所",
-                postName: "辅警",
-                phone: "13584585258",
-                isEnable: ["2"],
-              },
-              {
-                key: "8",
-                account: "test",
-                name: "赵六",
-                number: "FJ0585",
-                organizationName: "青秀区东葛路派出所",
-                postName: "辅警",
-                phone: "13584585258",
-                isEnable: ["2"],
-              },
-              {
-                key: "9",
-                account: "test",
-                name: "赵六",
-                number: "FJ0585",
-                organizationName: "青秀区东葛路派出所",
-                postName: "辅警",
-                phone: "13584585258",
-                isEnable: ["2"],
-              },
-              {
-                key: "10",
-                account: "test",
-                name: "赵六",
-                number: "FJ0585",
-                organizationName: "青秀区东葛路派出所",
-                postName: "辅警",
-                phone: "13584585258",
-                isEnable: ["2"],
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-            params: Object.assign(parameter, this.queryParam),
-          });
-        }).then((res) => {
-          return res;
-        });
+        const requestParameters = Object.assign({}, parameter, this.queryParam)
+        return this.$api.overTimeService.getOverTimeLeave(requestParameters)
+          .then(res => {
+            return res.result
+          })
       },
+      // loadScheduleData: (parameter) => {
+      //   return new Promise((resolve) => {
+      //     resolve({
+      //       data: [
+      //         {
+      //           key: "1",
+      //           account: "admin",
+      //           name: "管理员",
+      //           number: "FJ0584",
+      //           organizationName: "青秀区东葛路派出所",
+      //           postName: "辅警",
+      //           phone: "13584585258",
+      //           isEnable: ["1"],
+      //         },
+      //         {
+      //           key: "2",
+      //           account: "test",
+      //           name: "李四",
+      //           number: "FJ0585",
+      //           organizationName: "青秀区东葛路派出所",
+      //           postName: "辅警",
+      //           phone: "13584585258",
+      //           isEnable: ["1"],
+      //         },
+      //         {
+      //           key: "3",
+      //           account: "test",
+      //           name: "王五",
+      //           number: "FJ0585",
+      //           organizationName: "青秀区东葛路派出所",
+      //           postName: "辅警",
+      //           phone: "13584585258",
+      //           isEnable: ["1"],
+      //         },
+      //         {
+      //           key: "4",
+      //           account: "test",
+      //           name: "张三",
+      //           number: "FJ0585",
+      //           organizationName: "青秀区东葛路派出所",
+      //           postName: "辅警",
+      //           phone: "13584585258",
+      //           isEnable: ["1"],
+      //         },
+      //         {
+      //           key: "5",
+      //           account: "test",
+      //           name: "赵六",
+      //           number: "FJ0585",
+      //           organizationName: "青秀区东葛路派出所",
+      //           postName: "辅警",
+      //           phone: "13584585258",
+      //           isEnable: ["2"],
+      //         },
+      //         {
+      //           key: "6",
+      //           account: "test",
+      //           name: "赵六",
+      //           number: "FJ0585",
+      //           organizationName: "青秀区东葛路派出所",
+      //           postName: "辅警",
+      //           phone: "13584585258",
+      //           isEnable: ["2"],
+      //         },
+      //         {
+      //           key: "7",
+      //           account: "test",
+      //           name: "赵六",
+      //           number: "FJ0585",
+      //           organizationName: "青秀区东葛路派出所",
+      //           postName: "辅警",
+      //           phone: "13584585258",
+      //           isEnable: ["2"],
+      //         },
+      //         {
+      //           key: "8",
+      //           account: "test",
+      //           name: "赵六",
+      //           number: "FJ0585",
+      //           organizationName: "青秀区东葛路派出所",
+      //           postName: "辅警",
+      //           phone: "13584585258",
+      //           isEnable: ["2"],
+      //         },
+      //         {
+      //           key: "9",
+      //           account: "test",
+      //           name: "赵六",
+      //           number: "FJ0585",
+      //           organizationName: "青秀区东葛路派出所",
+      //           postName: "辅警",
+      //           phone: "13584585258",
+      //           isEnable: ["2"],
+      //         },
+      //         {
+      //           key: "10",
+      //           account: "test",
+      //           name: "赵六",
+      //           number: "FJ0585",
+      //           organizationName: "青秀区东葛路派出所",
+      //           postName: "辅警",
+      //           phone: "13584585258",
+      //           isEnable: ["2"],
+      //         },
+      //       ],
+      //       pageSize: 10,
+      //       pageNo: 1,
+      //       totalPage: 1,
+      //       totalCount: 10,
+      //       params: Object.assign(parameter, this.queryParam),
+      //     });
+      //   }).then((res) => {
+      //     return res;
+      //   });
+      // },
       selectedRowKeys: [],
       selectedRows: [],
     };

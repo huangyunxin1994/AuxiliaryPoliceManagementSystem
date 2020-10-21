@@ -25,17 +25,7 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <a-tree-select
-                  v-model="value"
-                  style="width: 100%"
-                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                  :tree-data="tree"
-                  :allowClear="true"
-                  :replaceFields="replaceFields"
-                  placeholder="请选择组织"
-                  tree-default-expand-all
-                >
-                </a-tree-select>
+                <tree-select @handleTreeChange="handleTreeChange"></tree-select>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -73,7 +63,7 @@
         rowKey="key"
         :columns="scheduleColumns"
         :data="loadScheduleData"
-        :scroll="{ y: 550, x: 1300 }"
+        :scroll="{ y: 550, x: 800 }"
         showPagination="auto"
       >
         <template slot="holiday" slot-scope="holiday">
@@ -97,118 +87,16 @@
 import { mapState } from "vuex";
 import moment from "moment";
 import STable from "@/components/Table_/";
-const tree = [
-  {
-    key: "key-01",
-    title: "研发中心",
-    icon: "mail",
-    count: "10",
-    scopedSlots: { title: "custom" },
-    children: [
-      {
-        key: "key-01-01",
-        title: "后端组",
-        icon: null,
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-01-01-01",
-            title: "JAVA",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-01-02",
-            title: "PHP",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-01-03",
-            title: "Golang",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-        ],
-      },
-      {
-        key: "key-01-02",
-        title: "前端组",
-        icon: null,
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-01-02-01",
-            title: "React",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-02-02",
-            title: "Vue",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-02-03",
-            title: "Angular",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-        ],
-      },
-      {
-        key: "key-02",
-        title: "财务部",
-        icon: "dollar",
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-02-01",
-            title: "会计核算",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-02-02",
-            title: "成本控制",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-02-03",
-            title: "内部控制",
-            icon: null,
-            scopedSlots: { title: "custom" },
-            children: [
-              {
-                key: "key-02-03-01",
-                title: "财务制度建设",
-                icon: null,
-                scopedSlots: { title: "custom" },
-              },
-              {
-                key: "key-02-03-02",
-                title: "会计核算",
-                icon: null,
-                scopedSlots: { title: "custom" },
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+import treeSelect from "@/components/treeSelect/TreeSelect"
 export default {
   name: "OvertimeLeaveCount",
   components:{
-    STable
+    STable,
+    treeSelect
   },
   data() {
     return {
       time1:moment(new Date()).format("YYYY年MM月"),
-      tree,
       showFormat:'YYYY年MM月',
       monthFormat: "YYYY-MM",
       // 高级搜索 展开/关闭
@@ -423,6 +311,11 @@ export default {
       console.log( moment(date).format("YYYY年MM月"))
       this.time1 = moment(date).format("YYYY年MM月")
     },
+    //树选择回调
+    handleTreeChange(val){
+      this.value = val
+      console.log("this.value = " + this.value)
+    }
   },
   filters: {
     statusFilter(status) {

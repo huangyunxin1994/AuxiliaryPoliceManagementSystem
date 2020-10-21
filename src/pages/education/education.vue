@@ -72,7 +72,7 @@
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="delete" style="margin-right: 10px" :disabled="selectedRowKeys.length == 0">删除培训</a-button>
-        <a-button type="primary" icon="plus">新建培训</a-button>
+        <a-button type="primary" icon="plus" @click="$router.push({path:'newEducation'})">新建培训</a-button>
         <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -90,7 +90,7 @@
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :rowSelection="rowSelection"
-        :scroll="{ y: 550, x: 1300 }"
+        :scroll="{ y: 550, x: 800 }"
         showPagination="auto"
       >
         <template slot="holiday" slot-scope="holiday">

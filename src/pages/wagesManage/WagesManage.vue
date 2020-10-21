@@ -25,22 +25,30 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <a-tree-select
-                  v-model="value"
-                  style="width: 100%"
-                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                  :tree-data="tree"
-                  :allowClear="true"
-                  :replaceFields="replaceFields"
-                  placeholder="请选择组织"
-                  tree-default-expand-all
-                >
-                </a-tree-select>
+                <tree-select @handleTreeChange="handleTreeChange"></tree-select>
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24">
+             <template v-if="advanced">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="工资状态">
+                  <a-select
+                    default-value=""
+                    style="width: 100%"
+                    @change="handleChange"
+                  >
+                    <a-select-option value=""> 全部 </a-select-option>
+                    <a-select-option value="1"> 已发放 </a-select-option>
+                    <a-select-option value="2"> 未发放 </a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </template>
+            <a-col :md="(!advanced && 8) || 24" :sm="24">
               <span
                 class="table-page-search-submitButtons"
+                :style="
+                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                "
               >
                 <a-button type="primary" @click="$refs.table.refresh(true)"
                   >查询</a-button
@@ -50,13 +58,19 @@
                   @click="() => (queryParam = {})"
                   >重置</a-button
                 >
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? "收起" : "展开" }}
+                  <a-icon :type="advanced ? 'up' : 'down'" />
+                </a>
               </span>
             </a-col>
           </a-row>
         </a-form>
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
-        <a-button type="primary" icon="export" >导出</a-button>
+        <a-button type="primary" icon="download" >查看工资表模板</a-button>
+        <a-button type="primary" icon="upload" style="margin-left: 8px">上传工资表</a-button>
+        <a-button type="primary" icon="sync" style="margin-left: 8px">同步工资表</a-button>
         <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -73,7 +87,7 @@
         rowKey="key"
         :columns="scheduleColumns"
         :data="loadScheduleData"
-        :scroll="{ y: 550, x: 1300 }"
+        :scroll="{ y: 550, x: 800 }"
         showPagination="auto"
       >
         <template slot="holiday" slot-scope="holiday">
@@ -97,118 +111,17 @@
 import { mapState } from "vuex";
 import moment from "moment";
 import STable from "@/components/Table_/";
-const tree = [
-  {
-    key: "key-01",
-    title: "研发中心",
-    icon: "mail",
-    count: "10",
-    scopedSlots: { title: "custom" },
-    children: [
-      {
-        key: "key-01-01",
-        title: "后端组",
-        icon: null,
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-01-01-01",
-            title: "JAVA",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-01-02",
-            title: "PHP",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-01-03",
-            title: "Golang",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-        ],
-      },
-      {
-        key: "key-01-02",
-        title: "前端组",
-        icon: null,
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-01-02-01",
-            title: "React",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-02-02",
-            title: "Vue",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-02-03",
-            title: "Angular",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-        ],
-      },
-      {
-        key: "key-02",
-        title: "财务部",
-        icon: "dollar",
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-02-01",
-            title: "会计核算",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-02-02",
-            title: "成本控制",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-02-03",
-            title: "内部控制",
-            icon: null,
-            scopedSlots: { title: "custom" },
-            children: [
-              {
-                key: "key-02-03-01",
-                title: "财务制度建设",
-                icon: null,
-                scopedSlots: { title: "custom" },
-              },
-              {
-                key: "key-02-03-02",
-                title: "会计核算",
-                icon: null,
-                scopedSlots: { title: "custom" },
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+import treeSelect from "@/components/treeSelect/TreeSelect"
 export default {
   name: "WagesManage",
   components:{
-    STable
+    STable,
+    treeSelect
   },
   data() {
     return {
       time1:moment(new Date()).format("YYYY年MM月"),
-      tree,
+      advanced:false,
       showFormat:'YYYY年MM月',
       monthFormat: "YYYY-MM",
       // 高级搜索 展开/关闭
@@ -242,98 +155,21 @@ export default {
           title: "组织",
           dataIndex: "organizationName",
           key: "organizationName",
-          width: 180,
           ellipsis: true,
         },
         {
-          title: "岗位",
+          title: "状态",
           dataIndex: "postName",
           key: "postName",
           width: 100,
-          ellipsis: true,
-        },
-        {
-          title: "加班时长(小时)",
-          dataIndex: "endTime",
-          key: "endTime",
-          width: 150,
-        },
-        {
-          title: "年假(小时)",
-          dataIndex: "duration",
-          key: "duration",
-          width: 100,
-        },
-        {
-          title: "产假(小时)",
-          dataIndex: "holiday",
-          key: "holiday",
-          width: 100,
-        },
-        {
-          title: "陪产假(小时)",
-          dataIndex: "a1",
-          key: "a1",
-          width: 120,
-        },
-        {
-          title: "婚假(小时)",
-          dataIndex: "a2",
-          key: "a2",
-          width: 100,
-        },
-        {
-          title: "例假(小时)",
-          dataIndex: "a3",
-          key: "a3",
-          width: 100,
-        },
-        {
-          title: "丧假(小时)",
-          dataIndex: "a4",
-          key: "a4",
-          width: 100,
-        },
-        {
-          title: "哺乳假(小时)",
-          dataIndex: "a5",
-          key: "a5",
-          width: 120,
-        },
-        {
-          title: "事假(小时)",
-          dataIndex: "a6",
-          key: "a6",
-          width: 100,
-        },
-        {
-          title: "调休(小时)",
-          dataIndex: "a8",
-          key: "a8",
-          width: 100,
-        },
-        {
-          title: "病假(小时)",
-          dataIndex: "a9",
-          key: "a9",
-          width: 100,
-        },
-        {
-          title: "其他(小时)",
-          dataIndex: "a10",
-          key: "a10",
-          width: 100,
-        },
-        {
-          title: "请假合计(小时)",
-          dataIndex: "a11",
-          key: "a11",
-          width: 150,
         }
       ],
-      loadScheduleData: () => {
+      queryParam:{},
+      loadScheduleData: (parameter) => {
+        
         return new Promise((resolve) => {
           resolve({
+              params:parameter,
             data: [
               {
                 key: "1",
@@ -423,6 +259,14 @@ export default {
       console.log( moment(date).format("YYYY年MM月"))
       this.time1 = moment(date).format("YYYY年MM月")
     },
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
+    },
+    //树选择回调
+    handleTreeChange(val){
+      this.value = val
+      console.log("this.value = " + this.value)
+    }
   },
   filters: {
     statusFilter(status) {

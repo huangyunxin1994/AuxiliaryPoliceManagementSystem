@@ -14,41 +14,6 @@
                 <tree-select @handleTreeChange="handleTreeChange"></tree-select>
               </a-form-item>
             </a-col>
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="是否审批">
-                  <a-select
-                    default-value=""
-                    style="width: 100%"
-                    @change="handleChange"
-                  >
-                    <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option value="1"> 是 </a-select-option>
-                    <a-select-option value="2"> 否 </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="请假类型">
-                  <a-select
-                    default-value=""
-                    style="width: 100%"
-                    @change="handleChange"
-                  >
-                    <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option value="1"> 事假 </a-select-option>
-                    <a-select-option value="2"> 病假 </a-select-option>
-                    <a-select-option value="3"> 调休 </a-select-option>
-                    <a-select-option value="4"> 年假 </a-select-option>
-                    <a-select-option value="5"> 婚假 </a-select-option>
-                    <a-select-option value="6"> 产假 </a-select-option>
-                    <a-select-option value="7"> 陪产假 </a-select-option>
-                    <a-select-option value="8"> 哺乳假 </a-select-option>
-                    <a-select-option value="9"> 丧假 </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </template>
             <a-col :md="(!advanced && 8) || 24" :sm="24">
               <span
                 class="table-page-search-submitButtons"
@@ -332,71 +297,50 @@ export default {
           ellipsis: true,
         },
         {
-          title: "开始时间",
+          title: "责任说明",
           dataIndex: "startTime",
           key: "startTime",
-          width: 150,
           ellipsis: true,
         },
         {
-          title: "结束时间",
+          title: "批准机关",
           dataIndex: "endTime",
           key: "endTime",
           width: 150,
           ellipsis: true,
         },
         {
-          title: "时长(小时)",
+          title: "批准日期",
           dataIndex: "duration",
           key: "duration",
           width: 100,
-        },
-        {
-          title: "请假类型",
-          dataIndex: "type",
-          key: "type",
-          scopedSlots: { customRender: "type" },
-          width: 150,
-        },
-        {
-          title: "请假原因",
-          dataIndex: "reason",
-          key: "reason",
-          ellipsis: true,
-        },
-        {
-          title: "审批结果",
-          dataIndex: "approvalResults",
-          key: "approvalResults",
-          width: 100,
-        },
-        {
-          title: "审批备注",
-          dataIndex: "approvalRemake",
-          key: "approvalRemake",
-          ellipsis: true,
-        },
-        {
-          title: "审批人",
-          dataIndex: "name",
-          key: "name",
-          width: 100,
-        },
-        {
-          table: "操作",
-          dataIndex: "action",
-          scopedSlots: { customRender: "action" },
-          width: 100,
-        },
+        }
       ],
-      //查询参数
-      queryParam:{type:2},
-      loadScheduleData: (parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
-        return this.$api.overTimeService.getOverTimeLeave(requestParameters)
-          .then(res => {
-            return res.data
-          })
+      loadScheduleData: () => {
+        return new Promise((resolve) => {
+          resolve({
+            data: [
+              {
+                key: "1",
+                policeName: "辅警1",
+                name: "管理员",
+                number: "FJ0584",
+                organizationName: "青秀区东葛路派出所",
+                startTime: "",
+                endTime: "",
+                duration: "",
+                type: "",
+                reason: ""
+              },
+            ],
+            pageSize: 10,
+            pageNo: 1,
+            totalPage: 1,
+            totalCount: 10,
+          });
+        }).then((res) => {
+          return res;
+        });
       },
       selectedRowKeys: [],
       selectedRows: [],

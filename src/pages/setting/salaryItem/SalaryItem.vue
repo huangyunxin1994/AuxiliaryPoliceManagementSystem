@@ -23,7 +23,7 @@
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :rowSelection="rowSelection"
-        :scroll="{ y: 600, x: 1300 }"
+        :scroll="{ y: 600, x: 800 }"
         showPagination="auto"
       >
         <template slot="status" slot-scope="status">
