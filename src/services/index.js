@@ -19,15 +19,9 @@ export default{
   auxiliaryPoliceService,
   otherItemsService,
   rankPostService,
-<<<<<<< .mine
   rewardService,
-  documentAnnouncementService
-
-
-=======
-  rewardService,
+  documentAnnouncementService,
   personAdminService,
   educationService,
   equipageService
->>>>>>> .theirs
 }
