@@ -33,7 +33,7 @@
                     <template slot="title">
                     查看全部
                     </template>
-                    <a class="" @click.stop="reload" v-if="allowReload&&item.id=='1'"><a-icon type="reload" /></a>
+                    <a class="btn" @click.stop="reload" v-if="allowReload&&item.id=='1'"><a-icon type="reload" /></a>
                 </a-tooltip>
                 </div>
             </template>
@@ -255,7 +255,7 @@ export default {
     /deep/ .ant-tree-node-selected{
          /deep/ .btn {
             display: inline-block;
-            margin-right: 20px;
+            margin-left: 20px;
         }
     }
       

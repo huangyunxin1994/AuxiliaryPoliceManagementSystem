@@ -395,6 +395,7 @@ export default {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         return this.$api.overTimeService.getOverTimeLeave(requestParameters)
           .then(res => {
+             res.data.data.list.map((i,k)=>i.key=k+1)
             return res.data
           })
       },

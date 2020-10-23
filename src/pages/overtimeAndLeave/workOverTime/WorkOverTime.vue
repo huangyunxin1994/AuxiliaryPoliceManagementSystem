@@ -281,6 +281,12 @@ export default {
         },
       scheduleColumns: [
         {
+          title: "序号",
+          dataIndex: "key",
+          key: "key",
+          width: 60,
+        },
+        {
           title: "姓名",
           dataIndex: "policeName",
           key: "policeName",
@@ -364,6 +370,7 @@ export default {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         return this.$api.overTimeService.getOverTimeLeave(requestParameters)
           .then(res => {
+            res.data.data.list.map((i,k)=>i.key=k+1)
             return res.data
           })
       },
