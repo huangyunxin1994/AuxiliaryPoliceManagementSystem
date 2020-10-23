@@ -88,12 +88,6 @@ export default {
         type:Function
       }
     },
-    watch:{
-        dataSource(newV,oldV) {
-            // do something
-            console.log(newV,oldV)
-        } 
-    },
     data() {
         return {
             selectedKeys:[],
@@ -149,6 +143,7 @@ export default {
             this.expandedKeys = expandedKeys;
             this.autoExpandParent = false;
         },
+        //选中树节点
         onSelect(selectedKeys,e) {
             console.log(154)
             this.selectedKeys = selectedKeys

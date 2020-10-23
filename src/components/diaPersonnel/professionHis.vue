@@ -3,8 +3,8 @@
         <a-card :bordered="false">
             <div class="title">
                 <div>
-                    <p><span>姓名: </span><span>李四</span></p>
-                    <p><span>警员编号: </span><span>123456789</span></p>
+                    <p><span>姓名: </span><span>{{nameMess.policeName}}</span></p>
+                    <p><span>警员编号: </span><span>{{nameMess.number}}</span></p>
                 </div>
                 <div>
                     <a-button type="primary" @click="addProfession">新增记录</a-button>
@@ -15,7 +15,7 @@
                 rowKey="key"
                 :columns="scheduleColumns"
                 :data="loadScheduleData"
-                :scroll="{y:600}">
+                :scroll="{ y: 600, x: 800 }">
             </s-table>
         </a-card>
   </div>
@@ -28,6 +28,14 @@
         name: 'OrganManage',
         components:{
             STable
+        },
+        props:{
+            nameMess:{
+                type: Object,
+                default: function () {
+                    return {}
+                }
+            }
         },
         data() {
         return {
@@ -42,60 +50,50 @@
                 },
                 {
                     title: '专业技术任职资格',
-                    dataIndex: 'profession',
-                    key: 'profession',
+                    dataIndex: 'qualification',
+                    key: 'qualification',
                     width: 80,
                 },
                 {
                     title: '资格审批单位',
-                    dataIndex: 'unit',
-                    key: 'unit',
+                    dataIndex: 'approvalUnit',
+                    key: 'approvalUnit',
                     width: 100
                 },
                 {
                     title: '获得资格日期',
-                    dataIndex: 'date',
-                    key: 'date',
+                    dataIndex: 'acquireDate',
+                    key: 'acquireDate',
                     width: 100,
                 }
             ],
-            loadScheduleData: () => {
-                return new Promise(resolve => {
-                resolve({
-                    data: [
-                    {
-                        key: '1',
-                        profession: '雅思证书',
-                        unit: '南宁总局',
-                        date: '2020-05-02'
-                    },
-                    {
-                        key: '2',
-                        profession: '雅思证书',
-                        unit: '南宁总局',
-                        date: '2020-05-02'
-                    }
-                    ],
-                    pageSize: 10,
-                    pageNo: 1,
-                    totalPage: 1,
-                    totalCount: 10
-                })
-                }).then(res => {
-                return res
+            queryParam: {
+                userId:this.nameMess.userId,
+                number:this.nameMess.number,
+                policeName:this.nameMess.policeName,
+                organizationId:this.nameMess.organizationId || '',
+                organizationName:this.nameMess.organizationName
+            },
+            loadScheduleData: (params) => {
+                let param = Object.assign(params,this.nameMess)
+                return this.$api.personAdminService.getPersonProfession(param).then((res)=>{
+                    res.data.data.list.map((i,k)=>{
+                        i.key=k+1
+                    })
+                    return res.data
                 })
             },
             selectedRowKeys: [],
             selectedRows: [],
             formTitle:[
-                {label:'专业技术任职资格称号',name:'profession',type:'input',placeholder:'请输入专业技术任职资格称号',disabled:true},
-                {label:'资格审批单位',name:'unit',type:'input',placeholder:'请输入资格审批单位',disabled:true},
-                {label:'获得资格日期',name:'date',type:'picker',placeholder:'请选择获得资格日期'}
+                {label:'专业技术任职资格称号',name:'qualification',type:'input',placeholder:'请输入专业技术任职资格称号'},
+                {label:'资格审批单位',name:'approvalUnit',type:'input',placeholder:'请输入资格审批单位'},
+                {label:'获得资格日期',name:'acquireDate',type:'picker',placeholder:'请选择获得资格日期'}
             ],
             addProRules:{
-                profession:[{ required: true, message: '请输入专业技术任职资格称号', trigger: 'blur'}],
-                unit: [{ required: true, message: '请输入资格审批单位', trigger: 'blur'}],
-                date: [{ required: true, message: '请选择获得资格日期', trigger: 'change' }]
+                qualification:[{ required: true, message: '请输入专业技术任职资格称号', trigger: 'blur'}],
+                approvalUnit: [{ required: true, message: '请输入资格审批单位', trigger: 'blur'}],
+                acquireDate: [{ required: true, message: '请选择获得资格日期', trigger: 'change' }]
             }
         }
         },
@@ -113,19 +111,15 @@
                     {
                     formTitle:this.formTitle,
                     rules:this.addProRules,
-                    fn:() => {
-                    return new Promise(resolve => {
-                        resolve({
-                        data: [
-                        ],
-                        pageSize: 10,
-                        pageNo: 1,
-                        totalPage: 1,
-                        totalCount: 10
+                    submitFun:(params) => {
+                        
+                        let param = Object.assign(params,this.queryParam)
+                        return this.$api.personAdminService.addProfessionMess(param).then((res)=>{
+                            res.data.data.list.map((i,k)=>{
+                                i.key=k+1
+                            })
+                            return res.data
                         })
-                    }).then(res => {
-                        return res
-                    })
                     },
                     on: {
                         ok () {
@@ -141,12 +135,11 @@
                     },
                     // modal props
                     {
-                        title: '编辑',
+                        title: '新增记录',
                         width: 700,
                         centered: true,
                         maskClosable: false,
-                        okText:"提交",
-                        zIndex:100100
+                        okText:"提交"
                     }
                 )
             }

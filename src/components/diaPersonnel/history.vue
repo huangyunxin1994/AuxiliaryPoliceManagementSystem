@@ -2,19 +2,23 @@
   <div class="new-page">
         <a-card :bordered="false">
             <div class="title">
-                <p><span>姓名: </span><span>张三</span></p>
-                <p><span>警员编号: </span><span>123456789</span></p>
+                <p><span>姓名: </span><span>{{person.policeName}}</span></p>
+                <p><span>警员编号: </span><span>{{person.number}}</span></p>
             </div>
             <s-table
                 ref="table"
                 rowKey="key"
                 :columns="diaColumns"
                 :data="loadScheduleData"
-                :scroll="{y:600}">
+                :scroll="{ y: 600, x: 800 }">
                 <template
-                    slot="status"
-                    slot-scope="status">
-                    <a-badge :status="status" :text="status | statusFilter"/>
+                    slot="state"
+                    slot-scope="state">
+                    <!-- <a-badge :status="state" :text="state | statusFilter"/> -->
+                    <a-badge
+                        :status="state == '1' ? 'success' : state == '2' ? 'error':'processing'"
+                        :text="state | statusFilter"
+                    />
                 </template>
             </s-table>
         </a-card>
@@ -41,37 +45,39 @@
                     return []
                 }
             },
-            diaData:{
-                type:Array,
-                default: function () {
-                    return []
-                }
-            },
+            // diaData:{
+            //     type:Array,
+            //     default: function () {
+            //         return []
+            //     }
+            // },
             record: {
                 type: Object,
                 default: null
             },
         },
         data() {
-        return {
-            openKeys: ['key-01'],
-            loading:false,
-            loadScheduleData: () => {
-                return new Promise(resolve => {
-                resolve({
-                    data: this.diaData,
-                    pageSize: 10,
-                    pageNo: 1,
-                    totalPage: 1,
-                    totalCount: 10
-                })
-                }).then(res => {
-                return res
-                })
-            },
-            selectedRowKeys: [],
-            selectedRows: []
-        }
+            return {
+                openKeys: ['key-01'],
+                loading:false,
+                // 查询条件参数
+                queryParam: {
+                    type:this.person.type,
+                    userId:this.person.userId
+                },
+                loadScheduleData: (params) => {
+                    let param = Object.assign(params,this.queryParam)
+                        return this.$api.personAdminService.getRankPostHistory(param).then((res)=>{
+                            console.log(res)
+                            res.data.data.list.map((i,k)=>{
+                                i.key=k+1
+                            })
+                        return res.data
+                    })
+                },
+                selectedRowKeys: [],
+                selectedRows: []
+            }
         },
         methods:{
             handleEdit(record){
@@ -84,8 +90,9 @@
         filters: {
             statusFilter (status) {
                 const statusMap = {
-                'processing': '晋升',
-                'error': '降级'
+                '0':'初始职级',
+                '1': '晋升',
+                '2': '降级'
                 }
                 return statusMap[status]
             }

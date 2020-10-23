@@ -4,10 +4,10 @@
       <a-row :gutter="24">
         <a-col :lg="7" :xl="5" :xxl="4">
           <ant-tree
-            :dataSource="tree"
             :allowEdit="false"
             :allowReload="true"
             :allowSearch="true"
+            @loadTreeNode="loadTreeNode"
             @editTreeNode="editTreeNode"
             @addTreeNode="addTreeNode"
             @removeTreeNode="removeTreeNode"
@@ -20,7 +20,7 @@
 					<a-row :gutter="48">
 						<a-col :md="8" :sm="24">
 							<a-form-item label="关键词搜索">
-								<a-input placeholder="请输入要查询的关键词" v-model="keyword" />
+								<a-input placeholder="请输入要查询的关键词" v-model="queryParam.search" />
 							</a-form-item>
 						</a-col>
 						<a-col :md="8" :sm="24">
@@ -31,7 +31,7 @@
 						<template v-if="advanced">
 							<a-col :md="8" :sm="24">
 								<a-form-item label="即将到期">
-									<a-select default-value="" @change="handleChange">
+									<a-select default-value="" v-model="queryParam.isExpire">
 										<a-select-option value=""> 全部 </a-select-option>
 										<a-select-option value="1"> 是 </a-select-option>
 										<a-select-option value="2"> 否 </a-select-option>
@@ -46,7 +46,7 @@
 								(advanced && { float: 'right', overflow: 'hidden' }) || {}
 								">
 								<!-- <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button> -->
-                <a-button type="primary" @click="search">查询</a-button>
+                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
 								<a-button
 									style="margin-left: 8px"
 									@click="resetSearch"
@@ -205,26 +205,26 @@ export default {
         },
         {
           title: "辅警编号",
-          dataIndex: "code",
-          key: "code",
+          dataIndex: "number",
+          key: "number",
           width: 100,
         },
         {
           title: "所属组织",
-          dataIndex: "organ",
-          key: "organ",
+          dataIndex: "organizationName",
+          key: "organizationName",
           width: 250,
         },
         {
           title: "合同终止日期",
-          dataIndex: "post",
-          key: "post",
+          dataIndex: "startDate",
+          key: "startDate",
           width: 100,
         },
         {
           title: "合同期限(月)",
-          dataIndex: "phone",
-          key: "phone",
+          dataIndex: "contractPeriod",
+          key: "contractPeriod",
           width: 150,
         },
         {
@@ -235,16 +235,25 @@ export default {
           scopedSlots: { customRender: "status" },
         },
         {
-          table: "操作",
+          title: "操作",
           dataIndex: "action",
           scopedSlots: { customRender: "action" },
           width: 150,
         },
       ],
-      queryParams:{},
+      queryParam:{
+        search:'',
+        isExpire:'',
+        endTime:'',
+        organizationId:''
+      },
       loadScheduleData: params => {
-        let param = Object.assign(params)
+        let param = Object.assign(params,this.queryParam)
         return this.$api.contractService.getContractData(param).then((res)=>{
+          res.data.data.list.map((i,k)=>{
+            i.key=k+1
+          })
+          console.log(res)
           return res.data
         })
       },
@@ -389,12 +398,15 @@ export default {
     removeTreeNode(params) {
       console.log(params);
     },
+    // 选中树节点
+    loadTreeNode(data){
+      this.queryParam.organizationId = data.id
+      this.$refs.table.refresh(true)
+    },
     // 获取多选的数据
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
-      console.log(this.selectedRowKeys);
-      console.log(this.selectedRows);
     },
 
     
@@ -417,32 +429,6 @@ export default {
     // 新建合同
     newContract() {
       this.$refs.modal.visible=true
-      // let param = {
-      //   stepTitle:[{title:'选择人员'},{title:'填写合同信息'}],
-      //   formTitle: formTitle,
-      //   rules: rules,
-      //   submitFun: () => {
-      //     return new Promise((resolve) => {
-      //       resolve({
-      //         data: [],
-      //         pageSize: 10,
-      //         pageNo: 1,
-      //         totalPage: 1,
-      //         totalCount: 10,
-      //       });
-      //     }).then((res) => {
-      //       return res;
-      //     });
-      //   },
-      // };
-      // let option = {
-      //   title: "新建合同",
-      //   width: 800,
-      //   centered: true,
-      //   maskClosable: false,
-      //   footer: "",
-      // };
-      // this.modal(param, option, formStep);
     },
     // 弹窗
     modal(obj, option, model) {
@@ -477,32 +463,19 @@ export default {
     // 时间框选择
     onChange(date, dateString) {
       console.log(date, dateString);
-      this.endTime = dateString
-    },
-    // 点击查询筛选按钮
-    search(){
-      this.queryParams = {
-        currentPage:1,
-        startTime:'',
-        endTime:'',
-        isExpire:this.isExpire,
-        pageSize:10,
-        state:'',
-        time:this.endTime,
-        type:''
-      }
-      this.$refs.table.refresh(true)
+      this.queryParam.endTime = dateString
     },
     // 点击重置
     resetSearch(){
-      this.isExpire = ''
-      this.endTime = ''
-      this.keyword = ''
-      this.queryParams = {}
+      this.queryParam={
+        search:'',
+        isExpire:'',
+        endTime:'',
+        organizationId:''
+      }
     },
     // 获取到组织树信息
     getTreeData(data){
-      console.log("******************************")
       this.tree = data
     }
   },

@@ -68,7 +68,7 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <a-tree-select
+                <!-- <a-tree-select
                   v-model="value"
                   style="width: 100%"
                   :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
@@ -78,7 +78,8 @@
                   placeholder="请选择组织"
                   tree-default-expand-all
                 >
-                </a-tree-select>
+                </a-tree-select> -->
+                <select-tree ref="selectTree" style="width: 100%" @handleTreeChange="handleTreeChange"></select-tree>
               </a-form-item>
             </a-col>
             <a-col :md="(!advanced && 8) || 24" :sm="24">
@@ -118,7 +119,7 @@
           <a-button type="primary" icon="delete" style="margin-right: 10px">删除人员</a-button>
         </a-popconfirm>
         
-        <a-button type="primary" icon="plus" @click="handleCredAdd" >新建人员</a-button>
+        <a-button type="primary" icon="plus" @click="handleCredAdd" >添加人员</a-button>
         <a-dropdown v-if="selectedCredRowKeys.length > 0">
           <a-menu slot="overlay">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -155,6 +156,7 @@ import { mapState } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import addPerson from "@/components/diaEducation/diaEducation"
+import selectTree from "@/components/treeSelect/TreeSelect"
 
 const tree = [{
     'key': 'key-01',
@@ -264,6 +266,7 @@ export default {
   name: "OrganManage",
   components: {
     STable,
+    selectTree
   },
   data() {
     return {
@@ -369,7 +372,7 @@ export default {
       };
       let modalProps = {
         title: "添加人员",
-        width: 700,
+        width: 1000,
         centered: true,
         maskClosable: false,
         okText: "提交",
@@ -464,6 +467,10 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+    // 获得组织选择的组织id
+    handleTreeChange(data){
+      this.organizationId = data
+    }
   },
   filters: {
     statusFilter(status) {

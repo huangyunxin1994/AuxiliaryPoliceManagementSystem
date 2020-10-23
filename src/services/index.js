@@ -3,6 +3,9 @@ import overTimeService from './OvertimeLeaveApi/index'
 import contractService from './contract/index'
 import organizationService from './OrganizationApi/index'
 import auxiliaryPoliceService from './auxiliaryPolice/index'
+import personAdminService from './personAdminApi/index'
+import educationService from './Education/index'
+import equipageService from './equipage/index'
 
 import otherItemsService from './OtherItemsApi/index'
 import rankPostService from './RankPostApi/index'
@@ -16,6 +19,15 @@ export default{
   auxiliaryPoliceService,
   otherItemsService,
   rankPostService,
+<<<<<<< .mine
   rewardService,
   documentAnnouncementService
+
+
+=======
+  rewardService,
+  personAdminService,
+  educationService,
+  equipageService
+>>>>>>> .theirs
 }

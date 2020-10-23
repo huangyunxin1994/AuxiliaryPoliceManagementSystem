@@ -11,17 +11,7 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <a-tree-select
-                  v-model="value"
-                  style="width: 100%"
-                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                  :tree-data="tree"
-                  :allowClear="true"
-                  :replaceFields="replaceFields"
-                  placeholder="请选择组织"
-                  tree-default-expand-all
-                >
-                </a-tree-select>
+                <select-tree style="width: 100%" ref="selectTree"></select-tree>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -71,22 +61,22 @@
         </a-form>
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
-        <a-button type="primary" icon="delete" style="margin-right: 10px" :disabled="selectedRowKeys.length == 0">删除培训</a-button>
-        <a-button type="primary" icon="plus" @click="$router.push({path:'newEducation'})">新建培训</a-button>
-        <a-dropdown v-if="selectedRowKeys.length > 0">
+        <a-button type="primary" icon="delete" style="margin-right: 10px" :disabled="selectedRowKeys.length == 0" @click="handleDel">删除培训</a-button>
+        <!-- <a-button type="primary" icon="plus" @click="$router.push({path:'newEducation'})">新建培训</a-button> -->
+        <a-button type="primary" icon="plus" @click="newEducation">新建培训</a-button>
+        <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-            <!-- lock | unlock -->
             <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px">
             批量操作 <a-icon type="down" />
           </a-button>
-        </a-dropdown>
+        </a-dropdown> -->
       </div>
       <s-table
         ref="table"
-        rowKey="key"
+        :rowKey="(record)=>record.id"
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :rowSelection="rowSelection"
@@ -107,6 +97,7 @@
         </span>
       </s-table>
     </a-card>
+    <form-step ref="modal" title="新增培训" formTitleName="name" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
   </div>
 </template>
 
@@ -114,105 +105,70 @@
 import { mapState } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/TaskForm";
-const tree = [{
-    'key': 'key-01',
-    'title': '研发中心',
-    'icon': 'mail',
-    'count': '10',
-    'scopedSlots': { title: 'custom' },
-    'children': [{
-      'key': 'key-01-01',
-      'title': '后端组',
-      'icon': null,
-      'scopedSlots': { title: 'custom' },
-      children: [{
-        'key': 'key-01-01-01',
-        'title': 'JAVA',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      },
-      {
-        'key': 'key-01-01-02',
-        'title': 'PHP',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      },
-      {
-        'key': 'key-01-01-03',
-        'title': 'Golang',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      }
-      ]
-    }, {
-      'key': 'key-01-02',
-      'title': '前端组',
-      'icon': null,
-      'scopedSlots': { title: 'custom' },
-      children: [{
-        'key': 'key-01-02-01',
-        'title': 'React',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      },
-      {
-        'key': 'key-01-02-02',
-        'title': 'Vue',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      },
-      {
-        'key': 'key-01-02-03',
-        'title': 'Angular',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      }
-      ]
-    }, {
-    'key': 'key-02',
-    'title': '财务部',
-    'icon': 'dollar',
-    'scopedSlots': { title: 'custom' },
-    'children': [{
-        'key': 'key-02-01',
-        'title': '会计核算',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        }, {
-        'key': 'key-02-02',
-        'title': '成本控制',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        }, {
-        'key': 'key-02-03',
-        'title': '内部控制',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        'children': [{
-            'key': 'key-02-03-01',
-            'title': '财务制度建设',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-02-03-02',
-            'title': '会计核算',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        }]
-    }]
-  }]
-  }]
+import selectTree from "@/components/treeSelect/TreeSelect"
+import formStep from "@/components/stepForm/StepForm";
+
+const formTitle = [
+  {
+    label: "培训名称",
+    name: "className",
+    type: "input",
+    placeholder: "请输入培训名称"
+  },
+  {
+    label: "培训起始时间",
+    name: "startTime",
+    type: "picker",
+    placeholder: "请选择培训起始时间"
+  },
+  {
+    label: "培训结束时间",
+    name: "endTime",
+    type: "picker",
+    placeholder: "请选择培训结束时间",
+  },
+  {
+    label: "总学时(小时)",
+    name: "classHour",
+    type: "input",
+    placeholder: "请输入总学时"
+  },
+  {
+    label: "培训方式",
+    name: "learningStyle",
+    type: "select",
+    select:[{name:'脱岗',value:2},{name:'不脱岗',value:1}]
+  },
+  {
+    label: "内容说明",
+    name: "learningContent",
+    type: "textarea",
+    placeholder: "请输入总学时"
+  },
+];
+const stepTitle = [{title:'选择人员'},{title:'填写培训内容'}]
+const rules = {
+  className: [
+    { required: true, message: "请输入培训名称", trigger: "blur"},
+  ],
+  startTime: [
+    { required: true, message: "请选择培训起始日期", trigger: "change" },
+  ],
+  endTime: [
+    { required: true, message: "请选择培训结束日期", trigger: "change" },
+  ],
+  learningStyle: [{ required: true, message: "请选择培训方式", trigger: "change" }],
+};
 export default {
   name: "AskForLeave",
   components: {
     STable,
     TaskForm,
+    selectTree,
+    formStep
   },
   data() {
     return {
-        tree,
-        value:null,
         // 高级搜索 展开/关闭
         advanced: false,
         replaceFields:{
@@ -230,8 +186,8 @@ export default {
         },
         {
           title: "培训名称",
-          dataIndex: "learningName",
-          key: "learningName",
+          dataIndex: "className",
+          key: "className",
           width: 100,
         },
         {
@@ -284,40 +240,43 @@ export default {
           ellipsis: true
         },
         {
-          table: "操作",
+          title: "操作",
           dataIndex: "action",
           scopedSlots: { customRender: "action" },
           width: 100,
         },
       ],
-      loadScheduleData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                learningName: "培训1",
-                organizationName: "青秀区东葛路派出所",
-                startTime: "2020-06-18 09:00:00",
-                endTime: "2020-06-18 18:00:00",
-                classHour: "7",
-                learningStyle: "1",
-                creator:"张三",
-                state:"正在培训",
-                learningContent:'这是培训1'
-              }
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      // 查询条件参数
+      queryParam: {
+        search:'',
+        learningStyle:'',
+        oid:'',// 当前页面下的筛选框组织
+        organizationId:'',//登录人员所属组织
+        state:'',
+      },
+      loadScheduleData: (params) => {
+        let param = Object.assign(params,this.queryParam)
+        return this.$api.educationService.geteducationList(param).then((res)=>{
+          console.log(res)
+          res.data.data.list.map((i,k)=>{
+            i.key=k+1
+          })
+          return res.data
+        })
       },
       selectedRowKeys: [],
       selectedRows: [],
+      formTitle,
+      rules,
+      stepTitle,
+      submitFun:(params,file)=>{
+        // let param = Object.assign(params,this.queryParams)
+        return this.$api.educationService.addEducation(params,file).then((res)=>{
+          this.$refs.table.refresh(false)
+          return res.data
+        })
+        
+      },
     };
   },
   methods: {
@@ -336,6 +295,19 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+    // 新建培训
+    newEducation(){
+      this.$refs.modal.visible=true
+    },
+    // 删除培训
+    handleDel(){
+      console.log(this.selectedRowKeys)
+      console.log(this.selectedRows)
+      this.$api.educationService.deleteEducation({id:this.selectedRowKeys}).then((res)=>{
+        this.$refs.table.refresh(true)
+        return res.data
+      })
+    }
   },
   filters: {
     statusFilter(status) {

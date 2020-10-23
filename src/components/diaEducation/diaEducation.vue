@@ -4,10 +4,10 @@
             <a-row :gutter="24">
                 <a-col :xl="8">
                     <ant-tree 
-                        :dataSource="tree" 
                         :allowEdit="false" 
                         :allowReload="true"
-                        :allowSearch="true">
+                        :allowSearch="true"
+                        @loadTreeNode="loadTreeNode">
                     </ant-tree>
                 </a-col>
                 <a-col :xl="16">
@@ -43,96 +43,7 @@
 
 <script>
 import sTable from '@/components/Table_/'
-import antTree from '@/components/tree_/Tree' 
-const tree = [{
-        'key': 'key-01',
-        'title': '研发中心',
-        'icon': 'mail',
-        'count': '10',
-        'scopedSlots': { title: 'custom' },
-        'children': [{
-        'key': 'key-01-01',
-        'title': '后端组',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        children: [{
-            'key': 'key-01-01-01', 
-            'title': 'JAVA',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-01-02',
-            'title': 'PHP',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-01-03',
-            'title': 'Golang',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        }
-        ]
-        }, {
-        'key': 'key-01-02',
-        'title': '前端组',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        children: [{
-            'key': 'key-01-02-01',
-            'title': 'React',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-02-02',
-            'title': 'Vue',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-02-03',
-            'title': 'Angular',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        }
-        ]
-        }, {
-        'key': 'key-02',
-        'title': '财务部',
-        'icon': 'dollar',
-        'scopedSlots': { title: 'custom' },
-        'children': [{
-            'key': 'key-02-01',
-            'title': '会计核算',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            }, {
-            'key': 'key-02-02',
-            'title': '成本控制',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            }, {
-            'key': 'key-02-03',
-            'title': '内部控制',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            'children': [{
-                'key': 'key-02-03-01',
-                'title': '财务制度建设',
-                'icon': null,
-                'scopedSlots': { title: 'custom' },
-            },
-            {
-                'key': 'key-02-03-02',
-                'title': '会计核算',
-                'icon': null,
-                'scopedSlots': { title: 'custom' },
-            }]
-        }]
-    }]
-}]
+import antTree from '@/components/tree_/Tree'
 export default {
   name: 'Step1',
   components:{
@@ -141,7 +52,6 @@ export default {
   },
   data(){
     return{
-      tree,
       loading:false,
       scheduleColumns: [
           {
@@ -157,6 +67,12 @@ export default {
               width: 60,
           },
           {
+              title: '岗位',
+              dataIndex: 'postName',
+              key: 'postName',
+              width: 60,
+          },
+          {
               title: '所属组织',
               dataIndex: 'organizationName',
               key: 'organizationName',
@@ -164,80 +80,20 @@ export default {
           }
       ],
       // 查询条件参数
-      queryParam: {},
-      loadScheduleData: () => {
-          return new Promise(resolve => {
-          resolve({
-              data: [
-              {
-                  key: '1',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '2',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '3',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '4',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '5',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '6',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '7',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '8',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '9',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '10',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              ],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10
-          })
-          }).then(res => {
-              return res
-          })
+      queryParam: {
+          organizationId:'',
+          search:''
+      },
+      loadScheduleData: params => {
+        let param = Object.assign(params,this.queryParam)
+        return this.$api.auxiliaryPoliceService.getAuxiliaryPoliceData(param).then((res)=>{
+        //   this.tableData=res.data.data.list;
+        //   res.data.data.list=res.data.data.list.filter(x=>!this.rightColumnsData.some(i=>i.id===x.id))
+            res.data.data.list.map((i,k)=>{
+                i.key=k+1
+            })
+          return res.data
+        })
       },
       searchVal:"",
       selectedRowKeys: [],
@@ -251,98 +107,7 @@ export default {
     // 搜索
     onSearch(){
         console.log(this.searchVal)
-        let data=[]
-        if(this.searchVal!="")
-            data = [
-              {
-                  key: '9',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '10',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              ]
-        else
-            data = [
-              {
-                  key: '1',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '2',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '3',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '4',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '5',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '6',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '7',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '8',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '9',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              {
-                  key: '10',
-                  name: '张三',
-                  number: '123',
-                  organizationName: '前端组'
-              },
-              ]
-        this.loadScheduleData=() => {
-          return new Promise(resolve => {
-          resolve({
-              data: data,
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10
-          })
-          }).then(res => {
-              return res
-          })
-        }
+        this.queryParam.search = this.searchVal
         this.$refs.table.refresh(true)
     },
     // 获取多选的数据
@@ -350,6 +115,45 @@ export default {
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
         console.log(this.selectedRows)
+        console.log(this.selectedRowKeys)
+    },
+    // 选中树节点
+    loadTreeNode(data){
+        console.log(data)
+        this.queryParam.organizationId = data.id
+    },
+    // 点击提交时
+    onOk() {
+      console.log("监听了 modal ok 事件");
+      console.log("*****************************")
+        this.$emit("getSelectData",this.selectedRowKeys)
+    //   return new Promise((resolve) => {
+    //         setTimeout(()=>{
+    //           resolve(true);
+    //           const result = this.submitFun(this.form);
+    //             result
+    //               .then((res) => {
+    //                 console.log(res);
+    //                 this.resetForm()
+    //                 this.$message.success(res.msg);
+    //                 resolve(true);
+    //               })
+    //               .catch((err) => {
+    //                 console.log(err);
+    //                  this.$message.success(err.msg);
+    //                 resolve(true);
+    //               });
+    //         },1000)
+
+        
+    //     });
+      
+    },
+    onCancel () {
+      console.log('监听了 modal cancel 事件')
+      return new Promise(resolve => {
+        resolve(true)
+      })
     },
   },
   computed:{

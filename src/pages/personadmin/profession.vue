@@ -4,10 +4,10 @@
             <a-row :gutter="24">
                 <a-col :lg="7" :xl="5" :xxl="4">
                     <ant-tree 
-                      :dataSource="tree" 
                       :allowEdit="false" 
                       :allowReload="true"
                       :allowSearch="true"
+                      @loadTreeNode="loadTreeNode"
                       @editTreeNode="editTreeNode" 
                       @addTreeNode="addTreeNode" 
                       @removeTreeNode="removeTreeNode">
@@ -19,7 +19,7 @@
 							<a-row :gutter="48">
 								<a-col :md="8" :sm="24">
 									<a-form-item label="关键词搜索">
-										<a-input placeholder="请输入要查询的关键词" />
+										<a-input placeholder="请输入要查询的关键词" v-model="queryParam.name"/>
 									</a-form-item>
 								</a-col>
 								<a-col :md="8" :sm="24">
@@ -67,7 +67,7 @@
                         :columns="scheduleColumns"
                         :data="loadScheduleData"
                         :rowSelection="rowSelection"
-                        :scroll="{y:600}"
+                        :scroll="{ y: 600, x: 800 }"
                         showPagination="auto">
 
                         <template
@@ -82,6 +82,7 @@
                 </a-col>
             </a-row>
        </a-card>
+       <form-step ref="modal" title="新增任职人员" formTitleName="name" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
   </div>
 </template>
 
@@ -91,107 +92,17 @@
     import AntTree from '@/components/tree_/Tree'
     // import fromModel from '@/components/formModel/formModel'
     import diaHisFro from '@/components/diaPersonnel/professionHis'
-    import addProPerson from '@/components/diaPersonnel/newProfessionPerson'
-    const tree = [{
-        'key': 'key-01',
-        'title': '研发中心',
-        'icon': 'mail',
-        'count': '10',
-        'scopedSlots': { title: 'custom' },
-        'children': [{
-        'key': 'key-01-01',
-        'title': '后端组',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        children: [{
-            'key': 'key-01-01-01',
-            'title': 'JAVA',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-01-02',
-            'title': 'PHP',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-01-03',
-            'title': 'Golang',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        }
-        ]
-        }, {
-        'key': 'key-01-02',
-        'title': '前端组',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        children: [{
-            'key': 'key-01-02-01',
-            'title': 'React',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-02-02',
-            'title': 'Vue',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-02-03',
-            'title': 'Angular',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        }
-        ]
-        }, {
-        'key': 'key-02',
-        'title': '财务部',
-        'icon': 'dollar',
-        'scopedSlots': { title: 'custom' },
-        'children': [{
-            'key': 'key-02-01',
-            'title': '会计核算',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            }, {
-            'key': 'key-02-02',
-            'title': '成本控制',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            }, {
-            'key': 'key-02-03',
-            'title': '内部控制',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            'children': [{
-                'key': 'key-02-03-01',
-                'title': '财务制度建设',
-                'icon': null,
-                'scopedSlots': { title: 'custom' },
-            },
-            {
-                'key': 'key-02-03-02',
-                'title': '会计核算',
-                'icon': null,
-                'scopedSlots': { title: 'custom' },
-            }]
-        }]
-    }]
-  }]
+    import formStep from "@/components/stepForm/StepForm";
     export default {
     name: 'OrganManage',
     components:{
         STable,
-        AntTree
-        
+        AntTree,
+        formStep
     },
     data() {
       return {
           openKeys: ['key-01'],
-          tree,
           loading:false,
           // 高级搜索 展开/关闭
           advanced: false,
@@ -204,38 +115,38 @@
             },
             {
               title: '姓名',
-              dataIndex: 'name',
-              key: 'name',
+              dataIndex: 'policeName',
+              key: 'policeName',
               width: 80,
             },
             {
               title: '辅警编号',
-              dataIndex: 'code',
-              key: 'code',
+              dataIndex: 'number',
+              key: 'number',
               width: 100
             },
             {
               title: '所属组织',
-              dataIndex: 'organ',
-              key: 'organ',
+              dataIndex: 'organizationName',
+              key: 'organizationName',
                width: 200,
             },
             {
               title: '专业技术任职资格',
-              dataIndex: 'profession',
-              key: 'profession',
+              dataIndex: 'qualification',
+              key: 'qualification',
               width: 150,
             },
             {
               title: '资格审批单位',
-              dataIndex: 'unit',
-              key: 'unit',
+              dataIndex: 'approvalUnit',
+              key: 'approvalUnit',
               width: 150
             },
             {
               title: '获得资格日期',
-              dataIndex: 'date',
-              key: 'date',
+              dataIndex: 'acquireDate',
+              key: 'acquireDate',
               width: 100
             },
             {
@@ -302,70 +213,18 @@
                   principal:'张三'
               }
           ],
-          loadScheduleData: () => {
-            return new Promise(resolve => {
-              resolve({
-                data: [
-                  {
-                    key: '1',
-                    account: 'admin',
-                    name: '管理员',
-                    code: 'FJ0584',
-                    organ: '青秀区东葛路派出所',
-                    beforeRank: '哈哈',
-                    status: 'processing',
-                    rank:'jalsdkfj',
-                    cause:'勤劳',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '2',
-                    account: 'test',
-                    name: '李四',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    beforeRank: '哈哈',
-                    status: 'processing',
-                    rank:'jalsdkfj',
-                    cause:'勤劳',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '3',
-                    account: 'test',
-                    name: '王五',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    beforeRank: '加了斯柯达',
-                    status: 'error',
-                    rank:'jalsdkfj',
-                    cause:'结党营私',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '4',
-                    account: 'test',
-                    name: '张三',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    beforeRank: '辅啊速度快放假警',
-                    status: 'error',
-                    rank:'jalsdkfj',
-                    cause:'结党营私',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  }
-                ],
-                pageSize: 10,
-                pageNo: 1,
-                totalPage: 1,
-                totalCount: 60 //总数
+          queryParam: {
+            name: "",
+            time:'',
+            organizationId:''
+          },
+          loadScheduleData: (params) => {
+            let param = Object.assign(params,this.queryParam)
+            return this.$api.personAdminService.getProfessionData(param).then((res)=>{
+              res.data.data.list.map((i,k)=>{
+                i.key=k+1
               })
-            }).then(res => {
-              return res
+              return res.data
             })
           },
           selectedRowKeys: [],
@@ -381,14 +240,53 @@
             rank:[{ required: true, message: '请选择变动后职级', trigger: 'change'}],
             cause: [{ required: true, message: '请输入变动原因', trigger: 'blur'}],
             date: [{ required: true, message: '请选择生效日期', trigger: 'change' }]
-          }
+          },
+          formTitle:[
+            {
+              label: "专业技术任职资格称号",
+              name: "qualification",
+              type: "input",
+              placeholder: "请输入所在单位"
+            },
+            {
+              label: "资格审批单位",
+              name: "approvalUnit",
+              type: "input",
+              placeholder: "请输入资格审批单位"
+            },
+            {
+              label: "获得资格日期",
+              name: "acquireDate",
+              type: "picker",
+              placeholder: "请选择获得资格日期"
+            }
+          ],
+          rules:{
+            qualification: [
+              { required: true, message: "请输入名字", trigger: "blur"},
+            ],
+            acquireDate: [
+              { required: true, message: "请选择获得资格日期", trigger: "change" },
+            ],
+            approvalUnit: [{ required: true, message: "请输入资格审批单位", trigger: "blur" }],
+          },
+
+          stepTitle:[{title:'选择人员'},{title:'填写专业技术'}],
+
+          submitFun:(params)=>{
+            // let param = Object.assign(params,this.queryParams)
+            return this.$api.personAdminService.addProfession(params).then((res)=>{
+              this.$refs.table.refresh(true)
+              return res.data
+            })
+          },
       }
     },
     methods:{
       handleEdit(record){
         console.log(record)
         let param ={
-            
+            nameMess:record
         }
         let option = {
             title: '个人专业技术任职资格记录',
@@ -418,6 +316,11 @@
       handleChange(e){
           console.log(e)
       },
+      // 选中组织树
+      loadTreeNode(data){
+        this.queryParam.organizationId = data.id
+        this.$refs.table.refresh(true)
+      },
       //编辑树节点
       editTreeNode(params){
           console.log(params)
@@ -439,18 +342,7 @@
 
       // 新增任职人员
       addPerson(){
-        let param ={
-            
-        }
-        let option = {
-            title: '新增任职人员',
-            width: 1000,
-            centered: true,
-            maskClosable: false,
-            okText:"提交",
-            zIndex:1040
-          }
-        this.modal(param,option,addProPerson)
+        this.$refs.modal.visible=true
       },
       // 弹窗
       modal(obj,option,model){
@@ -481,6 +373,7 @@
       //日期框筛选
       onChange(date, dateString){
           console.log(date, dateString);
+          this.queryParam.time = dateString
       },
       toggleAdvanced() {
         this.advanced = !this.advanced;

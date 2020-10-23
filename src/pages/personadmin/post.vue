@@ -4,10 +4,10 @@
             <a-row :gutter="24">
                 <a-col :lg="7" :xl="5" :xxl="4">
                     <ant-tree 
-                      :dataSource="tree" 
                       :allowEdit="false" 
                       :allowReload="true"
                       :allowSearch="true"
+                      @loadTreeNode="loadTreeNode"
                       @editTreeNode="editTreeNode" 
                       @addTreeNode="addTreeNode" 
                       @removeTreeNode="removeTreeNode">
@@ -19,16 +19,12 @@
 							<a-row :gutter="48">
 								<a-col :md="8" :sm="24">
 									<a-form-item label="关键词搜索">
-										<a-input placeholder="请输入要查询的关键词" />
+										<a-input placeholder="请输入要查询的关键词" v-model="queryParam.name"/>
 									</a-form-item>
 								</a-col>
 								<a-col :md="8" :sm="24">
 									<a-form-item label="岗位">
-										<a-select default-value="" @change="handleChange">
-											<a-select-option value=""> 全部： </a-select-option>
-											<a-select-option value="1"> 是 </a-select-option>
-											<a-select-option value="2"> 否 </a-select-option>
-										</a-select>
+                    <a-input placeholder="请输入岗位" v-model="queryParam.currentRank" />
 									</a-form-item>
 								</a-col>
 								<template v-if="advanced">
@@ -78,7 +74,7 @@
                         :columns="scheduleColumns"
                         :data="loadScheduleData"
                         :rowSelection="rowSelection"
-                        :scroll="{y:600}"
+                        :scroll="{ y: 600, x: 800 }"
                         showPagination="auto">
 
                         <template
@@ -102,95 +98,6 @@
     import AntTree from '@/components/tree_/Tree'
     import fromModel from '@/components/formModel/formModel'
     import diaHisRank from '@/components/diaPersonnel/history'
-    const tree = [{
-        'key': 'key-01',
-        'title': '研发中心',
-        'icon': 'mail',
-        'count': '10',
-        'scopedSlots': { title: 'custom' },
-        'children': [{
-        'key': 'key-01-01',
-        'title': '后端组',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        children: [{
-            'key': 'key-01-01-01',
-            'title': 'JAVA',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-01-02',
-            'title': 'PHP',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-01-03',
-            'title': 'Golang',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        }
-        ]
-        }, {
-        'key': 'key-01-02',
-        'title': '前端组',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        children: [{
-            'key': 'key-01-02-01',
-            'title': 'React',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-02-02',
-            'title': 'Vue',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-02-03',
-            'title': 'Angular',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        }
-        ]
-        }, {
-        'key': 'key-02',
-        'title': '财务部',
-        'icon': 'dollar',
-        'scopedSlots': { title: 'custom' },
-        'children': [{
-            'key': 'key-02-01',
-            'title': '会计核算',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            }, {
-            'key': 'key-02-02',
-            'title': '成本控制',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            }, {
-            'key': 'key-02-03',
-            'title': '内部控制',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            'children': [{
-                'key': 'key-02-03-01',
-                'title': '财务制度建设',
-                'icon': null,
-                'scopedSlots': { title: 'custom' },
-            },
-            {
-                'key': 'key-02-03-02',
-                'title': '会计核算',
-                'icon': null,
-                'scopedSlots': { title: 'custom' },
-            }]
-        }]
-    }]
-  }]
     export default {
     name: 'OrganManage',
     components:{
@@ -201,7 +108,6 @@
     data() {
       return {
           openKeys: ['key-01'],
-          tree,
           loading:false,
           // 高级搜索 展开/关闭
           advanced: false,
@@ -214,38 +120,38 @@
             },
             {
               title: '姓名',
-              dataIndex: 'name',
-              key: 'name',
+              dataIndex: 'policeName',
+              key: 'policeName',
               width: 80,
             },
             {
               title: '辅警编号',
-              dataIndex: 'code',
-              key: 'code',
+              dataIndex: 'number',
+              key: 'number',
               width: 100
             },
             {
               title: '所属组织',
-              dataIndex: 'organ',
-              key: 'organ',
+              dataIndex: 'organizationName',
+              key: 'organizationName',
                width: 250,
             },
             {
               title: '岗位',
-              dataIndex: 'post',
-              key: 'post',
+              dataIndex: 'currentRank',
+              key: 'currentRank',
               width: 100,
             },
             {
               title: '生效日期',
-              dataIndex: 'date',
-              key: 'date',
+              dataIndex: 'effectiveDate',
+              key: 'effectiveDate',
               width: 100
             },
             {
               title: '审批人',
-              dataIndex: 'principal',
-              key: 'principal',
+              dataIndex: 'approvedBy',
+              key: 'approvedBy',
               width: 100
             },
             {
@@ -264,109 +170,51 @@
                 },
                 {
                     title: '所属组织',
-                    dataIndex: 'organ',
-                    key: 'organ',
+                    dataIndex: 'organizationName',
+                    key: 'organizationName',
                     width: 180,
                 },
                 {
                     title: '所属岗位',
-                    dataIndex: 'post',
-                    key: 'post',
+                    dataIndex: 'currentRank',
+                    key: 'currentRank',
                     width: 100
                 },
                 {
                     title: '生效时间',
-                    dataIndex: 'date',
-                    key: 'date',
+                    dataIndex: 'effectiveDate',
+                    key: 'effectiveDate',
                     width: 100,
                 },
                 {
                     title: '调动原因',
-                    dataIndex: 'cause',
-                    key: 'cause',
+                    dataIndex: 'reason',
+                    key: 'reason',
                     width: 150,
                 },
                 {
                   title: '审批人',
-                  dataIndex: 'principal',
-                  key: 'principal',
+                  dataIndex: 'approvedBy',
+                  key: 'approvedBy',
                   width: 100
                 }
           ],
-          diaData:[
-              {
-                  key: '1',
-                  organ: '仙湖分局',
-                  post: '交通辅警',
-                  date: '2020-05-02',
-                  cause: '作风优良',
-                  principal:'李四'
-              },
-              {
-                  key: '2',
-                  organ: '南宁总局',
-                  post: '进来撒经多方',
-                  date: '2020-05-02',
-                  cause: '贪污腐败',
-                  principal:'李四'
-              }
-          ],
-          loadScheduleData: () => {
-            return new Promise(resolve => {
-              resolve({
-                data: [
-                  {
-                    key: '1',
-                    account: 'admin',
-                    name: '管理员',
-                    code: 'FJ0584',
-                    organ: '青秀区东葛路派出所',
-                    post:'哈哈哈',
-                    cause:'勤劳',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '2',
-                    account: 'test',
-                    name: '李四',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    post:'哈哈哈',
-                    cause:'勤劳',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '3',
-                    account: 'test',
-                    name: '王五',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    post:'哈哈哈',
-                    cause:'结党营私',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '4',
-                    account: 'test',
-                    name: '张三',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    post:'哈哈哈',
-                    cause:'结党营私',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  }
-                ],
-                pageSize: 10,
-                pageNo: 1,
-                totalPage: 1,
-                totalCount: 60 //总数
+          // 查询条件参数
+          queryParam: {
+            name: "",
+            organizationId:'',
+            currentRank:'',
+            time:'',
+            type:2
+          },
+          loadScheduleData: (params) => {
+            let param = Object.assign(params,this.queryParam)
+            return this.$api.personAdminService.getRankList(param).then((res)=>{
+              // console.log(res)
+              res.data.data.list.map((i,k)=>{
+                i.key=k+1
               })
-            }).then(res => {
-              return res
+              return res.data
             })
           },
           selectedRowKeys: [],
@@ -394,7 +242,7 @@
         console.log(record)
         let param ={
             diaColumns:this.diaColumns,
-            diaData:this.diaData
+            person:record
         }
         let option = {
             title: '个人岗位历史',
@@ -424,6 +272,11 @@
       },
       handleChange(e){
           console.log(e)
+      },
+      // 选中树节点
+      loadTreeNode(data){
+        this.queryParam.organizationId = data.id
+        this.$refs.table.refresh(true)
       },
       //编辑树节点
       editTreeNode(params){
@@ -489,6 +342,24 @@
       
       toggleAdvanced() {
         this.advanced = !this.advanced;
+      },
+      /**
+       * 重置查询参数
+       */
+      resetParam() {
+        this.queryParam= {
+            name: "",
+            organizationId:'',
+            currentRank:'',
+            time:'',
+            type:2
+        },
+        this.$refs.table.refresh(true)
+      },
+      // 生效时间
+      onChange(date, dateString) {
+        console.log(date, dateString);
+        this.queryParam.time = dateString
       },
     },
     filters: {

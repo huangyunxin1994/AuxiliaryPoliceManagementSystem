@@ -4,13 +4,13 @@
 			<a-row :gutter="24">
 				<a-col :lg="7" :xl="5" :xxl="4">
 					<ant-tree
-						:dataSource="tree" 
 						:allowEdit="false" 
 						:allowReload="true"
 						:allowSearch="true"
 						@editTreeNode="editTreeNode" 
 						@addTreeNode="addTreeNode" 
-						@removeTreeNode="removeTreeNode">
+						@removeTreeNode="removeTreeNode"
+            @loadTreeNode="loadTreeNode">
 					</ant-tree>
 				</a-col>
 				<a-col :md="24" :lg="17" :xl="19" :xxl="20">
@@ -19,22 +19,19 @@
 							<a-row :gutter="48">
 								<a-col :md="8" :sm="24">
 									<a-form-item label="关键词搜索">
-										<a-input placeholder="请输入要查询的关键词" />
+										<a-input placeholder="请输入要查询的关键词" v-model="queryParam.name" />
 									</a-form-item>
 								</a-col>
 								<a-col :md="8" :sm="24">
-									<a-form-item label="岗位">
-										<a-select default-value="" @change="handleChange">
-											<a-select-option value=""> 全部： </a-select-option>
-											<a-select-option value="1"> 是 </a-select-option>
-											<a-select-option value="2"> 否 </a-select-option>
-										</a-select>
+									<a-form-item label="职级">
+                    <a-input placeholder="请输入职级" v-model="queryParam.currentRank" />
+										
 									</a-form-item>
 								</a-col>
 								<template v-if="advanced">
 									<a-col :md="8" :sm="24">
 										<a-form-item label="变动类型">
-											<a-select default-value="" @change="handleChange">
+											<a-select default-value="" @change="handleChange" v-model="queryParam.state">
 												<a-select-option value=""> 全部 </a-select-option>
 												<a-select-option value="1"> 晋升 </a-select-option>
 												<a-select-option value="2"> 降级 </a-select-option>
@@ -48,10 +45,10 @@
 										:style="
 										(advanced && { float: 'right', overflow: 'hidden' }) || {}
 										">
-										<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+										<a-button type="primary"  @click="$refs.table.refresh(true)">查询</a-button>
 										<a-button
 											style="margin-left: 8px"
-											@click="() => (queryParam = {})"
+											@click="resetParam"
 										>重置</a-button
 										>
 										<a @click="toggleAdvanced" style="margin-left: 8px">
@@ -65,7 +62,7 @@
 					</div>
 					<div class="table-operator" style="margin-bottom: 24px" >
 						<a-button type="primary" @click="changeRank" :disabled="selectedRows.length == 0">变更职级</a-button>
-						<a-dropdown v-if="selectedRowKeys.length > 0">
+						<!-- <a-dropdown v-if="selectedRowKeys.length > 0">
 						<a-menu slot="overlay">
 							<a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
 							<a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
@@ -73,7 +70,7 @@
 						<a-button style="margin-left: 8px">
 							批量操作 <a-icon type="down" />
 						</a-button>
-						</a-dropdown>
+						</a-dropdown> -->
 					</div>
 					<s-table
 						ref="table"
@@ -81,13 +78,16 @@
 						:columns="scheduleColumns"
 						:data="loadScheduleData"
 						:rowSelection="rowSelection"
-						:scroll="{y:600}"
+						:scroll="{ y: 600, x: 800 }"
 						showPagination="auto">
 					
 						<template
-							slot="status"
-							slot-scope="status">
-							<a-badge :status="status" :text="status | statusFilter"/>
+							slot="state"
+							slot-scope="state">
+              <a-badge
+                :status="state == '1' ? 'success' : state == '2' ? 'error':'processing'"
+                :text="state | statusFilter"
+              />
 						</template>
 						<span slot="action" slot-scope="text, record">
 							<a @click="handleEdit (record)">查看</a>
@@ -105,95 +105,6 @@
     import AntTree from '@/components/tree_/Tree'
     import fromModel from '@/components/formModel/formModel'
     import diaHisRank from '@/components/diaPersonnel/history'
-    const tree = [{
-        'key': 'key-01',
-        'title': '研发中心',
-        'icon': 'mail',
-        'count': '10',
-        'scopedSlots': { title: 'custom' },
-        'children': [{
-        'key': 'key-01-01',
-        'title': '后端组',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        children: [{
-            'key': 'key-01-01-01',
-            'title': 'JAVA',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-01-02',
-            'title': 'PHP',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-01-03',
-            'title': 'Golang',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        }
-        ]
-        }, {
-        'key': 'key-01-02',
-        'title': '前端组',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        children: [{
-            'key': 'key-01-02-01',
-            'title': 'React',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-02-02',
-            'title': 'Vue',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-01-02-03',
-            'title': 'Angular',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        }
-        ]
-        }, {
-        'key': 'key-02',
-        'title': '财务部',
-        'icon': 'dollar',
-        'scopedSlots': { title: 'custom' },
-        'children': [{
-            'key': 'key-02-01',
-            'title': '会计核算',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            }, {
-            'key': 'key-02-02',
-            'title': '成本控制',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            }, {
-            'key': 'key-02-03',
-            'title': '内部控制',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-            'children': [{
-                'key': 'key-02-03-01',
-                'title': '财务制度建设',
-                'icon': null,
-                'scopedSlots': { title: 'custom' },
-            },
-            {
-                'key': 'key-02-03-02',
-                'title': '会计核算',
-                'icon': null,
-                'scopedSlots': { title: 'custom' },
-            }]
-        }]
-    }]
-  }]
     export default {
     name: 'OrganManage',
     components:{
@@ -204,7 +115,6 @@
     data() {
       return {
           openKeys: ['key-01'],
-          tree,
           loading:false,
           // 高级搜索 展开/关闭
           advanced: false,
@@ -217,20 +127,20 @@
             },
             {
               title: '姓名',
-              dataIndex: 'name',
-              key: 'name',
+              dataIndex: 'policeName',
+              key: 'policeName',
               width: 80,
             },
             {
               title: '辅警编号',
-              dataIndex: 'code',
-              key: 'code',
+              dataIndex: 'number',
+              key: 'number',
               width: 100
             },
             {
               title: '所属组织',
-              dataIndex: 'organ',
-              key: 'organ',
+              dataIndex: 'organizationName',
+              key: 'organizationName',
                width: 250,
             },
             {
@@ -241,33 +151,33 @@
             },
             {
               title: '变动类型',
-              dataIndex: 'status',
-              key: 'status',
+              dataIndex: 'state',
+              key: 'state',
               width: 150,
-              scopedSlots: { customRender: 'status' }
+              scopedSlots: { customRender: 'state' }
             },
             {
               title: '当前职级',
-              dataIndex: 'rank',
-              key: 'rank',
+              dataIndex: 'currentRank',
+              key: 'currentRank',
               width: 100
             },
             {
               title: '变动原因',
-              dataIndex: 'cause',
-              key: 'cause',
+              dataIndex: 'reason',
+              key: 'reason',
               width: 100
             },
             {
               title: '生效日期',
-              dataIndex: 'date',
-              key: 'date',
+              dataIndex: 'effectiveDate',
+              key: 'effectiveDate',
               width: 100
             },
             {
               title: '审批人',
-              dataIndex: 'principal',
-              key: 'principal',
+              dataIndex: 'approvedBy',
+              key: 'approvedBy',
               width: 100
             },
             {
@@ -286,133 +196,68 @@
                 },
                 {
                     title: '职级',
-                    dataIndex: 'rank',
-                    key: 'rank',
+                    dataIndex: 'currentRank',
+                    key: 'currentRank',
                     width: 80,
                 },
                 {
                     title: '变动类型',
-                    dataIndex: 'status',
-                    key: 'status',
+                    dataIndex: 'state',
+                    key: 'state',
                     width: 100,
-                    scopedSlots: { customRender: 'status' }
+                    scopedSlots: { customRender: 'state' }
                 },
                 {
                     title: '生效时间',
-                    dataIndex: 'date',
-                    key: 'date',
+                    dataIndex: 'effectiveDate',
+                    key: 'effectiveDate',
                     width: 100,
                 },
                 {
                     title: '变动原因',
-                    dataIndex: 'cause',
-                    key: 'cause',
+                    dataIndex: 'reason',
+                    key: 'reason',
                     width: 150,
                 },
                 {
                   title: '审批人',
-                  dataIndex: 'principal',
-                  key: 'principal',
+                  dataIndex: 'approvedBy',
+                  key: 'approvedBy',
                   width: 100
                 }
           ],
-          diaData:[
-              {
-                  key: '1',
-                  rank: '阿斯顿发',
-                  status: 'processing',
-                  date: '2020-05-02',
-                  cause: '作风优良',
-                  principal:'张三'
-              },
-              {
-                  key: '2',
-                  rank: '阿斯顿发',
-                  status: 'error',
-                  date: '2020-05-02',
-                  cause: '贪污腐败',
-                  principal:'张三'
-              }
-          ],
-          loadScheduleData: () => {
-            return new Promise(resolve => {
-              resolve({
-                data: [
-                  {
-                    key: '1',
-                    account: 'admin',
-                    name: '管理员',
-                    code: 'FJ0584',
-                    organ: '青秀区东葛路派出所',
-                    beforeRank: '哈哈',
-                    status: 'processing',
-                    rank:'jalsdkfj',
-                    cause:'勤劳',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '2',
-                    account: 'test',
-                    name: '李四',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    beforeRank: '哈哈',
-                    status: 'processing',
-                    rank:'jalsdkfj',
-                    cause:'勤劳',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '3',
-                    account: 'test',
-                    name: '王五',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    beforeRank: '加了斯柯达',
-                    status: 'error',
-                    rank:'jalsdkfj',
-                    cause:'结党营私',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  },
-                  {
-                    key: '4',
-                    account: 'test',
-                    name: '张三',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    beforeRank: '辅啊速度快放假警',
-                    status: 'error',
-                    rank:'jalsdkfj',
-                    cause:'结党营私',
-                    date:'2020-02-16',
-                    principal:'张三'
-                  }
-                ],
-                pageSize: 10,
-                pageNo: 1,
-                totalPage: 1,
-                totalCount: 60 //总数
+          // 查询条件参数
+          queryParam: {
+            name: "",
+            state: "",
+            currentRank:'',
+            organizationId:'',
+            search:'',
+            type:1
+          },
+          loadScheduleData: (params) => {
+            let param = Object.assign(params,this.queryParam)
+            return this.$api.personAdminService.getRankList(param).then((res)=>{
+              console.log(res)
+              res.data.data.list.map((i,k)=>{
+                i.key=k+1
               })
-            }).then(res => {
-              return res
+              return res.data
             })
           },
           selectedRowKeys: [],
           selectedRows: [],
           extension:[
-                {label:'姓名',name:'name',type:'input',refName:'name',placeholder:'请输入姓名',disabled:true},
-                {label:'变动前职级',name:'beforeRank',type:'input',refName:'beforeRank',placeholder:'请输入变动前职级',disabled:true},
-                {label:'变动后职级',name:'rank',type:'select',refName:'rank',placeholder:'请选择变动后职级'},
-                {label:'变动原因',name:'cause',type:'input',refName:'cause',placeholder:'请输入变动原因'},
-                {label:'生效日期',name:'date',type:'picker',refName:'date',placeholder:'请选择变动原因'}
+                {label:'姓名',name:'policeName',type:'text',refName:'name',placeholder:'请输入姓名',disabled:true},
+                {label:'变动前职级',name:'beforeRank',type:'text',refName:'beforeRank',placeholder:'请输入变动前职级',disabled:true},
+                {label:'变动后职级',name:'currentRank',type:'input',refName:'rank',placeholder:'请选择变动后职级'},
+                {label:'变动原因',name:'reason',type:'input',refName:'cause',placeholder:'请输入变动原因'},
+                {label:'生效日期',name:'effectiveDate',type:'picker',refName:'date',placeholder:'请选择变动原因'}
           ],
           changeRankRules:{
-            rank:[{ required: true, message: '请选择变动后职级', trigger: 'change'}],
-            cause: [{ required: true, message: '请输入变动原因', trigger: 'blur'}],
-            date: [{ required: true, message: '请选择生效日期', trigger: 'change' }]
+            currentRank:[{ required: true, message: '请选择变动后职级', trigger: 'change'}],
+            reason: [{ required: true, message: '请输入变动原因', trigger: 'blur'}],
+            effectiveDate: [{ required: true, message: '请选择生效日期', trigger: 'change' }]
           }
       }
     },
@@ -421,7 +266,7 @@
         console.log(record)
         let param ={
             diaColumns:this.diaColumns,
-            diaData:this.diaData
+            person:record
         }
         let option = {
             title: '职级历史',
@@ -469,6 +314,13 @@
         
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
+        console.log(this.selectedRowKeys)
+        console.log(this.selectedRows)
+      },
+      // 选中树节点
+      loadTreeNode(data){
+        this.queryParam.organizationId = data.id
+        this.$refs.table.refresh(true)
       },
 
       // 职级变更
@@ -476,7 +328,8 @@
         console.log(this.selectedRows)
         let param ={
             formTitle:this.extension,
-            rules:this.changeRankRules
+            rules:this.changeRankRules,
+            record:{}
         }
         let option = {
             title: '职级变更',
@@ -484,7 +337,7 @@
             centered: true,
             maskClosable: false,
             okText:"提交",
-          }
+        }
         this.modal(param,option,fromModel)
       },
       // 弹窗
@@ -516,12 +369,27 @@
       toggleAdvanced() {
         this.advanced = !this.advanced;
       },
+      /**
+     * 重置查询参数
+     */
+      resetParam() {
+        this.queryParam= {
+            name: "",
+            state: "",
+            currentRank:'',
+            organizationId:'',
+            search:'',
+            type:1
+        },
+        this.$refs.table.refresh(true)
+      },
     },
     filters: {
       statusFilter (status) {
         const statusMap = {
-          'processing': '晋升',
-          'error': '降级'
+          '0':'初始职级',
+          '1': '晋升',
+          '2': '降级'
         }
         return statusMap[status]
       }

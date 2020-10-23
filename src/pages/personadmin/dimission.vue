@@ -6,15 +6,15 @@
 					<a-row :gutter="48">
 						<a-col :md="8" :sm="24">
 							<a-form-item label="关键词搜索">
-								<a-input placeholder="请输入要查询的关键词" />
+								<a-input placeholder="请输入要查询的关键词" v-model="queryParam.name"/>
 							</a-form-item>
 						</a-col>
 						<a-col :md="8" :sm="24">
 							<a-form-item label="装备证件是否回收">
-								<a-select default-value="" @change="handleChange">
+								<a-select default-value=""  v-model="queryParam.state">
 									<a-select-option value=""> 全部： </a-select-option>
-									<a-select-option value="1"> 是 </a-select-option>
-									<a-select-option value="2"> 否 </a-select-option>
+									<a-select-option value="1"> 已回收 </a-select-option>
+									<a-select-option value="2"> 未回收 </a-select-option>
 								</a-select>
 							</a-form-item>
 						</a-col>
@@ -47,7 +47,7 @@
 				</a-form>
 			</div>
 			<div class="table-operator" style="margin-bottom: 24px">
-				<a-button type="primary" icon="plus" @click="newDimission" :disabled="selectedRows.length == 0">新建离职</a-button>
+				<a-button type="primary" icon="plus" @click="newDimission">新建离职</a-button>
 				<a-dropdown v-if="selectedRowKeys.length > 0">
 					<a-menu slot="overlay">
 						<a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -61,11 +61,11 @@
 			</div>
 			<s-table
 				ref="table"
-				rowKey="key"
+				:rowKey="(record) => record.id"
 				:columns="scheduleColumns"
 				:data="loadScheduleData"
 				:rowSelection="rowSelection"
-				:scroll="{y:600}"
+				:scroll="{ y: 600, x: 800 }"
 				showPagination="auto">
 				<span slot="action" slot-scope="text, record">
 					<span>{{text==1?'已回收':'未回收'}}</span>
@@ -84,18 +84,21 @@
 				</span>
 			</s-table>
        </a-card>
+      <form-step ref="modal" title="新增离职" formTitleName="name" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
   </div>
 </template>
 
 <script>
     import {mapState} from 'vuex'
     import STable from '@/components/Table_/'
-    import newDimission from '@/components/diaPersonnel/newDimissionStep/StepForm'
+    // import newDimission from '@/components/diaPersonnel/newDimissionStep/StepForm'
+    import formStep from "@/components/stepForm/StepForm";
     
     export default {
     name: 'OrganManage',
     components:{
-        STable
+        STable,
+        formStep
     },
     data() {
       return {
@@ -110,155 +113,133 @@
             },
             {
               title: '姓名',
-              dataIndex: 'name',
-              key: 'name',
+              dataIndex: 'policeName',
+              key: 'policeName',
               width: 80,
             },
             {
               title: '辅警编号',
-              dataIndex: 'code',
-              key: 'code',
+              dataIndex: 'number',
+              key: 'number',
               width: 100
             },
             {
               title: '所属组织',
-              dataIndex: 'organ',
-              key: 'organ',
+              dataIndex: 'organizationName',
+              key: 'organizationName',
                width: 250,
             },
             {
-              title: '岗位',
-              dataIndex: 'post',
-              key: 'post',
-              width: 100,
+              title: '离职创建时间',
+              dataIndex: 'createTime',
+              key: 'createTime',
+              width: 200,
             },
             {
-              title: '生效日期',
-              dataIndex: 'date',
-              key: 'date',
+              title: '离职生效日期',
+              dataIndex: 'effectiveDate',
+              key: 'effectiveDate',
               width: 150
             },
             {
+              title: '离职离职原因',
+              dataIndex: 'reason',
+              key: 'reason',
+              width: 200
+            },
+            {
               title: '审批人',
-              dataIndex: 'principal',
-              key: 'principal',
+              dataIndex: 'approval',
+              key: 'approval',
               width: 100
             },
             {
               title: '证件装备回收状态',
-              dataIndex: 'equState',
-              key: 'equState',
+              dataIndex: 'recoveryStatus',
+              key: 'recoveryStatus',
               scopedSlots: {customRender: 'action'},
               width: 150
             }
           ],
-          
-          loadScheduleData: () => {
-            return new Promise(resolve => {
-              resolve({
-                data: [
-                  {
-                    key: '1',
-                    account: 'admin',
-                    name: '管理员',
-                    code: 'FJ0584',
-                    organ: '青秀区东葛路派出所',
-                    date:'2020-02-16',
-                    principal:'张三',
-                    equState:'1'
-                  },
-                  {
-                    key: '2',
-                    account: 'test',
-                    name: '李四',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    date:'2020-02-16',
-                    principal:'张三',
-                    equState:'1'
-                  },
-                  {
-                    key: '3',
-                    account: 'test',
-                    name: '王五',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    date:'2020-02-16',
-                    principal:'张三',
-                    equState:'2'
-                  },
-                  {
-                    key: '4',
-                    account: 'test',
-                    name: '张三',
-                    code: 'FJ0585',
-                    organ: '青秀区东葛路派出所',
-                    date:'2020-02-16',
-                    principal:'张三',
-                    equState:'2'
-                  }
-                ],
-                pageSize: 10,
-                pageNo: 1,
-                totalPage: 1,
-                totalCount: 60 //总数
+          // 查询条件参数
+          queryParam: {
+            name: "",
+            time:'',
+            state:''
+          },
+          loadScheduleData: (params) => {
+            let param = Object.assign(params,this.queryParam)
+            return this.$api.personAdminService.getDimissionList(param).then((res)=>{
+              console.log(res)
+              res.data.data.list.map((i,k)=>{
+                i.key=k+1
               })
-            }).then(res => {
-              return res
+              return res.data
             })
           },
           selectedRowKeys: [],
           selectedRows: [],
           // 高级搜索 展开/关闭
           advanced: false,
+          formTitle:[
+            {
+              label: "姓名",
+              name: "name",
+              type: "text",
+              placeholder: "请输入所在单位"
+            },
+            {
+              label: "离职生效日期",
+              name: "effectiveDate",
+              type: "picker",
+              placeholder: "请选择离职生效日期"
+            },
+            {
+              label: "离职原因",
+              name: "reason",
+              type: "textarea",
+              placeholder: "请输入离职原因"
+            }
+          ],
+          rules:{
+            name: [
+              { required: false, message: "请输入名字", trigger: "blur"},
+            ],
+            effectiveDate: [
+              { required: true, message: "请选择离职生效日期", trigger: "change" },
+            ],
+            reason: [{ required: true, message: "请输入离职原因", trigger: "blur" }],
+          },
+
+          stepTitle:[{title:'选择人员'},{title:'填写合同信息'}],
+
+          submitFun:(params)=>{
+            // let param = Object.assign(params,this.queryParams)
+            return this.$api.personAdminService.addDimission(params).then((res)=>{
+              this.$refs.table.refresh(false)
+              return res.data
+            })
+          },
       }
     },
     methods:{
-      handleEdit(record){
-        console.log(record)
-        let param ={
-            diaColumns:this.diaColumns,
-            diaData:this.diaData
-        }
-        let option = {
-            title: '个人岗位历史',
-            width: 1000,
-            centered: true,
-            maskClosable: false,
-            okText:"提交",
-            footer:"",
-            zIndex:1000
-          }
-        this.modal(param,option,newDimission)
-      },
       handleChange(e){
           console.log(e)
       },
       // 获取多选的数据
       onSelectChange (selectedRowKeys, selectedRows) {
-        
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
       },
 
       // 新建离职
       newDimission(){
-        console.log(this.selectedRows)
-        let param ={
-            
-        }
-        let option = {
-            title: '新建离职',
-            width: 1000,
-            centered: true,
-            maskClosable: false,
-            footer:""
-          }
-        this.modal(param,option,newDimission)
+        this.$refs.modal.visible=true
       },
       // 离职生效时间
       onChange(date, dateString){
           console.log(date, dateString);
+          this.queryParam.time = dateString
       },
       // 弹窗
       modal(obj,option,model){
@@ -289,7 +270,19 @@
       //修改装备状态
       confirm(e) {
           console.log(e);
-          this.$message.success('修改成功');
+          let param = {
+            id:e.id,
+            state:1
+          }
+          this.$api.personAdminService.putDimission(param).then((res)=>{
+            console.log(res)
+            if(res.data.code == 0){
+              this.$message.success('修改成功');
+              this.$refs.table.refresh(true)
+            }else{
+              this.$message.error('修改失败，请重试');
+            }
+          })
       },
       cancel(e) {
           console.log(e);
