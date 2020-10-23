@@ -14,11 +14,13 @@ import {initI18n} from '@/utils/i18n'
 import bootstrap from '@/bootstrap'
  import moment from'moment'; 
  import 'moment/locale/zh-cn'; 
+ import Vuex from 'vuex'
  moment.locale('zh-cn');
 const router = initRouter(store.state.setting.asyncRoutes)
 const i18n = initI18n('CN', 'US')
 
 Vue.use(Antd)
+Vue.use(Vuex)
 Vue.config.productionTip = false
 Vue.use(Viser)
 Vue.use(Plugins)

@@ -11,7 +11,11 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <select-tree style="width: 100%" ref="selectTree"></select-tree>
+                <select-tree 
+                  style="width: 100%" 
+                  ref="selectTree" 
+                  :value="queryParam.organizationId" 
+                  @handleTreeChange="handleTreeChange"></select-tree>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -84,12 +88,16 @@
         showPagination="auto"
       >
         <template slot="holiday" slot-scope="holiday">
-          <span>{{holiday | holidayFilter}}</span>
-        </template>
-        <template slot="isEnable" slot-scope="isEnable">
+          <!-- <span>{{holiday | holidayFilter}}</span> -->
           <a-badge
-            :status="isEnable == '1' ? 'processing' : 'error'"
-            :text="isEnable | statusFilter"
+            :status="state == '1' ? 'processing' : 'error'"
+            :text="holiday | holidayFilter"
+          />
+        </template>
+        <template slot="state" slot-scope="state">
+          <a-badge
+            :status="state == '1' ? 'processing' : 'error'"
+            :text="state | statusFilter"
           />
         </template>
         <span slot="action" slot-scope="text, record">
@@ -102,7 +110,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/TaskForm";
 import selectTree from "@/components/treeSelect/TreeSelect"
@@ -231,6 +239,7 @@ export default {
           title: "状态",
           dataIndex: "state",
           key: "state",
+          scopedSlots: { customRender: "state" },
           width: 100
         },
         {
@@ -250,11 +259,12 @@ export default {
       queryParam: {
         search:'',
         learningStyle:'',
-        oid:'',// 当前页面下的筛选框组织
-        organizationId:'',//登录人员所属组织
+        oid:'', //登录人员所属组织
+        organizationId:'',// 当前页面下的筛选框组织
         state:'',
       },
       loadScheduleData: (params) => {
+        this.queryParam.oid = this.user.organizationId
         let param = Object.assign(params,this.queryParam)
         return this.$api.educationService.geteducationList(param).then((res)=>{
           console.log(res)
@@ -277,11 +287,20 @@ export default {
         })
         
       },
+      value:null
     };
   },
   methods: {
     handleEdit(record) {
       console.log(record);
+      this.$router.push(
+        {
+          path:'educationDetails',
+          query: {
+            param:record
+          }
+        }
+      )
     },
     handleChange(e) {
       console.log(e);
@@ -295,38 +314,62 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+    // 组织树选择
+    handleTreeChange(data){
+      this.queryParam.organizationId = data.val
+    },
     // 新建培训
     newEducation(){
+      console.log("66666666")
+      console.log(this.user)
       this.$refs.modal.visible=true
     },
     // 删除培训
     handleDel(){
-      console.log(this.selectedRowKeys)
-      console.log(this.selectedRows)
-      this.$api.educationService.deleteEducation({id:this.selectedRowKeys}).then((res)=>{
-        this.$refs.table.refresh(true)
-        return res.data
-      })
+      const _this = this;
+      this.$confirm({
+        title: "警告",
+        content: `确认要删除所选培训吗?`,
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          console.log(_this);
+          _this.$api.educationService.deleteEducation({id:_this.selectedRowKeys}).then((res)=>{
+            if(res.data.code == 0){
+              _this.$refs.table.refresh(true)
+              return res.data
+            }else{
+              _this.$message.error(res.data.msg);
+            }
+          }).catch((err) => {
+            _this.$message.error(err.data.msg);
+          });
+        },
+        onCancel() {},
+      });
     }
   },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        1: "是",
-        2: "否",
+        1: "已结束",
+        2: "未结束",
       };
       return statusMap[status];
     },
     holidayFilter(holiday) {
       const statusMap = {
-            "1":'是' ,
-            "2":'否' ,
+            "1":'不脱岗 ' ,
+            "2":'脱岗' ,
       };
       return statusMap[holiday];
     },
   },
   computed: {
     ...mapState("setting", ["pageMinHeight"]),
+    ...mapGetters("account",["user"]),// 获取登录者信息
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,

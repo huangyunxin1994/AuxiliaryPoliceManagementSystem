@@ -5,7 +5,7 @@
         class="position-and-level-title"
         :style="{ 'border-color': theme.color }"
       >
-        {{name}}
+        {{param.className}}
       </div>
       <a-form-model 
             :model="form" 
@@ -21,7 +21,10 @@
                 </a-col>
                 <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                     <a-form-model-item label="培训时间" :labelCol="{xs:{span: 24},sm:{span: 8}}" :wrapperCol="{xs:{span: 24},sm:{span: 16}}" prop="time">
-                        <a-range-picker disabled @change="onChange" />
+                        <a-range-picker 
+                          disabled 
+                          :value="[this.form.startTime,this.form.endTime]"
+                          @change="onChange" />
                     </a-form-model-item>
                 </a-col>
                 <a-col :md="24" :lg="12" :xl="12" :xxl="6">
@@ -32,10 +35,10 @@
                 <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                     <a-form-model-item label="培训方式" :labelCol="{xs:{span: 24},sm:{span: 8}}" :wrapperCol="{xs:{span: 24},sm:{span: 16}}" prop="learningStyle">
                         <a-select disabled v-model="form.learningStyle" placeholder="请选择培训方式">
-                            <a-select-option   value='不脱岗'>
+                            <a-select-option   value='1'>
                                 不脱岗
                             </a-select-option>
-                            <a-select-option   value='脱岗'>
+                            <a-select-option   value='2'>
                                 脱岗
                             </a-select-option>
                         </a-select>
@@ -61,28 +64,22 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="关键词搜索">
-                <a-input placeholder="请输入要查询的关键词" />
+                <a-input placeholder="请输入要查询的关键词" v-model="queryParam.search"/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <a-tree-select
-                  v-model="value"
-                  style="width: 100%"
-                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                  :tree-data="tree"
-                  :allowClear="true"
-                  :replaceFields="replaceFields"
-                  placeholder="请选择组织"
-                  tree-default-expand-all
-                >
-                </a-tree-select>
+                <select-tree 
+                  style="width: 100%" 
+                  ref="selectTree" 
+                  :value="queryParam.organizationId" 
+                  @handleTreeChange="handleTreeChange"></select-tree>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="状态">
-                  <a-select default-value="" @change="handleChange">
+                <a-form-item label="结果">
+                  <a-select default-value="" v-model="queryParam.state">
                     <a-select-option value=""> 全部： </a-select-option>
                     <a-select-option value="1"> 优秀 </a-select-option>
                     <a-select-option value="2"> 良好 </a-select-option>
@@ -124,6 +121,12 @@
         :scroll="{ y: 600, x: 650 }"
         showPagination="auto"
       >
+        <template slot="state" slot-scope="state">
+          <a-badge
+            :status="state == '1' ? 'success' : state == '2' ? 'processing' : 'error'"
+            :text="state | statusFilter(state)"
+          />
+        </template>
       </s-table>
       <div class="table-page-search-wrapper">
         <div class="submitBtn">
@@ -135,99 +138,12 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
+import selectTree from "@/components/treeSelect/TreeSelect"
 
-const tree = [{
-    'key': 'key-01',
-    'title': '研发中心',
-    'icon': 'mail',
-    'count': '10',
-    'scopedSlots': { title: 'custom' },
-    'children': [{
-      'key': 'key-01-01',
-      'title': '后端组',
-      'icon': null,
-      'scopedSlots': { title: 'custom' },
-      children: [{
-        'key': 'key-01-01-01',
-        'title': 'JAVA',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      },
-      {
-        'key': 'key-01-01-02',
-        'title': 'PHP',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      },
-      {
-        'key': 'key-01-01-03',
-        'title': 'Golang',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      }
-      ]
-    }, {
-      'key': 'key-01-02',
-      'title': '前端组',
-      'icon': null,
-      'scopedSlots': { title: 'custom' },
-      children: [{
-        'key': 'key-01-02-01',
-        'title': 'React',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      },
-      {
-        'key': 'key-01-02-02',
-        'title': 'Vue',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      },
-      {
-        'key': 'key-01-02-03',
-        'title': 'Angular',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-      }
-      ]
-    }, {
-    'key': 'key-02',
-    'title': '财务部',
-    'icon': 'dollar',
-    'scopedSlots': { title: 'custom' },
-    'children': [{
-        'key': 'key-02-01',
-        'title': '会计核算',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        }, {
-        'key': 'key-02-02',
-        'title': '成本控制',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        }, {
-        'key': 'key-02-03',
-        'title': '内部控制',
-        'icon': null,
-        'scopedSlots': { title: 'custom' },
-        'children': [{
-            'key': 'key-02-03-01',
-            'title': '财务制度建设',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        },
-        {
-            'key': 'key-02-03-02',
-            'title': '会计核算',
-            'icon': null,
-            'scopedSlots': { title: 'custom' },
-        }]
-    }]
-  }]
-  }]
+
 const credTitle = [
   {
     label: "姓名",
@@ -254,13 +170,15 @@ export default {
   name: "OrganManage",
   components: {
     STable,
+    selectTree
   },
   data() {
     return {
       name:"哈哈培训",//培训名称
-      tree,
       value:null,
       advanced:false,
+      param:{},
+      vaule:'',
       replaceFields:{
           children:'children',
           title:'title',
@@ -276,14 +194,14 @@ export default {
         },
         {
           title: "姓名",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "policeName",
+          key: "policeName",
           ellipsis: true,
         },
         {
           title: "所属岗位",
-          dataIndex: "post",
-          key: "post",
+          dataIndex: "postName",
+          key: "postName",
           ellipsis: true,
         },
         {
@@ -294,46 +212,36 @@ export default {
         },
         {
           title: "培训情况",
-          dataIndex: "trainGrade",
-          key: "trainGrade",
+          dataIndex: "state",
+          key: "state",
+          scopedSlots: { customRender: "state" },
           ellipsis: true,
         },
         {
           title: "说明",
-          dataIndex: "trainContent",
-          key: "trainContent",
+          dataIndex: "trainExplain",
+          key: "trainExplain",
           ellipsis: true,
         }
       ],
-      loadCredData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "张三",
-                post:'哈哈哈',
-                organizationName: "青秀分局",
-                trainGrade:'良好',
-                trainContent:'这个学员态度认真'
-              },
-              {
-                key: "2",
-                name: "李四",
-                post:'哈哈哈',
-                organizationName: "青秀分局",
-                trainGrade:'优秀',
-                trainContent:'这个学员非常nice'
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      queryParam:{
+        organizationId:'',
+        id:'',
+        oid:'',
+        state:'',
+        search:''
+      },
+      loadCredData: (params) => {
+        this.queryParam.oid = this.user.organizationId
+        this.queryParam.id = this.param.id
+        let param = Object.assign(params,this.queryParam)
+        return this.$api.educationService.getEducationDetails(param).then((res)=>{
+          console.log(res)
+          res.data.data.list.map((i,k)=>{
+            i.key=k+1
+          })
+          return res.data
+        })
       },
       selectedCredRowKeys: [],
       selectedCredRows: [],
@@ -421,6 +329,12 @@ export default {
       this.selectedEqupRows = selectedRows;
     },
 
+    // 组织树选择
+    handleTreeChange(data){
+      this.queryParam.organizationId = data.val
+      this.value = data.val
+    },
+
     // 开始时间和结束时间
     onChange(date, dateString) {
       console.log(date, dateString);
@@ -437,17 +351,30 @@ export default {
       console.log(e);
     },
   },
+  created(){
+    // param
+    this.param = this.$route.query.param
+    this.form.learningName = this.$route.query.param.className
+    this.form.startTime = this.$route.query.param.startTime
+    this.form.endTime = this.$route.query.param.endTime
+    this.form.classHour = this.$route.query.param.classHour
+    this.form.learningStyle = this.$route.query.param.learningStyle
+    this.form.learningContent = this.$route.query.param.learningContent
+    
+  },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        processing: "启用",
-        error: "禁用",
+        1: "优秀",
+        2: "良好",
+        3: "不及格"
       };
       return statusMap[status];
     },
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
+    ...mapGetters("account",["user"]),// 获取登录者信息
     rowCredSelection() {
       return {
         selectedRowKeys: this.selectedCredRowKeys,

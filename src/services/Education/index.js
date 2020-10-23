@@ -1,6 +1,7 @@
-import {GETLIST,POSTEDUCATION,DELETEEDUCATION} from './api'
+import {GETLIST,POSTEDUCATION,DELETEEDUCATION,GETDETAILSDATA} from './api'
 import {request, METHOD} from '@/utils/request'
 // import Qs from 'qs'
+import store from '@/store/index.js'
 
 const educationService = {
     // /**
@@ -42,9 +43,9 @@ const educationService = {
                 classHour:params.classHour,
                 learningStyle:params.learningStyle,
                 learningContent:params.learningContent,
-                creator:'',
-                organizationId:'',//创建者的组织id 
-                organizationName:'',//创建者的组织名
+                creator:store.state.account.user.name,
+                organizationId:store.state.account.user.organizationId,//创建者的组织id 
+                organizationName:store.state.account.user.organizationName,//创建者的组织名
             }
         }
         let arr = []
@@ -73,12 +74,21 @@ const educationService = {
         return request(DELETEEDUCATION, METHOD.DELETE, {data:id})
     },
 
-
+    /**
+     * 根据id获得培训详情
+     * @param params 培训id
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    getEducationDetails(params){
+        // const GETDETAILS = GETDETAILSDATA + id.id
+        return request(GETDETAILSDATA, METHOD.GET,params)
+    }
 
     // deleteCertEquip(id) {
     //     DELETERSFL = DELETERSFL+ id
     //     return request(DELETERSFL, METHOD.DELETE)
     // },
+    
 }
 
 

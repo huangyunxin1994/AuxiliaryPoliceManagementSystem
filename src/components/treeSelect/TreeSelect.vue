@@ -81,41 +81,6 @@ export default {
     
   },
   methods: {
-    initData() {
-      const tree1 = [
-        {
-          id: 1,
-          name: "根组织",
-          code: "000001",
-        },
-        {
-          id: 2,
-          name: "西乡塘",
-          code: "000002",
-          parentId: 1,
-        },
-        {
-          id: 3,
-          name: "青秀",
-          code: "000003",
-          parentId: 1,
-        },
-        {
-          id: 4,
-          name: "西乡塘1",
-          code: "000004",
-          parentId: 2,
-        },
-        {
-          id: 5,
-          name: "青秀1",
-          code: "000005",
-          parentId: 3,
-        },
-      ];
-      this.tree = filterArray(tree1);
-      console.log(this.tree);
-    },
     change(value) {
       // 将组织id传出去
       console.log(value);
