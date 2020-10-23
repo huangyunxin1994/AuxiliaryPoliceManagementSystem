@@ -1,5 +1,6 @@
 import { LOGIN, ROUTES } from './api'
 import {request, METHOD, removeAuthorization} from '@/utils/request'
+import Qs from 'qs'
 
 /**
  * 登录服务
@@ -7,11 +8,12 @@ import {request, METHOD, removeAuthorization} from '@/utils/request'
  * @param password 账户密码
  * @returns {Promise<AxiosResponse<T>>}
  */
-export async function login(name, password) {
-  return request(LOGIN, METHOD.POST, {
-    name: name,
-    password: password
-  })
+export async function login(name, password, type) {
+  return request(LOGIN, METHOD.POST, Qs.stringify({
+    account: name,
+    password: password,
+    type: type
+  }))
 }
 
 export async function getRoutesConfig() {

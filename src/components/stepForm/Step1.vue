@@ -7,7 +7,7 @@
             <a-col :md="24" :sm="24">
               <a-form-item label="模糊查询">
                 <a-input
-                  v-model="searchVal"
+                  v-model="queryParams.search"
                   placeholder="请输入搜索内容"
                   class="searchInput"
                 />
@@ -15,26 +15,16 @@
             </a-col>
             <a-col :md="16" :sm="24">
               <a-form-item label="组织选择">
-                <!-- <a-tree-select
-                  v-model="value"
-                  style="width: 100%"
-                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                  :tree-data="tree"
-                  :allowClear="true"
-                  :replaceFields="replaceFields"
-                  placeholder="请选择组织"
-                  tree-default-expand-all
-                >
-                </a-tree-select> -->
                 <tree-select 
                   ref="treeSelect"
+                  :value="queryParams.organizationId"
                   @handleTreeChange="handleTreeChange"
                 ></tree-select>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24" style="margin-bottom:24px">
-              <a-button type="primary" @click="onSearch"> 查询 </a-button>
-              <a-button @click="onSearch" style="margin-left: 8px">
+              <a-button type="primary" @click="$refs.table.refresh(true)"> 查询 </a-button>
+              <a-button @click="reloadData" style="margin-left: 8px">
                 重置
               </a-button>
             </a-col>
@@ -134,109 +124,7 @@ const rightTableColumns = [
     width: 300,
   },
 ];
-const tree = [
-  {
-    key: "key-01",
-    title: "研发中心",
-    icon: "mail",
-    count: "10",
-    scopedSlots: { title: "custom" },
-    children: [
-      {
-        key: "key-01-01",
-        title: "后端组",
-        icon: null,
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-01-01-01",
-            title: "JAVA",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-01-02",
-            title: "PHP",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-01-03",
-            title: "Golang",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-        ],
-      },
-      {
-        key: "key-01-02",
-        title: "前端组",
-        icon: null,
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-01-02-01",
-            title: "React",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-02-02",
-            title: "Vue",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-01-02-03",
-            title: "Angular",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-        ],
-      },
-      {
-        key: "key-02",
-        title: "财务部",
-        icon: "dollar",
-        scopedSlots: { title: "custom" },
-        children: [
-          {
-            key: "key-02-01",
-            title: "会计核算",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-02-02",
-            title: "成本控制",
-            icon: null,
-            scopedSlots: { title: "custom" },
-          },
-          {
-            key: "key-02-03",
-            title: "内部控制",
-            icon: null,
-            scopedSlots: { title: "custom" },
-            children: [
-              {
-                key: "key-02-03-01",
-                title: "财务制度建设",
-                icon: null,
-                scopedSlots: { title: "custom" },
-              },
-              {
-                key: "key-02-03-02",
-                title: "会计核算",
-                icon: null,
-                scopedSlots: { title: "custom" },
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+
 export default {
   name: "Step1",
   components: {
@@ -248,6 +136,7 @@ export default {
     return {
       leftColumns: leftTableColumns,
       queryParams:{
+        search:"",
         organizationId:''
       },
       leftColumnsData: params => {
@@ -268,7 +157,6 @@ export default {
         key: "key",
         value: "key",
       },
-      tree,
       loading: false,
       searchVal: "",
       selectedLeftRowKeys: [],
@@ -310,40 +198,13 @@ export default {
          console.log( this.selectedLeftRowKeys)
           this.$refs.table.refresh(true)
       },
-    // 搜索
-    onSearch() {
-        console.log(331)
-      this.leftColumnsData= () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                id: "56565",
-                name: "辅警11",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              },
-              {
-                id: "89898",
-                name: "辅警12",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-              }
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-            this.tableData = res.data
-            res.data = res.data.filter(x => !this.rightColumnsData.some(i=>i.id===x.id))
-          return res;
-        });
-        
-      }
-      
-    },
+      reloadData(){
+        this.queryParams={
+          search:"",
+          organizationId:''
+        }
+        this.$refs.table.refresh(true)
+      },
     onSelectChange(selectedRowKeys, selectedRows) {
       
       this.selectedLeftRowKeys = selectedRowKeys;
@@ -355,8 +216,8 @@ export default {
       this.selectedRightRows = selectedRows;
     },
     // 获得组织选择的组织id
-    handleTreeChange(data){
-      this.organizationId = data
+    handleTreeChange(obj){
+      this.queryParams.organizationId = obj.val
     }
   },
   computed:{

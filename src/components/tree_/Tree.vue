@@ -20,28 +20,28 @@
                     {{ item[replaceFields.title].substr(item[replaceFields.title].indexOf(searchValue) + searchValue.length) }}{{ showCount ? '（'+item.count+'）' : ''}}
                 </span>
                 <span v-else>{{ item[replaceFields.title] }}{{ showCount ? '（'+item.count+'）' : ''}}</span>
+               <div class="btnPosition">
                 <a-dropdown :trigger="['click']" v-if="allowEdit">
                     <a class="btn" @click="e => e.stopPropagation()"><a-icon type="ellipsis" /></a>
                     <a-menu slot="overlay">
                         <a-menu-item key="1" @click="edit">编辑</a-menu-item>
                         <a-menu-item key="2" @click="add">新增</a-menu-item>
-                        <a-menu-item key="3" @click="remove" v-if="item.key!='key-01'">删除</a-menu-item>
+                        <a-menu-item key="3" @click="remove" v-if="item.id!='1'">删除</a-menu-item>
                     </a-menu>
                 </a-dropdown>
                 <a-tooltip>
                     <template slot="title">
                     查看全部
                     </template>
-                    <a class="btnReload" @click.stop="reload" v-if="allowReload&&item.key=='key-01'"><a-icon type="reload" /></a>
+                    <a class="" @click.stop="reload" v-if="allowReload&&item.id=='1'"><a-icon type="reload" /></a>
                 </a-tooltip>
-                
+                </div>
             </template>
         </a-tree>
     </div>
 </template>
 
 <script>
-
 export default {
     props:{
       //树数据 类型：数组|Array
@@ -64,7 +64,7 @@ export default {
       //是否允许重置 类型：布尔值|Boolean
       allowReload:{
           type:Boolean,
-          default:false
+          default:true
       },
       //是否允许搜索 类型：布尔值|Boolean
       allowSearch:{
@@ -107,18 +107,23 @@ export default {
         };
     },
     mounted(){
-        this.$api.organizationService.getOrganization().then((res)=>{
+        this.loadTree()
+        
+    },
+    methods: {
+        loadTree(){
+            console.log(115)
+            this.$api.organizationService.getOrganization().then((res)=>{
             let tree = res.data.data.data
             tree.forEach(item => {
                 item.scopedSlots = { title: "custom" }
             })
             this.dataSource = this.filterArray(res.data.data.data)
-            console.log(this.dataSource)
-            // this.$emit("getTreeData",this.filterTree)
-        })
-        this.initData(this.dataSource)
-    },
-    methods: {
+            
+            this.initData(this.dataSource)
+                // this.$emit("getTreeData",this.filterTree)
+            })
+        },
         filterArray(data) {
             data.forEach(function (item) {
                 delete item.children;
@@ -145,6 +150,7 @@ export default {
             this.autoExpandParent = false;
         },
         onSelect(selectedKeys,e) {
+            console.log(154)
             this.selectedKeys = selectedKeys
             this.selectedNode = e.node.dataRef
             let params = {}
@@ -167,7 +173,8 @@ export default {
         reload(){
             this.selectedKeys=[]
             this.selectedNode={}
-            this.$emit('reloadTreeNode')
+            let params = {}
+            this.$emit('loadTreeNode',params)
         },
         initData(data){
             for (let i = 0; i < data.length; i++) {
@@ -233,27 +240,27 @@ export default {
       
       /deep/ .ant-tree-node-content-wrapper {
         position: relative;
-        /deep/ .btn {
-            display: none;
-            position: absolute;
-            top: 0;
-            right: 10px;
-            font-size: 20px;
-            z-index: 1;
-            color:@text-color
-        }
-        /deep/ .btnReload {
+        /deep/ .btnPosition {
             position: absolute;
             top: 0;
             right: 10px;
             font-size: 14px;
             z-index: 1;
+            color:@text-color;
+            display: flex;
+            justify-content: space-between;
+            
+        }
+        /deep/ .btn {
+            display: none;
             color:@text-color
         }
+        
     }
     /deep/ .ant-tree-node-selected{
          /deep/ .btn {
-            display: block;
+            display: inline-block;
+            margin-right: 20px;
         }
     }
       

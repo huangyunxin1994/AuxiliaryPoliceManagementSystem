@@ -7,15 +7,15 @@
             <a-row :gutter="48">
               <a-col :md="8" :sm="24">
                 <a-form-item label="模糊查询">
-                  <a-input placeholder="请输入要查询的关键词" />
+                  <a-input v-model="queryParam.name" placeholder="请输入要查询的关键词" />
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
                 <a-form-item label="是否到期">
-                  <a-select default-value="" @change="handleChange">
+                  <a-select default-value="" v-model="queryParam.expire">
                     <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option value="1"> 是 </a-select-option>
-                    <a-select-option value="2"> 否 </a-select-option>
+                    <a-select-option value="1"> 未过期 </a-select-option>
+                    <a-select-option value="2"> 已过期 </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -26,7 +26,7 @@
                   >
                   <a-button
                     style="margin-left: 8px"
-                    @click="() => (queryParam = {})"
+                    @click="reloadData"
                     >重置</a-button
                   >
                 </span>
@@ -41,7 +41,7 @@
           >新建</a-button
         >
         <a-dropdown v-if="selectedRowKeys.length > 0">
-          <a-menu slot="overlay">
+          <a-menu slot="overlay" @click="handleDel">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px">
@@ -51,7 +51,7 @@
       </div>
       <s-table
         ref="table"
-        rowKey="key"
+        :rowKey="(record)=>record.id"
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :rowSelection="rowSelection"
@@ -60,12 +60,12 @@
       >
         <template slot="expire" slot-scope="expire">
           <a-badge
-            :status="expire == 1 ? 'error' : 'processing'"
+            :status="expire == 1 ? 'processing' : 'error'"
             :text="expire | statusFilter"
           />
         </template>
-        <span slot="name" slot-scope="text, record">
-          <a @click="handleEdit(record)">{{ text }}</a>
+        <span slot="name" slot-scope="text,record">
+          <a  name="file" :download="record.name" :href="BASE_URL+'/DocumentAnnouncement/notice/download?noticeId='+record.id">{{ text }}</a>
         </span>
       </s-table>
     </a-card>
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 const formTitle = [
@@ -101,6 +101,15 @@ const formTitle = [
     name: "uploadFile",
     type: "upload",
   },
+  {
+    name:"publisher"
+  },
+  {
+    name:"organizationId"
+  },
+  {
+    name:"publisherId"
+  }
 ];
 const rules = {
   title: [{ required: true, message: "请输入标题", trigger: "blur" }],
@@ -113,6 +122,7 @@ export default {
   },
   data() {
     return {
+      BASE_URL:"",
       scheduleColumns: [
         {
           title: "序号",
@@ -171,33 +181,26 @@ export default {
           scopedSlots: { customRender: "name" },
         },
       ],
-      loadScheduleData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                title: "测试",
-                content: "需求文档2",
-                publisher: "admin",
-                expireDate: "",
-                releaseTime: "2020-09-30 09:44:16",
-                expire: "2",
-                name: "辅警管理系统需求文档V1.03(1).docx",
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
+      queryParam:{
+        name:"",
+        expire:""
+      },
+      loadScheduleData: (parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.queryParam);
+        return this.$api.documentAnnouncementService
+          .getNotice(requestParameters)
+          .then((res) => {
+            res.data.data.list.map((i,k)=>i.key=k+1)
+            return res.data;
           });
-        }).then((res) => {
-          return res;
-        });
       },
       selectedRowKeys: [],
       selectedRows: [],
     };
+  },
+  mounted(){
+    this.BASE_URL = process.env.VUE_APP_API_BASE_URL2
+    console.log( this.BASE_URL)
   },
   methods: {
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -209,20 +212,19 @@ export default {
     //新增文件
     handleAdd() {
       let formProps = {
+        record:{
+          publisher:this.user.name,
+          organizationId:this.user.organizationId,
+          publisherId:this.user.id,
+        },
         formTitle: formTitle,
         rules:rules,
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
+        submitFun: (parameter) => {
+          return this.$api.documentAnnouncementService
+            .postNotice(parameter)
+            .then((res) => {
+              return res.data;
             });
-          }).then((res) => {
-            return res;
-          });
         },
       };
       let modalProps = {
@@ -261,10 +263,12 @@ export default {
      * @param modalProps 弹窗配置项 Object
      */
     openModal(form, formProps, modalProps) {
+      const _this = this
       const defaultModalProps = {
         on: {
           ok() {
             console.log("ok 回调");
+            _this.$refs.table.refresh(true)
           },
           cancel() {
             console.log("cancel 回调");
@@ -283,18 +287,57 @@ export default {
         modalProps
       );
     },
+    reloadData(){
+      this.queryParam={
+        name:"",
+        expire:""
+      },
+      this.$refs.table.refresh(true)
+    },
+    handleDel(e){
+      console.log(e)
+      const _this = this;
+      this.$confirm({
+        title: "警告",
+        content: `真的要删除吗?`,
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          console.log(_this);
+          _this.$api.documentAnnouncementService
+            .deleteNotice({ id:_this.selectedRowKeys })
+            .then((res) => {
+              if (res.data.code == 0) {
+                _this.$message.success(res.data.msg);
+                _this.selectedRowKeys = []
+                _this.selectedRows = []
+                _this.$refs.table.refresh();
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
+        },
+        onCancel() {},
+      });
+    }
   },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        1: "是",
-        2: "否",
+        1: "未过期",
+        2: "已过期",
       };
       return statusMap[status];
     },
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
+    ...mapGetters("account",["user"]),
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,

@@ -1,5 +1,6 @@
 <template>
   <a-tree-select
+    :value="value"
     style="width: 100%"
     :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
     :tree-data="tree"
@@ -36,6 +37,8 @@ function filterArray(data) {
 }
 export default {
   props: {
+    value:[String,Number],
+    keyName:String,
     allowClear: {
       type: Boolean,
       default: true,
@@ -62,8 +65,7 @@ export default {
   },
   data() {
     return {
-      tree: [],
-      value: "",
+      tree: []
     };
   },
   mounted() {
@@ -76,7 +78,7 @@ export default {
         console.log(this.tree);
         // this.$emit("getTreeData",this.filterTree)
     })
-    // this.initData();
+    
   },
   methods: {
     initData() {
@@ -125,7 +127,11 @@ export default {
       } else {
         val = value;
       }
-      this.$emit("handleTreeChange", val);
+      const params = {
+          val:val,
+          keyName:this.keyName
+      }
+      this.$emit("handleTreeChange", params);
     },
   },
 };

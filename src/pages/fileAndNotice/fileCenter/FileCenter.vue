@@ -1,10 +1,35 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
+      <a-row>
+        <div class="table-page-search-wrapper">
+          <a-form layout="inline">
+            <a-row :gutter="48">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="模糊查询">
+                  <a-input v-model="queryParam.name" placeholder="请输入要查询的关键词" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="8" :sm="24">
+                <span class="table-page-search-submitButtons">
+                  <a-button type="primary" @click="$refs.table.refresh(true)"
+                    >查询</a-button
+                  >
+                  <a-button
+                    style="margin-left: 8px"
+                    @click="reloadData"
+                    >重置</a-button
+                  >
+                </span>
+              </a-col>
+            </a-row>
+          </a-form>
+        </div>
+      </a-row>
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
         <a-dropdown v-if="selectedRowKeys.length > 0">
-          <a-menu slot="overlay">
+          <a-menu slot="overlay" @click="handleDel">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px">
@@ -14,18 +39,18 @@
       </div>
       <s-table
         ref="table"
-        rowKey="key"
+        :rowKey="(record)=>record.id"
         :columns="columns"
         :data="loadData"
         :rowSelection="rowSelection"
         :scroll="{ y: 600, x: 800 }"
         showPagination="auto"
       >
-        <template slot="status" slot-scope="status">
+      <template slot="status" slot-scope="status">
           <a-badge :status="status" :text="status | statusFilter" />
         </template>
         <span slot="name" slot-scope="text, record">
-          <a @click="handleEdit(record)">{{ text }}</a>
+          <a name="file" :download="record.name" :href="BASE_URL+'/DocumentAnnouncement/document/download?documentId='+record.id">{{ text }}</a>
         </span>
       </s-table>
     </a-card>
@@ -33,13 +58,13 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 const formTitle = [
   {
     label: "上传文件",
-    name: "uploadFile",
+    name: "fileList",
     type: "upload",
     placeholder: "请输入请假原因",
   },
@@ -49,9 +74,19 @@ const formTitle = [
     type: "textarea",
     placeholder: "请输入内容说明",
   },
+  {
+    name:"publisher"
+  },
+  {
+    name:"organizationId"
+  },
+  {
+    name:"publisherId"
+  }
 ];
 const rules = {
-  remake: [{ required: true, message: "请输入内容说明", trigger: "blur" }],
+  remake: [{ required: true, message: "请输入内容说明", trigger: "blur" }]
+  
 };
 export default {
   name: "OrganManage",
@@ -61,6 +96,7 @@ export default {
   },
   data() {
     return {
+      BASE_URL:"",
       columns: [
         {
           title: "序号",
@@ -94,37 +130,25 @@ export default {
           width: 250,
         },
       ],
-      loadData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "辅警管理系统需求文档V1.03(1).docx",
-                remake: "需求文档",
-                publisher: "admin",
-                releaseTime: "2020-09-29 15:04:00",
-              },
-              {
-                key: "2",
-                name: "辅警管理系统需求文档V1.03(2).docx",
-                remake: "需求文档",
-                publisher: "admin",
-                releaseTime: "2020-09-29 15:04:00",
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
+      queryParam:{
+        name:""
+      },
+      loadData: (parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.queryParam);
+        return this.$api.documentAnnouncementService
+          .getDocument(requestParameters)
+          .then((res) => {
+            res.data.data.list.map((i,k)=>i.key=k+1)
+            return res.data;
           });
-        }).then((res) => {
-          return res;
-        });
       },
       selectedRowKeys: [],
       selectedRows: [],
     };
+  },
+  mounted(){
+    this.BASE_URL = process.env.VUE_APP_API_BASE_URL2
+    console.log( this.BASE_URL)
   },
   methods: {
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -136,19 +160,18 @@ export default {
     //新增文件
     handleAdd() {
       let formProps = {
+        record:{
+          publisher:this.user.name,
+          organizationId:this.user.organizationId,
+          publisherId:this.user.id,
+        },
         formTitle: formTitle,
         rules: rules,
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
-            });
-          }).then((res) => {
-            return res;
+        submitFun: (parameter) => {
+        return this.$api.documentAnnouncementService
+          .postDocument(parameter)
+          .then((res) => {
+            return res.data;
           });
         },
       };
@@ -161,27 +184,6 @@ export default {
       };
       this.openModal(TaskForm, formProps, modalProps);
     },
-    del(row) {
-      this.$confirm({
-        title: "警告",
-        content: `真的要删除 ${row.name} 吗?`,
-        okText: "删除",
-        okType: "danger",
-        centered: true,
-        cancelText: "取消",
-        onOk() {
-          console.log("OK");
-          // 在这里调用删除接口
-          return new Promise((resolve, reject) => {
-            setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-          }).catch(() => console.log("Oops errors!"));
-        },
-        onCancel() {
-          console.log("Cancel");
-        },
-      });
-    },
-
     /**
      * 表单弹窗
      * @param form form模板页面，通过import引入
@@ -189,10 +191,12 @@ export default {
      * @param modalProps 弹窗配置项 Object
      */
     openModal(form, formProps, modalProps) {
+       const _this = this;
       const defaultModalProps = {
         on: {
           ok() {
             console.log("ok 回调");
+            _this.$refs.table.refresh(true)
           },
           cancel() {
             console.log("cancel 回调");
@@ -211,6 +215,49 @@ export default {
         modalProps
       );
     },
+    reloadData(){
+      this.queryParam={
+        name:""
+      }
+      this.$refs.table.refresh(true)
+    },
+    handleDown(obj){
+      console.log(obj)
+      this.$api.documentAnnouncementService
+          .downDocument({documentId:obj.id})
+    },
+    handleDel(e){
+      console.log(e)
+      const _this = this;
+      this.$confirm({
+        title: "警告",
+        content: `真的要删除吗?`,
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          console.log(_this);
+          _this.$api.documentAnnouncementService
+            .deleteDocument({ id:_this.selectedRowKeys })
+            .then((res) => {
+              if (res.data.code == 0) {
+                _this.$message.success(res.data.msg);
+                _this.selectedRowKeys = []
+                _this.selectedRows = []
+                _this.$refs.table.refresh();
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
+        },
+        onCancel() {},
+      });
+    }
+    
   },
   filters: {
     statusFilter(status) {
@@ -223,6 +270,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
+    ...mapGetters("account",["user"]),
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,

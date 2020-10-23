@@ -7,14 +7,14 @@
             <a-col :md="8" :sm="24">
               <a-form-item label="模糊查询">
                 <a-input
-                  v-model="queryParam.name"
+                  v-model="queryParam.search"
                   placeholder="请输入要查询的关键词"
                 />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <tree-select @handleTreeChange="handleTreeChange"></tree-select>
+                <tree-select :value="queryParam.organizationId" @handleTreeChange="handleTreeChange"></tree-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -220,7 +220,7 @@ export default {
       ],
       //查询条件参数
       queryParam: {
-        name: "",
+        search: "",
         organizationId: "",
       },
       loadScheduleData: (parameter) => {
@@ -312,8 +312,8 @@ export default {
         modalProps
       );
     },
-    handleTreeChange(val) {
-      this.queryParam.organizationId = val;
+    handleTreeChange(obj) {
+      this.queryParam.organizationId = obj.val;
     },
     handleDel(e) {
         console.log(e)
@@ -332,6 +332,8 @@ export default {
             .then((res) => {
               if (res.data.code == 0) {
                 _this.$message.success(res.data.msg);
+                _this.selectedRowKeys = []
+                _this.selectedRows = []
                 _this.$refs.table.refresh();
               } else {
                 _this.$message.error(res.data.msg);
@@ -346,6 +348,10 @@ export default {
     },
     //重新加载
     refreshTable() {
+    this.queryParam= {
+        search: "",
+        organizationId: "",
+      }
       this.$refs.table.refresh(true);
     },
   },

@@ -71,7 +71,7 @@
             </a-dropdown>
           </div>
           <s-table
-            ref="table"
+            ref="credtable"
             :rowKey="(record)=>record.id"
             :columns="credColumns"
             :data="loadCredData"
@@ -85,7 +85,7 @@
             <span slot="action" slot-scope="text, record">
               <a @click="handleCredEdit(record)">编辑</a>
               <a-divider type="vertical" />
-              <a @click="handleCredEdit(record)">删除</a>
+              <a @click="handleCredDel(record)">删除</a>
             </span>
           </s-table>
         </a-col>
@@ -112,7 +112,7 @@
             </a-dropdown>
           </div>
           <s-table
-            ref="table"
+            ref="equptable"
             :rowKey="(record)=>record.id"
             :columns="equpColumns"
             :data="loadEqupData"
@@ -126,7 +126,7 @@
             <span slot="action" slot-scope="text, record">
               <a @click="handleEqupEdit(record)">编辑</a>
               <a-divider type="vertical" />
-              <a @click="handleEqupEdit(record)">删除</a>
+              <a @click="handleEqupDel(record)">删除</a>
             </span>
           </s-table>
         </a-col>
@@ -150,6 +150,9 @@ const credTitle = [
     name: "remake",
     type: "textarea",
   },
+  {
+    name: "type",
+  },
 ];
 const equpTitle = [
   {
@@ -161,6 +164,9 @@ const equpTitle = [
     label: "装备类型描述",
     name: "remake",
     type: "textarea",
+  },
+  {
+    name: "type",
   },
 ];
 const credRules = {
@@ -293,21 +299,17 @@ export default {
     handleEdit() {},
     handleCredAdd() {
       let formProps = {
+        record:{
+          type:1
+        },
         formTitle: credTitle,
         rules: credRules,
 
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
-            });
-          }).then((res) => {
-            return res;
-          });
+        submitFun: (parameter) => {
+          return this.$api.otherItemsService.postCertEquip(parameter)
+            .then(res => {
+              return res.data
+            })
         },
       };
       let modalProps = {
@@ -317,7 +319,9 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps);
+      this.openModal(TaskForm, formProps, modalProps,()=>{
+        this.$refs.credtable.refresh(true)
+      });
     },
     handleCredEdit(record) {
       console.log(record);
@@ -325,18 +329,11 @@ export default {
         record: record,
         formTitle: credTitle,
         rules: credRules,
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
-            });
-          }).then((res) => {
-            return res;
-          });
+        submitFun: (parameter) => {
+          return this.$api.otherItemsService.putCertEquip(parameter)
+            .then(res => {
+              return res.data
+            })
         },
       };
       let modalProps = {
@@ -346,25 +343,51 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps);
+      this.openModal(TaskForm, formProps, modalProps,()=>{
+        this.$refs.credtable.refresh(true)
+      });
+    },
+    handleCredDel(param){
+      const _this = this
+      this.$confirm({
+        title: "警告",
+        content: `真的要删除证件 [ ${param.name} ] 吗?`,
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          console.log(_this);
+          _this.$api.otherItemsService
+            .deleteCertEquip(param.id)
+            .then((res) => {
+              if (res.data.code == 0) {
+                _this.$message.success(res.data.msg);
+                _this.$refs.credtable.refresh(true)
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
+        },
+        onCancel() {},
+      });
     },
     handleEqupAdd() {
       let formProps = {
+        record:{
+          type:2
+        },
         formTitle: equpTitle,
         rules: equpRules,
 
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
-            });
-          }).then((res) => {
-            return res;
-          });
+        submitFun: (parameter) => {
+          return this.$api.otherItemsService.postCertEquip(parameter)
+            .then(res => {
+              return res.data
+            })
         },
       };
       let modalProps = {
@@ -374,26 +397,20 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps);
+      this.openModal(TaskForm, formProps, modalProps,()=>{
+        this.$refs.equptable.refresh(true)
+      });
     },
     handleEqupEdit(record) {
-      console.log(record);
       let formProps = {
         record: record,
         formTitle: equpTitle,
         rules: equpRules,
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
-            });
-          }).then((res) => {
-            return res;
-          });
+        submitFun: (parameter) => {
+          return this.$api.otherItemsService.putCertEquip(parameter)
+            .then(res => {
+              return res.data
+            })
         },
       };
       let modalProps = {
@@ -403,7 +420,37 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps);
+      this.openModal(TaskForm, formProps, modalProps,()=>{
+        this.$refs.equptable.refresh(true)
+      });
+    },
+    handleEqupDel(param){
+      const _this = this
+      this.$confirm({
+        title: "警告",
+        content: `真的要删除装备 [ ${param.name} ] 吗?`,
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          console.log(_this);
+          _this.$api.otherItemsService
+            .deleteCertEquip(param.id)
+            .then((res) => {
+              if (res.data.code == 0) {
+                _this.$message.success(res.data.msg);
+                _this.$refs.equptable.refresh(true)
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
+        },
+        onCancel() {},
+      });
     },
     /**
      * 表单弹窗
@@ -411,11 +458,12 @@ export default {
      * @param formProps form配置项 Object
      * @param modalProps 弹窗配置项 Object
      */
-    openModal(form, formProps, modalProps) {
+    openModal(form, formProps, modalProps,fn) {
       const defaultModalProps = {
         on: {
           ok() {
             console.log("ok 回调");
+            fn()
           },
           cancel() {
             console.log("cancel 回调");

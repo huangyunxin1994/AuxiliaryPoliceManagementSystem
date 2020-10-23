@@ -4,9 +4,10 @@
       <a-row :gutter="24">
         <a-col :lg="7" :xl="5" :xxl="4">
           <ant-tree
-            :dataSource="filterTree"
+          ref="tree"
             :replaceFields="replaceFields"
             :allowEdit="true"
+            :allowReload="true"
             @loadTreeNode="loadTreeNode"
             @editTreeNode="editTreeNode"
             @addTreeNode="addTreeNode"
@@ -21,7 +22,10 @@
                 <a-row :gutter="48">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="模糊查询">
-                      <a-input placeholder="请输入要查询的关键词" />
+                      <a-input
+                        v-model="queryParam.search"
+                        placeholder="请输入要查询的关键词"
+                      />
                     </a-form-item>
                   </a-col>
                   <a-col :md="8" :sm="24">
@@ -51,18 +55,52 @@
                       </a-select>
                     </a-form-item>
                   </a-col>
-                  <a-col :md="8" :sm="24">
-                    <span class="table-page-search-submitButtons">
+                  <template v-if="advanced">
+                    <a-col :md="8" :sm="24">
+                      <a-form-item label="岗位选择">
+                        <a-select default-value="" style="width: 100%">
+                          <a-select-option value=""> 全部 </a-select-option>
+                          <a-select-option value="1"> 岗位1 </a-select-option>
+                          <a-select-option value="2"> 岗位2 </a-select-option>
+                          <a-select-option value="3"> 岗位3 </a-select-option>
+                          <a-select-option value="4"> 岗位4 </a-select-option>
+                        </a-select>
+                      </a-form-item>
+                    </a-col>
+                    <a-col :md="8" :sm="24">
+                      <a-form-item label="启用状态">
+                        <a-select
+                          v-model="queryParam.state"
+                          style="width: 100%"
+                          @change="handleChange"
+                        >
+                          <a-select-option value=""> 全部 </a-select-option>
+                          <a-select-option value="1"> 是 </a-select-option>
+                          <a-select-option value="2"> 否 </a-select-option>
+                        </a-select>
+                      </a-form-item>
+                    </a-col>
+                  </template>
+                  <a-col :md="(!advanced && 8) || 24" :sm="24">
+                    <span
+                      class="table-page-search-submitButtons"
+                      :style="
+                        (advanced && { float: 'right', overflow: 'hidden' }) ||
+                        {}
+                      "
+                    >
                       <a-button
                         type="primary"
                         @click="$refs.table.refresh(true)"
                         >查询</a-button
                       >
-                      <a-button
-                        style="margin-left: 8px"
-                        @click="() => (queryParam = {})"
+                      <a-button style="margin-left: 8px" @click="reloadData"
                         >重置</a-button
                       >
+                      <a @click="toggleAdvanced" style="margin-left: 8px">
+                        {{ advanced ? "收起" : "展开" }}
+                        <a-icon :type="advanced ? 'up' : 'down'" />
+                      </a>
                     </span>
                   </a-col>
                 </a-row>
@@ -86,7 +124,7 @@
           </div>
           <s-table
             ref="table"
-            :rowKey="(record)=>record.id"
+            :rowKey="(record) => record.id"
             :columns="scheduleColumns"
             :data="loadScheduleData"
             :rowSelection="rowSelection"
@@ -117,65 +155,12 @@ import STable from "@/components/Table_/";
 import AntTree from "@/components/tree_/Tree";
 import TaskForm from "@/components/formModel/formModel";
 import { validatePhone } from "@/config/default/rules";
-function filterArray(data) {
-  data.forEach(function (item) {
-    delete item.children;
-  });
-  var map = {};
-  data.forEach(function (item) {
-    map[item.id] = item;
-  });
-  var val = [];
-  data.forEach(function (item) {
-    var parent = map[item.parentId] || map[item.code];
-    if (parent) {
-      (parent.children || (parent.children = [])).push(item);
-    } else {
-      val.push(item);
-    }
-  });
-  console.log(val);
-  return val;
-}
-const tree = [
-  { id: 1, name: "根组织", code: "000001", scopedSlots: { title: "custom" } },
-  {
-    id: 2,
-    name: "西乡塘",
-    code: "000002",
-    parentId: 1,
-    scopedSlots: { title: "custom" },
-  },
-  {
-    id: 3,
-    name: "青秀",
-    code: "000003",
-    parentId: 1,
-    scopedSlots: { title: "custom" },
-  },
-  {
-    id: 4,
-    name: "西乡塘1",
-    code: "000004",
-    parentId: 2,
-    scopedSlots: { title: "custom" },
-  },
-  {
-    id: 5,
-    name: "青秀1",
-    code: "000005",
-    parentId: 3,
-    scopedSlots: { title: "custom" },
-  },
-];
-const filterTree = filterArray(tree);
 
 const organTitle = [
   {
     label: "上级组织",
     name: "parentId",
     type: "treeSelect",
-    select: filterTree,
     replaceFields: {
       children: "children",
       title: "name",
@@ -185,68 +170,7 @@ const organTitle = [
   },
   { label: "组织名称", name: "name", type: "input" },
 ];
-const tableTitle = [
-  {
-    label: "账号",
-    name: "account",
-    type: "input",
-  },
-  {
-    label: "组织",
-    name: "organizationId",
-    type: "treeSelect",
-    select: filterTree,
-    replaceFields: {
-      children: "children",
-      title: "name",
-      key: "id",
-      value: "id",
-    },
-  },
-  {
-    label: "角色",
-    name: "roleId",
-    type: "checkboxgroup",
-    showBgc: true,
-    select: [
-      { name: "人员资料管理员", value: 1 },
-      { name: "合同管理员", value: 2 },
-      { name: "人事管理员", value: 3 },
-      { name: "工资管理员", value: 4 },
-      { name: "培训管理员", value: 5 },
-      { name: "证件装备管理员", value: 6 },
-      { name: "奖励与追责管理员", value: 7 },
-      { name: "文档与公告管理员", value: 8 },
-    ],
-  },
-  {
-    label: "姓名",
-    name: "name",
-    type: "input",
-  },
-  {
-    label: "警员编号",
-    name: "number",
-    type: "input",
-  },
 
-  {
-    label: "岗位",
-    name: "postId",
-    type: "select",
-  },
-  {
-    label: "联系电话",
-    name: "phone",
-    type: "input",
-  },
-  {
-    label: "是否启用",
-    name: "isEnable",
-    type: "checkboxgroup",
-    select: [{ value: 1 }],
-  },
-];
 const organRules = {
   name: [{ required: true, message: "请输入组织名称", trigger: "blur" }],
   parentId: [
@@ -287,8 +211,8 @@ export default {
   },
   data() {
     return {
-      openKeys: ["key-01"],
-      filterTree,
+      advanced: false,
+      tableTitle: [],
       replaceFields: {
         children: "children",
         title: "name",
@@ -306,13 +230,13 @@ export default {
           title: "账号",
           dataIndex: "account",
           key: "account",
-          width: 100,
+          width: 120,
         },
         {
           title: "姓名",
           dataIndex: "name",
           key: "name",
-          width: 80,
+          width: 120,
         },
         {
           title: "警员编号",
@@ -324,7 +248,7 @@ export default {
           title: "组织",
           dataIndex: "organizationName",
           key: "organizationName",
-          width: 250,
+          width: 200,
         },
         {
           title: "岗位",
@@ -353,155 +277,45 @@ export default {
         },
       ],
       // 查询条件参数
-      queryParam: {},
-      loadScheduleData: (parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
-        return this.$api.overTimeService.getOverTimeLeave(requestParameters)
-          .then(res => {
-            return res.result
-          })
+      queryParam: {
+        search: "",
+        state: "",
+        organizationId: "",
       },
-      // loadScheduleData: (parameter) => {
-      //   return new Promise((resolve) => {
-      //     resolve({
-      //       data: [
-      //         {
-      //           key: "1",
-      //           account: "admin",
-      //           name: "管理员",
-      //           number: "FJ0584",
-      //           organizationName: "青秀区东葛路派出所",
-      //           postName: "辅警",
-      //           phone: "13584585258",
-      //           isEnable: ["1"],
-      //         },
-      //         {
-      //           key: "2",
-      //           account: "test",
-      //           name: "李四",
-      //           number: "FJ0585",
-      //           organizationName: "青秀区东葛路派出所",
-      //           postName: "辅警",
-      //           phone: "13584585258",
-      //           isEnable: ["1"],
-      //         },
-      //         {
-      //           key: "3",
-      //           account: "test",
-      //           name: "王五",
-      //           number: "FJ0585",
-      //           organizationName: "青秀区东葛路派出所",
-      //           postName: "辅警",
-      //           phone: "13584585258",
-      //           isEnable: ["1"],
-      //         },
-      //         {
-      //           key: "4",
-      //           account: "test",
-      //           name: "张三",
-      //           number: "FJ0585",
-      //           organizationName: "青秀区东葛路派出所",
-      //           postName: "辅警",
-      //           phone: "13584585258",
-      //           isEnable: ["1"],
-      //         },
-      //         {
-      //           key: "5",
-      //           account: "test",
-      //           name: "赵六",
-      //           number: "FJ0585",
-      //           organizationName: "青秀区东葛路派出所",
-      //           postName: "辅警",
-      //           phone: "13584585258",
-      //           isEnable: ["2"],
-      //         },
-      //         {
-      //           key: "6",
-      //           account: "test",
-      //           name: "赵六",
-      //           number: "FJ0585",
-      //           organizationName: "青秀区东葛路派出所",
-      //           postName: "辅警",
-      //           phone: "13584585258",
-      //           isEnable: ["2"],
-      //         },
-      //         {
-      //           key: "7",
-      //           account: "test",
-      //           name: "赵六",
-      //           number: "FJ0585",
-      //           organizationName: "青秀区东葛路派出所",
-      //           postName: "辅警",
-      //           phone: "13584585258",
-      //           isEnable: ["2"],
-      //         },
-      //         {
-      //           key: "8",
-      //           account: "test",
-      //           name: "赵六",
-      //           number: "FJ0585",
-      //           organizationName: "青秀区东葛路派出所",
-      //           postName: "辅警",
-      //           phone: "13584585258",
-      //           isEnable: ["2"],
-      //         },
-      //         {
-      //           key: "9",
-      //           account: "test",
-      //           name: "赵六",
-      //           number: "FJ0585",
-      //           organizationName: "青秀区东葛路派出所",
-      //           postName: "辅警",
-      //           phone: "13584585258",
-      //           isEnable: ["2"],
-      //         },
-      //         {
-      //           key: "10",
-      //           account: "test",
-      //           name: "赵六",
-      //           number: "FJ0585",
-      //           organizationName: "青秀区东葛路派出所",
-      //           postName: "辅警",
-      //           phone: "13584585258",
-      //           isEnable: ["2"],
-      //         },
-      //       ],
-      //       pageSize: 10,
-      //       pageNo: 1,
-      //       totalPage: 1,
-      //       totalCount: 10,
-      //       params: Object.assign(parameter, this.queryParam),
-      //     });
-      //   }).then((res) => {
-      //     return res;
-      //   });
-      // },
+      loadScheduleData: (parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.queryParam);
+        return this.$api.organizationService
+          .getUser(requestParameters)
+          .then((res) => {
+            return res.data;
+          });
+      },
       selectedRowKeys: [],
       selectedRows: [],
     };
   },
+  mounted() {
+    this.getRoleList();
+  },
   methods: {
     loadTreeNode(obj) {
-      this.queryParam = obj;
+      console.log(302)
+      this.queryParam.organizationId = obj.id || "";
       this.$refs.table.refresh(true);
     },
     handleAdd() {
       let formProps = {
-        formTitle: tableTitle,
+        record: {
+          organizationId: this.queryParam.organizationId,
+        },
+        formTitle: this.tableTitle,
         rules: tableRules,
-
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
+        submitFun: (parameter) => {
+          return this.$api.organizationService
+            .postUser(parameter)
+            .then((res) => {
+              return res.data;
             });
-          }).then((res) => {
-            return res;
-          });
         },
       };
       let modalProps = {
@@ -517,20 +331,14 @@ export default {
       console.log(record);
       let formProps = {
         record: record,
-        formTitle: tableTitle,
+        formTitle: this.tableTitle,
         rules: tableRules,
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
+        submitFun: (parameter) => {
+          return this.$api.organizationService
+            .putUser(parameter)
+            .then((res) => {
+              return res.data;
             });
-          }).then((res) => {
-            return res;
-          });
         },
       };
       let modalProps = {
@@ -554,6 +362,7 @@ export default {
     },
     //编辑树节点
     editTreeNode(params) {
+      console.log(params)
       const id = params.id;
       const name = params.name;
       const code = params.code;
@@ -563,18 +372,12 @@ export default {
         record: obj,
         formTitle: organTitle,
         rules: organRules,
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
+        submitFun: (parameter) => {
+          return this.$api.organizationService
+            .putOrganization(parameter)
+            .then((res) => {
+              return res.data;
             });
-          }).then((res) => {
-            return res;
-          });
         },
       };
       let modalProps = {
@@ -595,18 +398,12 @@ export default {
         record: obj,
         formTitle: organTitle,
         rules: organRules,
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
+        submitFun: (parameter) => {
+          return this.$api.organizationService
+            .postOrganization(parameter)
+            .then((res) => {
+              return res.data;
             });
-          }).then((res) => {
-            return res;
-          });
         },
       };
       let modalProps = {
@@ -620,7 +417,32 @@ export default {
     },
     //删除树节点
     removeTreeNode(params) {
-      console.log(params);
+     const _this = this
+      this.$confirm({
+        title: "警告",
+        content: `真的要删除组织 [ ${params.name} ] 吗?`,
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          console.log(_this);
+          _this.$api.organizationService
+            .deleteOrganization({organizationId :params.id})
+            .then((res) => {
+              if (res.data.code == 0) {
+                _this.$message.success(res.data.msg);
+                _this.$refs.tree.loadTree()
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
+        },
+        onCancel() {},
+      });
     },
     //
     /**
@@ -630,10 +452,12 @@ export default {
      * @param modalProps 弹窗配置项 Object
      */
     openModal(form, formProps, modalProps) {
+      const _this = this
       const defaultModalProps = {
         on: {
           ok() {
             console.log("ok 回调");
+             _this.$refs.tree.loadTree();
           },
           cancel() {
             console.log("cancel 回调");
@@ -657,6 +481,76 @@ export default {
       this.selectedRows = selectedRows;
       console.log(this.selectedRowKeys);
       console.log(this.selectedRows);
+    },
+    //重新加载数据
+    reloadData() {
+      this.queryParam.search = "";
+      this.$refs.table.refresh(true);
+    },
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
+    },
+    getRoleList() {
+      this.$api.organizationService.getRole().then((res) => {
+        const list = res.data.data.data.sort(function(a,b){
+            return a.number-b.number;
+        })
+        this.tableTitle = [
+          {
+            label: "账号",
+            name: "account",
+            type: "input",
+          },
+          {
+            label: "组织",
+            name: "organizationId",
+            type: "treeSelect",
+            replaceFields: {
+              children: "children",
+              title: "name",
+              key: "id",
+              value: "id",
+            },
+          },
+          {
+            label: "角色",
+            name: "role",
+            type: "checkboxgroup",
+            showBgc: true,
+            select: list,
+          },
+          {
+            label: "姓名",
+            name: "name",
+            type: "input",
+          },
+          {
+            label: "警员编号",
+            name: "number",
+            type: "input",
+          },
+
+          {
+            label: "岗位",
+            name: "postId",
+            type: "select",
+          },
+          {
+            label: "联系电话",
+            name: "phone",
+            type: "input",
+          },
+          {
+            label: "是否启用",
+            name: "isEnable",
+            type: "radio",
+            select: [
+              { name: "是", value: 1 },
+              { name: "否", value: 2 },
+            ],
+          },
+        ];
+      });
     },
   },
   filters: {

@@ -6,12 +6,15 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="模糊查询">
-                <a-input placeholder="请输入要查询的关键词" />
+                <a-input v-model="queryParam.name" placeholder="请输入要查询的关键词" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                 <tree-select @handleTreeChange="handleTreeChange"></tree-select>
+                 <tree-select :value="queryParam.organizationId" 
+
+                 @handleTreeChange="handleTreeChange"
+                 ></tree-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -41,7 +44,7 @@
                 >
                 <a-button
                   style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                  @click="reloadData"
                   >重置</a-button
                 >
                 <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -83,18 +86,26 @@
             :status="isEnable == '1' ? 'processing' : 'error'"
             :text="isEnable | statusFilter"
           />
+          
+          
+        </template>
+        <template slot="approvalResults" slot-scope="approvalResults">
+          <a-badge
+            :status="approvalResults == '0' ? 'processing' : (approvalResults == 1 ? 'success' : 'error')"
+            :text="approvalResults | resultFilter"
+          />
         </template>
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">审批</a>
         </span>
       </s-table>
     </a-card>
-    <form-step ref="modal" title="新建加班记录" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
+    <form-step ref="modal" title="新建加班记录" :formTitle="formTitle" :record="{type:1}" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import formStep from "@/components/stepForm/StepForm";
 import TaskForm from "@/components/formModel/formModel";
@@ -116,7 +127,6 @@ const formTitle = [
     label: "时长(小时)",
     name: "duration",
     type: "input",
-    disabled:true,
   },
   {
     label: "法定假日",
@@ -132,6 +142,9 @@ const formTitle = [
     name: "reason",
     type: "textarea",
     placeholder: "请输入加班原因",
+  },
+  {
+    name: "type",
   }
 ];
 const formCheckTitle = [
@@ -220,6 +233,9 @@ const formCheckTitle = [
     label: "审批备注",
     name: "approvalRemake",
     type: "textarea",
+  },
+  {
+    name:"approval"
   }
 ];
 const stepTitle = [{title:'选择人员'},{title:'填写加班信息'}]
@@ -235,19 +251,6 @@ const rules = {
   ],
   reason: [{ required: true, message: "请输入加班原因", trigger: "blur" }],
 };
-const submitFun = ()=>{
-  return new Promise((resolve) => {
-              resolve({
-                data: [],
-                pageSize: 10,
-                pageNo: 1,
-                totalPage: 1,
-                totalCount: 10,
-              });
-            }).then((res) => {
-              return res;
-            });
-}
 export default {
   name: "AskForLeave",
   components: {
@@ -261,7 +264,12 @@ export default {
         formTitle,
         rules,
         stepTitle,
-        submitFun,
+        submitFun:(parameter) => {
+        return this.$api.overTimeService.postByUser(parameter)
+          .then(res => {
+            return res.data
+          })
+        },
         // 高级搜索 展开/关闭
       advanced: false,
         value:null,
@@ -328,7 +336,8 @@ export default {
           title: "审批结果",
           dataIndex: "approvalResults",
           key: "approvalResults",
-          width: 100
+          scopedSlots: { customRender: "approvalResults" },
+          width: 120
         },
         {
           title: "审批备注",
@@ -338,9 +347,9 @@ export default {
         },
         {
           title: "审批人",
-          dataIndex: "name",
-          key: "name",
-          width: 100,
+          dataIndex: "approval",
+          key: "approval",
+          width: 120,
         },
         {
           table: "操作",
@@ -350,7 +359,7 @@ export default {
         },
       ],
       //查询参数
-      queryParam:{type:1},
+      queryParam:{type:1,organizationId:"",name:""},
       loadScheduleData: (parameter) => {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         return this.$api.overTimeService.getOverTimeLeave(requestParameters)
@@ -368,21 +377,15 @@ export default {
     },
     handleEdit(record) {
       console.log(record);
+      record.approval = this.user.name
       let formProps = {
         record: record,
         formTitle: formCheckTitle,
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
-            });
-          }).then((res) => {
-            return res;
-          });
+        submitFun: (parameter) => {
+        return this.$api.overTimeService.putOverTimeLeave(parameter)
+          .then(res => {
+            return res.data
+          })
         },
       };
       let modalProps = {
@@ -435,6 +438,16 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+    //树选择回调
+    handleTreeChange(obj){
+      this.queryParam.organizationId = obj.val
+      console.log(this.queryParam)
+    },
+    //重置
+    reloadData(){
+      this.queryParam={type:1,organizationId:"",name:""}
+      this.$refs.table.refresh(true)
+    }
   },
   filters: {
     statusFilter(status) {
@@ -451,14 +464,19 @@ export default {
       };
       return statusMap[holiday];
     },
-    //树选择回调
-    handleTreeChange(val){
-      this.value = val
-      console.log("this.value = " + this.value)
+    resultFilter(result){
+      const statusMap = {
+        0:'未审批' ,
+            1:'审批通过' ,
+            2:'审批拒绝' ,
+      };
+      return statusMap[result];
     }
+    
   },
   computed: {
     ...mapState("setting", ["pageMinHeight"]),
+    ...mapGetters("account",["user"]),
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,

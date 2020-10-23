@@ -263,8 +263,8 @@ export default {
       this.advanced = !this.advanced;
     },
     //树选择回调
-    handleTreeChange(val){
-      this.value = val
+    handleTreeChange(obj){
+      this.value = obj.val
       console.log("this.value = " + this.value)
     }
   },

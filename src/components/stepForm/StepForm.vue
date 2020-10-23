@@ -125,6 +125,7 @@ export default {
           0,
           arrName.length - 1
         );
+        this.selcetPersonName = Object.assign(this.selcetPersonName,this.record)
         this.$refs.form.loadData()
         if (columnData.length > 1) {
           this.nowFormTitle.forEach((item) => {
