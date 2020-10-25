@@ -96,8 +96,8 @@
 				</template>
 				<span slot="action" slot-scope="text, record">
 					<a @click="handleEdit(record)">查看历史合同</a>
-					<!-- <a-divider type="vertical"/>
-								<a @click="handleEdit (record)">重置密码</a> -->
+					<a-divider type="vertical"/>
+					<a @click=" extensionOneCon(record)">续约合同</a>
 				</span>
 			</s-table>
         </a-col>
@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import AntTree from "@/components/tree_/Tree";
 import TaskForm from "@/components/TaskForm";
@@ -245,9 +245,11 @@ export default {
         search:'',
         isExpire:'',
         endTime:'',
-        organizationId:''
+        organizationId:'',
+		oid:''
       },
       loadScheduleData: params => {
+		this.queryParam.oid = this.user.organizationId
         let param = Object.assign(params,this.queryParam)
         return this.$api.contractService.getContractData(param).then((res)=>{
           res.data.data.list.map((i,k)=>{
@@ -409,7 +411,22 @@ export default {
       this.selectedRows = selectedRows;
     },
 
-    
+    //续约单个合同
+	extensionOneCon(e){
+		let param = {
+			formTitle: this.extension,
+			rules: {},
+			record:e
+		};
+		let option = {
+			title: "续约合同",
+			width: 500,
+			centered: true,
+			maskClosable: false,
+			okText: "提交",
+		};
+		this.modal(param, option, fromModel);
+	},
     // 续约合同
     extensionCon() {
       console.log(this.selectedRows);
@@ -490,6 +507,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["pageMinHeight"]),
+	...mapGetters("account",["user"]),// 获取登录者信息
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,

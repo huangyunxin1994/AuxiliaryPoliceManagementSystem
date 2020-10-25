@@ -87,7 +87,7 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
+    import {mapState,mapGetters} from 'vuex'
     import STable from '@/components/Table_/'
     import AntTree from '@/components/tree_/Tree'
     // import fromModel from '@/components/formModel/formModel'
@@ -216,9 +216,11 @@
           queryParam: {
             name: "",
             time:'',
-            organizationId:''
+            organizationId:'',
+			oid:''
           },
           loadScheduleData: (params) => {
+			this.queryParam.oid = this.user.organizationId
             let param = Object.assign(params,this.queryParam)
             return this.$api.personAdminService.getProfessionData(param).then((res)=>{
               res.data.data.list.map((i,k)=>{
@@ -390,6 +392,7 @@
     },
     computed: {
       ...mapState('setting', ['pageMinHeight']),
+	...mapGetters("account",["user"]),// 获取登录者信息
       rowSelection () {
         return {
           selectedRowKeys: this.selectedRowKeys,

@@ -24,7 +24,7 @@
 								</a-col>
 								<a-col :md="8" :sm="24">
 									<a-form-item label="岗位">
-                    <a-input placeholder="请输入岗位" v-model="queryParam.currentRank" />
+										<a-input placeholder="请输入岗位" v-model="queryParam.currentRank" />
 									</a-form-item>
 								</a-col>
 								<template v-if="advanced">
@@ -56,7 +56,8 @@
 						</a-form>
 					</div>
                     <div class="table-operator" style="margin-bottom: 24px">
-                      <a-button type="primary" @click="changePost" :disabled="selectedRows.length == 0">调动岗位与组织</a-button>
+                      <!-- <a-button type="primary" @click="changePost" :disabled="selectedRows.length == 0">调动岗位与组织</a-button> -->
+						<a-button type="primary" @click="changePost" v-if="selectedRows.length != 0">调动岗位与组织</a-button>
                       <a-dropdown v-if="selectedRowKeys.length > 0">
                         <a-menu slot="overlay">
                           <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -83,6 +84,8 @@
                           <a-badge :status="status" :text="status | statusFilter"/>
                         </template>
                         <span slot="action" slot-scope="text, record">
+							<a @click="changeOnePost(record)">调动岗位</a>
+							<a-divider type="vertical"  />
                           <a @click="handleEdit (record)">查看</a>
                         </span>
                       </s-table>
@@ -93,7 +96,7 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
+    import {mapState,mapGetters} from 'vuex'
     import STable from '@/components/Table_/'
     import AntTree from '@/components/tree_/Tree'
     import fromModel from '@/components/formModel/formModel'
@@ -205,9 +208,11 @@
             organizationId:'',
             currentRank:'',
             time:'',
-            type:2
+            type:2,
+			oid:''
           },
           loadScheduleData: (params) => {
+			this.queryParam.oid = this.user.organizationId
             let param = Object.assign(params,this.queryParam)
             return this.$api.personAdminService.getRankList(param).then((res)=>{
               // console.log(res)
@@ -297,7 +302,7 @@
         this.selectedRows = selectedRows
       },
 
-      // 岗位调动
+      // 批量岗位调动
       changePost(){
         console.log(this.selectedRows)
         let param ={
@@ -313,6 +318,22 @@
           }
         this.modal(param,option,fromModel)
       },
+		// 调动单个岗位
+		changeOnePost(e){
+			let param ={
+				formTitle:this.extension,
+				rules:this.changeRankRules,
+				record:e,
+			}
+			let option = {
+				title: '岗位调动',
+				width: 500,
+				centered: true,
+				maskClosable: false,
+				okText:"提交",
+			}
+			this.modal(param,option,fromModel)
+		},
       // 弹窗
       modal(obj,option,model){
         const defaultProps = {
@@ -373,6 +394,7 @@
     },
     computed: {
       ...mapState('setting', ['pageMinHeight']),
+		...mapGetters("account",["user"]),// 获取登录者信息
       rowSelection () {
         return {
           selectedRowKeys: this.selectedRowKeys,

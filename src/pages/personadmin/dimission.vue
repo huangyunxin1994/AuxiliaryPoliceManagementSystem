@@ -89,7 +89,7 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
+    import {mapState,mapGetters} from 'vuex'
     import STable from '@/components/Table_/'
     // import newDimission from '@/components/diaPersonnel/newDimissionStep/StepForm'
     import formStep from "@/components/stepForm/StepForm";
@@ -165,9 +165,11 @@
           queryParam: {
             name: "",
             time:'',
-            state:''
+            state:'',
+			oid:''
           },
           loadScheduleData: (params) => {
+			this.queryParam.oid = this.user.organizationId
             let param = Object.assign(params,this.queryParam)
             return this.$api.personAdminService.getDimissionList(param).then((res)=>{
               console.log(res)
@@ -303,6 +305,7 @@
     },
     computed: {
       ...mapState('setting', ['pageMinHeight']),
+	...mapGetters("account",["user"]),// 获取登录者信息
       rowSelection () {
         return {
           selectedRowKeys: this.selectedRowKeys,
