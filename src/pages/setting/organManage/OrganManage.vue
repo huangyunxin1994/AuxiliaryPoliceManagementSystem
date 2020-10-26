@@ -4,7 +4,7 @@
       <a-row :gutter="24">
         <a-col :lg="7" :xl="5" :xxl="4">
           <ant-tree
-          ref="tree"
+            ref="tree"
             :replaceFields="replaceFields"
             :allowEdit="true"
             :allowReload="true"
@@ -30,40 +30,20 @@
                   </a-col>
                   <a-col :md="8" :sm="24">
                     <a-form-item label="角色选择">
-                      <a-select default-value="" @change="handleChange">
+                      <a-select v-model="queryParam.menuId">
                         <a-select-option value=""> 全部 </a-select-option>
-                        <a-select-option value="1">
-                          人员资料管理员
+                        <a-select-option :value="item.id" v-for="item in roleList" :key="item.id">
+                          {{item.name}}
                         </a-select-option>
-                        <a-select-option value="2">合同管理员</a-select-option>
-                        <a-select-option value="3">
-                          人事管理员
-                        </a-select-option>
-                        <a-select-option value="4">
-                          工资管理员
-                        </a-select-option>
-                        <a-select-option value="5">培训管理员</a-select-option>
-                        <a-select-option value="6">
-                          证件装备管理员
-                        </a-select-option>
-                        <a-select-option value="7">
-                          奖励与追责管理员
-                        </a-select-option>
-                        <a-select-option value="8"
-                          >文档与公告管理员</a-select-option
-                        >
                       </a-select>
                     </a-form-item>
                   </a-col>
                   <template v-if="advanced">
                     <a-col :md="8" :sm="24">
                       <a-form-item label="岗位选择">
-                        <a-select default-value="" style="width: 100%">
+                        <a-select  v-model="queryParam.postId" style="width: 100%">
                           <a-select-option value=""> 全部 </a-select-option>
-                          <a-select-option value="1"> 岗位1 </a-select-option>
-                          <a-select-option value="2"> 岗位2 </a-select-option>
-                          <a-select-option value="3"> 岗位3 </a-select-option>
-                          <a-select-option value="4"> 岗位4 </a-select-option>
+                          <a-select-option :value="item.id" v-for="item in postList" :key="item.id"> {{item.name}} </a-select-option>
                         </a-select>
                       </a-form-item>
                     </a-col>
@@ -72,7 +52,6 @@
                         <a-select
                           v-model="queryParam.state"
                           style="width: 100%"
-                          @change="handleChange"
                         >
                           <a-select-option value=""> 全部 </a-select-option>
                           <a-select-option value="1"> 是 </a-select-option>
@@ -140,7 +119,7 @@
             <span slot="action" slot-scope="text, record">
               <a @click="handleEdit(record)">编辑</a>
               <a-divider type="vertical" />
-              <a @click="handleEdit(record)">重置密码</a>
+              <a @click="handleReset(record)">重置密码</a>
             </span>
           </s-table>
         </a-col>
@@ -213,6 +192,8 @@ export default {
     return {
       advanced: false,
       tableTitle: [],
+      roleList:[],
+      postList:[],
       replaceFields: {
         children: "children",
         title: "name",
@@ -280,13 +261,25 @@ export default {
       queryParam: {
         search: "",
         state: "",
+        menuId:"",
         organizationId: "",
+        postId:""
       },
       loadScheduleData: (parameter) => {
         const requestParameters = Object.assign({}, parameter, this.queryParam);
         return this.$api.organizationService
           .getUser(requestParameters)
           .then((res) => {
+            res.data.data.list.map((i,k)=>{
+                i.key=k+1
+                i.role=[]
+                i.oRole = []
+                res.data.data.data[i.id]&&res.data.data.data[i.id].map(j => {
+                  i.role.push(j.menuId)
+                  i.oRole.push(j.menuId)
+                })
+            }
+            )
             return res.data;
           });
       },
@@ -294,12 +287,12 @@ export default {
       selectedRows: [],
     };
   },
-  mounted() {
+  created() {
     this.getRoleList();
   },
   methods: {
     loadTreeNode(obj) {
-      console.log(302)
+      //console.log(302)
       this.queryParam.organizationId = obj.id || "";
       this.$refs.table.refresh(true);
     },
@@ -325,10 +318,12 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps);
+      this.openModal(TaskForm, formProps, modalProps,()=>{
+        this.$refs.table.refresh(true);
+      });
     },
     handleEdit(record) {
-      console.log(record);
+      record.organizationId = !record.organizationId&&""||record.organizationId
       let formProps = {
         record: record,
         formTitle: this.tableTitle,
@@ -348,21 +343,20 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps);
+      this.openModal(TaskForm, formProps, modalProps,()=>{
+        this.$refs.table.refresh(true);
+      });
     },
     handleClick(e) {
-      console.log("handleClick", e);
+      //console.log("handleClick", e);
       this.queryParam = {
         key: e.key,
       };
       this.$refs.table.refresh(true);
     },
-    handleChange(e) {
-      console.log(e);
-    },
     //编辑树节点
     editTreeNode(params) {
-      console.log(params)
+      //console.log(params)
       const id = params.id;
       const name = params.name;
       const code = params.code;
@@ -387,7 +381,9 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps);
+      this.openModal(TaskForm, formProps, modalProps,()=>{
+        this.$refs.tree.loadTree();
+      });
     },
     //添加树节点
     addTreeNode(params) {
@@ -413,7 +409,9 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps);
+      this.openModal(TaskForm, formProps, modalProps,()=>{
+        this.$refs.tree.loadTree();
+      });
     },
     //删除树节点
     removeTreeNode(params) {
@@ -426,7 +424,7 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
+          //console.log(_this);
           _this.$api.organizationService
             .deleteOrganization({organizationId :params.id})
             .then((res) => {
@@ -451,19 +449,19 @@ export default {
      * @param formProps form配置项 Object
      * @param modalProps 弹窗配置项 Object
      */
-    openModal(form, formProps, modalProps) {
-      const _this = this
+    openModal(form, formProps, modalProps,fn) {
+      // const _this = this
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
-             _this.$refs.tree.loadTree();
+            //console.log("ok 回调");
+             fn()
           },
           cancel() {
-            console.log("cancel 回调");
+            //console.log("cancel 回调");
           },
           close() {
-            console.log("modal close 回调");
+            //console.log("modal close 回调");
           },
         },
       };
@@ -479,12 +477,15 @@ export default {
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
-      console.log(this.selectedRowKeys);
-      console.log(this.selectedRows);
+      //console.log(this.selectedRowKeys);
+      //console.log(this.selectedRows);
     },
     //重新加载数据
     reloadData() {
-      this.queryParam.search = "";
+      this.queryParam.search = ''
+      this.queryParam.state = ''
+      this.queryParam.menuId = ''
+      this.queryParam.postId = ''
       this.$refs.table.refresh(true);
     },
     toggleAdvanced() {
@@ -495,7 +496,10 @@ export default {
         const list = res.data.data.data.sort(function(a,b){
             return a.number-b.number;
         })
-        this.tableTitle = [
+        this.roleList = Object.assign([],list)
+        this.$api.rankPostService.getPostList().then(res=>{
+          this.postList = Object.assign([],res.data.data.list)
+          this.tableTitle = [
           {
             label: "账号",
             name: "account",
@@ -534,6 +538,7 @@ export default {
             label: "岗位",
             name: "postId",
             type: "select",
+            select:this.postList
           },
           {
             label: "联系电话",
@@ -550,8 +555,36 @@ export default {
             ],
           },
         ];
+        })
+        
       });
     },
+    //重置密码
+    handleReset(row){
+      const _this = this
+      this.$confirm({
+        title: "警告",
+        content: `真的要重置管理员 [ ${row.name} ] 密码为123456吗?`,
+        okText: "重置",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          _this.$api.organizationService.putResetPassword({id:row.id}).then(res=>{
+            if(res.data.code ===0){
+              _this.$message.success(res.data.msg)
+            }else{
+              _this.$message.error(res.data.msg)
+            }
+          }).catch(err=>{
+            _this.$message.error(err.data.msg)
+          })
+        },
+        onCancel() {},
+      });
+      
+    }
+  
   },
   filters: {
     statusFilter(status) {

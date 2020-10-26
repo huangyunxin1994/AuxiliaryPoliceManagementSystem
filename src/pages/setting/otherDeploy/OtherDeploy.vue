@@ -11,34 +11,46 @@
         <a-col :lg="10" :md="10" :xs="10">
           <span style="width: 100px">上午上班时间：</span>
           <a-time-picker
+            v-model="commData.morningUppertime"
+            format="HH:mm:ss"
+            valueFormat="HH:mm:ss"
             style="width: calc(100% - 100px); margin-bottom: 24px"
           />
         </a-col>
         <a-col :lg="10" :md="10" :xs="10">
           <span style="width: 100px">上午下班时间：</span>
           <a-time-picker
+            v-model="commData.morningLowertime"
+            format="HH:mm:ss"
+            valueFormat="HH:mm:ss"
             style="width: calc(100% - 100px); margin-bottom: 24px"
-            disabled
+            :disabled="commData.state === 2 || commData.state === 4 "
           />
         </a-col>
         <a-col :lg="4" :md="4" :xs="4" style="margin-bottom: 24px">
-          <a-checkbox> 启用 </a-checkbox>
-        </a-col>
-        <a-col :lg="10" :md="10" :xs="10">
-          <span style="width: 100px">下午上班时间：</span>
-          <a-time-picker
-            style="width: calc(100% - 100px); margin-bottom: 24px"
-          />
+          <a-checkbox :checked="commData.state == 1 ||commData.state == 3" @change="changeCommMorn"> 启用 </a-checkbox>
         </a-col>
         <a-col :lg="10" :md="10" :xs="10">
           <span style="width: 100px">下午下班时间：</span>
           <a-time-picker
+            v-model="commData.afternoonLowertime"
+            format="HH:mm:ss"
+            valueFormat="HH:mm:ss"
             style="width: calc(100% - 100px); margin-bottom: 24px"
-            disabled
+          />
+        </a-col>
+        <a-col :lg="10" :md="10" :xs="10">
+          <span style="width: 100px">下午上班时间：</span>
+          <a-time-picker
+            v-model="commData.afternoonUppertime"
+            format="HH:mm:ss"
+            valueFormat="HH:mm:ss"
+            style="width: calc(100% - 100px); margin-bottom: 24px"
+            :disabled="commData.state === 1 || commData.state === 4 "
           />
         </a-col>
         <a-col :lg="4" :md="4" :xs="4" style="margin-bottom: 24px">
-          <a-checkbox> 启用 </a-checkbox>
+          <a-checkbox :checked="commData.state == 2 ||commData.state == 3" @change="changeCommAfter"> 启用 </a-checkbox>
         </a-col>
         <a-col :span="24" style="margin-bottom: 24px">
           <a-button type="primary" icon="save" @click="handleSave"
@@ -182,6 +194,7 @@ export default {
   },
   data() {
     return {
+      commData:{},
       credColumns: [
         {
           title: "序号",
@@ -241,6 +254,7 @@ export default {
         const requestParameters = Object.assign({}, parameter, this.queryCParam)
         return this.$api.otherItemsService.getCredDataList(requestParameters)
           .then(res => {
+            res.data.data.list.map((i,k)=>i.key=k+1)
             return res.data
           })
       },
@@ -249,6 +263,7 @@ export default {
         const requestParameters = Object.assign({}, parameter, this.queryEParam)
         return this.$api.otherItemsService.getEqupDataList(requestParameters)
           .then(res => {
+            res.data.data.list.map((i,k)=>i.key=k+1)
             return res.data
           })
       },
@@ -265,15 +280,17 @@ export default {
   },
   created(){
     this.$api.otherItemsService.getCommDataList()
-          .then(res => {
-            console.log(res)
-          })
+    .then(res => {
+      console.log(res.data.data.list[0])
+      this.commData = res.data.data.list[0]
+    })
   },
   methods: {
     /**
      * 保存上下班配置方法
      */
     handleSave() {
+      const _this = this
       this.$confirm({
         title: "提示",
         content: `确定保存配置吗？`,
@@ -284,9 +301,30 @@ export default {
         onOk() {
           console.log("OK");
           // 在这里调用删除接口
-          return new Promise((resolve, reject) => {
-            setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-          }).catch(() => console.log("Oops errors!"));
+          if(! _this.commData.id){
+            _this.$api.otherItemsService.postCommuting(_this.commData)
+            .then(res => {
+              if(res.data.code == 0){
+                _this.$message.success(res.data.msg);
+              }else{
+                _this.$message.error(res.data.msg);
+              }
+            }).catch(err=>{
+              _this.$message.error(err.data.msg);
+            })
+          }else{
+            _this.$api.otherItemsService.putCommuting(_this.commData)
+            .then(res => {
+              if(res.data.code == 0){
+                _this.$message.success(res.data.msg);
+              }else{
+                _this.$message.error(res.data.msg);
+              }
+            }).catch(err=>{
+              _this.$message.error(err.data.msg);
+            })
+          }
+         
         },
         onCancel() {
           console.log("Cancel");
@@ -294,9 +332,8 @@ export default {
       });
     },
     /**
-     * 保存上下班配置方法
+     * 添加证件方法
      */
-    handleEdit() {},
     handleCredAdd() {
       let formProps = {
         record:{
@@ -323,6 +360,9 @@ export default {
         this.$refs.credtable.refresh(true)
       });
     },
+    /**
+     * 编辑证件方法
+     */
     handleCredEdit(record) {
       console.log(record);
       let formProps = {
@@ -347,6 +387,9 @@ export default {
         this.$refs.credtable.refresh(true)
       });
     },
+    /**
+     * 删除证件方法
+     */
     handleCredDel(param){
       const _this = this
       this.$confirm({
@@ -375,6 +418,9 @@ export default {
         onCancel() {},
       });
     },
+    /**
+     * 添加装备方法
+     */
     handleEqupAdd() {
       let formProps = {
         record:{
@@ -401,6 +447,9 @@ export default {
         this.$refs.equptable.refresh(true)
       });
     },
+    /**
+     * 编辑装备方法
+     */
     handleEqupEdit(record) {
       let formProps = {
         record: record,
@@ -424,6 +473,9 @@ export default {
         this.$refs.equptable.refresh(true)
       });
     },
+    /**
+     * 删除装备方法
+     */
     handleEqupDel(param){
       const _this = this
       this.$confirm({
@@ -482,9 +534,6 @@ export default {
         modalProps
       );
     },
-    handleChange(e) {
-      console.log(e);
-    },
     onCredSelectChange(selectedRowKeys, selectedRows) {
       this.selectedCredRowKeys = selectedRowKeys;
       this.selectedCredRows = selectedRows;
@@ -493,6 +542,47 @@ export default {
       this.selectedEqupRowKeys = selectedRowKeys;
       this.selectedEqupRows = selectedRows;
     },
+    changeCommMorn(){
+      switch(this.commData.state){
+        case 1 : {
+          this.commData.state = 4;
+          break;
+        }
+        case 2 : {
+          this.commData.state = 3;
+          break;
+        }
+        case 3 : {
+          this.commData.state = 2;
+          break;
+        }
+        case 4 : {
+          this.commData.state = 1;
+          break;
+        }
+      }
+    },
+    changeCommAfter(){
+      switch(this.commData.state){
+        case 1 : {
+          this.commData.state = 3;
+          break;
+        }
+        case 2 : {
+          this.commData.state = 4;
+          break;
+        }
+        case 3 : {
+          this.commData.state = 1;
+          break;
+        }
+        case 4 : {
+          this.commData.state = 2;
+          break;
+        }
+      }
+      console.log(this.commData.state)
+    }
   },
   filters: {
     statusFilter(status) {

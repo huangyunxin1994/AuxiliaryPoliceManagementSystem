@@ -33,7 +33,7 @@
                     <template slot="title">
                     查看全部
                     </template>
-                    <a class="btn" @click.stop="reload" v-if="allowReload&&item.id=='1'"><a-icon type="reload" /></a>
+                    <a class="btnReload" @click.stop="reload" v-if="allowReload&&item.id=='1'"><a-icon type="reload" /></a>
                 </a-tooltip>
                 </div>
             </template>
@@ -250,12 +250,15 @@ export default {
             display: none;
             color:@text-color
         }
+         
         
     }
     /deep/ .ant-tree-node-selected{
          /deep/ .btn {
             display: inline-block;
-            margin-left: 20px;
+        }
+        /deep/ .btnReload{
+             margin-left: 20px;
         }
     }
       

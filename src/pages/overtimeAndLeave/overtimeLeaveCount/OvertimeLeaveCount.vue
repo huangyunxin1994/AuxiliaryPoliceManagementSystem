@@ -1,43 +1,57 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
-       <a-row>
-         <a-col :span="24"  style="text-align:center;margin-bottom:24px;">
-      <a-month-picker v-model="time1" :valueFormat="monthFormat"   @change="handleChange">
-            <h2 style="" :style="{'color':theme.color}">{{ time1 ? time1 : 'SelectTime' }}<a-icon type="caret-down" :style="{'color':theme.color}" style="margin-left:24px"/></h2>
+      <a-row>
+        <a-col :span="24" style="text-align: center; margin-bottom: 24px">
+          <a-month-picker
+            v-model="queryParam.time"
+            :valueFormat="monthFormat"
+            :disabled-date="disabledDate"
+            @change="handleChange"
+          >
+            <h2 style="" :style="{ color: theme.color }">
+              <span>{{ queryParam.time | filtersTime }}</span>
+              <a-icon
+                type="caret-down"
+                :style="{ color: theme.color }"
+                style="margin-left: 24px"
+              />
+            </h2>
             <template slot="monthCellContentRender" slot-scope="date">
-              <div v-if="getMonthData(date)" style="width: 100%; height: 100%">
-                <a-badge :offset="[24, 0]" :count="getBadgeData(date)">
-                  {{ getMonthData(date) }}
-                </a-badge>
-              </div>
+              <!-- <div v-if="getMonthData(date)" style="width: 100%; height: 100%">
+                <a-badge :offset="[24, 0]" :count="getBadgeData(date)"> -->
+              {{ getMonthData(date) }}
+              <!-- </a-badge>
+              </div> -->
             </template>
           </a-month-picker>
-         </a-col>
-       </a-row>
+        </a-col>
+      </a-row>
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="模糊查询">
-                <a-input placeholder="请输入要查询的关键词" />
+                <a-input
+                  v-model="queryParam.name"
+                  placeholder="请输入要查询的关键词"
+                />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <tree-select @handleTreeChange="handleTreeChange"></tree-select>
+                <tree-select
+                  :value="queryParam.organizationId"
+                  @handleTreeChange="handleTreeChange"
+                ></tree-select>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-              >
+              <span class="table-page-search-submitButtons">
                 <a-button type="primary" @click="$refs.table.refresh(true)"
                   >查询</a-button
                 >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                <a-button style="margin-left: 8px" @click="reloadData"
                   >重置</a-button
                 >
               </span>
@@ -46,7 +60,9 @@
         </a-form>
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
-        <a-button type="primary" icon="export" >导出</a-button>
+        <a-button type="primary" icon="export" @click="exportToExcel"
+          >导出</a-button
+        >
         <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -87,17 +103,18 @@
 import { mapState } from "vuex";
 import moment from "moment";
 import STable from "@/components/Table_/";
-import treeSelect from "@/components/treeSelect/TreeSelect"
+import treeSelect from "@/components/treeSelect/TreeSelect";
+import ExportJsonExcel from "js-export-excel"
 export default {
   name: "OvertimeLeaveCount",
-  components:{
+  components: {
     STable,
-    treeSelect
+    treeSelect,
   },
   data() {
     return {
-      time1:moment(new Date()).format("YYYY年MM月"),
-      showFormat:'YYYY年MM月',
+      time1: moment(new Date()).format("YYYY年MM月"),
+      showFormat: "YYYY年MM月",
       monthFormat: "YYYY-MM",
       // 高级搜索 展开/关闭
       value: null,
@@ -142,114 +159,103 @@ export default {
         },
         {
           title: "加班时长(小时)",
-          dataIndex: "endTime",
-          key: "endTime",
+          dataIndex: "overtimeHours",
+          key: "overtimeHours",
           width: 150,
         },
         {
           title: "年假(小时)",
-          dataIndex: "duration",
-          key: "duration",
+          dataIndex: "One",
+          key: "One",
           width: 100,
         },
         {
           title: "产假(小时)",
-          dataIndex: "holiday",
-          key: "holiday",
+          dataIndex: "Two",
+          key: "Two",
           width: 100,
         },
         {
           title: "陪产假(小时)",
-          dataIndex: "a1",
-          key: "a1",
+          dataIndex: "Three",
+          key: "Three",
           width: 120,
         },
         {
           title: "婚假(小时)",
-          dataIndex: "a2",
-          key: "a2",
+          dataIndex: "Four",
+          key: "Four",
           width: 100,
         },
         {
           title: "例假(小时)",
-          dataIndex: "a3",
-          key: "a3",
+          dataIndex: "Five",
+          key: "Five",
           width: 100,
         },
         {
           title: "丧假(小时)",
-          dataIndex: "a4",
-          key: "a4",
+          dataIndex: "Six",
+          key: "Six",
           width: 100,
         },
         {
           title: "哺乳假(小时)",
-          dataIndex: "a5",
-          key: "a5",
+          dataIndex: "Seven",
+          key: "Seven",
           width: 120,
         },
         {
           title: "事假(小时)",
-          dataIndex: "a6",
-          key: "a6",
+          dataIndex: "Eight",
+          key: "Eight",
           width: 100,
         },
         {
           title: "调休(小时)",
-          dataIndex: "a8",
-          key: "a8",
+          dataIndex: "Nine",
+          key: "Nine",
           width: 100,
         },
         {
           title: "病假(小时)",
-          dataIndex: "a9",
-          key: "a9",
+          dataIndex: "Ten",
+          key: "Ten",
           width: 100,
         },
         {
           title: "其他(小时)",
-          dataIndex: "a10",
-          key: "a10",
+          dataIndex: "Eleven",
+          key: "Eleven",
           width: 100,
         },
         {
           title: "请假合计(小时)",
-          dataIndex: "a11",
-          key: "a11",
+          dataIndex: "",
+          key: "",
           width: 150,
-        }
+        },
       ],
-      loadScheduleData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                policeName: "辅警1",
-                name: "管理员",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-                startTime: "2020-06-18 09:00:00",
-                endTime: "2020-06-18 18:00:00",
-                duration: "7",
-                holiday: "1",
-                reason: "加班",
-                approvalResults: "通过",
-                approvalRemake: "通过",
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
+      queryParam: {
+        name: "",
+        organizationId: "",
+        time: moment(new Date()).format("YYYY-MM"),
+      },
+      loadScheduleData: (parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.queryParam);
+        return this.$api.overTimeService
+          .statistics(requestParameters)
+          .then((res) => {
+            res.data.data.list.map((i, k) => (i.key = k + 1));
+            return res.data;
           });
-        }).then((res) => {
-          return res;
-        });
-      }
+      },
     };
   },
   methods: {
+    disabledDate(current) {
+      return current && current > moment().endOf("month");
+    },
     getBadgeData(value) {
       let result = moment(value).format("M");
       let arr = [
@@ -307,15 +313,62 @@ export default {
       );
     },
     //打开关闭日期选择器
-    handleChange(date){
-      console.log( moment(date).format("YYYY年MM月"))
-      this.time1 = moment(date).format("YYYY年MM月")
+    handleChange(date) {
+      console.log(moment(date).format("YYYY年MM月"));
+      this.time1 = moment(date).format("YYYY年MM月");
+      this.$refs.table.refresh(true);
     },
     //树选择回调
-    handleTreeChange(obj){
-      this.value = obj.val
-      console.log("this.value = " + this.value)
-    }
+    handleTreeChange(obj) {
+      this.queryParam.organizationId = obj.val;
+    },
+    //重置
+    reloadData() {
+      (this.queryParam = {
+        name: "",
+        organizationId: "",
+        time: moment(new Date()).format("YYYY-MM"),
+      }),
+        this.$refs.table.refresh(true);
+    },
+    //导出EXCEL
+    exportToExcel() {
+      let requestParameters = {
+        currentPage: 1,
+        pageSize: 99999
+      }
+      requestParameters = Object.assign({},requestParameters,this.queryParam)
+      this.$api.overTimeService
+          .statistics(requestParameters)
+          .then((res) => {
+            if( res.data.data.list.length>0){
+              res.data.data.list.map((i, k) => (i.key = k + 1));
+              const ReqDetailList = res.data.data.list;
+              const columns = this.scheduleColumns; // 表头数据
+              const option = {};
+              option.fileName = "excel";
+              option.datas = [
+                {
+                  sheetData: ReqDetailList.map((item) => {
+                    const result = {};
+                    columns.forEach((c) => {
+                      result[c.dataIndex] = item[c.dataIndex];
+                    });
+                    return result;
+                  }),
+                  sheetName: "加班请假统计表", // Excel文件名称
+                  sheetFilter: columns.map((item) => item.dataIndex),
+                  sheetHeader: columns.map((item) => item.title),
+                  columnWidths: columns.map(() =>5),
+                },
+              ];
+              const toExcel = new ExportJsonExcel(option);
+              toExcel.saveExcel();
+            }else{
+              this.$message.warning("没有可以导出的数据")
+            }
+      });
+    },
   },
   filters: {
     statusFilter(status) {
@@ -332,9 +385,16 @@ export default {
       };
       return statusMap[holiday];
     },
+    filtersTime(time) {
+      console.log(322);
+      console.log(time);
+      const dateTime = moment(new Date(time)).format("YYYY年MM月");
+      console.log(dateTime);
+      return dateTime;
+    },
   },
   computed: {
-    ...mapState("setting", ["theme","pageMinHeight"]),
+    ...mapState("setting", ["theme", "pageMinHeight"]),
   },
 };
 </script>

@@ -6,12 +6,12 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="模糊查询">
-                <a-input placeholder="请输入要查询的关键词" />
+                <a-input v-model="queryParam.name" placeholder="请输入要查询的关键词" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <tree-select @handleTreeChange="handleTreeChange"></tree-select>
+                <tree-select :value="queryParam.organizationId" @handleTreeChange="handleTreeChange"></tree-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -36,15 +36,17 @@
                     @change="handleChange"
                   >
                     <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option value="1"> 事假 </a-select-option>
-                    <a-select-option value="2"> 病假 </a-select-option>
-                    <a-select-option value="3"> 调休 </a-select-option>
-                    <a-select-option value="4"> 年假 </a-select-option>
-                    <a-select-option value="5"> 婚假 </a-select-option>
-                    <a-select-option value="6"> 产假 </a-select-option>
-                    <a-select-option value="7"> 陪产假 </a-select-option>
-                    <a-select-option value="8"> 哺乳假 </a-select-option>
-                    <a-select-option value="9"> 丧假 </a-select-option>
+                    <a-select-option value="1"> 年假 </a-select-option>
+                    <a-select-option value="2"> 产假  </a-select-option>
+                    <a-select-option value="3"> 陪产假 </a-select-option>
+                    <a-select-option value="4"> 婚假 </a-select-option>
+                    <a-select-option value="5"> 例假  </a-select-option>
+                    <a-select-option value="6"> 丧假  </a-select-option>
+                    <a-select-option value="7"> 哺乳假 </a-select-option>
+                    <a-select-option value="8"> 事假 </a-select-option>
+                    <a-select-option value="9"> 调休 </a-select-option>
+                    <a-select-option value="10"> 病假 </a-select-option>
+                    <a-select-option value="11"> 其他 </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -61,7 +63,7 @@
                 >
                 <a-button
                   style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                  @click="reloadData"
                   >重置</a-button
                 >
                 <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -91,17 +93,22 @@
         rowKey="key"
         :columns="scheduleColumns"
         :data="loadScheduleData"
-        :rowSelection="rowSelection"
         :scroll="{ y: 550, x: 800 }"
         showPagination="auto"
       >
-        <template slot="type" slot-scope="type">
-          <span>{{ type | typeFilter }}</span>
+        <template slot="state" slot-scope="state">
+          <span>{{ state | typeFilter }}</span>
         </template>
         <template slot="isEnable" slot-scope="isEnable">
           <a-badge
             :status="isEnable == '1' ? 'processing' : 'error'"
             :text="isEnable | statusFilter"
+          />
+        </template>
+        <template slot="approvalResults" slot-scope="approvalResults">
+          <a-badge
+            :status="approvalResults == '0' ? 'processing' : (approvalResults == 1 ? 'success' : 'error')"
+            :text="approvalResults | resultFilter"
           />
         </template>
         <span slot="action" slot-scope="text, record">
@@ -112,16 +119,18 @@
     <form-step
       ref="modal"
       title="新建请假记录"
+      :record="{type:2}"
       :formTitle="formTitle"
       :rules="rules"
       :stepTitle="stepTitle"
       :submitFun="submitFun"
+      @refreshTable="reloadData"
     ></form-step>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import formStep from "@/components/stepForm/StepForm";
@@ -129,19 +138,21 @@ import treeSelect from "@/components/treeSelect/TreeSelect"
 const formTitle = [
   {
     label: "请假类型",
-    name: "type",
+    name: "state",
     type: "select",
     placeholder: "请选择请假类型",
     select: [
-      { value: 1, name: "事假" },
-      { value: 2, name: "病假" },
-      { value: 3, name: "调休" },
-      { value: 4, name: "年假" },
-      { value: 5, name: "婚假" },
-      { value: 6, name: "产假" },
-      { value: 7, name: "陪产假" },
-      { value: 8, name: "哺乳假" },
-      { value: 9, name: "丧假" },
+      { value: 1, name: "年假" },
+      { value: 2, name: "产假" },
+      { value: 3, name: "陪产假" },
+      { value: 4, name: "婚假 " },
+      { value: 5, name: "例假 " },
+      { value: 6, name: "丧假" },
+      { value: 7, name: "哺乳假" },
+      { value: 8, name: "事假" },
+      { value: 9, name: "调休" },
+      { value: 10, name: "病假" },
+      { value: 11, name: "其他" }
     ],
   },
   {
@@ -157,11 +168,19 @@ const formTitle = [
     placeholder: "请选择请假结束时间",
   },
   {
+    label: "时长(小时)",
+    name: "duration",
+    type: "input",
+  },
+  {
     label: "请假原因",
     name: "reason",
     type: "textarea",
     placeholder: "请输入请假原因",
   },
+  {
+    name:'type'
+  }
 ];
 const formCheckTitle = [
   
@@ -256,6 +275,9 @@ const formCheckTitle = [
     label: "审批备注",
     name: "approvalRemake",
     type: "textarea",
+  },
+  {
+    name:"approval"
   }
 ];
 const stepTitle = [{ title: "选择人员" }, { title: "填写请假信息" }];
@@ -268,19 +290,6 @@ const rules = {
     { required: true, message: "请选择请假结束时间", trigger: "change" },
   ],
   reason: [{ required: true, message: "请输入请假原因", trigger: "blur" }],
-};
-const submitFun = () => {
-  return new Promise((resolve) => {
-    resolve({
-      data: [],
-      pageSize: 10,
-      pageNo: 1,
-      totalPage: 1,
-      totalCount: 10,
-    });
-  }).then((res) => {
-    return res;
-  });
 };
 export default {
   name: "AskForLeave",
@@ -295,7 +304,12 @@ export default {
       formTitle,
       rules,
       stepTitle,
-      submitFun,
+      submitFun:(parameter) => {
+        return this.$api.overTimeService.postByUser(parameter)
+          .then(res => {
+            return res.data
+          })
+      },
       // 高级搜索 展开/关闭
       advanced: false,
       value: null,
@@ -353,10 +367,10 @@ export default {
         },
         {
           title: "请假类型",
-          dataIndex: "type",
-          key: "type",
-          scopedSlots: { customRender: "type" },
-          width: 150,
+          dataIndex: "state",
+          key: "state",
+          scopedSlots: { customRender: "state" },
+          width: 100,
         },
         {
           title: "请假原因",
@@ -368,7 +382,8 @@ export default {
           title: "审批结果",
           dataIndex: "approvalResults",
           key: "approvalResults",
-          width: 100,
+          scopedSlots: { customRender: "approvalResults" },
+          width: 120
         },
         {
           title: "审批备注",
@@ -378,9 +393,9 @@ export default {
         },
         {
           title: "审批人",
-          dataIndex: "name",
-          key: "name",
-          width: 100,
+          dataIndex: "approval",
+          key: "approval",
+          width: 120,
         },
         {
           table: "操作",
@@ -390,7 +405,7 @@ export default {
         },
       ],
       //查询参数
-      queryParam:{type:2},
+      queryParam:{type:2,organizationId:"",name:""},
       loadScheduleData: (parameter) => {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         return this.$api.overTimeService.getOverTimeLeave(requestParameters)
@@ -410,21 +425,15 @@ export default {
     //请假审批
     handleEdit(record) {
       console.log(record);
+      record.approval = this.user.name
       let formProps = {
         record: record,
         formTitle: formCheckTitle,
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
-            });
-          }).then((res) => {
-            return res;
-          });
+        submitFun: (parameter) => {
+        return this.$api.overTimeService.putOverTimeLeave(parameter)
+          .then(res => {
+            return res.data
+          })
         },
       };
       let modalProps = {
@@ -455,10 +464,12 @@ export default {
      * @param modalProps 弹窗配置项 Object
      */
     openModal(form, formProps, modalProps) {
+      const _this=this
       const defaultModalProps = {
         on: {
           ok() {
             console.log("ok 回调");
+            _this.$refs.table.refresh(true)
           },
           cancel() {
             console.log("cancel 回调");
@@ -477,9 +488,16 @@ export default {
         modalProps
       );
     },
+    //树选择回调
     handleTreeChange(obj){
-      this.value = obj.val
-      console.log("this.value = " + this.value)
+      this.queryParam.organizationId = obj.val
+      console.log(this.queryParam)
+    },
+    //重置
+    reloadData(){
+      this.queryParam={type:2,organizationId:"",name:""}
+      this.$refs.table.refresh(true)
+      
     }
   },
   filters: {
@@ -492,21 +510,32 @@ export default {
     },
     typeFilter(type) {
       const statusMap = {
-        1: "事假",
-        2: "病假",
-        3: "调休",
-        4: "年假",
-        5: "婚假",
-        6: "产假",
-        7: "陪产假",
-        8: "哺乳假",
-        9: "丧假",
+        1: "年假 ",
+        2: "产假 ",
+        3: "陪产假",
+        4: "婚假",
+        5: "例假",
+        6: "丧假",
+        7: "哺乳假",
+        8: "事假",
+        9: "调休",
+        10: "病假",
+        11: "其他"
       };
       return statusMap[type];
     },
+     resultFilter(result){
+      const statusMap = {
+        0:'未审批' ,
+            1:'审批通过' ,
+            2:'审批拒绝' ,
+      };
+      return statusMap[result];
+    }
   },
   computed: {
     ...mapState("setting", ["pageMinHeight"]),
+    ...mapGetters("account",["user"]),
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,

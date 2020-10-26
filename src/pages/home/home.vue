@@ -2,7 +2,7 @@
   <div class="" >
     <a-row :gutter="24">
       <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
-        <div style="background:#578EBE" class="antd-pro-pages-home-quickCard" :showfooter="false" :loading="loading" title="" total="职级评定">
+        <div style="background:#578EBE" class="antd-pro-pages-home-quickCard" :showfooter="false" :loading="loading" total="">
           <a-icon type="audit" />
           <span>职级评定</span>
         </div>
@@ -268,6 +268,7 @@ export default {
       display: flex;
       justify-content: flex-start;
       align-items: center;
+      cursor: pointer;
       i{
           font-size: 64px;
           color: rgba(255, 255, 255, .3);

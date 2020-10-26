@@ -74,7 +74,6 @@
         :rowKey="(record)=>record.id"
         :columns="scheduleColumns"
         :data="loadScheduleData"
-        :rowSelection="rowSelection"
         :scroll="{ y: 550, x: 800 }"
         showPagination="auto"
       >

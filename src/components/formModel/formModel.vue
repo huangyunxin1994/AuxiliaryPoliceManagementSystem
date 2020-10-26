@@ -39,7 +39,7 @@
             <a-select-option
               v-for="(i, j) in item.select"
               :key="j"
-              :value="i.value || i.name"
+              :value="i.id || i.name"
             >
               {{ i.name }}
             </a-select-option>
@@ -255,14 +255,21 @@ export default {
           result
             .then((res) => {
               console.log(res);
-              this.resetForm();
-              this.$message.success(res.msg);
-              resolve(true);
+              if(res.code === 0){
+                this.resetForm();
+                this.$message.success(res.msg);
+                resolve(true);
+              }else{
+                this.resetForm();
+                this.$message.error(res.msg);
+                resolve(true);
+              }
+              
             })
             .catch((err) => {
-              console.log(err);
+              this.resetForm();
               this.$message.success(err.msg);
-              resolve(false);
+              resolve(true);
             });
         }, 1000);
       });

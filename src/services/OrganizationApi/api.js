@@ -12,4 +12,7 @@ module.exports = {
   GETROLE:`${BASE_URL.lk}/organization/menu`,//查询角色
   GETUSER:`${BASE_URL.lk}/organization/user`,//查找管理员信息
   POSTUSER:`${BASE_URL.lk}/organization/user`,//添加管理员
+  PUTUSER:`${BASE_URL.lk}/organization/user`,//添加管理员
+  PUTRESET:`${BASE_URL.lk}/organization/reset`,//重置密码
+  
 }

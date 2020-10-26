@@ -6,12 +6,12 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="模糊查询">
-                <a-input placeholder="请输入要查询的关键词" />
+                <a-input v-model="queryParam.name" placeholder="请输入要查询的关键词" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <tree-select @handleTreeChange="handleTreeChange"></tree-select>
+                <tree-select :value="queryParam.organizationId" @handleTreeChange="handleTreeChange"></tree-select>
               </a-form-item>
             </a-col>
             <a-col :md="(!advanced && 8) || 24" :sm="24">
@@ -26,7 +26,7 @@
                 >
                 <a-button
                   style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                  @click="refreshTable"
                   >重置</a-button
                 >
                 <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -41,10 +41,8 @@
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
         <a-dropdown v-if="selectedRowKeys.length > 0">
-          <a-menu slot="overlay">
+          <a-menu slot="overlay" @click="handleDel">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-            <!-- lock | unlock -->
-            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px">
             批量操作 <a-icon type="down" />
@@ -53,7 +51,7 @@
       </div>
       <s-table
         ref="table"
-        rowKey="key"
+        :rowKey="(record) => record.id"
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :rowSelection="rowSelection"
@@ -81,6 +79,7 @@
       :rules="rules"
       :stepTitle="stepTitle"
       :submitFun="submitFun"
+      @refreshTable="refreshTable"
     ></form-step>
   </div>
 </template>
@@ -93,39 +92,21 @@ import formStep from "@/components/stepForm/StepForm";
 import treeSelect from "@/components/treeSelect/TreeSelect"
 const formTitle = [
   {
-    label: "请假类型",
-    name: "type",
-    type: "select",
-    placeholder: "请选择请假类型",
-    select: [
-      { value: 1, name: "事假" },
-      { value: 2, name: "病假" },
-      { value: 3, name: "调休" },
-      { value: 4, name: "年假" },
-      { value: 5, name: "婚假" },
-      { value: 6, name: "产假" },
-      { value: 7, name: "陪产假" },
-      { value: 8, name: "哺乳假" },
-      { value: 9, name: "丧假" },
-    ],
-  },
-  {
-    label: "开始时间",
-    name: "startTime",
-    type: "picker",
-    placeholder: "请选择请假开始时间",
-  },
-  {
-    label: "结束时间",
-    name: "endTime",
-    type: "picker",
-    placeholder: "请选择请假结束时间",
-  },
-  {
-    label: "请假原因",
+    label: "原因",
     name: "reason",
     type: "textarea",
-    placeholder: "请输入请假原因",
+  },
+  {
+    label: "批准机关",
+    name: "startTime",
+    type: "input",
+    placeholder: "请输入批准机关",
+  },
+  {
+    label: "批准日期",
+    name: "duration",
+    type: "picker",
+    placeholder: "请选择批准日期",
   },
 ];
 const formCheckTitle = [
@@ -225,27 +206,11 @@ const formCheckTitle = [
 ];
 const stepTitle = [{ title: "选择人员" }, { title: "填写请假信息" }];
 const rules = {
-  type: [{ required: true, message: "请选择请假类型", trigger: "change" }],
+  reason: [{ required: true, message: "请输入原因", trigger: "blur" }],
   startTime: [
-    { required: true, message: "请选择请假开始时间", trigger: "change" },
+    { required: true, message: "请输入批准机关", trigger: "blur" },
   ],
-  endTime: [
-    { required: true, message: "请选择请假结束时间", trigger: "change" },
-  ],
-  reason: [{ required: true, message: "请输入请假原因", trigger: "blur" }],
-};
-const submitFun = () => {
-  return new Promise((resolve) => {
-    resolve({
-      data: [],
-      pageSize: 10,
-      pageNo: 1,
-      totalPage: 1,
-      totalCount: 10,
-    });
-  }).then((res) => {
-    return res;
-  });
+  duration: [{ required: true, message: "请选择批准日期", trigger: "change" }],
 };
 export default {
   name: "AskForLeave",
@@ -260,7 +225,11 @@ export default {
       formTitle,
       rules,
       stepTitle,
-      submitFun,
+      submitFun: (parameter) => {
+        return this.$api.accountabilityService.postAccountability(parameter).then((res) => {
+          return res.data;
+        });
+      },
       // 高级搜索 展开/关闭
       advanced: false,
       value: null,
@@ -279,8 +248,8 @@ export default {
         },
         {
           title: "姓名",
-          dataIndex: "policeName",
-          key: "policeName",
+          dataIndex: "name",
+          key: "name",
           width: 100,
         },
         {
@@ -298,8 +267,8 @@ export default {
         },
         {
           title: "责任说明",
-          dataIndex: "startTime",
-          key: "startTime",
+          dataIndex: "reason",
+          key: "reason",
           ellipsis: true,
         },
         {
@@ -316,31 +285,21 @@ export default {
           width: 100,
         }
       ],
-      loadScheduleData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                policeName: "辅警1",
-                name: "管理员",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-                startTime: "",
-                endTime: "",
-                duration: "",
-                type: "",
-                reason: ""
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
+      //查询条件参数
+      queryParam: {
+        name: "",
+        organizationId: "",
+      },
+      loadScheduleData: (parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.queryParam);
+        return this.$api.accountabilityService
+          .getAccountabilityList(requestParameters)
+          .then((res) => {
+            res.data.data.list.map((i, k) => {
+              i.key = k + 1;
+            });
+            return res.data;
           });
-        }).then((res) => {
-          return res;
-        });
       },
       selectedRowKeys: [],
       selectedRows: [],
@@ -420,10 +379,48 @@ export default {
         modalProps
       );
     },
-    handleTreeChange(obj){
-      this.value = obj.val
-      console.log("this.value = " + this.value)
-    }
+    handleTreeChange(obj) {
+      this.queryParam.organizationId = obj.val;
+    },
+    handleDel(e) {
+        console.log(e)
+      const _this = this;
+      this.$confirm({
+        title: "警告",
+        content: `真的要删除吗?`,
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          console.log(_this);
+          _this.$api.accountabilityService
+            .deleteAccountability({ list:_this.selectedRowKeys })
+            .then((res) => {
+              if (res.data.code == 0) {
+                _this.$message.success(res.data.msg);
+                _this.selectedRowKeys = []
+                _this.selectedRows = []
+                _this.$refs.table.refresh();
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
+        },
+        onCancel() {},
+      });
+    },
+    //重新加载
+    refreshTable() {
+    this.queryParam= {
+        name: "",
+        organizationId: "",
+      }
+      this.$refs.table.refresh(true);
+    },
   },
   filters: {
     statusFilter(status) {

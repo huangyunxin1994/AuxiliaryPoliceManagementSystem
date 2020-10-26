@@ -32,16 +32,16 @@ const otherItemsService = {
      * @param params 添加的数据
      * @returns {Promise<AxiosResponse<T>>}
      */
-    async postCommuting(param) {
-        return request(POSTSETTING, METHOD.POST, param)
+    async postCommuting(params) {
+        return request(POSTSETTING, METHOD.POST, Qs.stringify(params))
     },
     /**
      * 修改上下班时间
      * @param params 修改的数据
      * @returns {Promise<AxiosResponse<T>>}
      */
-    async putCommuting(param) {
-        return request(PUTSETTING, METHOD.PUT, param)
+    async putCommuting(params) {
+        return request(PUTSETTING, METHOD.PUT, Qs.stringify(params))
     },
     /**
      * 获取装备配置列表

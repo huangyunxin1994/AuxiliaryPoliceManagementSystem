@@ -30,9 +30,9 @@
           <a-badge :status="status" :text="status | statusFilter" />
         </template>
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">编辑</a>
+          <a type="line" @click="handleEdit(record)" :disabled="record.isSystem==1">编辑</a>
           <a-divider type="vertical" />
-          <a @click="del(record)">删除</a>
+          <a type="line" @click="del(record)" :disabled="record.isSystem==1">删除</a>
         </span>
       </s-table>
     </a-card>
@@ -51,7 +51,7 @@ const wageTitle = [
   },
   {
     label: "描述",
-    name: "explain",
+    name: "itemExplain",
     type: "textarea",
   },
 ];
@@ -82,8 +82,8 @@ export default {
         },
         {
           title: "说明",
-          dataIndex: "explain",
-          key: "explain",
+          dataIndex: "itemExplain",
+          key: "itemExplain",
           ellipsis: true,
         },
         {
@@ -93,29 +93,14 @@ export default {
           width: 150,
         },
       ],
-      loadScheduleData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                itemName: "姓名",
-                explain: "必填项，用户数据校验",
-              },
-              {
-                key: "2",
-                itemName: "辅警编号",
-                explain: "必填项，用户数据校验",
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      queryParam:{},
+      loadScheduleData: (parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.queryParam)
+        return this.$api.wageItemsService.getWageItems(requestParameters)
+          .then(res => {
+            res.data.data.list.map((i,k)=>i.key=k+1)
+            return res.data
+          })
       },
       selectedRowKeys: [],
       selectedRows: [],
@@ -131,18 +116,11 @@ export default {
         formTitle: wageTitle,
         rules: wageRules,
 
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
-            });
-          }).then((res) => {
-            return res;
-          });
+        submitFun: (requestParameters) => {
+          return this.$api.wageItemsService.postWageItems(requestParameters)
+          .then(res => {
+            return res.data
+          })
         },
       };
       let modalProps = {
@@ -160,18 +138,11 @@ export default {
         record: record,
         formTitle: wageTitle,
         rules: wageRules,
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
-            });
-          }).then((res) => {
-            return res;
-          });
+        submitFun: (requestParameters) => {
+          return this.$api.wageItemsService.putWageItems(requestParameters)
+          .then(res => {
+            return res.data
+          })
         },
       };
       let modalProps = {
@@ -190,10 +161,12 @@ export default {
      * @param modalProps 弹窗配置项 Object
      */
     openModal(form, formProps, modalProps) {
+      const _this = this
       const defaultModalProps = {
         on: {
           ok() {
             console.log("ok 回调");
+            _this.$refs.table.refresh(true)
           },
           cancel() {
             console.log("cancel 回调");
@@ -213,6 +186,10 @@ export default {
       );
     },
     publish() {
+      const _this = this
+      console.log(_this.$refs.table.localDataSource)
+      let content = []
+      _this.$refs.table.localDataSource.map(i => content.push(i.itemName))
       this.$confirm({
         title: "提示",
         content: `更改内容将于下月1号生效，确定发布吗？`,
@@ -222,10 +199,17 @@ export default {
         cancelText: "取消",
         onOk() {
           console.log("OK");
-          // 在这里调用删除接口
-          return new Promise((resolve, reject) => {
-            setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-          }).catch(() => console.log("Oops errors!"));
+           _this.$api.wageItemsService.releaseWageItems({content:content})
+          .then(res => {
+            if(res.data.code === 0){
+              _this.$message.success(res.data.msg)
+               _this.$refs.table.refresh()
+            }else{
+               _this.$message.error(res.data.msg)
+            }
+          }).catch(err=>{
+             _this.$message.error(err.data.msg)
+          })
         },
         onCancel() {
           console.log("Cancel");
@@ -233,6 +217,7 @@ export default {
       });
     },
     del(row) {
+      const _this = this
       this.$confirm({
         title: "警告",
         content: `真的要删除 ${row.itemName} 工资项吗?`,
@@ -243,9 +228,17 @@ export default {
         onOk() {
           console.log("OK");
           // 在这里调用删除接口
-          return new Promise((resolve, reject) => {
-            setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-          }).catch(() => console.log("Oops errors!"));
+          _this.$api.wageItemsService.deleteWageItems({id:row.id})
+          .then(res => {
+            if(res.data.code === 0){
+              _this.$message.success(res.data.msg)
+               _this.$refs.table.refresh()
+            }else{
+               _this.$message.error(res.data.msg)
+            }
+          }).catch(err=>{
+             _this.$message.error(err.data.msg)
+          })
         },
         onCancel() {
           console.log("Cancel");

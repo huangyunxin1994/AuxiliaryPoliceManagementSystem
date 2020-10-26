@@ -131,7 +131,8 @@ export default {
         },
       ],
       queryParam:{
-        name:""
+        name:"",
+        oid:""
       },
       loadData: (parameter) => {
         const requestParameters = Object.assign({}, parameter, this.queryParam);
@@ -145,6 +146,9 @@ export default {
       selectedRowKeys: [],
       selectedRows: [],
     };
+  },
+  created(){
+    this.queryParam.oid = this.user.id
   },
   mounted(){
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL2

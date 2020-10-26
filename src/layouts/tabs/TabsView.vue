@@ -66,6 +66,7 @@ export default {
       this.pageList.push(this.createPage(route))
     }
     this.activePage = route.fullPath
+    console.log(route)
     if (this.multiPage) {
       this.$nextTick(() => {
         this.setCachedKey(route)

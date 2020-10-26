@@ -198,6 +198,9 @@ export default {
       selectedRows: [],
     };
   },
+  created(){
+    this.queryParam.oid = this.user.id
+  },
   mounted(){
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL2
     console.log( this.BASE_URL)

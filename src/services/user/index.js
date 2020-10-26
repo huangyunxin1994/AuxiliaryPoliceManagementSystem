@@ -1,7 +1,6 @@
 import { LOGIN, ROUTES } from './api'
 import {request, METHOD, removeAuthorization} from '@/utils/request'
 import Qs from 'qs'
-
 /**
  * 登录服务
  * @param name 账户名

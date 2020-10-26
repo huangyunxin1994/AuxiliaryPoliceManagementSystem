@@ -1,4 +1,4 @@
-import {GETORGAN, POSTORGAN, PUTORGAN, DELETEORGAN, GETROLE, GETUSER, POSTUSER} from './api'
+import {GETORGAN, POSTORGAN, PUTORGAN, DELETEORGAN, GETROLE, GETUSER, POSTUSER, PUTUSER, PUTRESET} from './api'
 import {request, METHOD} from '@/utils/request'
 import Qs from 'qs'
 const organizationService = {
@@ -63,6 +63,35 @@ const organizationService = {
             role:role
         }
         return request(POSTUSER, METHOD.POST, obj)
+    },
+    /**
+     * 修改管理员
+     * @param params 查询条件
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    async putUser(params){
+        const oRole = Object.assign([],params.oRole)
+        const nRole = Object.assign([],params.role)
+        const checkArrSames = (oRole, nRole) =>{
+          return [...new Set(oRole)].length === [...new Set([...oRole, ...nRole])].length;
+        } 
+        const role = !checkArrSames(oRole,nRole) && Object.assign([],params.role) 
+        delete params.role
+        delete params.oRole
+        const obj = {
+            user:params,
+            role:role!==false&&role||[]
+        }
+
+        return request(PUTUSER, METHOD.PUT, obj)
+    },
+    /**
+     * 重置密码
+     * @param params 修改数据
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    async putResetPassword(params){
+        return request(PUTRESET, METHOD.PUT, Qs.stringify(params))
     }
 }
 

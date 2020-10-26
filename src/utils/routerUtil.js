@@ -78,9 +78,26 @@ function loadRoutes({router, store, i18n}, routesConfig) {
   // 初始化Admin后台菜单数据
   const rootRoute = router.options.routes.find(item => item.path === '/')
   const menuRoutes = rootRoute && rootRoute.children
+  console.log(menuRoutes)
   if (menuRoutes) {
+    filterMenu(menuRoutes)
     store.commit('setting/setMenuData', menuRoutes)
   }
+}
+
+/**
+ * 初始化菜单数据
+ * @param menuData
+ */
+function filterMenu(menuData) {
+  menuData.forEach(menu => {
+    if (menu.meta && menu.meta.invisible !== undefined) {
+        delete menu.meta.invisible
+      if (menu.children && menu.children.length > 0) {
+        filterMenu(menu.children)
+      }
+    }
+  })
 }
 
 /**
