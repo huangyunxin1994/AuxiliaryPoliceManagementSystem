@@ -1,5 +1,6 @@
-import {GETLIST,POSTEDUCATION,DELETEEDUCATION,GETDETAILSDATA} from './api'
+import {GETLIST,POSTEDUCATION,DELETEEDUCATION,GETDETAILSDATA,PUTEDUCATION} from './api'
 import {request, METHOD} from '@/utils/request'
+
 // import Qs from 'qs'
 import store from '@/store/index.js'
 
@@ -35,6 +36,7 @@ const educationService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     addEducation(params) {
+        console.log(params)
         let submitData = {
             train:{
                 className:params.className,
@@ -50,6 +52,7 @@ const educationService = {
         }
         let arr = []
         let dataArr = params.police
+        console.log(dataArr)
         dataArr.forEach(element => {
             let obj = {
                 policeId:element.id,
@@ -62,6 +65,7 @@ const educationService = {
             arr.push(obj)
         });
         submitData.list = arr
+        console.log(submitData)
         return request(POSTEDUCATION, METHOD.POST, submitData)
     },
 
@@ -82,12 +86,49 @@ const educationService = {
     getEducationDetails(params){
         // const GETDETAILS = GETDETAILSDATA + id.id
         return request(GETDETAILSDATA, METHOD.GET,params)
-    }
+    },
 
-    // deleteCertEquip(id) {
-    //     DELETERSFL = DELETERSFL+ id
-    //     return request(DELETERSFL, METHOD.DELETE)
-    // },
+    /**
+     * 填写结果  单个
+     * @param params 培训id
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    putEducation(params){
+        console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        console.log(params)
+        let obj = {
+            id:params.id,
+            policeId:params.policeId,
+            policeName:params.policeName,
+            postId:params.postId,
+            postName:params.postName,
+            organizationId:params.organizationId,
+            organizationName:params.organizationName,
+            trainId:params.trainId,
+            trainExplain:params.trainExplain,
+            state:params.state
+        }
+        console.log(obj)
+        let submitData = []
+        submitData.push(obj)
+        console.log(submitData)
+        return request(PUTEDUCATION, METHOD.PUT,submitData)
+    },
+
+    /**
+     * 填写结果  多个
+     * @param params 培训id
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    putManyEducation(params,selectArr){
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&")
+        console.log(selectArr)
+        selectArr.forEach((item)=>{
+            item.state = params.state
+            item.trainExplain = params.trainExplain
+        })
+        return request(PUTEDUCATION, METHOD.PUT,selectArr)
+    }
     
 }
 

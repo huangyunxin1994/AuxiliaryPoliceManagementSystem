@@ -87,11 +87,10 @@
         :scroll="{ y: 550, x: 800 }"
         showPagination="auto"
       >
-        <template slot="holiday" slot-scope="holiday">
-          <!-- <span>{{holiday | holidayFilter}}</span> -->
+        <template slot="holiday" slot-scope="learningStyle">
           <a-badge
-            :status="state == '1' ? 'processing' : 'error'"
-            :text="holiday | holidayFilter"
+            :status="learningStyle == '1' ? 'processing' : 'error'"
+            :text="learningStyle | holidayFilter"
           />
         </template>
         <template slot="state" slot-scope="state">
@@ -339,6 +338,7 @@ export default {
           _this.$api.educationService.deleteEducation({id:_this.selectedRowKeys}).then((res)=>{
             if(res.data.code == 0){
               _this.$refs.table.refresh(true)
+              _this.selectedRowKeys.length = 0
               return res.data
             }else{
               _this.$message.error(res.data.msg);

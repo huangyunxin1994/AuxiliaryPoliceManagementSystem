@@ -112,21 +112,30 @@
           </a-row>
         </a-form>
       </div>
+      <div class="table-operator" style="margin-bottom: 24px">
+				<a-button type="primary" icon="plus" @click="handleCredAdd" v-if="selectedRows.length != 0">填写结果</a-button>
+			</div>
       <s-table
         ref="table"
         rowKey="key"
         :columns="credColumns"
         :data="loadCredData"
-        :rowSelection="rowCredSelection"
+        :rowSelection="rowSelection"
         :scroll="{ y: 600, x: 650 }"
         showPagination="auto"
       >
-        <template slot="state" slot-scope="state">
-          <a-badge
-            :status="state == '1' ? 'success' : state == '2' ? 'processing' : 'error'"
-            :text="state | statusFilter(state)"
-          />
+        <template slot="state" slot-scope="state">  
+          <span  v-if="state != ''">
+            <a-badge
+              :status="state == '1' ? 'success' : state == '2' ? 'processing' : 'error'"
+              :text="state | statusFilter(state)"
+            />
+          </span>
+          
         </template>
+        <span slot="action" slot-scope="text, record">
+          <a @click="handleCredAddOne(record)">填写结果</a>
+        </span>
       </s-table>
       <div class="table-page-search-wrapper">
         <div class="submitBtn">
@@ -147,24 +156,24 @@ import selectTree from "@/components/treeSelect/TreeSelect"
 const credTitle = [
   {
     label: "姓名",
-    name: "name",
+    name: "policeName",
     type: "input",
   },
   {
     label: "培训情况",
-    name: "trainGrade",
+    name: "state",
     type: "select",
-    select:[{name:'优秀'},{name:'良好'},{name:'不合格'}]
+    select:[{name:'优秀',value:'1'},{name:'良好',value:'2'},{name:'不合格',value:'3'}]
   },
   {
     label: "说明",
-    name: "remake",
+    name: "trainExplain",
     type: "textarea",
   },
 ];
 const credRules = {
-  name: [{ required: true, message: "请输入证件类型名称", trigger: "blur" }],
-  trainGrade:[{ required: true, message: "请选择培训情况", trigger: "change" }]
+  policeName: [{ required: true, message: "请输入证件类型名称", trigger: "blur" }],
+  state:[{ required: true, message: "请选择培训情况", trigger: "change" }]
 };
 export default {
   name: "OrganManage",
@@ -179,6 +188,8 @@ export default {
       advanced:false,
       param:{},
       vaule:'',
+      selectedRowKeys: [],
+      selectedRows: [],
       replaceFields:{
           children:'children',
           title:'title',
@@ -222,6 +233,12 @@ export default {
           dataIndex: "trainExplain",
           key: "trainExplain",
           ellipsis: true,
+        },
+        {
+          title: '操作',
+          dataIndex: 'action',
+          scopedSlots: {customRender: 'action'},
+          width: 150
         }
       ],
       queryParam:{
@@ -232,7 +249,7 @@ export default {
         search:''
       },
       loadCredData: (params) => {
-        this.queryParam.oid = this.user.organizationId
+        // this.queryParam.oid = this.user.organizationId
         this.queryParam.id = this.param.id
         let param = Object.assign(params,this.queryParam)
         return this.$api.educationService.getEducationDetails(param).then((res)=>{
@@ -260,26 +277,80 @@ export default {
         },
         labelCol: { span: 4 },
         wrapperCol: { span: 14 },
+      selcetPersonName:{}
     };
   },
   methods: {
+    //填写结果(批量)
     handleCredAdd() {
+      let arrName = "";
+      let selectArr = []
+      let arr = this.selectedRows
+      arr.forEach((e)=>{
+        let queryPa = {
+          id:e.id,
+          trainId:this.param.id,
+          policeId:e.policeId,
+          policeName:e.policeName,
+          postId:e.postId,
+          postName:e.postName,
+          organizationId:e.organizationId,
+          organizationName:e.organizationName
+        }
+        arrName = e.policeName + ",";
+        this.selcetPersonName.policeName = arrName.slice(0,arrName.length - 1);
+        selectArr.push(queryPa)
+      })
       let formProps = {
         formTitle: credTitle,
         rules: credRules,
-
-        submitFun: () => {
-          return new Promise((resolve) => {
-            resolve({
-              data: [],
-              pageSize: 10,
-              pageNo: 1,
-              totalPage: 1,
-              totalCount: 10,
-            });
-          }).then((res) => {
-            return res;
-          });
+        record:this.selcetPersonName,
+        submitFun:(params) => {
+            // let param = Object.assign(params,queryPa)
+            return this.$api.educationService.putManyEducation(params,selectArr).then((res)=>{
+                res.data.data.list.map((i,k)=>{
+                    i.key=k+1
+                })
+                return res.data
+            })
+        },
+      };
+      let modalProps = {
+        title: "填写结果",
+        width: 700,
+        centered: true,
+        maskClosable: false,
+        okText: "提交",
+      };
+      this.openModal(TaskForm, formProps, modalProps);
+    },
+    // 填写结果(单个)
+    handleCredAddOne(e){
+      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+      console.log(e)
+      let queryPa = {
+        id:e.id,
+        trainId:e.trainId,
+        policeId:e.policeId,
+        policeName:e.policeName,
+        postId:e.postId,
+        postName:e.postName,
+        organizationId:e.organizationId,
+        organizationName:e.organizationName
+      }
+      let formProps = {
+        formTitle: credTitle,
+        rules: credRules,
+        record:e,
+        submitFun:(params) => {
+            let param = Object.assign(params,queryPa)
+            return this.$api.educationService.putEducation(param).then((res)=>{
+                res.data.data.list.map((i,k)=>{
+                    i.key=k+1
+                })
+                this.$refs.table.refresh(true)
+                return res.data
+            })
         },
       };
       let modalProps = {
@@ -320,13 +391,13 @@ export default {
         modalProps
       );
     },
-    onCredSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedCredRowKeys = selectedRowKeys;
-      this.selectedCredRows = selectedRows;
-    },
-    onEqupSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedEqupRowKeys = selectedRowKeys;
-      this.selectedEqupRows = selectedRows;
+    // 获取多选的数据
+    onSelectChange (selectedRowKeys, selectedRows) {
+      
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+      console.log(this.selectedRowKeys)
+      console.log(this.selectedRows)
     },
 
     // 组织树选择
@@ -342,7 +413,11 @@ export default {
 
     // 点击返回
     submit(){
-
+      this.$router.replace(
+        {
+          path:'education'
+        }
+      )
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
@@ -375,18 +450,12 @@ export default {
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
     ...mapGetters("account",["user"]),// 获取登录者信息
-    rowCredSelection() {
+    rowSelection () {
       return {
-        selectedRowKeys: this.selectedCredRowKeys,
-        onChange: this.onCredSelectChange,
-      };
-    },
-    rowEqupSelection() {
-      return {
-        selectedRowKeys: this.selectedEqupRowKeys,
-        onChange: this.onEqupSelectChange,
-      };
-    },
+        selectedRowKeys: this.selectedRowKeys,
+        onChange: this.onSelectChange
+      }
+    }
   },
 };
 </script>

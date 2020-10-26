@@ -20,4 +20,5 @@ module.exports = {
   POSTEDUCATION:`${BASE_URL.lk}/train/`,//查询培训列表
   DELETEEDUCATION:`${BASE_URL.lk}/train/`,//删除培训
   GETDETAILSDATA:`${BASE_URL.lk}/train/details`,//根据id查找培训详情
+  PUTEDUCATION:`${BASE_URL.lk}/train/`,//填写结果
 }

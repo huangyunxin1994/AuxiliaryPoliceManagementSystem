@@ -91,7 +91,7 @@
               />
 						</template>
 						<span slot="action" slot-scope="text, record">
-							<a @click="changeOneRank(record)">续约</a>
+							<a @click="changeOneRank(record)">变更职级</a>
 							<a-divider type="vertical"  />
 							<a @click="handleEdit (record)">查看</a>
 						</span>

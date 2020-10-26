@@ -66,11 +66,13 @@
 					type="primary"
 					@click="extensionCon"
 					:disabled="selectedRows.length == 0"
+          v-if="selectedRowKeys.length > 0"
 				>续约合同</a-button>
 				<a-button
 					type="primary"
 					style="margin-left: 8px"
 					@click="newContract"
+          icon="plus"
 				>新建合同</a-button>
 				<a-dropdown v-if="selectedRowKeys.length > 0">
 				<a-menu slot="overlay">
@@ -88,7 +90,7 @@
 				:columns="scheduleColumns"
 				:data="loadScheduleData"
 				:rowSelection="rowSelection"
-				:scroll="{ y: 600 }"
+				:scroll="{ y: 600, x: 800 }"
 				:showPagination="true"
 			>
 				<template slot="status" slot-scope="status">
@@ -162,7 +164,7 @@ const rules = {
   startDate: [
     { required: true, message: "请选择合同起始日期", trigger: "change" },
   ],
-  deadline: [{ required: true, message: "请输入合同期限", trigger: "blur" }],
+  contractPeriod: [{ required: true, message: "请输入合同期限", trigger: "blur" }],
 };
 
 export default {
@@ -272,9 +274,9 @@ export default {
         },
         {
           label: "合同期限(月)",
-          name: "deadline",
+          name: "contractPeriod",
           type: "input",
-          refName: "deadline",
+          refName: "contractPeriod",
           placeholder: "请输入整数",
         },
         {
@@ -284,6 +286,9 @@ export default {
           refName: "uploadFile",
         },
       ],
+      extensionRules:{
+        contractPeriod: [{ required: true, message: "请输入合同期限", trigger: "blur" }],
+      },
       // 模糊搜索关键字
       keyword:'',
       isExpire:'',//是否到期
@@ -293,7 +298,9 @@ export default {
   methods: {
     handleEdit(record) {
       console.log(record);
-      let param = {};
+      let param = {
+        person:record
+      };
       let option = {
         title: "历史合同信息",
         width: 1000,

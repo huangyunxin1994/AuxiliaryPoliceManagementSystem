@@ -116,6 +116,7 @@ export default {
   methods: {
     nextStep() {
       const columnData = this.$refs.person.rightColumnsData;
+      console.log(columnData)
       if (columnData.length > 0) {
         let arrName = "";
         columnData.forEach((item) => {

@@ -1,4 +1,5 @@
-import {GETDATA,POSTdATA} from './api'
+import {GETDATA,GETDETAILS,POSTdATA} from './api'
+// ,PODTEXTENSION
 import {request, METHOD} from '@/utils/request'
 import {DateAdd} from '@/utils/util'
 import moment from 'moment'
@@ -34,6 +35,16 @@ const contractService = {
         return request(POSTdATA, METHOD.POST, formData)
         
     },
+    //根据辅警id查询合同信息
+    getdetails(params){
+        return request(GETDETAILS, METHOD.GET, params)
+    },
+
+    // 续约合同
+    postExtensionCon(params){
+        console.log(params)
+        // return request(PODTEXTENSION, METHOD.POST, params)
+    }
 }
 
 

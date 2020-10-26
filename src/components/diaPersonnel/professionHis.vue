@@ -76,10 +76,12 @@
             },
             loadScheduleData: (params) => {
                 let param = Object.assign(params,this.nameMess)
+                console.log(param)
                 return this.$api.personAdminService.getPersonProfession(param).then((res)=>{
                     res.data.data.list.map((i,k)=>{
                         i.key=k+1
                     })
+                    this.$refs.table.refresh(true)
                     return res.data
                 })
             },
@@ -118,6 +120,7 @@
                             res.data.data.list.map((i,k)=>{
                                 i.key=k+1
                             })
+                            this.$refs.table.refresh(true)
                             return res.data
                         })
                     },
