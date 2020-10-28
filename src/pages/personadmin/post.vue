@@ -58,16 +58,16 @@
                     <div class="table-operator" style="margin-bottom: 24px">
                       <!-- <a-button type="primary" @click="changePost" :disabled="selectedRows.length == 0">调动岗位与组织</a-button> -->
 						<a-button type="primary" @click="changePost" v-if="selectedRows.length != 0">调动岗位与组织</a-button>
-                      <a-dropdown v-if="selectedRowKeys.length > 0">
+                      <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
                         <a-menu slot="overlay">
                           <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-                          <!-- lock | unlock -->
+                          
                           <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
                         </a-menu>
                         <a-button style="margin-left: 8px">
                           批量操作 <a-icon type="down" />
                         </a-button>
-                      </a-dropdown>
+                      </a-dropdown> -->
                     </div>
                       <s-table
                         ref="table"
@@ -225,24 +225,51 @@
           selectedRowKeys: [],
           selectedRows: [],
           extension:[
-                {label:'姓名',name:'name',type:'input',placeholder:'请输入姓名',disabled:true},
-                {label:'原组织',name:'beforeOrg',type:'input',placeholder:'请输入变动前职级',disabled:true},
-                {label:'原岗位',name:'beforePost',type:'input',placeholder:'请输入变动前职级',disabled:true},
-                {label:'生效日期',name:'date',type:'picker',placeholder:'请选择变动原因'},
-                {label:'调动后组织',name:'organ',type:'select',placeholder:'请选择变动后职级'},
-                {label:'调动后岗位拟',name:'post',type:'select',placeholder:'请选择调动后岗位拟'},
-                {label:'变动原因',name:'cause',type:'textarea',placeholder:'请输入变动原因'},
-                
+                {label:'姓名',name:'policeName',type:'text',placeholder:'请输入姓名'},
+                {label:'原组织',name:'beforeOrg',type:'text',placeholder:'请输入变动前职级'},
+                {label:'原岗位',name:'beforePost',type:'text',placeholder:'请输入变动前职级'},
+                {label:'生效日期',name:'effectiveDate',type:'pickerDate',placeholder:'请选择生效日期'},
+                {label:'调动后组织',name:'organizationId',type:'treeSelect',placeholder:'请选择变动后组织'},
+                {label:'调动后岗位',name:'currentRank',type:'select',placeholder:'请选择调动后岗位'},
+                {label:'变动原因',name:'reason',type:'textarea',placeholder:'请输入变动原因'},
           ],
           changeRankRules:{
-            post:[{ required: true, message: '请选择变动后岗位', trigger: 'change'}],
-            organ:[{ required: true, message: '请选择变动后组织', trigger: 'change'}],
-            cause: [{ required: true, message: '请输入变动原因', trigger: 'blur'}],
-            date: [{ required: true, message: '请选择生效日期', trigger: 'change' }]
-          }
+            currentRank:[{ required: true, message: '请选择变动后岗位', trigger: 'change'}],
+            organizationId:[{ required: true, message: '请选择变动后组织', trigger: 'change'}],
+            reason: [{ required: true, message: '请输入变动原因', trigger: 'blur'}],
+            effectiveDate: [{ required: true, message: '请选择生效日期', trigger: 'change' }]
+          },
+          postMess:[],
       }
     },
+    created () {
+      this.getPostList()
+      // this.getOrgList()
+    },
     methods:{
+      getPostList(){
+        let para = {
+          oid:this.user.organizationId
+        }
+        this.$api.rankPostService.getPostList(para).then((res)=>{
+          // console.log(res)
+          let post = res.data.data.list
+          console.log(post)
+          this.extension.forEach((item)=>{
+            if(item.name == 'currentRank'){
+              let arr = []
+              post.forEach((i)=>{
+                let obj = {
+                  name:i.name
+                }
+                arr.push(obj)
+              })
+              item.select = arr
+              this.postMess = arr
+            }
+          })
+        })
+      },
       handleEdit(record){
         console.log(record)
         let param ={
@@ -305,9 +332,40 @@
       // 批量岗位调动
       changePost(){
         console.log(this.selectedRows)
+        let arr = []
+        let arrName = ''
+        this.selectedRows.forEach((item,index)=>{
+          let obj = {
+            policeName:item.policeName,//名字
+            number:item.number,//警员编号
+            userId:item.userId,//用户id
+            beforeRank:item.currentRank,//变动前岗位
+            approvedBy:this.user.name,//审批人
+            type:2
+          }
+          // console.log(obj)
+          arrName = item.policeName + ",";
+          if(index == this.selectedRows.length ){
+            arrName.slice(0,arrName.length - 1);
+          }
+          arr.push(obj)
+        })
         let param ={
             formTitle:this.extension,
-            rules:this.changeRankRules
+            rules:this.changeRankRules,
+            record:{
+              policeName:arrName,//名字
+              policeArr:arr,
+              organizationId:"",
+            },
+            submitFun: (parameter) => {
+              return this.$api.personAdminService
+                .changeManyPost(parameter)
+                .then((res) => {
+                  this.$refs.table.refresh(true)
+                  return res.data;
+                });
+            },
         }
         let option = {
             title: '岗位调动',
@@ -320,10 +378,40 @@
       },
 		// 调动单个岗位
 		changeOnePost(e){
+      console.log(e)
 			let param ={
 				formTitle:this.extension,
 				rules:this.changeRankRules,
-				record:e,
+				record:{
+          policeName:e.policeName,//名字
+          number:e.number,//警员编号
+          beforeRank:e.currentRank,//变动前职级
+          approvedBy:this.user.name,//审批人
+          beforeOrg:e.organizationName,
+          beforePost:e.currentRank,
+          organizationId:"",
+          type:2,
+          userId:e.userId
+        },
+        submitFun: (parameter) => {
+          return this.$api.personAdminService
+            .changePost(parameter)
+            .then((res) => {
+              console.log(res)
+              
+              if(res.code == 0){
+                this.$refs.table.refresh(true)
+                return res.data;
+              }else{
+                this.$message.error("调动失败，请重试")
+              }
+            })
+            .catch((res)=>{
+              console.log("错误的返回")
+              console.log(res)
+              this.$message.error("调动失败，请重试")
+            })
+        },
 			}
 			let option = {
 				title: '岗位调动',

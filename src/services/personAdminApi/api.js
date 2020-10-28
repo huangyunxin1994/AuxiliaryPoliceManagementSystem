@@ -16,7 +16,7 @@ module.exports = {
   // PUTRANK:`${BASE_URL}/Other/rankest/rank`,//修改职级
   // DELETERANK:`${BASE_URL}/Other/rankest/rank/`,//删除职级 
 
-  GETRANKDATA:`${BASE_URL.rzh}/PersonnelManagement/RankPost`,//获取岗配置列表
+  GETRANKDATA:`${BASE_URL.lk}/PersonnelManagement/RankPost`,//获取岗配置列表
   GETRANKPOSTHIS:`${BASE_URL.rzh}/PersonnelManagement/RankPost/person`,//获取职级或岗位个人列表
   CHANGERANKPOST:`${BASE_URL.rzh}/PersonnelManagement/RankPost`,//变更职级或岗位
 

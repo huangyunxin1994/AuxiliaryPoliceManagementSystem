@@ -82,10 +82,16 @@ export default {
     })
     
   },
+  watch:{
+    value(val){
+      console.log('organizationId='+val)
+    }
+  },
   methods: {
-    change(value) {
+    change(value,label) {
       // 将组织id传出去
       console.log(value);
+      console.log(label)
       let val = "";
       if (Array.isArray(value)) {
         value.map((i) => (val += i.value + ","));
@@ -96,7 +102,8 @@ export default {
       }
       const params = {
           val:val,
-          keyName:this.keyName
+          keyName:this.keyName,
+          label:label
       }
       this.$emit("handleTreeChange", params);
     },

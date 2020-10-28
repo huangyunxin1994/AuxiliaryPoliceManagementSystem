@@ -67,6 +67,7 @@
 					@click="extensionCon"
 					:disabled="selectedRows.length == 0"
           v-if="selectedRowKeys.length > 0"
+          icon="form"
 				>续约合同</a-button>
 				<a-button
 					type="primary"
@@ -74,15 +75,6 @@
 					@click="newContract"
           icon="plus"
 				>新建合同</a-button>
-				<a-dropdown v-if="selectedRowKeys.length > 0">
-				<a-menu slot="overlay">
-					<a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-					<a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-				</a-menu>
-				<a-button style="margin-left: 8px">
-					批量操作 <a-icon type="down" />
-				</a-button>
-				</a-dropdown>
 			</div>
 			<s-table
 				ref="table"
@@ -153,7 +145,7 @@ const formTitle = [
     label: "合同附件",
     name: "uploadFile",
     type: "upload",
-    refName: "uploadFile",
+    refName: "uploadFile"
   },
 ];
 const stepTitle = [{title:'选择人员'},{title:'填写合同信息'}]
@@ -183,9 +175,10 @@ export default {
       submitFun:(params,file)=>{
         // let param = Object.assign(params,this.queryParams)
         return this.$api.contractService.addContractData(params,file).then((res)=>{
+          this.$refs.table.refresh(true)
           return res.data
+          
         })
-        
       },
       // 高级搜索 展开/关闭
       advanced: false,
@@ -284,6 +277,7 @@ export default {
           name: "uploadFile",
           type: "upload",
           refName: "uploadFile",
+          disabled:false
         },
       ],
       extensionRules:{
@@ -420,10 +414,25 @@ export default {
 
     //续约单个合同
 	extensionOneCon(e){
+    this.extension.forEach(item => {
+    if(item.type == 'upload'){
+        item.disabled = false
+      }
+    });
 		let param = {
 			formTitle: this.extension,
-			rules: {},
-			record:e
+			rules: this.extensionRules,
+      record:{
+        name:e.name,
+        policeId:e.police_id,
+      },
+      submitFun: (parameter) => {
+        return this.$api.contractService
+          .postExtensionCon(parameter)
+          .then((res) => {
+            return res.data;
+          });
+      },
 		};
 		let option = {
 			title: "续约合同",
@@ -437,9 +446,35 @@ export default {
     // 续约合同
     extensionCon() {
       console.log(this.selectedRows);
+      this.extension.forEach(item => {
+      if(item.type == 'upload'){
+          item.disabled = true
+        }
+      });
+      let arr = this.selectedRows
+      let arrName = ""
+      let policeId = []
+      arr.forEach((item,index)=>{
+        arrName = item.name + ",";
+        if(index == arr.length - 1){
+          arrName.slice(0,arrName.length - 1);
+        }
+        policeId.push(item.police_id)
+      })
       let param = {
         formTitle: this.extension,
-        rules: {},
+        rules: this.extensionRules,
+        record:{
+          name:arrName,
+          policeId:policeId,
+        },
+        submitFun: (parameter) => {
+          return this.$api.contractService
+            .postManyExtensionCon(parameter)
+            .then((res) => {
+              return res.data;
+            });
+          },
       };
       let option = {
         title: "续约合同",

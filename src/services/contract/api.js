@@ -16,4 +16,6 @@ module.exports = {
   POSTdATA:`${BASE_URL.lk}/contract/`,//批量添加合同信息
   GETDETAILS:`${BASE_URL.lk}/contract/details`,//根据辅警id查询合同信息
   PODTEXTENSION:`${BASE_URL.lk}/contract/renewal`,//续约合同
+  DOWNLAODNOC:`${BASE_URL.lk}/contract/downloadFile`,//下载文件
+  POSTFILES:`${BASE_URL.lk}/contract/uploadFile`,//文件上传
 }

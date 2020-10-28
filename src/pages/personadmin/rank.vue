@@ -24,8 +24,11 @@
 								</a-col>
 								<a-col :md="8" :sm="24">
 									<a-form-item label="职级">
-                    <a-input placeholder="请输入职级" v-model="queryParam.currentRank" />
-										
+                    <!-- <a-input placeholder="请输入职级" v-model="queryParam.currentRank" /> -->
+										<a-select default-value=""  v-model="queryParam.currentRank">
+												<a-select-option value=""> 全部 </a-select-option>
+                        <a-select-option v-for="(item,index) in rankMess" :key="index" :value="item.name"> {{item.name}} </a-select-option>
+											</a-select>
 									</a-form-item>
 								</a-col>
 								<template v-if="advanced">
@@ -62,7 +65,7 @@
 					</div>
 					<div class="table-operator" style="margin-bottom: 24px" >
 						<!-- <a-button type="primary" @click="changeRank" :disabled="selectedRows.length == 0">变更职级</a-button> -->
-						<a-button type="primary" @click="changeRank" v-if="selectedRows.length != 0">变更职级</a-button>
+						<a-button type="primary" icon="edit" @click="changeRank" v-if="selectedRows.length != 0">变更职级</a-button>
 						<!-- <a-dropdown v-if="selectedRowKeys.length > 0">
 						<a-menu slot="overlay">
 							<a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -150,7 +153,7 @@
               title: '变动前职级',
               dataIndex: 'beforeRank',
               key: 'beforeRank',
-              width: 100,
+              width: 120,
             },
             {
               title: '变动类型',
@@ -175,7 +178,7 @@
               title: '生效日期',
               dataIndex: 'effectiveDate',
               key: 'effectiveDate',
-              width: 100
+              width: 150
             },
             {
               title: '审批人',
@@ -255,18 +258,46 @@
           extension:[
                 {label:'姓名',name:'policeName',type:'text',refName:'name',placeholder:'请输入姓名',disabled:true},
                 {label:'变动前职级',name:'beforeRank',type:'text',refName:'beforeRank',placeholder:'请输入变动前职级',disabled:true},
-                {label:'变动后职级',name:'currentRank',type:'input',refName:'rank',placeholder:'请选择变动后职级'},
+                {label:'变动后职级',name:'currentRank',type:'select',refName:'rank',placeholder:'请选择变动后职级'},
                 {label:'变动原因',name:'reason',type:'input',refName:'cause',placeholder:'请输入变动原因'},
-                {label:'生效日期',name:'effectiveDate',type:'picker',refName:'date',placeholder:'请选择变动原因'}
+                {label:'生效日期',name:'effectiveDate',type:'pickerDate',refName:'date',placeholder:'请选择变动原因'}
           ],
           changeRankRules:{
             currentRank:[{ required: true, message: '请选择变动后职级', trigger: 'change'}],
             reason: [{ required: true, message: '请输入变动原因', trigger: 'blur'}],
             effectiveDate: [{ required: true, message: '请选择生效日期', trigger: 'change' }]
-          }
+          },
+          rankMess:[]
       }
     },
+    mounted () {
+        this.getRankList()
+    },
     methods:{
+      
+      getRankList(){
+        let para = {
+          oid:this.user.organizationId
+        }
+        this.$api.rankPostService.getRankList(para).then((res)=>{
+          // console.log(res)
+          let rank = res.data.data.list
+          console.log(rank)
+          this.extension.forEach((item)=>{
+            if(item.name == 'currentRank'){
+              let arr = []
+              rank.forEach((i)=>{
+                let obj = {
+                  name:i.name
+                }
+                arr.push(obj)
+              })
+              item.select = arr
+              this.rankMess = arr
+            }
+          })
+        })
+      },
       handleEdit(record){
         console.log(record)
         let param ={
@@ -330,11 +361,44 @@
 
       // 职级变更
       changeRank(){
+        console.log("askdjflasdkfjsaow ")
         console.log(this.selectedRows)
+        let arr = []
+        let arrName = ''
+        this.selectedRows.forEach((item,index)=>{
+          console.log(item)
+          let obj = {
+            policeName:item.policeName,//名字
+            number:item.number,//警员编号
+            userId:item.userId,//用户id
+            beforeRank:item.currentRank,//变动前职级
+            approvedBy:this.user.name,//审批人
+            organizationName:item.organizationName,//组织名
+            organizationId:item.organizationId,//组织id
+            type:1
+          }
+          arrName = item.policeName + ",";
+          if(index == this.selectedRows.length ){
+            arrName.slice(0,arrName.length - 1);
+          }
+          arr.push(obj)
+        })
+        
         let param ={
             formTitle:this.extension,
             rules:this.changeRankRules,
-            record:{}
+            record:{
+              policeName:arrName,//名字
+              policeArr:arr
+            },
+            submitFun: (parameter) => {
+              return this.$api.personAdminService
+                .changeManyPostRank(parameter)
+                .then((res) => {
+                  this.$refs.table.refresh(true)
+                  return res.data;
+                });
+            },
         }
         let option = {
             title: '职级变更',
@@ -345,12 +409,31 @@
         }
         this.modal(param,option,fromModel)
       },
-		// 变更单个直接
+		// 变更单个职级
 		changeOneRank(e){
+      console.log(e)
+      console.log(this.user)
 			let param ={
 				formTitle:this.extension,
 				rules:this.changeRankRules,
-				record:e
+				record:{
+          policeName:e.policeName,//名字
+          number:e.number,//警员编号
+          userId:e.userId,//用户id
+          beforeRank:e.currentRank,//变动前职级
+          approvedBy:this.user.name,//审批人
+          organizationName:e.organizationName,//组织名
+          organizationId:e.organizationId,//组织id
+          type:1
+        },
+        submitFun: (parameter) => {
+          return this.$api.personAdminService
+            .changePostRank(parameter)
+            .then((res) => {
+              this.$refs.table.refresh(true)
+              return res.data;
+            });
+        },
 			}
 			let option = {
 				title: '职级变更',

@@ -13,7 +13,7 @@
                 rowKey="key"
                 :columns="scheduleColumns"
                 :data="loadScheduleData"
-                :scroll="{y:600}">
+                :scroll="{y:600,x:800}">
 
                 <template
                     slot="status"
@@ -21,7 +21,8 @@
                     <a-badge :status="status" :text="status | statusFilter"/>
                 </template>
                 <span slot="action" slot-scope="text, record">
-                    <a @click="handleEdit (record)">下载</a>
+                    <!-- <a @click="handleEdit (record)">下载</a> -->
+                    <a  name="file" :download="record.name" :href="BASE_URL+'/contract/downloadFile?noticeId='+record.id">下载</a>
                     <a-divider type="vertical"/>
                     <a-upload
                         name="file"
@@ -31,7 +32,7 @@
                         :before-upload="beforeUpload"
                         :show-upload-list="false"
                     >
-                        <a >上传</a>
+                        <a @click="handleUpData (record)">上传</a>
                     </a-upload>
                     
                 </span>
@@ -63,6 +64,7 @@
         },
         data() {
         return {
+            // BASE_URL:'',
             openKeys: ['key-01'],
             loading:false,
             queryParam:{
@@ -101,7 +103,6 @@
                 },
                 {
                 title: '操作',
-                dataIndex: 'action',
                 scopedSlots: {customRender: 'action'},
                 width: 150
                 }
@@ -125,19 +126,46 @@
             fileList:[],
             form:{
                 file:''
-            }
+            },
+            handleData:'',//点击下载时，获取到当前行的值
         }
+        },
+        mounted(){
+            // this.BASE_URL = process.env.VUE_APP_API_BASE_URL
         },
         methods:{
             handleEdit(record){
                 console.log(record)
+                let param = {
+                    contractId:record.id
+                }
+                console.log(param)
+                this.$api.contractService.downNotice(param).then((res)=>{
+                    console.log(res)
+                }).catch((res)=>{
+                    console.log(res)
+                })
             },
             beforeUpload(file){
-                console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-                console.log(file)
-                this.fileList=[...this.fileList, file];
-                console.log(this.fileList)
+                let param = {
+                    contractId:this.handleData.id,
+                    file:file
+                }
+                this.$api.contractService.postFiles(param).then((res)=>{
+                    if(res.data.code == 0){
+                        this.$message.success('上传成功');
+                    }else{
+                        this.$message.error('上传失败，请重试');
+                    }
+                }).catch((res)=>{
+                    console.log(res)
+                    this.$message.error('上传失败，请重试');
+                })
                 return false
+            },
+            handleUpData(record){
+                console.log(record)
+                this.handleData = record
             }
         },
         filters: {

@@ -55,6 +55,15 @@
             :placeholder="item.placeholder"
             style="width: 100%"
           />
+          <!-- 日期框 -->
+          <a-date-picker 
+            v-model="form[item.name]"
+            :disabled="item.disabled"
+            :placeholder="item.placeholder"
+            valueFormat="YYYY-MM-DD"
+            type="date"
+            style="width: 100%"
+            v-else-if="item.type == 'pickerDate'" />
           <!-- 开关 -->
           <a-switch
             :disabled="item.disabled"
@@ -119,14 +128,13 @@
           <a-upload
             name="file"
             :multiple="true"
-            :disabled="item.disabled"
             :default-file-list="form[item.name]"
             action=""
             :before-upload="beforeUpload"
             :show-upload-list="true"
             v-else-if="item.type == 'upload'"
           >
-            <a-button type="primary">选择文件</a-button>
+            <a-button type="primary" :disabled="item.disabled">选择文件</a-button>
           </a-upload>
         </a-form-model-item>
       </a-col>
@@ -287,6 +295,8 @@ export default {
     },
     //树选择回调
     handleTreeChange(obj){
+      console.log(obj)
+      console.log(obj.keyName)
       this.form[obj.keyName] = obj.val
       console.log( this.form)
     }
