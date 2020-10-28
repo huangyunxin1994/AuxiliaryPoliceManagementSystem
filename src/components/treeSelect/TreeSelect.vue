@@ -15,6 +15,7 @@
   </a-tree-select>
 </template>
 <script>
+import { mapGetters } from "vuex";
 function filterArray(data) {
   data.forEach(function (item) {
     delete item.children;
@@ -69,7 +70,8 @@ export default {
     };
   },
   mounted() {
-    this.$api.organizationService.getOrganization().then((res)=>{
+    const oid = this.user.organizationId
+    this.$api.organizationService.getOrganization({organizationId:oid}).then((res)=>{
         let tree = res.data.data.data
         tree.forEach(item => {
             item.scopedSlots = { title: "custom" }
@@ -99,5 +101,8 @@ export default {
       this.$emit("handleTreeChange", params);
     },
   },
+  computed:{
+    ...mapGetters("account", ["user"])
+  }
 };
 </script>
