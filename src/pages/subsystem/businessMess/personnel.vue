@@ -7,7 +7,7 @@
 				<a-row :gutter="48">
 					<a-col :md="8" :sm="24">
 						<a-form-item label="关键词搜索">
-							<a-input placeholder="请输入要查询的关键词" />
+							<a-input placeholder="请输入要查询的关键词" v-model="rankQuery.search" />
 						</a-form-item>
 					</a-col>
 					<a-col :md="(!advanced && 8) || 24" :sm="24">
@@ -22,10 +22,10 @@
 								style="margin-left: 8px"
 								@click="() => (queryParam = {})"
 								>重置</a-button>
-								<a @click="toggleAdvanced" style="margin-left: 8px">
+								<!-- <a @click="toggleAdvanced" style="margin-left: 8px">
 									{{ advanced ? "收起" : "展开" }}
 									<a-icon :type="advanced ? 'up' : 'down'" />
-								</a>
+								</a> -->
 						</span>
 					</a-col>
 				</a-row>
@@ -56,7 +56,7 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="关键词搜索">
-                <a-input placeholder="请输入要查询的关键词" />
+                <a-input placeholder="请输入要查询的关键词" v-model="postQuery.search" />
               </a-form-item>
             </a-col>
             <a-col :md="(!advanced && 8) || 24" :sm="24">
@@ -74,10 +74,10 @@
                   @click="() => (queryParam = {})"
                   >重置</a-button
                 >
-                <a @click="toggleAdvanced" style="margin-left: 8px">
+                <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? "收起" : "展开" }}
                   <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
+                </a> -->
               </span>
             </a-col>
           </a-row>
@@ -101,7 +101,7 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="关键词搜索">
-                <a-input placeholder="请输入要查询的关键词" />
+                <a-input placeholder="请输入要查询的关键词" v-model="professionQuery.search"/>
               </a-form-item>
             </a-col>
             <a-col :md="(!advanced && 8) || 24" :sm="24">
@@ -119,10 +119,10 @@
                   @click="() => (queryParam = {})"
                   >重置</a-button
                 >
-                <a @click="toggleAdvanced" style="margin-left: 8px">
+                <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
                   {{ advanced ? "收起" : "展开" }}
                   <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
+                </a> -->
               </span>
             </a-col>
           </a-row>
@@ -199,31 +199,17 @@ export default {
           width: 150
         }
       ],
-      rankData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "张三",
-                num:'123456',
-                organizationName: "青秀分局"
-              },
-              {
-                key: "2",
-                name: "李四",
-                num:'123456',
-                organizationName: "仙湖分局"
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      rankQuery:{
+        userId:undefined,
+        search:''
+      },
+      rankData: (parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.rankQuery)
+        return this.$api.personAdminService.getRankPostHistory(requestParameters)
+          .then(res => {
+            res.data.data.list.map((i,k)=>i.key=k+1)
+            return res.data
+          })
       },
       postColumns:[
         {
@@ -261,31 +247,17 @@ export default {
           width: 100
         }
       ],
-      postData:() => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "张三",
-                num:'123456',
-                organizationName: "青秀分局"
-              },
-              {
-                key: "2",
-                name: "李四",
-                num:'123456',
-                organizationName: "仙湖分局"
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      postQuery:{
+        id:undefined,
+        search:''
+      },
+      postData:(parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.postQuery)
+        return this.$api.personAdminService.getRankPostHistory(requestParameters)
+          .then(res => {
+            res.data.data.list.map((i,k)=>i.key=k+1)
+            return res.data
+          })
       },
       professionColumns:[
         {
@@ -316,31 +288,17 @@ export default {
           width: 100
         }
       ],
-      professionData:() => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "张三",
-                num:'123456',
-                organizationName: "青秀分局"
-              },
-              {
-                key: "2",
-                name: "李四",
-                num:'123456',
-                organizationName: "仙湖分局"
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      professionQuery:{
+        search:'',
+        userId:undefined
+      },
+      professionData:(parameter) => {
+        const requestParameters = Object.assign({}, parameter, this.queryParam)
+        return this.$api.personAdminService.getRankPostHistory(requestParameters)
+          .then(res => {
+            res.data.data.list.map((i,k)=>i.key=k+1)
+            return res.data
+          })
       },
       selectedCredRowKeys: [],
       selectedCredRows: [],

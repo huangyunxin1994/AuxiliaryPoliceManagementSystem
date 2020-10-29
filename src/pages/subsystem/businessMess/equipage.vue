@@ -160,31 +160,19 @@ export default {
           width: 150
         },
       ],
-      loadCredData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "张三",
-                num:'123456',
-                organizationName: "青秀分局"
-              },
-              {
-                key: "2",
-                name: "李四",
-                num:'123456',
-                organizationName: "仙湖分局"
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      queryParam:{
+          userId:undefined,
+          type:1
+      },
+      loadCredData: (params) => {
+        let param = Object.assign(params,this.queryParam)
+        return this.$api.certEquipService.getCertEqup(param).then((res)=>{
+          console.log(res)
+          res.data.data.list.map((i,k)=>{
+            i.key=k+1
+          })
+          return res.data
+        })
       },
       dutyColumns:[
         {
@@ -223,31 +211,19 @@ export default {
           width: 150
         }
       ],
-      dutyData:() => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "张三",
-                num:'123456',
-                organizationName: "青秀分局"
-              },
-              {
-                key: "2",
-                name: "李四",
-                num:'123456',
-                organizationName: "仙湖分局"
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      equParam:{
+        userId:undefined,
+        type:2
+      },
+      dutyData:(params) => {
+        let param = Object.assign(params,this.equParam)
+        return this.$api.certEquipService.getCertEqup(param).then((res)=>{
+          console.log(res)
+          res.data.data.list.map((i,k)=>{
+            i.key=k+1
+          })
+          return res.data
+        })
       },
       selectedCredRowKeys: [],
       selectedCredRows: [],

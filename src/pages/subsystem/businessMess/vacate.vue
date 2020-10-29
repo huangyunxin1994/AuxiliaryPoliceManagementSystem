@@ -192,31 +192,18 @@ export default {
           ellipsis: true
         },
       ],
-      loadCredData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "张三",
-                num:'123456',
-                organizationName: "青秀分局"
-              },
-              {
-                key: "2",
-                name: "李四",
-                num:'123456',
-                organizationName: "仙湖分局"
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      queryParam:{
+        id:undefined
+      },
+      loadCredData: (params) => {
+        let param = Object.assign(params,this.queryParam)
+        return this.$api.overTimeService.statistics(param).then((res)=>{
+          console.log(res)
+          res.data.data.list.map((i,k)=>{
+            i.key=k+1
+          })
+          return res.data
+        })
       },
       dutyColumns:[
         {
@@ -278,31 +265,18 @@ export default {
           ellipsis: true
         },
       ],
-      dutyData:() => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "张三",
-                num:'123456',
-                organizationName: "青秀分局"
-              },
-              {
-                key: "2",
-                name: "李四",
-                num:'123456',
-                organizationName: "仙湖分局"
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      dutyQueryData:{
+        id:undefined
+      },
+      dutyData:(params) => {
+        let param = Object.assign(params,this.dutyQueryData)
+        return this.$api.overTimeService.statistics(param).then((res)=>{
+          console.log(res)
+          res.data.data.list.map((i,k)=>{
+            i.key=k+1
+          })
+          return res.data
+        })
       },
       selectedCredRowKeys: [],
       selectedCredRows: [],

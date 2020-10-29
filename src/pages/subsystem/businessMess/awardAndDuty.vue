@@ -150,32 +150,20 @@ export default {
           width: 150
         },
       ],
-      loadCredData: () => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "张三",
-                num:'123456',
-                organizationName: "青秀分局"
-              },
-              {
-                key: "2",
-                name: "李四",
-                num:'123456',
-                organizationName: "仙湖分局"
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      // 奖励查询条件
+      loadQueryParam:{
+        id:undefined
       },
+      loadCredData: (params) => {
+            let param = Object.assign(params,this.loadQueryParam)
+            return this.$api.rewardService.getRewardById(param).then((res)=>{
+              console.log(res)
+              res.data.data.list.map((i,k)=>{
+                i.key=k+1
+              })
+              return res.data
+            })
+          },
       dutyColumns:[
         {
           title: "序号",
@@ -205,31 +193,19 @@ export default {
           width: 150
         }
       ],
-      dutyData:() => {
-        return new Promise((resolve) => {
-          resolve({
-            data: [
-              {
-                key: "1",
-                name: "张三",
-                num:'123456',
-                organizationName: "青秀分局"
-              },
-              {
-                key: "2",
-                name: "李四",
-                num:'123456',
-                organizationName: "仙湖分局"
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
-        });
+      //查询条件
+      queryParam:{
+        id:undefined
+      },
+      dutyData:(params) => {
+        let param = Object.assign(params,this.queryParam)
+        return this.$api.accountabilityService.deleteAccountability(param).then((res)=>{
+          console.log(res)
+          res.data.data.list.map((i,k)=>{
+            i.key=k+1
+          })
+          return res.data
+        })
       },
       selectedCredRowKeys: [],
       selectedCredRows: [],
