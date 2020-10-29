@@ -150,7 +150,7 @@
           </div>
           <standard-table
             ref="table"
-            rowKey="key"
+            :rowKey="(record)=>record.id"
             :columns="studyColumns"
             :data="studySource"
             :scroll="{ y: 600, x: 650 }"
@@ -180,7 +180,7 @@
           </div>
           <standard-table
             ref="worktable"
-            rowKey="key"
+            :rowKey="(record)=>record.id"
             :columns="workColumns"
             :data="workSource"
             showPagination="auto"
@@ -209,7 +209,7 @@
           </div>
           <standard-table
             ref="familytable"
-            rowKey="key"
+            :rowKey="(record)=>record.id"
             :columns="familyColumns"
             :data="familySource"
             showPagination="auto"
@@ -226,15 +226,12 @@
         </div>
       </div>
     </a-card>
-
-    <dialog-data ref="studyData"></dialog-data>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from "vuex";
 import excelBtn from "@/components/importExcel/importExcel";
-import dialogData from "@/components/dialogPersonalData/dialogPersonalData";
 import fromModel from "@/components/formModel/formModel";
 import StandardTable from "@/components/Table_/";
 import { validateIdNo, validatePhone } from "@/config/default/rules";
@@ -657,8 +654,7 @@ export default {
   name: "Demo",
   components: {
     StandardTable,
-    excelBtn,
-    dialogData,
+    excelBtn
   },
   props: {
     policeId: String,

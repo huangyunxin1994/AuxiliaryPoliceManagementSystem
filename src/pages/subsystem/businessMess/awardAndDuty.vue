@@ -97,6 +97,9 @@ export default {
   components: {
     STable,
   },
+  props:{
+    policeId:String
+  },
   data() {
     return {
       value:null,
@@ -150,14 +153,16 @@ export default {
           width: 150
         },
       ],
-      // 奖励查询条件
-      loadQueryParam:{
-        id:undefined
+      //查询条件
+      queryParam:{
+        id:""
       },
       loadCredData: (params) => {
-            let param = Object.assign(params,this.loadQueryParam)
+            let param = Object.assign(params,this.queryParam)
             return this.$api.rewardService.getRewardById(param).then((res)=>{
               console.log(res)
+              res.data.data.count = res.data.data.list.length;
+              res.data.data.currentPage = 1;
               res.data.data.list.map((i,k)=>{
                 i.key=k+1
               })
@@ -193,14 +198,13 @@ export default {
           width: 150
         }
       ],
-      //查询条件
-      queryParam:{
-        id:undefined
-      },
+      
       dutyData:(params) => {
         let param = Object.assign(params,this.queryParam)
-        return this.$api.accountabilityService.deleteAccountability(param).then((res)=>{
+        return this.$api.accountabilityService.getAccountabilityById(param).then((res)=>{
           console.log(res)
+          res.data.data.count = res.data.data.list.length;
+          res.data.data.currentPage = 1;
           res.data.data.list.map((i,k)=>{
             i.key=k+1
           })
@@ -225,6 +229,9 @@ export default {
         labelCol: { span: 4 },
         wrapperCol: { span: 14 },
     };
+  },
+  created(){
+    this.queryParam.id = this.policeId
   },
   methods: {
     
