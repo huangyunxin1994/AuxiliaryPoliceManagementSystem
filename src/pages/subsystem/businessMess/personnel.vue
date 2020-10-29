@@ -20,7 +20,9 @@
 							<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
 							<a-button
 								style="margin-left: 8px"
-								@click="() => (queryParam = {})"
+								@click="() => (rankQuery = {
+                  search:''
+                })"
 								>重置</a-button>
 								<!-- <a @click="toggleAdvanced" style="margin-left: 8px">
 									{{ advanced ? "收起" : "展开" }}
@@ -71,7 +73,9 @@
                 >
                 <a-button
                   style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                  @click="() => (postQuery = {
+                    search:''
+                  })"
                   >重置</a-button
                 >
                 <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -116,7 +120,9 @@
                 >
                 <a-button
                   style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                  @click="() => (professionQuery = {
+                    search:''
+                  })"
                   >重置</a-button
                 >
                 <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -152,6 +158,12 @@ export default {
   name: "OrganManage",
   components: {
     STable,
+  },
+  props:{
+    policeId:{
+      type:String || Number,
+      default:undefined
+    }
   },
   data() {
     return {
@@ -200,8 +212,9 @@ export default {
         }
       ],
       rankQuery:{
-        userId:undefined,
-        search:''
+        userId:this.policeId,
+        search:'',
+        type:1
       },
       rankData: (parameter) => {
         const requestParameters = Object.assign({}, parameter, this.rankQuery)
@@ -248,8 +261,9 @@ export default {
         }
       ],
       postQuery:{
-        id:undefined,
-        search:''
+        userId:this.policeId,
+        search:'',
+        type:2
       },
       postData:(parameter) => {
         const requestParameters = Object.assign({}, parameter, this.postQuery)
@@ -290,7 +304,7 @@ export default {
       ],
       professionQuery:{
         search:'',
-        userId:undefined
+        userId:this.policeId
       },
       professionData:(parameter) => {
         const requestParameters = Object.assign({}, parameter, this.queryParam)

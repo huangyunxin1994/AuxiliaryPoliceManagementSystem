@@ -120,7 +120,6 @@
                             res.data.data.list.map((i,k)=>{
                                 i.key=k+1
                             })
-                            this.$refs.table.refresh(true)
                             return res.data
                         })
                     },
