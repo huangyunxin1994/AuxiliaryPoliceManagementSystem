@@ -109,7 +109,7 @@ export default {
           width: 100
         },
         {
-          title: "操作",
+          title: "合同附件",
           dataIndex: "action",
           scopedSlots: { customRender: "action" },
           width: 150,
@@ -150,22 +150,22 @@ export default {
         },
         {
           title: "其实合同日期",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "startDate",
+          key: "startDate",
           ellipsis: true,
           width: 100,
         },
         {
           title: "结束合同日期",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "endDate",
+          key: "endDate",
           ellipsis: true,
           width: 100
         },
         {
           title: "合同期限",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "contractPeriod",
+          key: "contractPeriod",
           ellipsis: true,
           width: 100
         },
