@@ -42,6 +42,14 @@
 			:scroll="{ y: 600, x: 650 }"
 			showPagination="auto"
 		>
+      <template
+        slot="state"
+        slot-scope="state">
+        <a-badge
+          :status="state == '1' ? 'success' : state == '2' ? 'error':'processing'"
+          :text="state | statusFilter"
+        />
+      </template>
 		</s-table>
     </a-card>
     <a-card :bordered="false">
@@ -89,6 +97,15 @@
         :scroll="{ y: 600, x: 650 }"
         showPagination="auto"
       >
+        <template slot="approvalResults" slot-scope="approvalResults">
+          <a-badge
+            :status="approvalResults == '0' ? 'processing' : (approvalResults == 1 ? 'success' : 'error')"
+            :text="approvalResults | resultFilter"
+          />
+        </template>
+        <template slot="state" slot-scope="state">
+          <span>{{ state | typeFilter }}</span>
+        </template>
       </s-table>
       
     </a-card>
@@ -123,32 +140,56 @@ export default {
           width: 60,
         },
         {
-          title: "配发日期",
-          dataIndex: "name",
-          key: "name",
+          title: "开始时间",
+          dataIndex: "startTime",
+          key: "startTime",
           ellipsis: true,
           width: 100,
         },
         {
-          title: "有效日期  ",
-          dataIndex: "num",
-          key: "num",
+          title: "结束时间  ",
+          dataIndex: "endTime",
+          key: "endTime",
           ellipsis: true,
           width: 150
         },
         {
-          title: "状态",
-          dataIndex: "organizationName",
-          key: "organizationName",
-          ellipsis: true,
+          title: "时长(小时)",
+          dataIndex: "duration",
+          key: "duration",
           width: 100
         },
         {
-          title: "证件描述",
-          dataIndex: "num",
-          key: "num",
-          ellipsis: true,
+          title: "是否法定假日",
+          dataIndex: "holiday",
+          key: "holiday",
+          scopedSlots: { customRender: "holiday" },
           width: 150
+        },
+        {
+          title: "加班原因",
+          dataIndex: "reason",
+          key: "reason",
+          ellipsis: true
+        },
+        {
+          title: "状态",
+          dataIndex: "state",
+          key: "state",
+          ellipsis: true,
+          scopedSlots: { customRender: 'state' }
+        },
+        {
+          title: "审批人",
+          dataIndex: "approval",
+          key: "approval",
+          width: 120,
+        },
+        {
+          title: "审批备注",
+          dataIndex: "approvalRemake",
+          key: "approvalRemake",
+          ellipsis: true
         },
       ],
       loadCredData: () => {
@@ -185,33 +226,57 @@ export default {
           width: 60,
         },
         {
-          title: "配发日期",
-          dataIndex: "name",
-          key: "name",
+          title: "开始时间",
+          dataIndex: "startTime",
+          key: "startTime",
           ellipsis: true,
-          width: 200,
+          width: 100,
         },
         {
-          title: "有效日期",
-          dataIndex: "num",
-          key: "num",
+          title: "结束时间  ",
+          dataIndex: "endTime",
+          key: "endTime",
           ellipsis: true,
+          width: 150
+        },
+        {
+          title: "时长(小时)",
+          dataIndex: "duration",
+          key: "duration",
           width: 100
         },
         {
-          title: "状态",
-          dataIndex: "organizationName",
-          key: "organizationName",
-          ellipsis: true,
-          width: 150
+          title: "请假类型",
+          dataIndex: "state",
+          key: "state",
+          scopedSlots: { customRender: "state" },
+          width: 100,
         },
         {
-          title: "装备描述",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          title: "请假原因",
+          dataIndex: "reason",
+          key: "reason",
           ellipsis: true,
-          width: 150
-        }
+        },
+        {
+          title: "审批状态",
+          dataIndex: "approvalResults",
+          key: "approvalResults",
+          scopedSlots: { customRender: "approvalResults" },
+          width: 120
+        },
+        {
+          title: "审批人",
+          dataIndex: "approval",
+          key: "approval",
+          width: 120,
+        },
+        {
+          title: "审批备注",
+          dataIndex: "approvalRemake",
+          key: "approvalRemake",
+          ellipsis: true
+        },
       ],
       dutyData:() => {
         return new Promise((resolve) => {
@@ -277,9 +342,22 @@ export default {
           },
           {
             label: "法定假日",
-            name: "statutoryHoliday",
+            name: "holiday",
             type: "select",
             placeholder: "请选择法定假日",
+            select: [
+              { value: 1, name: "年假" },
+              { value: 2, name: "产假" },
+              { value: 3, name: "陪产假" },
+              { value: 4, name: "婚假 " },
+              { value: 5, name: "例假 " },
+              { value: 6, name: "丧假" },
+              { value: 7, name: "哺乳假" },
+              { value: 8, name: "事假" },
+              { value: 9, name: "调休" },
+              { value: 10, name: "病假" },
+              { value: 11, name: "其他" }
+            ],
           },
           {
             label: "加班原因",
@@ -310,7 +388,20 @@ export default {
             label: "请假类型",
             name: "vacateType",
             type: "select",
-            placeholder: "请选择请假类型"
+            placeholder: "请选择请假类型",
+            select: [
+              { value: 1, name: "年假" },
+              { value: 2, name: "产假" },
+              { value: 3, name: "陪产假" },
+              { value: 4, name: "婚假 " },
+              { value: 5, name: "例假 " },
+              { value: 6, name: "丧假" },
+              { value: 7, name: "哺乳假" },
+              { value: 8, name: "事假" },
+              { value: 9, name: "调休" },
+              { value: 10, name: "病假" },
+              { value: 11, name: "其他" }
+            ],
           },
           {
             label: "开始时间",
@@ -412,11 +503,35 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        processing: "启用",
-        error: "禁用",
+        '1': "通过",
+        '2': "不通过",
       };
       return statusMap[status];
     },
+    typeFilter(type) {
+      const statusMap = {
+        1: "年假 ",
+        2: "产假 ",
+        3: "陪产假",
+        4: "婚假",
+        5: "例假",
+        6: "丧假",
+        7: "哺乳假",
+        8: "事假",
+        9: "调休",
+        10: "病假",
+        11: "其他"
+      };
+      return statusMap[type];
+    },
+     resultFilter(result){
+      const statusMap = {
+        0:'未审批' ,
+            1:'审批通过' ,
+            2:'审批拒绝' ,
+      };
+      return statusMap[result];
+    }
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),

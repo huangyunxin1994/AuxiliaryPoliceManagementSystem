@@ -96,9 +96,12 @@
                   :showPagination="false"
               >
                 <template
-                  slot="status"
-                  slot-scope="status">
-                  <a-badge :status="status" :text="status | statusFilter"/>
+                  slot="orderly"
+                  slot-scope="orderly">
+                  <a-badge
+                    :status="orderly == '1' ? 'processing' : 'error'"
+                    :text="orderly | orderlyFilter"
+                  />
                 </template>
               </standard-table>
             </div> 
@@ -210,7 +213,8 @@ const workColumns = [
   {
     title: '是否公务员',
     dataIndex: 'orderly',
-    key: 'orderly'
+    key: 'orderly',
+    scopedSlots: { customRender: 'orderly' }
   },
   {
     title: '从事或担任工作',
@@ -360,17 +364,26 @@ export default {
 
     },
     computed: {
-    ...mapState('setting', ['theme','pageMinHeight']),
-    desc() {
-      return this.$t('description')
+      ...mapState('setting', ['theme','pageMinHeight']),
+      desc() {
+        return this.$t('description')
+      },
+      rowSelection() {
+        return {
+          selectedRowKeys: this.selectedRowKeys,
+          onChange: this.onSelectChange,
+        };
+      },
     },
-    rowSelection() {
-      return {
-        selectedRowKeys: this.selectedRowKeys,
-        onChange: this.onSelectChange,
-      };
+    filters: {
+      orderlyFilter (status) {
+        const statusMap = {
+          '1': '是',
+          '2': '否'
+        }
+        return statusMap[status]
+      }
     },
-  },
 }
 </script>
 

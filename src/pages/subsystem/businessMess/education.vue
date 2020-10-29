@@ -71,43 +71,43 @@ export default {
         },
         {
           title: "开始时间",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "startTime",
+          key: "startTime",
           ellipsis: true,
           width: 100,
         },
         {
           title: "结束时间",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "endTime",
+          key: "endTime",
           ellipsis: true,
           width: 150
         },
         {
           title: "总学时",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "classHour",
+          key: "classHour",
           ellipsis: true,
           width: 100
         },
         {
           title: "培训方式",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "learningStyle",
+          key: "learningStyle",
           ellipsis: true,
           width: 100
         },
         {
           title: "创建人",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "creator",
+          key: "creator",
           ellipsis: true,
           width: 150
         },
         {
           title: "培训内容说明",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "learningContent",
+          key: "learningContent",
           ellipsis: true,
           width: 200
         },

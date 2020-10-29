@@ -39,6 +39,14 @@
 			:scroll="{ y: 600, x: 650 }"
 			showPagination="auto"
 		>
+      <template
+        slot="state"
+        slot-scope="state">
+        <a-badge
+          :status="state == '1' ? 'processing' : 'error'"
+          :text="state | statusFilter"
+        />
+      </template>
 		</s-table>
     </a-card>
     <a-card :bordered="false">
@@ -83,6 +91,14 @@
         :scroll="{ y: 600, x: 650 }"
         showPagination="auto"
       >
+        <template
+          slot="state"
+          slot-scope="state">
+          <a-badge
+            :status="state == '1' ? 'processing' : 'error'"
+            :text="state | statusFilter"
+          />
+        </template>
       </s-table>
       
     </a-card>
@@ -116,29 +132,30 @@ export default {
         },
         {
           title: "配发日期",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "allotmentDate",
+          key: "allotmentDate",
           ellipsis: true,
           width: 100,
         },
         {
           title: "有效日期  ",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "termValidity",
+          key: "termValidity",
           ellipsis: true,
           width: 150
         },
         {
           title: "状态",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "state",
+          key: "state",
           ellipsis: true,
-          width: 100
+          width: 100,
+          scopedSlots: { customRender: 'state' }
         },
         {
           title: "证件描述",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "describes",
+          key: "describes",
           ellipsis: true,
           width: 150
         },
@@ -178,29 +195,30 @@ export default {
         },
         {
           title: "配发日期",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "allotmentDate",
+          key: "allotmentDate",
           ellipsis: true,
           width: 200,
         },
         {
           title: "有效日期",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "termValidity",
+          key: "termValidity",
           ellipsis: true,
           width: 100
         },
         {
           title: "状态",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "state",
+          key: "state",
           ellipsis: true,
-          width: 150
+          width: 100,
+          scopedSlots: { customRender: 'state' }
         },
         {
           title: "装备描述",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "describes",
+          key: "describes",
           ellipsis: true,
           width: 150
         }

@@ -39,6 +39,14 @@
 			:scroll="{ y: 600, x: 650 }"
 			showPagination="auto"
 		>
+      <template
+        slot="state"
+        slot-scope="state">
+        <a-badge
+          :status="state == '1' ? 'success' : state == '2' ? 'error':'processing'"
+          :text="state | stateFilter"
+        />
+      </template>
 		</s-table>
     </a-card>
     <a-card :bordered="false">
@@ -164,29 +172,29 @@ export default {
         },
         {
           title: "职级",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "currentRank",
+          key: "currentRank",
           ellipsis: true,
           width: 100,
         },
         {
-          title: "变动类型",
-          dataIndex: "num",
-          key: "num",
-          ellipsis: true,
-          width: 150
+          title: '变动类型',
+          dataIndex: 'state',
+          key: 'state',
+          width: 150,
+          scopedSlots: { customRender: 'state' }
         },
         {
           title: "变动原因",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "reason",
+          key: "reason",
           ellipsis: true,
           width: 100
         },
         {
           title: "生效日期",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "effectiveDate",
+          key: "effectiveDate",
           ellipsis: true,
           width: 150
         }
@@ -233,22 +241,22 @@ export default {
         },
         {
           title: "岗位",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "currentRank",
+          key: "currentRank",
           ellipsis: true,
           width: 100,
         },
         {
           title: "调动原因",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "reason",
+          key: "reason",
           ellipsis: true,
           width: 200,
         },
         {
           title: "生效日期",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "effectiveDate",
+          key: "effectiveDate",
           ellipsis: true,
           width: 100
         }
@@ -288,22 +296,22 @@ export default {
         },
         {
           title: "专业技术任职资格",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "qualification",
+          key: "qualification",
           ellipsis: true,
           width: 150
         },
         {
           title: "资格审批单位",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "approvalUnit",
+          key: "approvalUnit",
           ellipsis: true,
           width: 100,
         },
         {
           title: "获得资格日期",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "acquireDate",
+          key: "acquireDate",
           ellipsis: true,
           width: 100
         }
@@ -387,10 +395,11 @@ export default {
     },
   },
   filters: {
-    statusFilter(status) {
+    stateFilter(status) {
       const statusMap = {
-        processing: "启用",
-        error: "禁用",
+        '0':'初始职级',
+        '1': '晋升',
+        '2': '降级'
       };
       return statusMap[status];
     },

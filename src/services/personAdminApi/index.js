@@ -149,7 +149,7 @@ const personAdminService = {
                 organizationName:item.organizationName,
                 effectiveDate:params.effectiveDate,
                 reason:params.reason,
-                approval:''
+                approval:params.approval
             }
             arr.push(obj)
         });

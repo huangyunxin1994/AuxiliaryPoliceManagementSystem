@@ -116,36 +116,36 @@ export default {
         },
         {
           title: "奖励原因",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "reason",
+          key: "reason",
           ellipsis: true,
           width: 100,
         },
         {
           title: "奖励批准机关",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "organizationName",
+          key: "organizationName",
           ellipsis: true,
           width: 150
         },
         {
           title: "奖励批准日期",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "approvalDate",
+          key: "approvalDate",
           ellipsis: true,
           width: 100
         },
         {
           title: "荣誉称号授予单位",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "approvalAuthority",
+          key: "approvalAuthority",
           ellipsis: true,
           width: 150
         },
         {
           title: "荣誉称号级别",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "honoraryTitle",
+          key: "honoraryTitle",
           ellipsis: true,
           width: 150
         },

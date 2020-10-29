@@ -59,6 +59,15 @@
                     :placeholder="item.placeholder"
                     style="width: 100%"
                   />
+                  <!-- 日期框 -->
+                  <a-date-picker 
+                    v-model="form[item.name]"
+                    :disabled="item.disabled"
+                    :placeholder="item.placeholder"
+                    valueFormat="YYYY-MM-DD"
+                    type="date"
+                    style="width: 100%"
+                    v-else-if="item.type == 'pickerDate'" />
                   <!-- 开关 -->
                   <a-switch
                     :disabled="item.disabled"

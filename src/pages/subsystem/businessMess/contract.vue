@@ -81,25 +81,38 @@ export default {
           width: 60,
         },
         {
-          title: "发放日期",
-          dataIndex: "name",
-          key: "name",
+          title: "合同起始日期",
+          dataIndex: "startDate",
+          key: "startDate",
           ellipsis: true,
           width: 100,
         },
         {
           title: "结束合同日期",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "endDate",
+          key: "endDate",
           ellipsis: true,
           width: 100
         },
         {
+          title: "试用结束日期",
+          dataIndex: "probation",
+          key: "dataIndex",
+          ellipsis: true,
+          width: 100,
+        },
+        {
           title: "合同期限",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "contractPeriod",
+          key: "contractPeriod",
           ellipsis: true,
           width: 100
+        },
+        {
+          title: "操作",
+          dataIndex: "action",
+          scopedSlots: { customRender: "action" },
+          width: 150,
         }
       ],
       wageData: () => {

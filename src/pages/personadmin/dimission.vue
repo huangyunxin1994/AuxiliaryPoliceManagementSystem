@@ -48,16 +48,15 @@
 			</div>
 			<div class="table-operator" style="margin-bottom: 24px">
 				<a-button type="primary" icon="plus" @click="newDimission">新建离职</a-button>
-				<a-dropdown v-if="selectedRowKeys.length > 0">
+				<!-- <a-dropdown v-if="selectedRowKeys.length > 0">
 					<a-menu slot="overlay">
 						<a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-						<!-- lock | unlock -->
 						<a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
 					</a-menu>
 					<a-button style="margin-left: 8px">
 						批量操作 <a-icon type="down" />
 					</a-button>
-				</a-dropdown>
+				</a-dropdown> -->
 			</div>
 			<s-table
 				ref="table"
@@ -70,8 +69,8 @@
 				<span slot="action" slot-scope="text, record">
 					<span>{{text==1?'已回收':'未回收'}}</span>
 					<a-divider type="vertical" v-if="text !=1" />
-					<!-- <a @click="handleEdit (record)" v-if="text !=1">修改</a> -->
-					<a-popconfirm
+					<a @click="confirm (record)" v-if="text !=1">修改</a>
+					<!-- <a-popconfirm
 						title="是否将此人员的证件装备回收状态改为“已回收”?"
 						ok-text="是"
 						cancel-text="否"
@@ -80,7 +79,7 @@
 						v-if="text !=1"
 					>
 						<a href="#">修改</a>
-					</a-popconfirm>
+					</a-popconfirm> -->
 				</span>
 			</s-table>
        </a-card>
@@ -177,7 +176,7 @@
                 i.key=k+1
               })
               return res.data
-            })
+            })  
           },
           selectedRowKeys: [],
           selectedRows: [],
@@ -193,7 +192,7 @@
             {
               label: "离职生效日期",
               name: "effectiveDate",
-              type: "picker",
+              type: "pickerDate",
               placeholder: "请选择离职生效日期"
             },
             {
@@ -213,11 +212,14 @@
             reason: [{ required: true, message: "请输入离职原因", trigger: "blur" }],
           },
 
-          stepTitle:[{title:'选择人员'},{title:'填写合同信息'}],
+          stepTitle:[{title:'选择人员'},{title:'填写离职信息'}],
 
           submitFun:(params)=>{
-            // let param = Object.assign(params,this.queryParams)
-            return this.$api.personAdminService.addDimission(params).then((res)=>{
+            let queryParam = {
+              approval:this.user.name
+            }
+            let param = Object.assign(params,queryParam)
+            return this.$api.personAdminService.addDimission(param).then((res)=>{
               this.$refs.table.refresh(false)
               return res.data
             })
@@ -272,19 +274,32 @@
       //修改装备状态
       confirm(e) {
           console.log(e);
-          let param = {
-            id:e.id,
-            state:1
-          }
-          this.$api.personAdminService.putDimission(param).then((res)=>{
-            console.log(res)
-            if(res.data.code == 0){
-              this.$message.success('修改成功');
-              this.$refs.table.refresh(true)
-            }else{
-              this.$message.error('修改失败，请重试');
-            }
-          })
+          const _this = this;
+          this.$confirm({
+            title: "警告",
+            content: `是否将此人员的证件装备回收状态改为“已回收”?`,
+            okText: "是",
+            okType: "danger",
+            centered: true,
+            cancelText: "否",
+            onOk() {
+              console.log(_this);
+              let param = {
+                id:e.id,
+                state:1
+              }
+              _this.$api.personAdminService.putDimission(param).then((res)=>{
+                console.log(res)
+                if(res.data.code == 0){
+                  _this.$message.success('修改成功');
+                  _this.$refs.table.refresh(true)
+                }else{
+                  _this.$message.error('修改失败，请重试');
+                }
+              })
+            },
+            onCancel() {},
+          });
       },
       cancel(e) {
           console.log(e);
