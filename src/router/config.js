@@ -1,7 +1,6 @@
 import TabsView from '@/layouts/tabs/TabsView'
 import BlankView from '@/layouts/BlankView'
 // import PageView from '@/layouts/PageView'
-
 // 管理路由配置
 const options = {
   routes: [
@@ -31,12 +30,15 @@ const options = {
           path: 'home',
           name: '首页',
           meta: {
-            icon: 'home'
+            icon: 'home',
+            authority: {
+              role: 'gly'
+            }
           },
           component: () => import('@/pages/home/home')
         },
         {
-          path: 'parent1',
+          path: 'auxMess',
           name: '辅警资料',
           meta: {
             icon: 'user',
@@ -47,25 +49,40 @@ const options = {
           component: BlankView,
           children: [
             {
-              path: 'demo1',
-              name: '辅警资料',
+              path: 'personList',
+              name: '人员列表',
               meta: {
-                invisible: true,
                 authority: {
                   role: 'jczl'
                 }
+              },
+              component: () => import('@/pages/demo/baseMess/baseMess')
+            },
+            {
+              path: '/baseMess',
+              name: 'baseMess',
+              meta: {
+                invisible: true,
+                defalutInvisible: true,
+                authority: {
+                  role: 'jczl'
+                },
+                keepAlive:false
               },
               component: () => import('@/pages/demo/Demo'),
             },
             {
-              path: 'baseMess',
-              name: '基础资料',
+              path: '/baseMessA',
+              name: 'baseMess',
               meta: {
+                invisible: true,
+                defalutInvisible: true,
                 authority: {
                   role: 'jczl'
-                }
+                },
+                keepAlive:false
               },
-              component: () => import('@/pages/demo/baseMess/baseMess'),
+              component: () => import('@/pages/demo/DemoA'),
             }
           ]
         },
@@ -190,21 +207,11 @@ const options = {
               component: () => import('@/pages/education/education'),
             },
             {
-              path: 'newEducation',
-              name: '新建培训',
-              meta: {
-                invisible: true,
-                authority: {
-                  role: 'jypx'
-                }
-              },
-              component: () => import('@/pages/education/newEducation/newEducation'),
-            },
-            {
               path: 'educationDetails',
               name: '培训详情',
               meta: {
                 invisible: true,
+                defalutInvisible: true,
                 authority: {
                   role: 'jypx'
                 }
@@ -408,62 +415,36 @@ const options = {
             }
           ]
         },
-      //   {
-      //     path: 'exception',
-      //     name: '异常页',
-      //     meta: {
-      //       icon: 'warning',
-      //     },
-      //     component: BlankView,
-      //     children: [
-      //       {
-      //         path: '404',
-      //         name: 'Exp404',
-      //         component: () => import('@/pages/exception/404')
-      //       },
-      //       {
-      //         path: '403',
-      //         name: 'Exp403',
-      //         component: () => import('@/pages/exception/403')
-      //       },
-      //       {
-      //         path: '500',
-      //         name: 'Exp500',
-      //         component: () => import('@/pages/exception/500')
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     name: '验权页面',
-      //     path: 'auth/demo',
-      //     meta: {
-      //       icon: 'file-ppt',
-      //       // authority: {
-      //       //   permission: 'form',
-      //       //   role: 'manager'
-      //       // },
-      //     },
-      //     component: () => import('@/pages/demo')
-      //   }
-      ]
-    },
-    {
-      path: 'subsystem',
-      name: '基础资料',
-      component: TabsView,
-      redirect: '/baseMess/demo1',
-      children: [
+        {
+          path: '/auxhome',
+          name: '首页',
+          meta: {
+            icon: 'home',
+            authority: {
+              role: 'fj'
+            }
+          },
+          component: () => import('@/pages/home/home')
+        },
         {
           path: 'baseMess',
           name: '基础资料',
           meta: {
-            icon: 'user'
+            icon: 'user',
+            authority: {
+              role: 'fj'
+            }
           },
           component: BlankView,
           children: [
             {
               path: 'demo1',
               name: '基础资料',
+              meta: {
+                authority: {
+                  role: 'fj'
+                }
+              },
               component: () => import('@/pages/subsystem/baseMess/baseMess')
             }
           ]
@@ -472,44 +453,78 @@ const options = {
           path: 'parent2',
           name: '业务信息',
           meta: {
-            icon: 'solution'
+            icon: 'solution',
+            authority: {
+              role: 'fj'
+            }
           },
           component: BlankView,
           children: [
             {
               path: 'demo2',
               name: '奖励与责任追究',
+              meta: {
+                authority: {
+                  role: 'fj'
+                }
+              },
               component: () => import('@/pages/subsystem/businessMess/awardAndDuty'),
             },
             {
               path: 'demo3',
               name: '合同与工资信息',
+              meta: {
+                authority: {
+                  role: 'fj'
+                }
+              },
               component: () => import('@/pages/subsystem/businessMess/contract'),
             },
             {
               path: 'demo4',
               name: '人事信息',
+              meta: {
+                authority: {
+                  role: 'fj'
+                }
+              },
               component: () => import('@/pages/subsystem/businessMess/personnel'),
             },
             {
               path: 'demo5',
               name: '培训记录',
+              meta: {
+                authority: {
+                  role: 'fj'
+                }
+              },
               component: () => import('@/pages/subsystem/businessMess/education'),
             },
             {
               path: 'demo6',
               name: '证件装备',
+              meta: {
+                authority: {
+                  role: 'fj'
+                }
+              },
               component: () => import('@/pages/subsystem/businessMess/equipage'),
             },
             {
               path: 'demo7',
               name: '加班与请假',
+              meta: {
+                authority: {
+                  role: 'fj'
+                }
+              },
               component: () => import('@/pages/subsystem/businessMess/vacate'),
             }
           ]
-        }
+        },
+        
       ]
-    }
+    },
   ]
 }
 

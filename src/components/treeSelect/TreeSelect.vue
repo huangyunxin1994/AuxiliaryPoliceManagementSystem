@@ -40,6 +40,7 @@ export default {
   props: {
     value:[String,Number],
     keyName:String,
+    labelName:String,
     allowClear: {
       type: Boolean,
       default: true,
@@ -90,20 +91,18 @@ export default {
   methods: {
     change(value,label) {
       // 将组织id传出去
-      console.log(value);
-      console.log(label)
       let val = "";
       if (Array.isArray(value)) {
         value.map((i) => (val += i.value + ","));
         val = val.slice(0, val.length - 1);
-        console.log(val);
       } else {
         val = value;
       }
       const params = {
           val:val,
           keyName:this.keyName,
-          label:label
+          labelName:this.labelName&&this.labelName||"",
+          label:label[0]
       }
       this.$emit("handleTreeChange", params);
     },

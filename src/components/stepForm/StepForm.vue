@@ -99,6 +99,10 @@ export default {
       type: String,
       default: "name",
     },
+    formTitleId: {
+      type: String,
+      default: "userId",
+    },
   },
   data() {
     return {
@@ -175,6 +179,12 @@ export default {
       this.visible = false;
     },
   },
+  watch:{
+    formTitle(){
+      console.log(180)
+      this.nowFormTitle = this.formTitle
+    }
+  }
 };
 </script>
 

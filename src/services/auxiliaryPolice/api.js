@@ -13,4 +13,6 @@ module.exports = {
   // STATISTICS:`${BASE_URL}/OvertimeLeave/OvertimeLeave/user`,//获取加班或请假统计分页列表
 
   GETDATA:`${BASE_URL.lk}/auxiliary-police/`,//获取辅警列表信息
+  POSTDATA:`${BASE_URL.lk}/auxiliary-police/`,//添加辅警
+  PUTDATA:`${BASE_URL.lk}/auxiliary-police/`,//修改辅警
 }

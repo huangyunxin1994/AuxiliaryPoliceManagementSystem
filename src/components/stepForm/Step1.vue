@@ -83,7 +83,7 @@
 import antTree from "@/components/tree_/Tree";
 import STable from "@/components/Table_"
 import treeSelect from "@/components/treeSelect/TreeSelect"
-
+import {mapGetters} from 'vuex'
 const leftTableColumns = [
   {
     title: "姓名",
@@ -166,8 +166,8 @@ export default {
       organizationId:'',//组织树选择的组织id
     };
   },
-  mounted(){
-      
+  created(){
+      this.queryParams.oid = this.user.organizationId
   },
         
   methods: {
@@ -221,6 +221,7 @@ export default {
     }
   },
   computed:{
+    ...mapGetters("account", ["user"]),
       rowSelection() {
       return {
           selectedRowKeys: this.selectedLeftRowKeys ,

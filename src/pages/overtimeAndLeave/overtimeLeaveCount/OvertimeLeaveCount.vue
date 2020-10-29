@@ -100,11 +100,11 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import moment from "moment";
 import STable from "@/components/Table_/";
 import treeSelect from "@/components/treeSelect/TreeSelect";
-import ExportJsonExcel from "js-export-excel"
+import ExportJsonExcel from "js-export-excel";
 export default {
   name: "OvertimeLeaveCount",
   components: {
@@ -239,6 +239,7 @@ export default {
       queryParam: {
         name: "",
         organizationId: "",
+        oid: "",
         time: moment(new Date()).format("YYYY-MM"),
       },
       loadScheduleData: (parameter) => {
@@ -251,6 +252,9 @@ export default {
           });
       },
     };
+  },
+  created() {
+    this.queryParam.oid = this.user.organizationId;
   },
   methods: {
     disabledDate(current) {
@@ -324,49 +328,45 @@ export default {
     },
     //重置
     reloadData() {
-      (this.queryParam = {
-        name: "",
-        organizationId: "",
-        time: moment(new Date()).format("YYYY-MM"),
-      }),
-        this.$refs.table.refresh(true);
+      this.queryParam.name = "";
+      this.queryParam.organizationId = "";
+      this.queryParam.time = moment(new Date()).format("YYYY-MM");
+      this.$refs.table.refresh(true);
     },
     //导出EXCEL
     exportToExcel() {
       let requestParameters = {
         currentPage: 1,
-        pageSize: 99999
-      }
-      requestParameters = Object.assign({},requestParameters,this.queryParam)
-      this.$api.overTimeService
-          .statistics(requestParameters)
-          .then((res) => {
-            if( res.data.data.list.length>0){
-              res.data.data.list.map((i, k) => (i.key = k + 1));
-              const ReqDetailList = res.data.data.list;
-              const columns = this.scheduleColumns; // 表头数据
-              const option = {};
-              option.fileName = "excel";
-              option.datas = [
-                {
-                  sheetData: ReqDetailList.map((item) => {
-                    const result = {};
-                    columns.forEach((c) => {
-                      result[c.dataIndex] = item[c.dataIndex];
-                    });
-                    return result;
-                  }),
-                  sheetName: "加班请假统计表", // Excel文件名称
-                  sheetFilter: columns.map((item) => item.dataIndex),
-                  sheetHeader: columns.map((item) => item.title),
-                  columnWidths: columns.map(() =>5),
-                },
-              ];
-              const toExcel = new ExportJsonExcel(option);
-              toExcel.saveExcel();
-            }else{
-              this.$message.warning("没有可以导出的数据")
-            }
+        pageSize: 99999,
+      };
+      requestParameters = Object.assign({}, requestParameters, this.queryParam);
+      this.$api.overTimeService.statistics(requestParameters).then((res) => {
+        if (res.data.data.list.length > 0) {
+          res.data.data.list.map((i, k) => (i.key = k + 1));
+          const ReqDetailList = res.data.data.list;
+          const columns = this.scheduleColumns; // 表头数据
+          const option = {};
+          option.fileName = "excel";
+          option.datas = [
+            {
+              sheetData: ReqDetailList.map((item) => {
+                const result = {};
+                columns.forEach((c) => {
+                  result[c.dataIndex] = item[c.dataIndex];
+                });
+                return result;
+              }),
+              sheetName: "加班请假统计表", // Excel文件名称
+              sheetFilter: columns.map((item) => item.dataIndex),
+              sheetHeader: columns.map((item) => item.title),
+              columnWidths: columns.map(() => 5),
+            },
+          ];
+          const toExcel = new ExportJsonExcel(option);
+          toExcel.saveExcel();
+        } else {
+          this.$message.warning("没有可以导出的数据");
+        }
       });
     },
   },
@@ -395,6 +395,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
+    ...mapGetters("account", ["user"]),
   },
 };
 </script>

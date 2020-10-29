@@ -6,28 +6,32 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="模糊查询">
-                <a-input v-model="queryParam.name" placeholder="请输入要查询的关键词" />
+                <a-input
+                  v-model="queryParam.name"
+                  placeholder="请输入要查询的关键词"
+                />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                 <tree-select :value="queryParam.organizationId" 
-
-                 @handleTreeChange="handleTreeChange"
-                 ></tree-select>
+                <tree-select
+                  :value="queryParam.organizationId"
+                  @handleTreeChange="handleTreeChange"
+                ></tree-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="是否审批">
                   <a-select
-                    default-value=""
+                    v-model="queryParam.approvalResults"
                     style="width: 100%"
                     @change="handleChange"
                   >
                     <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option value="1"> 是 </a-select-option>
-                    <a-select-option value="2"> 否 </a-select-option>
+                    <a-select-option value="0"> 未审批 </a-select-option>
+                    <a-select-option value="1"> 通过 </a-select-option>
+                    <a-select-option value="2"> 拒绝 </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -42,9 +46,7 @@
                 <a-button type="primary" @click="$refs.table.refresh(true)"
                   >查询</a-button
                 >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="reloadData"
+                <a-button style="margin-left: 8px" @click="reloadData"
                   >重置</a-button
                 >
                 <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -71,26 +73,30 @@
       </div>
       <s-table
         ref="table"
-        :rowKey="(record)=>record.id"
+        :rowKey="(record) => record.id"
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :scroll="{ y: 550, x: 800 }"
         showPagination="auto"
       >
         <template slot="holiday" slot-scope="holiday">
-          <span>{{holiday | holidayFilter}}</span>
+          <span>{{ holiday | holidayFilter }}</span>
         </template>
         <template slot="isEnable" slot-scope="isEnable">
           <a-badge
             :status="isEnable == '1' ? 'processing' : 'error'"
             :text="isEnable | statusFilter"
           />
-          
-          
         </template>
         <template slot="approvalResults" slot-scope="approvalResults">
           <a-badge
-            :status="approvalResults == '0' ? 'processing' : (approvalResults == 1 ? 'success' : 'error')"
+            :status="
+              approvalResults == '0'
+                ? 'processing'
+                : approvalResults == 1
+                ? 'success'
+                : 'error'
+            "
             :text="approvalResults | resultFilter"
           />
         </template>
@@ -99,16 +105,24 @@
         </span>
       </s-table>
     </a-card>
-    <form-step ref="modal" title="新建加班记录" :formTitle="formTitle" :record="{type:1}" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
+    <form-step
+      ref="modal"
+      title="新建加班记录"
+      :formTitle="formTitle"
+      :record="{ type: 1 }"
+      :rules="rules"
+      :stepTitle="stepTitle"
+      :submitFun="submitFun"
+    ></form-step>
   </div>
 </template>
 
 <script>
-import { mapState,mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import formStep from "@/components/stepForm/StepForm";
 import TaskForm from "@/components/formModel/formModel";
-import treeSelect from "@/components/treeSelect/TreeSelect"
+import treeSelect from "@/components/treeSelect/TreeSelect";
 const formTitle = [
   {
     label: "开始时间",
@@ -131,10 +145,10 @@ const formTitle = [
     label: "法定假日",
     name: "holiday",
     type: "radio",
-    select:[
-      {name:"是", value:1},
-      {name:"否", value:2}
-    ]
+    select: [
+      { name: "是", value: 1 },
+      { name: "否", value: 2 },
+    ],
   },
   {
     label: "加班原因",
@@ -144,73 +158,71 @@ const formTitle = [
   },
   {
     name: "type",
-  }
+  },
 ];
 const formCheckTitle = [
-  
   {
     label: "姓名",
     name: "policeName",
     type: "text",
     smCol: { span: 12 },
-    labelCol:{
+    labelCol: {
       xs: { span: 24 },
-      sm: { span: 14 }
+      sm: { span: 14 },
     },
-    wrapperCol:{
+    wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 10 }
-    }
+      sm: { span: 10 },
+    },
   },
-  
+
   {
     label: "警员编号",
     name: "number",
     type: "text",
     smCol: { span: 12 },
-    
   },
   {
     label: "开始时间",
     name: "startTime",
     type: "text",
     smCol: { span: 12 },
-    labelCol:{
+    labelCol: {
       xs: { span: 24 },
-      sm: { span: 14 }
+      sm: { span: 14 },
     },
-    wrapperCol:{
+    wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 10 }
-    }
+      sm: { span: 10 },
+    },
   },
   {
     label: "结束时间",
     name: "endTime",
     type: "text",
-    smCol: { span: 12 }
+    smCol: { span: 12 },
   },
   {
     label: "时长(小时)",
     name: "duration",
     type: "text",
     smCol: { span: 12 },
-    labelCol:{
+    labelCol: {
       xs: { span: 24 },
-      sm: { span: 14 }
+      sm: { span: 14 },
     },
-    wrapperCol:{
+    wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 10 }
-    }
+      sm: { span: 10 },
+    },
   },
   {
     label: "法定假日",
     name: "holiday",
     type: "text",
-    filter:{
-      1:'是' ,
-      2:'否' ,
+    filter: {
+      1: "是",
+      2: "否",
     },
     smCol: { span: 12 },
   },
@@ -223,10 +235,10 @@ const formCheckTitle = [
     label: "是否通过",
     name: "approvalResults",
     type: "radio",
-    select:[
-      {name:"是", value:1},
-      {name:"否", value:2}
-    ]
+    select: [
+      { name: "是", value: 1 },
+      { name: "否", value: 2 },
+    ],
   },
   {
     label: "审批备注",
@@ -234,10 +246,10 @@ const formCheckTitle = [
     type: "textarea",
   },
   {
-    name:"approval"
-  }
+    name: "approval",
+  },
 ];
-const stepTitle = [{title:'选择人员'},{title:'填写加班信息'}]
+const stepTitle = [{ title: "选择人员" }, { title: "填写加班信息" }];
 const rules = {
   holiday: [
     { required: true, message: "请选择是否法定假日", trigger: "change" },
@@ -256,28 +268,27 @@ export default {
     STable,
     TaskForm,
     formStep,
-    treeSelect
+    treeSelect,
   },
   data() {
     return {
-        formTitle,
-        rules,
-        stepTitle,
-        submitFun:(parameter) => {
-        return this.$api.overTimeService.postByUser(parameter)
-          .then(res => {
-            return res.data
-          })
-        },
-        // 高级搜索 展开/关闭
+      formTitle,
+      rules,
+      stepTitle,
+      submitFun: (parameter) => {
+        return this.$api.overTimeService.postByUser(parameter).then((res) => {
+          return res.data;
+        });
+      },
+      // 高级搜索 展开/关闭
       advanced: false,
-        value:null,
-        replaceFields:{
-            children:'children',
-            title:'title',
-            key:'key',
-            value: 'key'
-        },
+      value: null,
+      replaceFields: {
+        children: "children",
+        title: "title",
+        key: "key",
+        value: "key",
+      },
       scheduleColumns: [
         {
           title: "序号",
@@ -322,33 +333,33 @@ export default {
           title: "时长(小时)",
           dataIndex: "duration",
           key: "duration",
-          width: 100
+          width: 100,
         },
         {
           title: "是否法定假日",
           dataIndex: "holiday",
           key: "holiday",
           scopedSlots: { customRender: "holiday" },
-          width: 150
+          width: 150,
         },
         {
           title: "加班原因",
           dataIndex: "reason",
           key: "reason",
-          ellipsis: true
+          ellipsis: true,
         },
         {
           title: "审批结果",
           dataIndex: "approvalResults",
           key: "approvalResults",
           scopedSlots: { customRender: "approvalResults" },
-          width: 120
+          width: 120,
         },
         {
           title: "审批备注",
           dataIndex: "approvalRemake",
           key: "approvalRemake",
-          ellipsis: true
+          ellipsis: true,
         },
         {
           title: "审批人",
@@ -364,34 +375,45 @@ export default {
         },
       ],
       //查询参数
-      queryParam:{type:1,organizationId:"",name:""},
+      queryParam: {
+        type: 1,
+        organizationId: "",
+        name: "",
+        oid: "",
+        approvalResults: "",
+      },
       loadScheduleData: (parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
-        return this.$api.overTimeService.getOverTimeLeave(requestParameters)
-          .then(res => {
-            res.data.data.list.map((i,k)=>i.key=k+1)
-            return res.data
-          })
+        const requestParameters = Object.assign({}, parameter, this.queryParam);
+        return this.$api.overTimeService
+          .getOverTimeLeave(requestParameters)
+          .then((res) => {
+            res.data.data.list.map((i, k) => (i.key = k + 1));
+            return res.data;
+          });
       },
       selectedRowKeys: [],
       selectedRows: [],
     };
   },
+  created() {
+    this.queryParam.oid = this.user.organizationId;
+  },
   methods: {
-    handleAdd(){
-      this.$refs.modal.visible=true
+    handleAdd() {
+      this.$refs.modal.visible = true;
     },
     handleEdit(record) {
       console.log(record);
-      record.approval = this.user.name
+      record.approval = this.user.name;
       let formProps = {
         record: record,
         formTitle: formCheckTitle,
         submitFun: (parameter) => {
-        return this.$api.overTimeService.putOverTimeLeave(parameter)
-          .then(res => {
-            return res.data
-          })
+          return this.$api.overTimeService
+            .putOverTimeLeave(parameter)
+            .then((res) => {
+              return res.data;
+            });
         },
       };
       let modalProps = {
@@ -445,15 +467,17 @@ export default {
       this.advanced = !this.advanced;
     },
     //树选择回调
-    handleTreeChange(obj){
-      this.queryParam.organizationId = obj.val
-      console.log(this.queryParam)
+    handleTreeChange(obj) {
+      this.queryParam.organizationId = obj.val;
+      console.log(this.queryParam);
     },
     //重置
-    reloadData(){
-      this.queryParam={type:1,organizationId:"",name:""}
-      this.$refs.table.refresh(true)
-    }
+    reloadData() {
+      this.queryParam.organizationId = "";
+      this.queryParam.name = "";
+      this.queryParam.approvalResults = "";
+      this.$refs.table.refresh(true);
+    },
   },
   filters: {
     statusFilter(status) {
@@ -465,24 +489,23 @@ export default {
     },
     holidayFilter(holiday) {
       const statusMap = {
-            "1":'是' ,
-            "2":'否' ,
+        1: "是",
+        2: "否",
       };
       return statusMap[holiday];
     },
-    resultFilter(result){
+    resultFilter(result) {
       const statusMap = {
-        0:'未审批' ,
-            1:'审批通过' ,
-            2:'审批拒绝' ,
+        0: "未审批",
+        1: "审批通过",
+        2: "审批拒绝",
       };
       return statusMap[result];
-    }
-    
+    },
   },
   computed: {
     ...mapState("setting", ["pageMinHeight"]),
-    ...mapGetters("account",["user"]),
+    ...mapGetters("account", ["user"]),
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,

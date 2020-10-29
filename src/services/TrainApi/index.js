@@ -4,7 +4,7 @@ import {request, METHOD} from '@/utils/request'
 // import Qs from 'qs'
 import store from '@/store/index.js'
 
-const educationService = {
+const trainService = {
     // /**
     //  * 获取岗位配置列表
     //  * @param params 条件参数
@@ -133,4 +133,4 @@ const educationService = {
 }
 
 
-export default educationService
+export default trainService

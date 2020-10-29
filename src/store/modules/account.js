@@ -4,7 +4,8 @@ export default {
     user: undefined,
     permissions: null,
     roles: null,
-    routesConfig: null
+    routesConfig: null,
+    loginType:undefined
   },
   getters: {
     user: state => {
@@ -53,6 +54,17 @@ export default {
         }
       }
       return state.routesConfig
+    },
+    loginType: state => {
+      if (!state.loginType) {
+        try {
+          const loginType = localStorage.getItem(process.env.VUE_APP_LOGIN_TYPE)
+          state.loginType = JSON.parse(loginType)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      return state.loginType
     }
   },
   mutations: {
@@ -71,6 +83,10 @@ export default {
     setRoutesConfig(state, routesConfig) {
       state.routesConfig = routesConfig
       localStorage.setItem(process.env.VUE_APP_ROUTES_KEY, JSON.stringify(routesConfig))
-    }
+    },
+    setloginType (state, loginType) {
+      state.loginType = loginType
+      localStorage.setItem(process.env.VUE_APP_LOGIN_TYPE, JSON.stringify(loginType))
+    },
   }
 }

@@ -78,7 +78,6 @@ function loadRoutes({router, store, i18n}, routesConfig) {
   // 初始化Admin后台菜单数据
   const rootRoute = router.options.routes.find(item => item.path === '/')
   const menuRoutes = rootRoute && rootRoute.children
-  console.log(menuRoutes)
   if (menuRoutes) {
     filterMenu(menuRoutes)
     store.commit('setting/setMenuData', menuRoutes)
@@ -91,7 +90,7 @@ function loadRoutes({router, store, i18n}, routesConfig) {
  */
 function filterMenu(menuData) {
   menuData.forEach(menu => {
-    if (menu.meta && menu.meta.invisible !== undefined) {
+    if (menu.meta && menu.meta.invisible !== undefined && menu.meta.defalutInvisible === undefined) {
         delete menu.meta.invisible
       if (menu.children && menu.children.length > 0) {
         filterMenu(menu.children)

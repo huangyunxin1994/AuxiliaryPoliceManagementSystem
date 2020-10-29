@@ -252,7 +252,7 @@ export default {
         // this.queryParam.oid = this.user.organizationId
         this.queryParam.id = this.param.id
         let param = Object.assign(params,this.queryParam)
-        return this.$api.educationService.getEducationDetails(param).then((res)=>{
+        return this.$api.trainService.getEducationDetails(param).then((res)=>{
           console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
@@ -307,7 +307,7 @@ export default {
         record:this.selcetPersonName,
         submitFun:(params) => {
             // let param = Object.assign(params,queryPa)
-            return this.$api.educationService.putManyEducation(params,selectArr).then((res)=>{
+            return this.$api.trainService.putManyEducation(params,selectArr).then((res)=>{
                 res.data.data.list.map((i,k)=>{
                     i.key=k+1
                 })
@@ -344,7 +344,7 @@ export default {
         record:e,
         submitFun:(params) => {
             let param = Object.assign(params,queryPa)
-            return this.$api.educationService.putEducation(param).then((res)=>{
+            return this.$api.trainService.putEducation(param).then((res)=>{
                 res.data.data.list.map((i,k)=>{
                     i.key=k+1
                 })

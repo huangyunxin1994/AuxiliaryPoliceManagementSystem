@@ -2,7 +2,7 @@
   <!-- <div class="new-page" :style="`min-height: ${pageMinHeight}px`"> -->
   <div class="page-header-index-wide page-header-wrapper-grid-content-main">
     <a-row :gutter="24">
-        <a-col :md="24" :lg="8" :xl="5">
+        <a-col :md="24" :lg="8" :xl="4">
           <a-card :bordered="true">
             <div class="account-center-avatarHolder">
               <div class="username" v-if="policeName">{{policeName}}</div>
@@ -46,7 +46,7 @@
                 <div class="members">
                   <a-row>
                     <a-col :span="24" v-for="(item, index) in teams" :key="index">
-                     <a-button class="abutton" type="link" @click="tabIndex=parseInt(index+2)">
+                     <a-button class="abutton" type="link" disabled>
                         <a-avatar size="small" src="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"/>
                         <span class="member" :style="{color:tabIndex===parseInt(index+2)?theme.color:''}">{{ item.name }}</span>
                      </a-button>
@@ -56,38 +56,20 @@
             </div>
           </a-card>
         </a-col>
-        <a-col :md="24" :lg="16" :xl="19">
-          <aux-msg-form :policeId="policeId" v-if="tabIndex===1"></aux-msg-form>
-          <award-duty :policeId="policeId" v-else-if="tabIndex===2"></award-duty>
-          <contract :policeId="policeId" v-else-if="tabIndex===3"></contract>
-          <personnel :policeId="policeId" v-else-if="tabIndex===4"></personnel>
-          <education :policeId="policeId" v-else-if="tabIndex===5"></education>
-          <equipage :policeId="policeId" v-else-if="tabIndex===6"></equipage>
-          <vacate :policeId="policeId" v-else-if="tabIndex===7"></vacate>
+        <a-col :md="24" :lg="16" :xl="20">
+          <aux-msg-form-a :policeId="policeId" ></aux-msg-form-a>
         </a-col>
-      </a-row>
+      </a-row> 
   </div>
 </template>
 
 <script>
   import {mapState} from 'vuex'
-  import auxMsgForm from '@/components/auxMsgForm/auxMsgForm'
-  import awardDuty from '@/pages/subsystem/businessMess/awardAndDuty'
-  import contract from '@/pages/subsystem/businessMess/contract'
-  import education from '@/pages/subsystem/businessMess/education'
-  import equipage from '@/pages/subsystem/businessMess/equipage'
-  import personnel from '@/pages/subsystem/businessMess/personnel'
-  import vacate from '@/pages/subsystem/businessMess/vacate'
+  import auxMsgFormA from '@/components/auxMsgForm/auxMsgFormA'
   export default {
     name: 'Demo',
     components:{
-      auxMsgForm,
-      awardDuty,
-      contract,
-      education,
-      equipage,
-      personnel,
-      vacate
+      auxMsgFormA
     },
     data() {
       return {
@@ -271,11 +253,10 @@
   .account-center-tags {
     .members {
       .abutton {
-        display: block;
         margin: 12px 0;
         .member {
           font-size: 14px;
-          color: rgba(0, 0, 0, 0.65);
+          // color: rgba(0, 0, 0, 0.65);
           line-height: 24px;
           max-width: 100px;
           vertical-align: top;
@@ -283,7 +264,6 @@
           transition: all 0.3s;
           display: inline-block;
         }
-        
       }
     }
   }

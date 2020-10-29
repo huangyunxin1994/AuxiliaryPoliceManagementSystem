@@ -93,6 +93,7 @@
             </a-col>
         </a-row>
     </div>
+    
   </div>
 </template>
 
@@ -202,6 +203,7 @@ export default {
   },
   data () {
     return {
+      visible:false,
        loading: true,
       rankList,
 

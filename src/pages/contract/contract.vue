@@ -97,12 +97,20 @@
         </a-col>
       </a-row>
     </a-card>
-    <form-step ref="modal" title="新增合同" formTitleName="name" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
+    <form-step
+      ref="modal"
+      title="新增合同"
+      formTitleName="name"
+      :formTitle="formTitle"
+      :rules="rules"
+      :stepTitle="stepTitle"
+      :submitFun="submitFun"
+    ></form-step>
   </div>
 </template>
 
 <script>
-import { mapState,mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import AntTree from "@/components/tree_/Tree";
 import TaskForm from "@/components/TaskForm";
@@ -118,21 +126,21 @@ const formTitle = [
     type: "text",
     refName: "name",
     placeholder: "请输入所在单位",
-    disabled:true
+    disabled: true,
   },
   {
     label: "合同起始日期",
     name: "startDate",
     type: "picker",
     refName: "startDate",
-    placeholder: "请选择工作起始日期"
+    placeholder: "请选择工作起始日期",
   },
   {
     label: "合同期限(月)",
     name: "contractPeriod",
     type: "input",
     refName: "contractPeriod",
-    placeholder: "请输入合同期限"
+    placeholder: "请输入合同期限",
   },
   {
     label: "试用结束日期",
@@ -148,7 +156,7 @@ const formTitle = [
     refName: "uploadFile"
   },
 ];
-const stepTitle = [{title:'选择人员'},{title:'填写合同信息'}]
+const stepTitle = [{ title: "选择人员" }, { title: "填写合同信息" }];
 const rules = {
   name: [
     { required: false, message: "请输入名字", trigger: "blur", disabled: true },
@@ -156,7 +164,9 @@ const rules = {
   startDate: [
     { required: true, message: "请选择合同起始日期", trigger: "change" },
   ],
-  contractPeriod: [{ required: true, message: "请输入合同期限", trigger: "blur" }],
+  contractPeriod: [
+    { required: true, message: "请输入合同期限", trigger: "blur" },
+  ],
 };
 
 export default {
@@ -165,25 +175,25 @@ export default {
     STable,
     AntTree,
     TaskForm,
-    formStep
+    formStep,
   },
   data() {
     return {
       formTitle,
       rules,
       stepTitle,
-      submitFun:(params,file)=>{
+      submitFun: (params, file) => {
         // let param = Object.assign(params,this.queryParams)
-        return this.$api.contractService.addContractData(params,file).then((res)=>{
-          this.$refs.table.refresh(true)
-          return res.data
-          
-        })
+        return this.$api.contractService
+          .addContractData(params, file)
+          .then((res) => {
+            return res.data;
+          });
       },
       // 高级搜索 展开/关闭
       advanced: false,
       openKeys: ["key-01"],
-      tree:[],
+      tree: [],
       loading: false,
       scheduleColumns: [
         {
@@ -236,23 +246,23 @@ export default {
           width: 150,
         },
       ],
-      queryParam:{
-        search:'',
-        isExpire:'',
-        endTime:'',
-        organizationId:'',
-		oid:''
+      queryParam: {
+        search: "",
+        isExpire: "",
+        endTime: "",
+        organizationId: "",
+        oid: "",
       },
-      loadScheduleData: params => {
-		this.queryParam.oid = this.user.organizationId
-        let param = Object.assign(params,this.queryParam)
-        return this.$api.contractService.getContractData(param).then((res)=>{
-          res.data.data.list.map((i,k)=>{
-            i.key=k+1
-          })
-          console.log(res)
-          return res.data
-        })
+      loadScheduleData: (params) => {
+        this.queryParam.oid = this.user.organizationId;
+        let param = Object.assign(params, this.queryParam);
+        return this.$api.contractService.getContractData(param).then((res) => {
+          res.data.data.list.map((i, k) => {
+            i.key = k + 1;
+          });
+          console.log(res);
+          return res.data;
+        });
       },
       selectedRowKeys: [],
       selectedRows: [],
@@ -280,20 +290,22 @@ export default {
           disabled:false
         },
       ],
-      extensionRules:{
-        contractPeriod: [{ required: true, message: "请输入合同期限", trigger: "blur" }],
+      extensionRules: {
+        contractPeriod: [
+          { required: true, message: "请输入合同期限", trigger: "blur" },
+        ],
       },
       // 模糊搜索关键字
-      keyword:'',
-      isExpire:'',//是否到期
-      endTime:'',//合同终止日期
+      keyword: "",
+      isExpire: "", //是否到期
+      endTime: "", //合同终止日期
     };
   },
   methods: {
     handleEdit(record) {
       console.log(record);
       let param = {
-        person:record
+        person: record,
       };
       let option = {
         title: "历史合同信息",
@@ -324,7 +336,7 @@ export default {
     // 是否即将到期
     handleChange(e) {
       console.log(e);
-      this.isExpire = e
+      this.isExpire = e;
     },
     //编辑树节点
     editTreeNode(params) {
@@ -402,9 +414,9 @@ export default {
       console.log(params);
     },
     // 选中树节点
-    loadTreeNode(data){
-      this.queryParam.organizationId = data.id
-      this.$refs.table.refresh(true)
+    loadTreeNode(data) {
+      this.queryParam.organizationId = data.id;
+      this.$refs.table.refresh(true);
     },
     // 获取多选的数据
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -487,7 +499,7 @@ export default {
     },
     // 新建合同
     newContract() {
-      this.$refs.modal.visible=true
+      this.$refs.modal.visible = true;
     },
     // 弹窗
     modal(obj, option, model) {
@@ -522,21 +534,21 @@ export default {
     // 时间框选择
     onChange(date, dateString) {
       console.log(date, dateString);
-      this.queryParam.endTime = dateString
+      this.queryParam.endTime = dateString;
     },
     // 点击重置
-    resetSearch(){
-      this.queryParam={
-        search:'',
-        isExpire:'',
-        endTime:'',
-        organizationId:''
-      }
+    resetSearch() {
+      this.queryParam = {
+        search: "",
+        isExpire: "",
+        endTime: "",
+        organizationId: "",
+      };
     },
     // 获取到组织树信息
-    getTreeData(data){
-      this.tree = data
-    }
+    getTreeData(data) {
+      this.tree = data;
+    },
   },
   filters: {
     statusFilter(status) {
@@ -549,7 +561,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["pageMinHeight"]),
-	...mapGetters("account",["user"]),// 获取登录者信息
+    ...mapGetters("account", ["user"]), // 获取登录者信息
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,
@@ -563,9 +575,9 @@ export default {
       };
     },
   },
-  mounted(){
+  mounted() {
     // this.getOrganization()
-  }
+  },
 };
 </script>
 

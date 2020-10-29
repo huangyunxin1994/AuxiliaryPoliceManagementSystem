@@ -44,6 +44,7 @@
           // console.log("附件格式错误，请删除后重新上传!")
           this.$message.error("附件格式错误，请重新上传！", 3)
         }
+        return false
       },
       importfxx(e) {
           let _this = this;

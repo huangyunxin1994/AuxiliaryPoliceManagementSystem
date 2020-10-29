@@ -4,7 +4,7 @@ import contractService from './contract/index'
 import organizationService from './OrganizationApi/index'
 import auxiliaryPoliceService from './auxiliaryPolice/index'
 import personAdminService from './personAdminApi/index'
-import educationService from './Education/index'
+import trainService from './TrainApi/index'
 import equipageService from './equipage/index'
 
 import otherItemsService from './OtherItemsApi/index'
@@ -13,6 +13,10 @@ import rewardService from './RewardApi/index'
 import documentAnnouncementService from './DocumentAnnouncementApi/index'
 import accountabilityService from "./accountabilityApi/index"
 import wageItemsService from "./WageItemsApi/index"
+import certEquipService from "./CertEquipApi/index"
+import educationService from "./EducationApi/index"
+import workService from "./WorkApi/index"
+import familyService from "./FamilyApi/index"
 export default{
   userService,
   overTimeService,
@@ -24,8 +28,12 @@ export default{
   rewardService,
   documentAnnouncementService,
   personAdminService,
-  educationService,
+  trainService,
   equipageService,
   accountabilityService,
-  wageItemsService
+  wageItemsService,
+  certEquipService,
+  educationService,
+  workService,
+  familyService
 }

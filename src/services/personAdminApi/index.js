@@ -68,7 +68,7 @@ const personAdminService = {
             number:params.number,
             policeName:params.policeName,
             organizationId:params.organizationId,
-            organizationName:"",
+            organizationName:params.organizationName,
             approvedBy:params.approvedBy
         }
         arr.push(obj)

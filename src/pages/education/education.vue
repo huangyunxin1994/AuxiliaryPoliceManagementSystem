@@ -265,7 +265,7 @@ export default {
       loadScheduleData: (params) => {
         this.queryParam.oid = this.user.organizationId
         let param = Object.assign(params,this.queryParam)
-        return this.$api.educationService.geteducationList(param).then((res)=>{
+        return this.$api.trainService.geteducationList(param).then((res)=>{
           console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
@@ -280,7 +280,7 @@ export default {
       stepTitle,
       submitFun:(params,file)=>{
         // let param = Object.assign(params,this.queryParams)
-        return this.$api.educationService.addEducation(params,file).then((res)=>{
+        return this.$api.trainService.addEducation(params,file).then((res)=>{
           this.$refs.table.refresh(false)
           return res.data
         })
@@ -335,7 +335,7 @@ export default {
         cancelText: "取消",
         onOk() {
           console.log(_this);
-          _this.$api.educationService.deleteEducation({id:_this.selectedRowKeys}).then((res)=>{
+          _this.$api.trainService.deleteEducation({id:_this.selectedRowKeys}).then((res)=>{
             if(res.data.code == 0){
               _this.$refs.table.refresh(true)
               _this.selectedRowKeys.length = 0

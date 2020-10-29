@@ -229,7 +229,7 @@
                 {label:'原组织',name:'beforeOrg',type:'text',placeholder:'请输入变动前职级'},
                 {label:'原岗位',name:'beforePost',type:'text',placeholder:'请输入变动前职级'},
                 {label:'生效日期',name:'effectiveDate',type:'pickerDate',placeholder:'请选择生效日期'},
-                {label:'调动后组织',name:'organizationId',type:'treeSelect',placeholder:'请选择变动后组织'},
+                {label:'调动后组织',name:'organizationId',labelName:"organizationName",type:'treeSelect',placeholder:'请选择变动后组织'},
                 {label:'调动后岗位',name:'currentRank',type:'select',placeholder:'请选择调动后岗位'},
                 {label:'变动原因',name:'reason',type:'textarea',placeholder:'请输入变动原因'},
           ],

@@ -195,6 +195,7 @@ export default {
      */
     changeDataForImport (newDataSource) {
       this.localDataSource = this.localDataSource.concat(newDataSource)
+      this.localDataSource.map((i,k) => i.key = k+1)
     },
     initTotalList (columns) {
       const totalList = []

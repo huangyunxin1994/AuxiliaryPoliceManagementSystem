@@ -121,6 +121,7 @@
             v-else-if="item.type == 'treeSelect'"
             :value="form[item.name]"
             :keyName="item.name"
+            :labelName="item.labelName"
             :allowClear="true"
             :replaceFields="item.replaceFields"
             @handleTreeChange="handleTreeChange"
@@ -288,6 +289,17 @@ export default {
         resolve(true);
       });
     },
+    onSelfOk() {
+      console.log(this.form)
+      this.$refs.ruleForm.validate((valid) => {
+            if (valid) {
+               this.$emit("handleOk", this.form);
+            } else {
+              console.log("error submit!!");
+            }
+          });
+      //
+    },
     // 上传文件
     beforeUpload(file) {
       this.form.fileList = [...this.fileList, file];
@@ -298,6 +310,7 @@ export default {
       console.log(obj)
       console.log(obj.keyName)
       this.form[obj.keyName] = obj.val
+      this.form[obj.labelName] = obj.label
       console.log( this.form)
     }
   },

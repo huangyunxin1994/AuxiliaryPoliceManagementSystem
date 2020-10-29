@@ -191,7 +191,12 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("account", ["setUser", "setPermissions", "setRoles"]),
+    ...mapMutations("account", [
+      "setUser",
+      "setPermissions",
+      "setRoles",
+      "setloginType",
+    ]),
     onSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err) => {
@@ -211,7 +216,7 @@ export default {
       this.logging = false;
       const loginRes = res.data;
       if (loginRes.code >= 0) {
-        const { data, list } = loginRes.data;
+        const { data, list, type } = loginRes.data;
         loginRes.data.token = "Authorization:" + Math.random();
         loginRes.message = this.timeFix().CN + "，欢迎回来";
         loginRes.data.expireAt = new Date(
@@ -221,27 +226,20 @@ export default {
           "https://gw.alipayobjects.com/zos/rmsportal/cnrhVkzwxjPwAaCfPbdc.png";
         this.setUser(data);
         let roleArr = [];
-        list.map((i) => {
-          let param = {};
-          param.id = i.code;
-          roleArr.push(param);
-        });
-        if (data.account == "huachen2020") {
-          roleArr = [
-            { id: "jczl" },
-            { id: "htgl" },
-            { id: "rsgl" },
-            { id: "gzgl" },
-            { id: "jypx" },
-            { id: "zzzb" },
-            { id: "jcgl" },
-            { id: "jbqj" },
-            { id: "wdgg" },
-            { id: "xtgl" },
-          ];
+        console.log(type)
+        if (type === 2) {
+          list.map((i) => {
+            let param = {};
+            param.id = i.code;
+            roleArr.push(param);
+          });
+          roleArr.push({ id: "gly" });
+        } else {
+          roleArr.push({ id: "fj" });
         }
-
+        console.log(roleArr)
         this.setRoles(roleArr);
+        this.setloginType(type);
         setAuthorization({
           token: loginRes.data.token,
           expireAt: new Date(loginRes.data.expireAt),
@@ -252,9 +250,14 @@ export default {
           { router: this.$router, store: this.$store, i18n: this.$i18n },
           routesConfig
         );
-        this.$router.push("/");
+        if(type===2){
+          this.$router.push("/");
+        }else{
+          console.log(256)
+          this.$router.push("/auxhome");
+        }
       } else {
-        this.error = loginRes.message;
+        this.error = loginRes.msg;
       }
     },
     timeFix() {

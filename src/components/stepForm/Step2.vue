@@ -39,11 +39,12 @@
                     :disabled="item.disabled"
                     v-else-if="item.type == 'select'"
                     :placeholder="item.placeholder"
+                    @change="changeSelect"
                   >
                     <a-select-option
                       v-for="(i, j) in item.select"
                       :key="j"
-                      :value="i.value || i.name"
+                      :value="i.id || i.name"
                     >
                       {{ i.name }}
                     </a-select-option>
@@ -246,7 +247,6 @@ export default {
               console.log("error submit!!");
             }
           });
-          
       //
     },
     prevStep() {
@@ -257,7 +257,10 @@ export default {
       this.form.fileList=[...this.fileList, file];
       return false
     },
-  }
+    changeSelect(val,opt){
+      console.log(val,opt)
+    },
+  },
 };
 </script>
 

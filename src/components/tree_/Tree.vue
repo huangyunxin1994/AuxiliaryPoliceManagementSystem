@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 export default {
     props:{
       //树数据 类型：数组|Array
@@ -106,8 +107,8 @@ export default {
     },
     methods: {
         loadTree(){
-            console.log(115)
-            this.$api.organizationService.getOrganization().then((res)=>{
+            const oid = this.user.organizationId||""
+            this.$api.organizationService.getOrganization({organizationId:oid}).then((res)=>{
             let tree = res.data.data.data
             tree.forEach(item => {
                 item.scopedSlots = { title: "custom" }
@@ -226,6 +227,9 @@ export default {
             return parentKey;
         }
     },
+     computed:{
+    ...mapGetters("account", ["user"])
+  }
 };
 </script>
 <style lang="less">
