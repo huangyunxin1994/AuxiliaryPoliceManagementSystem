@@ -18,6 +18,8 @@ const contractService = {
     },
     // 批量添加合同信息
     addContractData(params){
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+        console.log(params)
         const endDate =  DateAdd('m',params.contractPeriod,new Date(params.startDate))
         params.endDate = moment(endDate).format('YYYY-MM-DD')
         const contract = params;
@@ -28,7 +30,8 @@ const contractService = {
             policeId:policeId
         }
         const formData = new FormData();
-        if(params.fileList.length>0){
+        // if(params.fileList.length>0){
+        if(params.fileList){    
             formData.append("file", params.fileList[0]);
         }else{
             formData.append("file", "");

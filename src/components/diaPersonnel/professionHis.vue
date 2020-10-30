@@ -81,7 +81,6 @@
                     res.data.data.list.map((i,k)=>{
                         i.key=k+1
                     })
-                    this.$refs.table.refresh(true)
                     return res.data
                 })
             },
@@ -108,6 +107,7 @@
             },
             addProfession(){
                 // console.log("新增记录")
+                const _this = this
                 this.$dialog(fromModel,
                     // component props
                     {
@@ -126,6 +126,7 @@
                     on: {
                         ok () {
                             console.log('ok 回调')
+                           _this.$refs.table.refresh(true);
                         },
                         cancel () {
                             console.log('cancel 回调')

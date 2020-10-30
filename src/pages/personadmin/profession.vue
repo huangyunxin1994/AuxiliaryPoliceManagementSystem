@@ -305,7 +305,7 @@
           this.queryParam = {
               key: e.key
           }
-          this.$refs.table.refresh(true)
+          // this.$refs.table.refresh(true)
       },
       handleAdd (item) {
           console.log('add button, item', item)

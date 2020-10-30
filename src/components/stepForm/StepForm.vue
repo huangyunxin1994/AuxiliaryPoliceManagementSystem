@@ -124,8 +124,9 @@ export default {
       if (columnData.length > 0) {
         let arrName = "";
         columnData.forEach((item) => {
-          arrName = item.name + ",";
+          arrName += item.name + ",";
         });
+        console.log(arrName)
         this.selcetPersonName[this.formTitleName] = arrName.slice(
           0,
           arrName.length - 1

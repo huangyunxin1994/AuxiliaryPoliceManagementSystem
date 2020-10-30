@@ -17,6 +17,7 @@ import certEquipService from "./CertEquipApi/index"
 import educationService from "./EducationApi/index"
 import workService from "./WorkApi/index"
 import familyService from "./FamilyApi/index"
+import messageService from "./messageApi/index"
 export default{
   userService,
   overTimeService,
@@ -35,5 +36,6 @@ export default{
   certEquipService,
   educationService,
   workService,
-  familyService
+  familyService,
+  messageService
 }

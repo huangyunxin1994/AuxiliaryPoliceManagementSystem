@@ -64,7 +64,7 @@
         },
         data() {
         return {
-            // BASE_URL:'',
+            BASE_URL:'',
             openKeys: ['key-01'],
             loading:false,
             queryParam:{
@@ -131,7 +131,7 @@
         }
         },
         mounted(){
-            // this.BASE_URL = process.env.VUE_APP_API_BASE_URL
+            this.BASE_URL = process.env.VUE_APP_API_BASE_URL2
         },
         methods:{
             handleEdit(record){

@@ -75,11 +75,19 @@
             </a-col>
         </a-row>
         <a-row :gutter="24">
-            <a-col :xl="16" :lg="24" :md="24" :sm="24" :xs="24">
+            <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24">
                 <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false">
-                    <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">通知公告</div>
+                    <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">通知</div>
                     <div class="ant-table-wrapper">
-                        <list :iconColor="theme.color" icon="sound" :list="noticeList"/>
+                        <list :iconColor="theme.color" icon="sound" :list="noticeList" :user="user"/>
+                    </div>
+                </a-card>
+            </a-col>
+            <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24">
+                <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false">
+                    <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">公告</div>
+                    <div class="ant-table-wrapper">
+                        <list :iconColor="theme.color" icon="sound" :list="afficheList"/>
                     </div>
                 </a-card>
             </a-col>
@@ -192,7 +200,7 @@ dv.transform({
   as: 'percent'
 })
 const pieData = dv.rows
-import {mapState} from 'vuex'
+import {mapState,mapGetters} from 'vuex'
 import bar from '@/components/chart/Bar'
 import list from '@/components/list/List'
 export default {
@@ -224,32 +232,130 @@ export default {
         stroke: '#fff',
         lineWidth: 1
       },
-      businessList:[
-          {id:1,name:"【业务】您有员工待创建合同，请前往处理",date:"2020-06-16"},
-          {id:2,name:"【业务】您有员工合同即将到期，请前往处理",date:"2020-06-16"},
-          {id:3,name:"【业务】您有组织上月未同步工资条，请前往处理",date:"2020-06-16"},
-          {id:4,name:"【业务】您有员工未按时归还证件，请前往处理",date:"2020-06-16"},
-          {id:5,name:"【业务】您有员工未按时归还装，请前往处理",date:"2020-06-16"},
-          {id:6,name:"【业务】您有新的加班申请待审批，请前往处理",date:"2020-06-16"},
-          {id:7,name:"【业务】您有新的请假申请待审批，请前往处理",date:"2020-06-16"},
-      ],
-      noticeList:[
-          {id:1,name:"【通知】区政协召开2017年委员地区组工作会议",date:"2020-06-16"},
-          {id:2,name:"【通知】区政协召开2017年委员地区组工作会议",date:"2020-06-16"},
-          {id:3,name:"【通知】关于2020年优秀辅警评选申报通知",date:"2020-06-16"},
-          {id:4,name:"【通知】关于2020年新晋辅警人员通知",date:"2020-06-16"}
-      ],
+      businessList:[],//待办
+      noticeList:[],//通知
+      afficheList:[],//公告
       fileList:[
           {id:1,name:"【文档】辅警管理规范.PDF",date:"2020-06-16"},
           {id:2,name:"【文档】辅警个人管理概要.docx",date:"2020-06-16"}
       ]
     }
   },
+  methods:{
+    // 获取管理员个人消息通知列表(通知)
+    async getUserMessList(){
+      let _this = this
+      let query = {
+        id:this.user.id
+      }
+      const requestParameters = Object.assign({}, query);
+       _this.$api.messageService
+        .getUSerList(requestParameters)
+        .then((res) => {
+          console.log(res)
+          let list = res.data.data.list
+          this.noticeList = list
+        });
+    },
+    // 获取代办列表(代办)
+    async getUserDbList(){
+      let _this = this
+      let query = {
+        oid:this.user.organizationId
+      }
+      const requestParameters = Object.assign({}, query);
+       _this.$api.messageService
+        .getDbList(requestParameters)
+        .then((res) => {
+          console.log(res)
+          let gzList = res.data.data.gzList //工资
+          let htList = res.data.data.htList //合同
+          let jbList = res.data.data.jbList //加班
+          let qjList = res.data.data.qjList //请假
+          let zbList = res.data.data.zbList //装备
+          let zjList = res.data.data.zjList //证件
+          let arr = []
+          // if(gzList.length > 0){
+          //   gzList[0].content = gzList[0].content + "(" + gzList.length + ")"
+          // }
+          // gzList.forEach((item)=>{
+          //   arr.push(item)
+          // })
+          if(gzList.length > 0){
+            gzList[0].content = gzList[0].content + "(" + gzList.length + ")"
+            arr.push(gzList[0])
+          }
+          // htList.forEach((item)=>{
+          //   arr.push(item)
+          // })
+          if(htList.length > 0){
+            htList[0].content = htList[0].content + "(" + htList.length + ")"
+            arr.push(htList[0])
+          }
+          // jbList.forEach((item)=>{
+          //   arr.push(item)
+          // })
+          if(jbList.length > 0){
+            jbList[0].content = jbList[0].content + "(" + jbList.length + ")"
+            arr.push(jbList[0])
+          }
+          // qjList.forEach((item)=>{
+          //   arr.push(item)
+          // })
+          if(qjList.length > 0){
+            qjList[0].content = qjList[0].content + "(" + qjList.length + ")"
+            arr.push(qjList[0])
+          }
+          // zbList.forEach((item)=>{
+          //   arr.push(item)
+          // })
+          if(zbList.length > 0){
+            zbList[0].content = zbList[0].content + "(" + zbList.length + ")"
+            arr.push(zbList[0])
+          }
+          // zjList.forEach((item)=>{
+          //   arr.push(item)
+          // })
+          if(zjList.length > 0){
+            zjList[0].content = zjList[0].content + "(" + zjList.length + ")"
+            arr.push(zjList[0])
+          }
+          this.businessList = arr
+          console.log(arr)
+        });
+    },
+    // 公告
+    async getAfficheList(){
+      let  _this = this
+      let query = {
+        oid:this.user.organizationId
+      }
+      const requestParameters = Object.assign({}, query);
+      _this.$api.documentAnnouncementService
+          .getNotice(requestParameters)
+          .then((res) => {
+            console.log(res)
+            res.data.data.list.forEach(item => {
+              item.notice = 1
+              item.contentA = item.content
+              item.content = item.title
+            });
+            // return res.data;
+            _this.afficheList = res.data.data.list
+          });
+    }
+  },
   created() {
     setTimeout(() => this.loading = !this.loading, 1000)
   },
+  async mounted(){
+    await this.getUserMessList()
+    await this.getUserDbList()
+    await this.getAfficheList()
+  },
   computed: {
       ...mapState('setting', ['theme','isMobile','pageMinHeight']),
+      ...mapGetters("account",["user"]),// 获取登录者信息
     }
 }
 </script>
