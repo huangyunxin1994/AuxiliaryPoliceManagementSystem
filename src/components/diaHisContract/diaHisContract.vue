@@ -125,7 +125,7 @@
             selectedRows: [],
             fileList:[],
             form:{
-                file:''
+                file:[]
             },
             handleData:'',//点击下载时，获取到当前行的值
         }

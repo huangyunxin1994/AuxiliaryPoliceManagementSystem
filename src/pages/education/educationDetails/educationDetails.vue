@@ -28,20 +28,15 @@
                     </a-form-model-item>
                 </a-col>
                 <a-col :md="24" :lg="12" :xl="12" :xxl="6">
-                    <a-form-model-item label="总学时" :labelCol="{xs:{span: 24},sm:{span: 8}}" :wrapperCol="{xs:{span: 24},sm:{span: 16}}">
+                    <a-form-model-item label="总学时(小时)" :labelCol="{xs:{span: 24},sm:{span: 8}}" :wrapperCol="{xs:{span: 24},sm:{span: 16}}">
                         <a-input disabled v-model="form.classHour" />
                     </a-form-model-item>
                 </a-col>
                 <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                     <a-form-model-item label="培训方式" :labelCol="{xs:{span: 24},sm:{span: 8}}" :wrapperCol="{xs:{span: 24},sm:{span: 16}}" prop="learningStyle">
-                        <a-select disabled v-model="form.learningStyle" placeholder="请选择培训方式">
-                            <a-select-option   value='1'>
-                                不脱岗
-                            </a-select-option>
-                            <a-select-option   value='2'>
-                                脱岗
-                            </a-select-option>
-                        </a-select>
+                        
+                        <a-input disabled value="不脱岗" v-if="form.learningStyle==1" />
+                        <a-input disabled value="脱岗" v-else />
                     </a-form-model-item>
                 </a-col>
                 <a-col :sm="24" :md="24" >

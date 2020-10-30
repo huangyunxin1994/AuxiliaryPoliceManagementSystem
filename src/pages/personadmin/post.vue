@@ -57,7 +57,7 @@
 					</div>
                     <div class="table-operator" style="margin-bottom: 24px">
                       <!-- <a-button type="primary" @click="changePost" :disabled="selectedRows.length == 0">调动岗位与组织</a-button> -->
-						<a-button type="primary" @click="changePost" v-if="selectedRows.length != 0">调动岗位与组织</a-button>
+						<a-button type="primary" icon="swap" @click="changePost" v-if="selectedRows.length != 0">调动岗位与组织</a-button>
                       <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
                         <a-menu slot="overlay">
                           <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -344,8 +344,8 @@
             type:2
           }
           // console.log(obj)
-          arrName = item.policeName + ",";
-          if(index == this.selectedRows.length ){
+          arrName += item.policeName + ",";
+          if(index == this.selectedRows.length - 1 ){
             arrName.slice(0,arrName.length - 1);
           }
           arr.push(obj)
@@ -399,17 +399,18 @@
             .then((res) => {
               console.log(res)
               
-              if(res.code == 0){
+              if(res.data.code == 0){
                 this.$refs.table.refresh(true)
+                this.$message.success(res.data.msg)
                 return res.data;
               }else{
-                this.$message.error("调动失败，请重试")
+                this.$message.error(res.data.msg)
               }
             })
             .catch((res)=>{
               console.log("错误的返回")
               console.log(res)
-              this.$message.error("调动失败，请重试")
+              this.$message.error(res.data.msg)
             })
         },
 			}

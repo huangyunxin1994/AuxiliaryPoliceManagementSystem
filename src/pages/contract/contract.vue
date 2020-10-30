@@ -85,8 +85,12 @@
 				:scroll="{ y: 600, x: 800 }"
 				:showPagination="true"
 			>
-				<template slot="status" slot-scope="status">
-					<a-badge :status="status" :text="status | statusFilter" />
+				<template slot="status" slot-scope="isExpire">
+					<!-- <a-badge :status="isExpire" :text="isExpire | statusFilter" /> -->
+          <a-badge
+                :status="isExpire == '1' ? 'processing' : 'error'"
+                :text="isExpire | statusFilter"
+              />
 				</template>
 				<span slot="action" slot-scope="text, record">
 					<a @click="handleEdit(record)">查看历史合同</a>
@@ -234,8 +238,8 @@ export default {
         },
         {
           title: "是否即将到期",
-          dataIndex: "status",
-          key: "status",
+          dataIndex: "isExpire",
+          key: "isExpire",
           width: 100,
           scopedSlots: { customRender: "status" },
         },
@@ -426,67 +430,28 @@ export default {
 
     //续约单个合同
 	extensionOneCon(e){
-    this.extension.forEach(item => {
-    if(item.type == 'upload'){
-        item.disabled = false
-      }
-    });
-		let param = {
-			formTitle: this.extension,
-			rules: this.extensionRules,
-      record:{
-        name:e.name,
-        policeId:e.police_id,
-      },
-      submitFun: (parameter) => {
-        return this.$api.contractService
-          .postExtensionCon(parameter)
-          .then((res) => {
-            return res.data;
-          });
-      },
-		};
-		let option = {
-			title: "续约合同",
-			width: 500,
-			centered: true,
-			maskClosable: false,
-			okText: "提交",
-		};
-		this.modal(param, option, fromModel);
-	},
-    // 续约合同
-    extensionCon() {
-      console.log(this.selectedRows);
+    if(e.isExpire == 2){
+      this.$message.error('合同未到期，不能续约!');
+    }else{
       this.extension.forEach(item => {
       if(item.type == 'upload'){
-          item.disabled = true
+          item.disabled = false
         }
       });
-      let arr = this.selectedRows
-      let arrName = ""
-      let policeId = []
-      arr.forEach((item,index)=>{
-        arrName = item.name + ",";
-        if(index == arr.length - 1){
-          arrName.slice(0,arrName.length - 1);
-        }
-        policeId.push(item.police_id)
-      })
       let param = {
         formTitle: this.extension,
         rules: this.extensionRules,
         record:{
-          name:arrName,
-          policeId:policeId,
+          name:e.name,
+          policeId:e.police_id,
         },
         submitFun: (parameter) => {
           return this.$api.contractService
-            .postManyExtensionCon(parameter)
+            .postExtensionCon(parameter)
             .then((res) => {
               return res.data;
             });
-          },
+        },
       };
       let option = {
         title: "续约合同",
@@ -496,6 +461,55 @@ export default {
         okText: "提交",
       };
       this.modal(param, option, fromModel);
+    }
+	},
+    // 续约合同
+    extensionCon() {
+      console.log(this.selectedRows);
+      this.selectedRows.forEach((i)=>{
+        if(i.isExpire == 2){
+          this.$message.error('选项存在未到期合同，不能续约!');
+        }else{
+          this.extension.forEach(item => {
+          if(item.type == 'upload'){
+              item.disabled = true
+            }
+          });
+          let arr = this.selectedRows
+          let arrName = ""
+          let policeId = []
+          arr.forEach((item,index)=>{
+            arrName = item.name + ",";
+            if(index == arr.length - 1){
+              arrName.slice(0,arrName.length - 1);
+            }
+            policeId.push(item.police_id)
+          })
+          let param = {
+            formTitle: this.extension,
+            rules: this.extensionRules,
+            record:{
+              name:arrName,
+              policeId:policeId,
+            },
+            submitFun: (parameter) => {
+              return this.$api.contractService
+                .postManyExtensionCon(parameter)
+                .then((res) => {
+                  return res.data;
+                });
+              },
+          };
+          let option = {
+            title: "续约合同",
+            width: 500,
+            centered: true,
+            maskClosable: false,
+            okText: "提交",
+          };
+          this.modal(param, option, fromModel);
+        }
+      })
     },
     // 新建合同
     newContract() {
@@ -553,8 +567,8 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        processing: "是",
-        error: "否",
+        '1': "是",
+        '2': "否",
       };
       return statusMap[status];
     },

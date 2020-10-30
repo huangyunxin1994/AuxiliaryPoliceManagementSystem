@@ -88,14 +88,15 @@ const personAdminService = {
      */
     changeManyPostRank(params){
         console.log(params)
+        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
         let arr = params.policeArr
         arr.forEach((item)=>{
             item.currentRank = params.currentRank,
             item.effectiveDate = params.effectiveDate,
             item.reason = params.reason
-            if(item.beforeRank == params.currentRank){
-                this.$message.warning('存在变动前职级和变动后职级相同的情况，请修改!');
-            }
+            // if(item.beforeRank == params.currentRank){
+            //     this.$message.warning('存在变动前职级和变动后职级相同的情况，请修改!');
+            // }
         })
         console.log(params)
 

@@ -377,8 +377,8 @@
             organizationId:item.organizationId,//组织id
             type:1
           }
-          arrName = item.policeName + ",";
-          if(index == this.selectedRows.length ){
+          arrName += item.policeName + ",";
+          if(index == this.selectedRows.length - 1 ){
             arrName.slice(0,arrName.length - 1);
           }
           arr.push(obj)
