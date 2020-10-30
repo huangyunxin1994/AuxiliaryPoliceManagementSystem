@@ -50,8 +50,8 @@ const accountabilityService = {
      * @param params 
      * @returns {Promise<AxiosResponse<T>>}
      */
-    getAccountabilityById(id) {
-        const GETRSFLACCOUNTABILITY = GETACCOUNTABILITY+ id
+    getAccountabilityById(params) {
+        const GETRSFLACCOUNTABILITY = GETACCOUNTABILITY+ params.id
         return request(GETRSFLACCOUNTABILITY, METHOD.GET)
     },
 }

@@ -113,6 +113,9 @@ export default {
   components: {
     STable,
   },
+  props:{
+    policeId:String
+  },
   data() {
     return {
       value:null,
@@ -243,6 +246,10 @@ export default {
         labelCol: { span: 4 },
         wrapperCol: { span: 14 },
     };
+  },
+  created(){
+    this.queryParam.userId = this.policeId
+    this.equParam.userId = this.policeId
   },
   methods: {
     

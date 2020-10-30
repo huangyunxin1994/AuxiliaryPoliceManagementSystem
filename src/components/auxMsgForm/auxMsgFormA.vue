@@ -957,65 +957,16 @@ export default {
     },
     // 编辑
     editRecord(key, index) {
-      // fromTitle[index]
-      console.log(key);
-      let param = {
-        formTitle: fromTitle[index],
-        record: key,
-        rules: rules[index],
+      this.record = key
+      this.tableName = index
+      this.option = {
+          title: index === 'table1' ? "新增学习经历" : (index === 'table2' ? '新增工作经历' : '新增家庭及社会关系'),
+          width: 500,
+          centered: true,
+          maskClosable: false,
+          okText: "确认",
       };
-      let option = {};
-      let callback;
-      if (index == "table1") {
-        param.submitFun = (params) => {
-          return this.$api.educationService.putEdu(params).then((res) => {
-            return res.data;
-          });
-        };
-        callback = () => {
-          this.$refs.table.refresh(true);
-        };
-        option = {
-          title: "学习经历",
-          width: 500,
-          centered: true,
-          maskClosable: false,
-          okText: "提交",
-        };
-      } else if (index == "table2") {
-        param.submitFun = (params) => {
-          return this.$api.workService.putWork(params).then((res) => {
-            return res.data;
-          });
-        };
-        callback = () => {
-          this.$refs.worktable.refresh(true);
-        };
-        option = {
-          title: "工作经历",
-          width: 500,
-          centered: true,
-          maskClosable: false,
-          okText: "提交",
-        };
-      } else {
-        param.submitFun = (params) => {
-          return this.$api.familyService.putFamily(params).then((res) => {
-            return res.data;
-          });
-        };
-        callback = () => {
-          this.$refs.familytable.refresh(true);
-        };
-        option = {
-          title: "家庭及社会关系",
-          width: 500,
-          centered: true,
-          maskClosable: false,
-          okText: "提交",
-        };
-      }
-      this.modal(param, option, callback);
+      this.$refs.studyData.visible = true
     },
     modal(obj, option, callback) {
       const defaultProps = {
@@ -1056,9 +1007,9 @@ export default {
         });
       });
       console.log(tdata);
-      this.$refs.table.changeDataForImport(tdata[0]);
-      this.$refs.worktable.changeDataForImport(tdata[1]);
-      this.$refs.familytable.changeDataForImport(tdata[2]);
+      this.$refs.table1.changeDataForImport(tdata[0]);
+      this.$refs.table2.changeDataForImport(tdata[1]);
+      this.$refs.table3.changeDataForImport(tdata[2]);
     },
     // 点击删除
     del(key, index) {
@@ -1072,49 +1023,7 @@ export default {
         cancelText: "取消",
         onOk() {
           console.log(_this);
-          if (index == "table1") {
-            _this.$api.educationService
-              .deleteEdu({ id: key.id })
-              .then((res) => {
-                if (res.data.code == 0) {
-                  _this.$message.success(res.data.msg);
-                  _this.$refs.table.refresh();
-                } else {
-                  _this.$message.error(res.data.msg);
-                }
-              })
-              .catch((err) => {
-                _this.$message.error(err.data.msg);
-              });
-          } else if (index == "table2") {
-            _this.$api.workService
-              .deleteWork({ id: key.id })
-              .then((res) => {
-                if (res.data.code == 0) {
-                  _this.$message.success(res.data.msg);
-                  _this.$refs.worktable.refresh();
-                } else {
-                  _this.$message.error(res.data.msg);
-                }
-              })
-              .catch((err) => {
-                _this.$message.error(err.data.msg);
-              });
-          } else {
-            _this.$api.familyService
-              .deleteFamily({ id: key.id })
-              .then((res) => {
-                if (res.data.code == 0) {
-                  _this.$message.success(res.data.msg);
-                  _this.$refs.familytable.refresh();
-                } else {
-                  _this.$message.error(res.data.msg);
-                }
-              })
-              .catch((err) => {
-                _this.$message.error(err.data.msg);
-              });
-          }
+          _this.$refs[index].localDataSource.splice(_this.$refs[index].localDataSource.findIndex(i=>i.key === key.key),1)
         },
         onCancel() {},
       });
@@ -1134,10 +1043,15 @@ export default {
     },
     handleOk(form){
       console.log(form)
-      let arr =[]
+      if(!form.key){
+        let arr =[]
       arr.push(form)
       console.log(this.tableName)
       this.$refs[this.tableName].changeDataForImport(arr);
+      }else{
+        this.$refs[this.tableName].localDataSource.splice(this.$refs[this.tableName].localDataSource.findIndex(i=>i.key === form.key),1,form)
+      }
+      
     },
     // 点击保存按钮
     saveBtn() {

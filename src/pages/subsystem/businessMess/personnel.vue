@@ -2,37 +2,6 @@
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
 		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">职级调动</div>
-		<div class="table-page-search-wrapper">
-			<a-form layout="inline">
-				<a-row :gutter="48">
-					<a-col :md="8" :sm="24">
-						<a-form-item label="关键词搜索">
-							<a-input placeholder="请输入要查询的关键词" v-model="rankQuery.search" />
-						</a-form-item>
-					</a-col>
-					<a-col :md="(!advanced && 8) || 24" :sm="24">
-						<span
-							class="table-page-search-submitButtons"
-							:style="
-							(advanced && { float: 'right', overflow: 'hidden' }) || {}
-							"
-						>
-							<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-							<a-button
-								style="margin-left: 8px"
-								@click="() => (rankQuery = {
-                  search:''
-                })"
-								>重置</a-button>
-								<!-- <a @click="toggleAdvanced" style="margin-left: 8px">
-									{{ advanced ? "收起" : "展开" }}
-									<a-icon :type="advanced ? 'up' : 'down'" />
-								</a> -->
-						</span>
-					</a-col>
-				</a-row>
-			</a-form>
-		</div>
 		<s-table
 			ref="table"
 			rowKey="key"
@@ -53,40 +22,7 @@
     </a-card>
     <a-card :bordered="false">
       <div class="position-and-level-title" :style="{ 'border-color': theme.color }">岗位变动</div>
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="关键词搜索">
-                <a-input placeholder="请输入要查询的关键词" v-model="postQuery.search" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="
-                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
-                "
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)"
-                  >查询</a-button
-                >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="() => (postQuery = {
-                    search:''
-                  })"
-                  >重置</a-button
-                >
-                <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? "收起" : "展开" }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a> -->
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
+      
       <s-table
         ref="table"
         rowKey="key"
@@ -100,40 +36,6 @@
     </a-card>
     <a-card :bordered="false">
       <div class="position-and-level-title" :style="{ 'border-color': theme.color }">专业技术辅警资格信息</div>
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="关键词搜索">
-                <a-input placeholder="请输入要查询的关键词" v-model="professionQuery.search"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="
-                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
-                "
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)"
-                  >查询</a-button
-                >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="() => (professionQuery = {
-                    search:''
-                  })"
-                  >重置</a-button
-                >
-                <!-- <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? "收起" : "展开" }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a> -->
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="upload"  style="margin-right: 10px">导出</a-button>
       </div>
@@ -160,10 +62,7 @@ export default {
     STable,
   },
   props:{
-    policeId:{
-      type:String || Number,
-      default:undefined
-    }
+    policeId:String
   },
   data() {
     return {
@@ -213,11 +112,10 @@ export default {
       ],
       rankQuery:{
         userId:this.policeId,
-        search:'',
         type:1
       },
       rankData: (parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.rankQuery)
+        const requestParameters = Object.assign({}, parameter, this.queryParam)
         return this.$api.personAdminService.getRankPostHistory(requestParameters)
           .then(res => {
             res.data.data.list.map((i,k)=>i.key=k+1)
@@ -262,11 +160,10 @@ export default {
       ],
       postQuery:{
         userId:this.policeId,
-        search:'',
         type:2
       },
       postData:(parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.postQuery)
+        const requestParameters = Object.assign({}, parameter, this.postParam)
         return this.$api.personAdminService.getRankPostHistory(requestParameters)
           .then(res => {
             res.data.data.list.map((i,k)=>i.key=k+1)
@@ -302,13 +199,12 @@ export default {
           width: 100
         }
       ],
-      professionQuery:{
-        search:'',
-        userId:this.policeId
+      proferssPara:{
+        userId:undefined
       },
       professionData:(parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
-        return this.$api.personAdminService.getRankPostHistory(requestParameters)
+        const requestParameters = Object.assign({}, parameter, this.proferssPara)
+        return this.$api.personAdminService.getPersonProfession(requestParameters)
           .then(res => {
             res.data.data.list.map((i,k)=>i.key=k+1)
             return res.data
@@ -332,6 +228,12 @@ export default {
         labelCol: { span: 4 },
         wrapperCol: { span: 14 },
     };
+  },
+  created(){
+    this.queryParam.userId = this.policeId
+    this.postParam.userId = this.policeId
+    this.proferssPara.userId = this.policeId
+    
   },
   methods: {
     

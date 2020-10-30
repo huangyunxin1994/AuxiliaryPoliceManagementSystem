@@ -122,6 +122,9 @@ export default {
     STable,
     fromModel
   },
+  props:{
+    policeId:String
+  },
   data() {
     return {
       value:null,
@@ -192,12 +195,17 @@ export default {
           ellipsis: true
         },
       ],
-      queryParam:{
-        id:undefined
+      overTimeParam:{
+        userId:undefined,
+        type:1
+      },
+      leaveParam:{
+        userId:undefined,
+        type:2
       },
       loadCredData: (params) => {
-        let param = Object.assign(params,this.queryParam)
-        return this.$api.overTimeService.statistics(param).then((res)=>{
+        let param = Object.assign(params,this.overTimeParam)
+        return this.$api.overTimeService.getOverTimeLeave(param).then((res)=>{
           console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
@@ -265,12 +273,9 @@ export default {
           ellipsis: true
         },
       ],
-      dutyQueryData:{
-        id:undefined
-      },
       dutyData:(params) => {
-        let param = Object.assign(params,this.dutyQueryData)
-        return this.$api.overTimeService.statistics(param).then((res)=>{
+        let param = Object.assign(params,this.leaveParam)
+        return this.$api.overTimeService.getOverTimeLeave(param).then((res)=>{
           console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
@@ -411,6 +416,10 @@ export default {
           ]
         }
     };
+  },
+  created(){
+    this.overTimeParam.userId = this.policeId
+    this.leaveParam.userId = this.policeId
   },
   methods: {
     // 加班

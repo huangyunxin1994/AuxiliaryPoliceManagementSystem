@@ -13,8 +13,8 @@
         <a-button key="back" @click="handleCancel">
           取消
         </a-button>
-        <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">
-          提交  
+        <a-button key="submit" type="primary" @click="handleSubmit">
+          确认  
         </a-button>
       </template>
       <div class="content">
@@ -66,7 +66,6 @@ export default {
   },
   data() {
     return {
-        loading: false,
         visible: false,
     };
   },
@@ -78,12 +77,8 @@ export default {
       this.$refs.formModel.onSelfOk()
     },
     handleOk(form) {
-      this.loading = true;
-      setTimeout(() => {
         this.visible = false;
-        this.loading = false;
         this.$emit("handleOk",form)
-      }, 3000);
     },
     handleCancel() {
       this.visible = false;

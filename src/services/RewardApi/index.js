@@ -50,8 +50,8 @@ const rewardService = {
      * @param params 条件参数
      * @returns {Promise<AxiosResponse<T>>}
      */
-    getRewardById(id) {
-        const GETRSFLREWARD = GETREWARD+ id
+    getRewardById(params) {
+        const GETRSFLREWARD = GETREWARD+ params.id
         return request(GETRSFLREWARD, METHOD.GET)
     },
 }
