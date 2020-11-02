@@ -133,6 +133,12 @@
             <template slot="status" slot-scope="status">
               <a-badge :status="status" :text="status | statusFilter" />
             </template>
+            <template slot="sex" slot-scope="sex">
+              <span >{{sex | sexFilter}}</span>
+            </template>
+            <template slot="isMajor" slot-scope="isMajor">
+              <span >{{isMajor | majorFilter}}</span>
+            </template>
             <span slot="action" slot-scope="text, record">
               <a-popconfirm
                 title="该人员的登录密码将重置为123456，是否继续？"
@@ -219,6 +225,7 @@ export default {
           title: "性别",
           dataIndex: "sex",
           key: "sex",
+          scopedSlots: { customRender: "sex" },
           width: 100,
         },
         {
@@ -235,10 +242,10 @@ export default {
         },
         {
           title: "是否专业辅警",
-          dataIndex: "status",
-          key: "status",
+          dataIndex: "isMajor",
+          key: "isMajor",
+          scopedSlots: { customRender: "isMajor" },
           width: 100,
-          scopedSlots: { customRender: "status" },
         },
         {
           title: "操作",
@@ -484,6 +491,20 @@ export default {
       };
       return statusMap[status];
     },
+    sexFilter(sex){
+      const statusMap = {
+        1: "男",
+        2: "女",
+      };
+      return statusMap[sex];
+    },
+    majorFilter(major){
+      const statusMap = {
+        1: "是",
+        2: "否",
+      };
+      return statusMap[major];
+    }
   },
   computed: {
     ...mapState("setting", ["pageMinHeight"]),

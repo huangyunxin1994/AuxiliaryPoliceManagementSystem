@@ -79,44 +79,60 @@
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
                   label="是否是专业辅警"
-                  :labelCol="{ span: 10 }"
-                  :wrapperCol="{ span: 13 }"
+                  :labelCol="{
+                    sm: { span: 24 },
+                    md: { span: 7 },
+                    lg: { span: 11 },
+                  }"
+                  :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-radio-group v-model="isSpecialty">
-                    <a-radio value="true"> 是 </a-radio>
-                    <a-radio value="false"> 否 </a-radio>
+                  <a-radio-group :default-value="2" v-model="form.isMajor" @change="changeRadio">
+                    <a-radio :value="1"> 是 </a-radio>
+                    <a-radio :value="2"> 否 </a-radio>
                   </a-radio-group>
                 </a-form-model-item>
               </a-col>
             </a-row>
-            <a-row :gutter="24" v-if="isSpecialty == 'true'">
+            <a-row :gutter="24" v-if="form.isMajor== 1">
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
                   label="专业技术职业资格"
-                  :labelCol="{ span: 10 }"
-                  :wrapperCol="{ span: 13 }"
+                  :labelCol="{
+                    sm: { span: 24 },
+                    md: { span: 7 },
+                    lg: { span: 11 },
+                  }"
+                  :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="form.awardContent" />
+                  <a-input v-model="major.qualification"/>
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
                   label="资格审批单位"
-                  :labelCol="{ span: 7 }"
-                  :wrapperCol="{ span: 13 }"
+                  :labelCol="{
+                    sm: { span: 24 },
+                    md: { span: 7 },
+                    lg: { span: 11 },
+                  }"
+                  :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="form.awardUnit" />
+                  <a-input v-model="major.approvalUnit" />
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
                   label="获得资格日期"
-                  :labelCol="{ span: 7 }"
-                  :wrapperCol="{ span: 13 }"
+                  :labelCol="{
+                    sm: { span: 24 },
+                    md: { span: 7 },
+                    lg: { span: 11 },
+                  }"
+                  :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
                   <a-date-picker
-                    v-model="form.awardTime"
-                    show-time
+                    v-model="major.acquireDate"
+                    value-format="YYYY-MM-DD"
                     type="date"
                     placeholder="请选择时间"
                     style="width: 100%"
@@ -693,6 +709,12 @@ export default {
         birthday: "",
         sex: "",
         age: "",
+        isMajor:2
+      },
+       major:{ 
+        qualification:"",
+        approvalUnit:"",
+        acquire_date:""
       },
       baseMessTitle: [
         {
@@ -1028,6 +1050,9 @@ export default {
         onCancel() {},
       });
     },
+    changeRadio(){
+      console.log(this.form.isMajor)
+    },
     // 添加记录
     addStudyData(index) {
       console.log(index)
@@ -1080,6 +1105,7 @@ export default {
               });
               const param = {
                 basic: _this.form,
+                major:_this.form.isMajor === 1 && _this.major || {},
                 education: _this.$refs.table1.localDataSource,
                 work: _this.$refs.table2.localDataSource,
                 family: _this.$refs.table3.localDataSource,

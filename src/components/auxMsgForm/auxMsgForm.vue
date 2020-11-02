@@ -3,7 +3,9 @@
   <div>
     <a-card :bordered="true">
       <div class="saveBtn">
-        <a-button type="primary" @click="saveBtn">保存</a-button>
+        <a-button type="primary" @click="saveBtn" v-if="policeId"
+          >保存</a-button
+        >
       </div>
     </a-card>
     <a-card :bordered="true">
@@ -36,11 +38,16 @@
               >
                 <a-form-model-item
                   :label="item.label"
-                  :labelCol="{ sm:{span: 24},md:{span: 7},lg:{span: 11} }"
-                  :wrapperCol="{ sm:{span: 24},md:{span: 13} }"
+                  :labelCol="{
+                    sm: { span: 24 },
+                    md: { span: 7 },
+                    lg: { span: 11 },
+                  }"
+                  :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                   :prop="item.title"
                 >
                   <a-input
+                    :disabled="!policeId"
                     v-model="form[item.title]"
                     v-if="item.type == 'input' && item.title == 'idCard'"
                     @blur.native.capture="getIdData"
@@ -48,12 +55,13 @@
                   <a-input
                     v-model="form[item.title]"
                     v-if="item.type == 'input' && item.title != 'idCard'"
-                    :disabled="item.disabled"
+                    :disabled="!policeId || item.disabled"
                   />
                   <a-select
                     v-model="form[item.title]"
                     :placeholder="item.placeholder"
                     v-else-if="item.type == 'select'"
+                    :disabled="!policeId"
                   >
                     <a-select-option
                       v-for="(i, j) in item.select"
@@ -64,6 +72,7 @@
                     </a-select-option>
                   </a-select>
                   <a-date-picker
+                    :disabled="!policeId"
                     v-model="form[item.title]"
                     type="date"
                     placeholder="请选择入职时间"
@@ -79,44 +88,62 @@
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
                   label="是否是专业辅警"
-                  :labelCol="{ sm:{span: 24},md:{span: 7},lg:{span: 11} }"
-                  :wrapperCol="{ sm:{span: 24},md:{span: 13} }"
+                  
+                  :labelCol="{
+                    sm: { span: 24 },
+                    md: { span: 7 },
+                    lg: { span: 11 },
+                  }"
+                  :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-radio-group v-model="isSpecialty">
-                    <a-radio value="true"> 是 </a-radio>
-                    <a-radio value="false"> 否 </a-radio>
+                  <a-radio-group v-model="form['isMajor']" :disabled="!policeId">
+                    <a-radio :value="1"> 是 </a-radio>
+                    <a-radio :value="2"> 否 </a-radio>
                   </a-radio-group>
                 </a-form-model-item>
               </a-col>
             </a-row>
-            <a-row :gutter="24" v-if="isSpecialty == 'true'">
+            <a-row :gutter="24" v-if="form['isMajor'] === 1">
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
                   label="专业技术职业资格"
-                  :labelCol="{ sm:{span: 24},md:{span: 7},lg:{span: 11} }"
-                  :wrapperCol="{ sm:{span: 24},md:{span: 13} }"
+                  :labelCol="{
+                    sm: { span: 24 },
+                    md: { span: 7 },
+                    lg: { span: 11 },
+                  }"
+                  :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="form.awardContent" />
+                  <a-input v-model="major.qualification" :disabled="!policeId" />
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
                   label="资格审批单位"
-                  :labelCol="{ sm:{span: 24},md:{span: 7},lg:{span: 11} }"
-                  :wrapperCol="{ sm:{span: 24},md:{span: 13} }"
+                  :labelCol="{
+                    sm: { span: 24 },
+                    md: { span: 7 },
+                    lg: { span: 11 },
+                  }"
+                  :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="form.awardUnit" />
+                  <a-input v-model="major.approvalUnit" :disabled="!policeId" />
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
                   label="获得资格日期"
-                  :labelCol="{ sm:{span: 24},md:{span: 7},lg:{span: 11} }"
-                  :wrapperCol="{ sm:{span: 24},md:{span: 13} }"
+                  :labelCol="{
+                    sm: { span: 24 },
+                    md: { span: 7 },
+                    lg: { span: 11 },
+                  }"
+                  :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
                   <a-date-picker
-                    v-model="form.awardTime"
-                    show-time
+                    :disabled="!policeId"
+                    v-model="major.acquireDate"
+                    value-format="YYYY-MM-DD"
                     type="date"
                     placeholder="请选择时间"
                     style="width: 100%"
@@ -134,6 +161,7 @@
           <excel-btn
             :tableTitle="allTableTitle"
             @getTableData="getTableData"
+            v-if="policeId"
           ></excel-btn>
         </div>
         <div class="studyHis">
@@ -144,13 +172,17 @@
             >
               学习经历
             </div>
-            <a-button type="primary" @click="addStudyData('table1')" icon="plus"
+            <a-button
+              type="primary"
+              @click="addStudyData('table1')"
+              icon="plus"
+              v-if="policeId"
               >添加记录</a-button
             >
           </div>
           <standard-table
             ref="table"
-            :rowKey="(record)=>record.id"
+            :rowKey="(record) => record.id"
             :columns="studyColumns"
             :data="studySource"
             :scroll="{ y: 600, x: 650 }"
@@ -174,13 +206,17 @@
             >
               工作经历
             </div>
-            <a-button type="primary" @click="addStudyData('table2')" icon="plus"
+            <a-button
+              type="primary"
+              @click="addStudyData('table2')"
+              icon="plus"
+              v-if="policeId"
               >添加记录</a-button
             >
           </div>
           <standard-table
             ref="worktable"
-            :rowKey="(record)=>record.id"
+            :rowKey="(record) => record.id"
             :columns="workColumns"
             :data="workSource"
             showPagination="auto"
@@ -203,13 +239,17 @@
             >
               家庭及社会关系
             </div>
-            <a-button type="primary" @click="addStudyData('table3')" icon="plus"
+            <a-button
+              type="primary"
+              @click="addStudyData('table3')"
+              icon="plus"
+              v-if="policeId"
               >添加记录</a-button
             >
           </div>
           <standard-table
             ref="familytable"
-            :rowKey="(record)=>record.id"
+            :rowKey="(record) => record.id"
             :columns="familyColumns"
             :data="familySource"
             showPagination="auto"
@@ -217,7 +257,7 @@
             <template slot="status" slot-scope="status">
               <a-badge :status="status" :text="status | statusFilter" />
             </template>
-            <span slot="familyaction" slot-scope="text, record">
+            <span slot="familyaction" slot-scope="text, record" v-if="policeId">
               <a @click="editRecord(record, 'table3')">编辑</a>
               <a-divider type="vertical" />
               <a @click="del(record, 'table3')">删除</a>
@@ -685,6 +725,12 @@ export default {
         birthday: "",
         sex: "",
         age: "",
+        isMajor:""
+      },
+      major:{ 
+        qualification:"",
+        approvalUnit:"",
+        acquire_date:""
       },
       baseMessTitle: [
         {
@@ -863,9 +909,9 @@ export default {
   },
   created() {
     console.log(this.policeId);
-    this.queryPa.id = this.policeId || "";
+    this.queryPa.id = this.policeId || this.user.id;
     this.$api.auxiliaryPoliceService
-      .getAuxiliaryPoliceData({ policeId: this.policeId || "undefined" })
+      .getAuxiliaryPoliceData({ policeId: this.policeId || this.user.id || "undefined" })
       .then((res) => {
         this.form = Object.assign({}, this.form, res.data.data.list[0]);
       });

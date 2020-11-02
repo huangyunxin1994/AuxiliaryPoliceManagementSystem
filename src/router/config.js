@@ -445,7 +445,7 @@ const options = {
                   role: 'fj'
                 }
               },
-              component: () => import('@/pages/subsystem/baseMess/baseMess')
+              component: () => import('@/components/auxMsgForm/auxMsgForm')
             }
           ]
         },

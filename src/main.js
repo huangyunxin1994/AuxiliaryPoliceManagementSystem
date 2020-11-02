@@ -5,7 +5,7 @@ import './theme/index.less'
 import Antd from 'ant-design-vue'
 import Viser from 'viser-vue'
 import Dialog from '@/components/Dialog'
-import '@/mock'
+// import '@/mock'
 import api from "./services"
 import store from './store'
 import 'animate.css/source/animate.css'
@@ -15,7 +15,7 @@ import bootstrap from '@/bootstrap'
  import moment from'moment'; 
  import 'moment/locale/zh-cn'; 
  import Vuex from 'vuex'
- moment.locale('zh-cn');
+ moment.locale('zh-CN');
 const router = initRouter(store.state.setting.asyncRoutes)
 const i18n = initI18n('CN', 'US')
 

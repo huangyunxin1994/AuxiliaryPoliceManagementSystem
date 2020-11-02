@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import fromModel from "@/components/formModel/formModel";
 export default {
@@ -418,8 +418,9 @@ export default {
     };
   },
   created(){
-    this.overTimeParam.userId = this.policeId
-    this.leaveParam.userId = this.policeId
+    this.overTimeParam.userId = this.policeId||this.user.id
+    this.leaveParam.userId = this.policeId||this.user.id
+    console.log(this.overTimeParam.userId)
   },
   methods: {
     // 加班
@@ -518,6 +519,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
+    ...mapGetters("account", ["user"]),
     rowCredSelection() {
       return {
         selectedRowKeys: this.selectedCredRowKeys,

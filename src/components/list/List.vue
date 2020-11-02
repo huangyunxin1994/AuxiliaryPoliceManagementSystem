@@ -187,7 +187,7 @@ export default {
     }
   },
   mounted(){
-    this.BASE_URL = process.env.VUE_APP_API_BASE_URL2
+    this.BASE_URL = process.env.VUE_APP_API_BASE_URL
     console.log( this.BASE_URL)
   },
 };

@@ -16,9 +16,9 @@ module.exports = {
   // PUTRANK:`${BASE_URL}/Other/rankest/rank`,//修改职级
   // DELETERANK:`${BASE_URL}/Other/rankest/rank/`,//删除职级 
 
-  GETLIST:`${BASE_URL.lk}/train/`,//查询培训列表
-  POSTEDUCATION:`${BASE_URL.lk}/train/`,//查询培训列表
-  DELETEEDUCATION:`${BASE_URL.lk}/train/`,//删除培训
-  GETDETAILSDATA:`${BASE_URL.lk}/train/details`,//根据id查找培训详情
-  PUTEDUCATION:`${BASE_URL.lk}/train/`,//填写结果
+  GETLIST:`${BASE_URL}/train/`,//查询培训列表
+  POSTEDUCATION:`${BASE_URL}/train/`,//查询培训列表
+  DELETEEDUCATION:`${BASE_URL}/train/`,//删除培训
+  GETDETAILSDATA:`${BASE_URL}/train/details`,//根据id查找培训详情
+  PUTEDUCATION:`${BASE_URL}/train/`,//填写结果
 }

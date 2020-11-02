@@ -16,16 +16,16 @@ module.exports = {
   // PUTRANK:`${BASE_URL}/Other/rankest/rank`,//修改职级
   // DELETERANK:`${BASE_URL}/Other/rankest/rank/`,//删除职级 
 
-  GETRANKDATA:`${BASE_URL.lk}/PersonnelManagement/RankPost`,//获取岗配置列表
-  GETRANKPOSTHIS:`${BASE_URL.rzh}/PersonnelManagement/RankPost/person`,//获取职级或岗位个人列表
-  CHANGERANKPOST:`${BASE_URL.rzh}/PersonnelManagement/RankPost`,//变更职级或岗位
+  GETRANKDATA:`${BASE_URL}/PersonnelManagement/RankPost`,//获取岗配置列表
+  GETRANKPOSTHIS:`${BASE_URL}/PersonnelManagement/RankPost/person`,//获取职级或岗位个人列表
+  CHANGERANKPOST:`${BASE_URL}/PersonnelManagement/RankPost`,//变更职级或岗位
 
-  GETDIMISSIONDATA:`${BASE_URL.rzh}/PersonnelManagement/quit`,//获取离职人员列表
-  POSTDIMISSION:`${BASE_URL.rzh}/PersonnelManagement/quit`,//获取离职人员列表
-  PUTPDIMISSION:`${BASE_URL.rzh}/PersonnelManagement/quit`,//离职修改证件装备回收状态
+  GETDIMISSIONDATA:`${BASE_URL}/PersonnelManagement/quit`,//获取离职人员列表
+  POSTDIMISSION:`${BASE_URL}/PersonnelManagement/quit`,//获取离职人员列表
+  PUTPDIMISSION:`${BASE_URL}/PersonnelManagement/quit`,//离职修改证件装备回收状态
 
-  GETPROFESSIONDATA:`${BASE_URL.rzh}/PersonnelManagement/major`, //获取专业技术辅警资格列表
-  POSTPROFESSION:`${BASE_URL.rzh}/PersonnelManagement/major`, //新增专业辅警任职人员
-  GETPERSONROFESSIOND:`${BASE_URL.rzh}/PersonnelManagement/major/person`, //获取专业技术辅警资格个人列表
+  GETPROFESSIONDATA:`${BASE_URL}/PersonnelManagement/major`, //获取专业技术辅警资格列表
+  POSTPROFESSION:`${BASE_URL}/PersonnelManagement/major`, //新增专业辅警任职人员
+  GETPERSONROFESSIOND:`${BASE_URL}/PersonnelManagement/major/person`, //获取专业技术辅警资格个人列表
   
 }

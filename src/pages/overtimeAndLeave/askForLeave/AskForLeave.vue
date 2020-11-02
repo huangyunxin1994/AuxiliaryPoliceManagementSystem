@@ -164,13 +164,16 @@ const formTitle = [
     label: "开始时间",
     name: "startTime",
     type: "picker",
+    
     placeholder: "请选择请假开始时间",
+    showTime:{ format: 'HH:mm' }
   },
   {
     label: "结束时间",
     name: "endTime",
     type: "picker",
     placeholder: "请选择请假结束时间",
+    showTime:{ format: 'HH:mm' }
   },
   {
     label: "时长(小时)",

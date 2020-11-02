@@ -95,7 +95,7 @@
                 <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false">
                     <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">文档中心</div>
                     <div class="ant-table-wrapper">
-                         <list :iconColor="theme.color" icon="folder" :list="fileList"/>
+                         <file-list :iconColor="theme.color" icon="folder" :list="fileList"/>
                     </div>
                 </a-card>
             </a-col>
@@ -203,11 +203,13 @@ const pieData = dv.rows
 import {mapState,mapGetters} from 'vuex'
 import bar from '@/components/chart/Bar'
 import list from '@/components/list/List'
+import fileList from '@/components/list/fileList'
 export default {
   name: 'Analysis',
   components:{
       bar,
-      list
+      list,
+      fileList
   },
   data () {
     return {
@@ -343,6 +345,19 @@ export default {
             // return res.data;
             _this.afficheList = res.data.data.list
           });
+    },
+    async getFile(){
+      let query = {
+        oid:this.user.organizationId
+      }
+      const requestParameters = Object.assign({}, query);
+      this.$api.documentAnnouncementService
+          .getDocument(requestParameters)
+          .then((res) => {
+            console.log(res)
+            // return res.data;
+            this.fileList = res.data.data.list
+          });
     }
   },
   created() {
@@ -352,6 +367,7 @@ export default {
     await this.getUserMessList()
     await this.getUserDbList()
     await this.getAfficheList()
+    await this.getFile()
   },
   computed: {
       ...mapState('setting', ['theme','isMobile','pageMinHeight']),

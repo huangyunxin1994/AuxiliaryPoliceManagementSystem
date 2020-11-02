@@ -1,10 +1,22 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
-       <a-row>
-         <a-col :span="24"  style="text-align:center;margin-bottom:24px;">
-      <a-month-picker v-model="time1" :valueFormat="monthFormat"   @change="handleChange">
-            <h2 style="" :style="{'color':theme.color}">{{ time1 ? time1 : 'SelectTime' }}<a-icon type="caret-down" :style="{'color':theme.color}" style="margin-left:24px"/></h2>
+      <a-row>
+        <a-col :span="24" style="text-align: center; margin-bottom: 24px">
+          <a-month-picker
+            v-model="queryParam.month"
+            :valueFormat="monthFormat"
+            :disabled-date="disabledDate"
+            @change="handleChange"
+          >
+            <h2 style="" :style="{ color: theme.color }">
+              <span>{{ queryParam.month | filtersTime }}</span>
+              <a-icon
+                type="caret-down"
+                :style="{ color: theme.color }"
+                style="margin-left: 24px"
+              />
+            </h2>
             <template slot="monthCellContentRender" slot-scope="date">
               <div v-if="getMonthData(date)" style="width: 100%; height: 100%">
                 <a-badge :offset="[24, 0]" :count="getBadgeData(date)">
@@ -13,26 +25,26 @@
               </div>
             </template>
           </a-month-picker>
-         </a-col>
-       </a-row>
+        </a-col>
+      </a-row>
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="模糊查询">
-                <a-input placeholder="请输入要查询的关键词" />
+                <a-input v-model="queryParam.search" placeholder="请输入要查询的关键词" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <tree-select @handleTreeChange="handleTreeChange"></tree-select>
+                <tree-select :value="queryParam.organ" @handleTreeChange="handleTreeChange"></tree-select>
               </a-form-item>
             </a-col>
-             <template v-if="advanced">
+            <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="工资状态">
                   <a-select
-                    default-value=""
+                    v-model="queryParam.state"
                     style="width: 100%"
                     @change="handleChange"
                   >
@@ -68,19 +80,19 @@
         </a-form>
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
-        <a-button type="primary" icon="download" >查看工资表模板</a-button>
-        <a-button type="primary" icon="upload" style="margin-left: 8px">上传工资表</a-button>
-        <a-button type="primary" icon="sync" style="margin-left: 8px">同步工资表</a-button>
-        <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
-          <a-menu slot="overlay">
-            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-            
-            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-          </a-menu>
-          <a-button style="margin-left: 8px">
-            批量操作 <a-icon type="down" />
-          </a-button>
-        </a-dropdown> -->
+        <a-button type="primary" icon="download" @click="downloadExcel"
+          >查看工资表模板</a-button
+        >
+        <a-button
+          type="primary"
+          icon="upload"
+          style="margin-left: 8px"
+          @click="uploadExcel"
+          >上传工资表</a-button
+        >
+        <a-button type="primary" icon="sync" style="margin-left: 8px"
+          @click="synchroExcel">同步工资表</a-button
+        >
       </div>
       <s-table
         ref="table"
@@ -93,10 +105,10 @@
         <template slot="holiday" slot-scope="holiday">
           <span>{{ holiday | holidayFilter }}</span>
         </template>
-        <template slot="isEnable" slot-scope="isEnable">
+        <template slot="state" slot-scope="state">
           <a-badge
-            :status="isEnable == '1' ? 'processing' : 'error'"
-            :text="isEnable | statusFilter"
+            :status="state == '1' ? 'success' : 'error'"
+            :text="state | statusFilter"
           />
         </template>
         <span slot="action" slot-scope="text, record">
@@ -104,25 +116,118 @@
         </span>
       </s-table>
     </a-card>
+    <a-modal v-model="visible" title="上传工资表" on-ok="handleOk" centered destroyOnClose>
+      <template slot="footer">
+        <a-button key="back" @click="handleCancel"> 取消 </a-button>
+        <a-button key="submit" type="primary" :loading="loading" @click="handleOk">
+          确认
+        </a-button>
+      </template>
+      <a-form-model
+        ref="ruleForm"
+        :model="form"
+        :rules="rules"
+        :label-col="{
+          xs: { span: 24 },
+          sm: { span: 7 },
+        }"
+        :wrapper-col="{
+          xs: { span: 24 },
+          sm: { span: 13 },
+        }"
+      >
+        <a-row>
+          <a-col :xs="24" :sm="24">
+            <a-form-model-item label="组织选择" prop="organizationId">
+              <!-- 树选择 -->
+              <a-tree-select
+                v-model="form['organizationId']"
+                :treeData="treeSelect"
+                style="width: 100%"
+                :value="value"
+                :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                placeholder="Please select"
+                allow-clear
+                multiple
+                :replaceFields="{
+                  children: 'children',
+                  title: 'name',
+                  key: 'id',
+                  value: 'id',
+                }"
+                tree-default-expand-all
+              >
+              </a-tree-select>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+        <a-row>
+          <a-col :xs="24" :sm="24">
+            <a-form-model-item label="上传文件">
+              <a-upload
+                name="file"
+                :multiple="true"
+                action=""
+                :before-upload="beforeUpload"
+                :show-upload-list="true"
+              >
+                <a-button type="primary">选择文件</a-button>
+              </a-upload>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
+      </a-form-model>
+    </a-modal>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import moment from "moment";
 import STable from "@/components/Table_/";
-import treeSelect from "@/components/treeSelect/TreeSelect"
+import treeSelect from "@/components/treeSelect/TreeSelect";
+function filterArray(data) {
+  data.forEach(function (item) {
+    delete item.children;
+  });
+  var map = {};
+  data.forEach(function (item) {
+    map[item.id] = item;
+  });
+  var val = [];
+  data.forEach(function (item) {
+    var parent = map[item.parentId] || map[item.code];
+    if (parent) {
+      (parent.children || (parent.children = [])).push(item);
+    } else {
+      val.push(item);
+    }
+  });
+  return val;
+}
 export default {
   name: "WagesManage",
-  components:{
+  components: {
     STable,
-    treeSelect
+    treeSelect,
   },
   data() {
     return {
-      time1:moment(new Date()).format("YYYY年MM月"),
-      advanced:false,
-      showFormat:'YYYY年MM月',
+      form: {
+        organizationId: [],
+        fileList: [],
+      },
+      loading:false,
+      fileList: [],
+      rules: {},
+      tree: [],
+      treeSelect:[],
+      disableTree: [],
+      treeData: [],
+      visible: false,
+      salaryTitle: {},
+      advanced: false,
+      showFormat: "YYYY年MM月",
       monthFormat: "YYYY-MM",
       // 高级搜索 展开/关闭
       value: null,
@@ -141,8 +246,8 @@ export default {
         },
         {
           title: "姓名",
-          dataIndex: "policeName",
-          key: "policeName",
+          dataIndex: "name",
+          key: "name",
           width: 100,
         },
         {
@@ -159,45 +264,81 @@ export default {
         },
         {
           title: "状态",
-          dataIndex: "postName",
-          key: "postName",
+          dataIndex: "state",
+          key: "state",
+          scopedSlots: { customRender: "state" },
           width: 100,
-        }
+        },
       ],
-      queryParam:{},
-      loadScheduleData: (parameter) => {
-        
-        return new Promise((resolve) => {
-          resolve({
-              params:parameter,
-            data: [
-              {
-                key: "1",
-                policeName: "辅警1",
-                name: "管理员",
-                number: "FJ0584",
-                organizationName: "青秀区东葛路派出所",
-                startTime: "2020-06-18 09:00:00",
-                endTime: "2020-06-18 18:00:00",
-                duration: "7",
-                holiday: "1",
-                reason: "加班",
-                approvalResults: "通过",
-                approvalRemake: "通过",
-              },
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 10,
-          });
-        }).then((res) => {
-          return res;
+      queryParam: {
+        month: moment(
+          new Date(new Date().setMonth(new Date().getMonth() - 1))
+        ).format("YYYY-MM"),
+        organizationId:"",
+        oid:"",
+        search:"",
+        state:""
+      },
+      loadScheduleData: (params) => {
+        this.queryParam.oid = this.user.organizationId;
+        let param = Object.assign(params, this.queryParam);
+        return this.$api.salaryService.getSalary(param).then((res) => {
+          if (res.data.data.list.length > 0) {
+            const salaryTitle = Object.assign(
+              {},
+              JSON.parse(res.data.data.list[0].salaryContent)
+            );
+            this.scheduleColumns.map(
+              (j) => salaryTitle[j.title] && delete salaryTitle[j.title]
+            );
+            res.data.data.list.map((i, k) => {
+              i.key = k + 1;
+              const salaryVal = JSON.parse(i.salaryContent);
+              i = Object.assign(i, salaryVal);
+            });
+            Object.keys(salaryTitle)
+              .reverse()
+              .map((i) => {
+                let params = {};
+                params.title = i;
+                params.dataIndex = i;
+                params.key = i;
+                this.scheduleColumns.splice(4, 0, params);
+              });
+          }
+
+          return res.data;
         });
-      }
+      },
     };
   },
+  mounted() {
+    const oid =
+      (this.user.account !== "huachen2020" && this.user.organizationId) || "";
+    this.$api.organizationService
+      .getOrganization({ organizationId: oid })
+      .then((res) => {
+        const data = JSON.parse(JSON.stringify(res.data.data.data));
+        this.tree = Object.assign([], res.data.data.data);
+        this.treeData = filterArray(data);
+        // this.$emit("getTreeData",this.filterTree)
+      });
+    this.$nextTick(() => {
+      this.searchDisabledTree()
+    });
+  },
   methods: {
+    disabledDate(current) {
+      console.log(current);
+      console.log(moment().endOf("month"));
+      return (
+        current &&
+        current >
+          moment(
+            new Date(new Date().setMonth(new Date().getMonth() - 1))
+          ).endOf("month")
+      );
+    },
     getBadgeData(value) {
       let result = moment(value).format("M");
       let arr = [
@@ -225,54 +366,112 @@ export default {
     getMonthData(value) {
       return moment(value).format("M月");
     },
-    /**
-     * 表单弹窗
-     * @param form form模板页面，通过import引入
-     * @param formProps form配置项 Object
-     * @param modalProps 弹窗配置项 Object
-     */
-    openModal(form, formProps, modalProps) {
-      const defaultModalProps = {
-        on: {
-          ok() {
-            console.log("ok 回调");
-          },
-          cancel() {
-            console.log("cancel 回调");
-          },
-          close() {
-            console.log("modal close 回调");
-          },
-        },
-      };
-      formProps = Object.assign(formProps, defaultModalProps);
-      this.$dialog(
-        form,
-        // component props
-        formProps,
-        // modal props
-        modalProps
-      );
-    },
+
     //打开关闭日期选择器
-    handleChange(date){
-      console.log( moment(date).format("YYYY年MM月"))
-      this.time1 = moment(date).format("YYYY年MM月")
+    handleChange() {
+      this.$refs.table.refresh(true);
+      this.searchDisabledTree()
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
     //树选择回调
-    handleTreeChange(obj){
-      this.value = obj.val
-      console.log("this.value = " + this.value)
-    }
+    handleTreeChange(obj) {
+      this.queryParam.organizationId = obj.val;
+    },
+    downloadExcel() {
+      window.location.href = `${process.env.VUE_APP_API_BASE_URL}/salary/formwork?month=${this.queryParam.month}`;
+    },
+    uploadExcel() {
+      this.visible = true;
+    },
+    synchroExcel(){
+      const _this = this
+      this.$confirm({
+        title: "提示",
+        content: `真的要同步 ${_this.queryParam.month} 月份工资表吗 吗?`,
+        okText: "同步",
+        okType: "primary",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          _this.$api.salaryService.getSynchro({month:_this.queryParam.month,organizationId:_this.user.organizationId }).then((res) => {
+            console.log(res);
+            if(res.data.code === 0){
+              _this.$message.success(res.data.msg)
+              _this.$refs.table.refresh(true)
+            }else{
+              _this.$message.error(res.data.msg)
+            }
+          });
+        },
+        onCancel() {},
+      });
+      
+    },
+    handleOk() {
+      this.loading = true
+      this.form.month = this.queryParam.month;
+      this.$api.salaryService.postSalary(this.form).then((res) => {
+        this.loading = false
+        this.visible = false;
+        if(res.data.code === 0){
+          this.$message.success(res.data.msg)
+          this.$refs.table.refresh(true)
+        }else{
+          this.$message.error(res.data.msg)
+        }
+      });
+    },
+    handleCancel() {
+      this.visible = false;
+    },
+    // 上传文件
+    beforeUpload(file) {
+      console.log(file);
+      this.form.fileList = [...this.fileList, file];
+      return false;
+    },
+    //查询已上传工资条的组织
+    searchDisabledTree(){
+      this.$api.salaryService
+        .getSalaryfileter({ id: this.user.organizationId, month: this.queryParam.month })
+        .then((res) => {
+          this.disableTree = res.data.data.list;
+          this.treeSelect = JSON.parse(JSON.stringify(this.tree))
+          this.treeSelect = this.treeFilter(this.treeSelect)
+        });
+    },
+    treeFilter(data) {
+      data.forEach((item) => {
+        delete item.children;
+        this.disableTree.forEach((i) => {
+          if (i === item.id) {
+            item.disabled = true;
+          }
+        });
+      });
+      var map = {};
+      data.forEach(function (item) {
+        map[item.id] = item;
+      });
+      var val = [];
+    data.forEach(function (item) {
+        var parent = map[item.parentId] || map[item.code];
+        if (parent) {
+          (parent.children || (parent.children = [])).push(item);
+        } else {
+          val.push(item);
+        }
+      });
+      return val;
+    },
   },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        1: "是",
-        2: "否",
+        1: "已同步",
+        2: "未同步",
       };
       return statusMap[status];
     },
@@ -283,9 +482,14 @@ export default {
       };
       return statusMap[holiday];
     },
+    filtersTime(time) {
+      const dateTime = moment(new Date(time)).format("YYYY年MM月");
+      return dateTime;
+    },
   },
   computed: {
-    ...mapState("setting", ["theme","pageMinHeight"]),
+    ...mapState("setting", ["theme", "pageMinHeight"]),
+    ...mapGetters("account", ["user"]),
   },
 };
 </script>

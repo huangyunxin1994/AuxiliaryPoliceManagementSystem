@@ -18,6 +18,7 @@ import educationService from "./EducationApi/index"
 import workService from "./WorkApi/index"
 import familyService from "./FamilyApi/index"
 import messageService from "./messageApi/index"
+import salaryService from "./SalaryApi/index"
 export default{
   userService,
   overTimeService,
@@ -37,5 +38,6 @@ export default{
   educationService,
   workService,
   familyService,
-  messageService
+  messageService,
+  salaryService
 }

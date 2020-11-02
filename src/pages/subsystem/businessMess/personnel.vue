@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 export default {
   name: "OrganManage",
@@ -115,7 +115,7 @@ export default {
         type:1
       },
       rankData: (parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
+        const requestParameters = Object.assign({}, parameter, this.rankQuery)
         return this.$api.personAdminService.getRankPostHistory(requestParameters)
           .then(res => {
             res.data.data.list.map((i,k)=>i.key=k+1)
@@ -163,7 +163,7 @@ export default {
         type:2
       },
       postData:(parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.postParam)
+        const requestParameters = Object.assign({}, parameter, this.postQuery)
         return this.$api.personAdminService.getRankPostHistory(requestParameters)
           .then(res => {
             res.data.data.list.map((i,k)=>i.key=k+1)
@@ -230,9 +230,9 @@ export default {
     };
   },
   created(){
-    this.queryParam.userId = this.policeId
-    this.postParam.userId = this.policeId
-    this.proferssPara.userId = this.policeId
+    this.rankQuery.userId = this.policeId || this.user.id
+    this.postQuery.userId = this.policeId || this.user.id
+    this.proferssPara.userId = this.policeId || this.user.id
     
   },
   methods: {
@@ -280,6 +280,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
+    ...mapGetters("account", ["user"]),
     rowCredSelection() {
       return {
         selectedRowKeys: this.selectedCredRowKeys,

@@ -6,8 +6,8 @@ const API_PROXY_PREFIX={
 const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX
 // const BASE_URL = process.env.VUE_APP_API_BASE_URL
 module.exports = {
-  GETFAMILY:`${BASE_URL.lk}/family/`,//根据辅警id查找家庭信息
-  POSTFAMILY: `${BASE_URL.lk}/family/`,//新增家庭信息
-  PUTFAMILY:`${BASE_URL.lk}/family/`,//修改家庭信息
-  DELETEFAMILY:`${BASE_URL.lk}/family/`,//删除家庭信息
+  GETFAMILY:`${BASE_URL}/family/`,//根据辅警id查找家庭信息
+  POSTFAMILY: `${BASE_URL}/family/`,//新增家庭信息
+  PUTFAMILY:`${BASE_URL}/family/`,//修改家庭信息
+  DELETEFAMILY:`${BASE_URL}/family/`,//删除家庭信息
 }

@@ -12,10 +12,10 @@ module.exports = {
   // POSTBYUSER:`${BASE_URL}/OvertimeLeave/OvertimeLeave/Statistics`,//管理员新增辅警请假或加班申请
   // STATISTICS:`${BASE_URL}/OvertimeLeave/OvertimeLeave/user`,//获取加班或请假统计分页列表
 
-  GETDATA:`${BASE_URL.lk}/contract/`,//获取合同管理信息列表
-  POSTdATA:`${BASE_URL.lk}/contract/`,//批量添加合同信息
-  GETDETAILS:`${BASE_URL.lk}/contract/details`,//根据辅警id查询合同信息
-  PODTEXTENSION:`${BASE_URL.lk}/contract/renewal`,//续约合同
-  DOWNLAODNOC:`${BASE_URL.lk}/contract/downloadFile`,//下载文件
-  POSTFILES:`${BASE_URL.lk}/contract/uploadFile`,//文件上传
+  GETDATA:`${BASE_URL}/contract/`,//获取合同管理信息列表
+  POSTdATA:`${BASE_URL}/contract/`,//批量添加合同信息
+  GETDETAILS:`${BASE_URL}/contract/details`,//根据辅警id查询合同信息
+  PODTEXTENSION:`${BASE_URL}/contract/renewal`,//续约合同
+  DOWNLAODNOC:`${BASE_URL}/contract/downloadFile`,//下载文件
+  POSTFILES:`${BASE_URL}/contract/uploadFile`,//文件上传
 }

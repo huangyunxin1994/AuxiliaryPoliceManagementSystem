@@ -7,6 +7,7 @@
     :allowClear="allowClear"
     :replaceFields="replaceFields"
     :treeCheckStrictly="treeCheckStrictly"
+    :multiple="multiple"
     :tree-checkable="checkable"
     placeholder="请选择组织"
     tree-default-expand-all
@@ -64,6 +65,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -71,7 +76,7 @@ export default {
     };
   },
   mounted() {
-    const oid = this.user.organizationId
+    const oid = this.user.account !=='huachen2020' && this.user.organizationId || ""
     this.$api.organizationService.getOrganization({organizationId:oid}).then((res)=>{
         let tree = res.data.data.data
         tree.forEach(item => {

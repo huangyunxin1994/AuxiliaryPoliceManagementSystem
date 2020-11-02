@@ -44,7 +44,7 @@
                     <a-select-option
                       v-for="(i, j) in item.select"
                       :key="j"
-                      :value="i.id || i.name"
+                      :value="i.value || i.name"
                     >
                       {{ i.name }}
                     </a-select-option>
@@ -54,8 +54,8 @@
                     v-model="form[item.name]"
                     v-else-if="item.type == 'picker'"
                     :disabled="item.disabled"
-                    :show-time="item.showTime&&{ format: 'HH:mm:ss' }||false"
-                    valueFormat="YYYY-MM-DD HH:mm:ss"
+                    :show-time="item.showTime&&item.showTime||false"
+                    valueFormat="YYYY-MM-DD HH:mm"
                     type="date"
                     :placeholder="item.placeholder"
                     style="width: 100%"

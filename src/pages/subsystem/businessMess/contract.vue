@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 // import TaskForm from "@/components/formModel/formModel";
 import moment from 'moment';
@@ -200,7 +200,7 @@ export default {
     };
   },
   created(){
-    this.queryParam.id = this.policeId
+    this.queryParam.id = this.policeId || this.user.id
   },
   methods: {
     moment,
@@ -264,6 +264,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
+    ...mapGetters("account", ["user"]),
     rowCredSelection() {
       return {
         selectedRowKeys: this.selectedCredRowKeys,

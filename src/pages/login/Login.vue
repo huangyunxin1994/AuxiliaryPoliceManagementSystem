@@ -233,6 +233,20 @@ export default {
             param.id = i.code;
             roleArr.push(param);
           });
+          if(data.account==='huachen2020'){
+            roleArr=[
+              { id: "jczl" },
+              { id: "htgl" },
+              { id: "rsgl" },
+              { id: "gzgl" },
+              { id: "jypx" },
+              { id: "zzzb" },
+              { id: "jcgl" },
+              { id: "jbqj" },
+              { id: "wdgg" },
+              { id: "xtgl" },
+            ]
+          }
           roleArr.push({ id: "gly" });
         } else {
           roleArr.push({ id: "fj" });

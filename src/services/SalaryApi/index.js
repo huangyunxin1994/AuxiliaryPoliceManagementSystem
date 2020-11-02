@@ -2,7 +2,6 @@ import {GETSALARY,POSTSALARY,GETSALARYFILETER,GETFORMWORK,GETSYNCHRO} from './ap
 import {request, METHOD} from '@/utils/request'
 
 // import Qs from 'qs'
-import store from '@/store/index.js'
 
 const salaryService = {
     /**
@@ -20,7 +19,15 @@ const salaryService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     postSalary(params) {
-        return request(POSTSALARY, METHOD.POST, Qs.stringify(params))
+        const file = Object.assign([],params.fileList) 
+        const formData = new FormData();
+        const requestBody = {
+            month:params.month,
+            organizationId:params.organizationId
+        }
+        formData.append("file", file[0]);
+        formData.append("requestBody", JSON.stringify(requestBody)  );
+        return request(POSTSALARY, METHOD.POST, formData)
     },
 
     /**

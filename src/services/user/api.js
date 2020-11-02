@@ -8,6 +8,6 @@ const MOCK_URL = 'http://192.168.1.8:8181'
 // const BASE_URL = process.env.VUE_APP_API_BASE_URL
 console.log(BASE_URL)
 module.exports = {
-  LOGIN: `${BASE_URL.lk}/login`,
+  LOGIN: `${BASE_URL}/login`,
   ROUTES: `${MOCK_URL}/routes`
 }

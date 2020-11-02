@@ -1,7 +1,7 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
-		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">培训记录</div>
+		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">加班请假统计 </div>
 		<div class="table-page-search-wrapper">
 			<a-form layout="inline">
 				<a-row :gutter="48">
@@ -31,6 +31,9 @@
 				</a-row>
 			</a-form>
 		</div>
+        <div class="table-operator" style="margin-bottom: 24px">
+            <a-button type="primary" icon="export"   style="margin-right: 10px" @click="overtime">导出</a-button>
+        </div>
 		<s-table
 			ref="table"
 			rowKey="key"
@@ -39,18 +42,28 @@
 			:scroll="{ y: 600, x: 650 }"
 			showPagination="auto"
 		>
+      <template
+        slot="state"
+        slot-scope="state">
+        <a-badge
+          :status="state == '1' ? 'success' : state == '2' ? 'error':'processing'"
+          :text="state | statusFilter"
+        />
+      </template>
 		</s-table>
     </a-card>
   </div>
 </template>
 
 <script>
-import { mapState,mapGetters } from "vuex";
+import { mapState } from "vuex";
 import STable from "@/components/Table_/";
+import fromModel from "@/components/formModel/formModel";
 export default {
   name: "OrganManage",
   components: {
     STable,
+    fromModel
   },
   props:{
     policeId:String
@@ -73,57 +86,97 @@ export default {
           width: 60,
         },
         {
-          title: "开始时间",
-          dataIndex: "startTime",
-          key: "startTime",
-          ellipsis: true,
+          title: "月份",
+          dataIndex: "overtimeHours",
+          key: "overtimeHours",
+          width: 150,
+        },
+        {
+          title: "加班时长(小时)",
+          dataIndex: "overtimeHours",
+          key: "overtimeHours",
+          width: 150,
+        },
+        {
+          title: "年假(小时)",
+          dataIndex: "One",
+          key: "One",
           width: 100,
         },
         {
-          title: "结束时间",
-          dataIndex: "endTime",
-          key: "endTime",
-          ellipsis: true,
-          width: 150
+          title: "产假(小时)",
+          dataIndex: "Two",
+          key: "Two",
+          width: 100,
         },
         {
-          title: "总学时",
-          dataIndex: "classHour",
-          key: "classHour",
-          ellipsis: true,
-          width: 100
+          title: "陪产假(小时)",
+          dataIndex: "Three",
+          key: "Three",
+          width: 120,
         },
         {
-          title: "培训方式",
-          dataIndex: "learningStyle",
-          key: "learningStyle",
-          ellipsis: true,
-          width: 100
+          title: "婚假(小时)",
+          dataIndex: "Four",
+          key: "Four",
+          width: 100,
         },
         {
-          title: "创建人",
-          dataIndex: "creator",
-          key: "creator",
-          ellipsis: true,
-          width: 150
+          title: "例假(小时)",
+          dataIndex: "Five",
+          key: "Five",
+          width: 100,
         },
         {
-          title: "培训内容说明",
-          dataIndex: "learningContent",
-          key: "learningContent",
-          ellipsis: true,
-          width: 200
+          title: "丧假(小时)",
+          dataIndex: "Six",
+          key: "Six",
+          width: 100,
         },
+        {
+          title: "哺乳假(小时)",
+          dataIndex: "Seven",
+          key: "Seven",
+          width: 120,
+        },
+        {
+          title: "事假(小时)",
+          dataIndex: "Eight",
+          key: "Eight",
+          width: 100,
+        },
+        {
+          title: "调休(小时)",
+          dataIndex: "Nine",
+          key: "Nine",
+          width: 100,
+        },
+        {
+          title: "病假(小时)",
+          dataIndex: "Ten",
+          key: "Ten",
+          width: 100,
+        },
+        {
+          title: "其他(小时)",
+          dataIndex: "Eleven",
+          key: "Eleven",
+          width: 100,
+        },
+        {
+          title: "请假合计(小时)",
+          dataIndex: "",
+          key: "",
+          width: 150,
+        }
       ],
-      queryParam:{
-        id:undefined
+      overTimeParam:{
+        userId:undefined,
       },
       loadCredData: (params) => {
-        let param = Object.assign(params,this.queryParam)
-        return this.$api.trainService.getEducationDetails(param).then((res)=>{
+        let param = Object.assign(params,this.overTimeParam)
+        return this.$api.overTimeService.statistics(param).then((res)=>{
           console.log(res)
-          res.data.data.count = res.data.data.list.length;
-              res.data.data.currentPage = 1;
           res.data.data.list.map((i,k)=>{
             i.key=k+1
           })
@@ -132,49 +185,38 @@ export default {
       },
       selectedCredRowKeys: [],
       selectedCredRows: [],
-        form:{
-            learningName:'',
-            startTime:'',
-            endTime:'',
-            classHour:'',
-            learningStyle:'',
-            learningContent:''
-        },
         labelCol: { span: 4 },
         wrapperCol: { span: 14 },
     };
   },
   created(){
-    this.queryParam.id = this.policeId || this.user.id
+    this.overTimeParam.userId = this.policeId
   },
   methods: {
-    
-    onCredSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedCredRowKeys = selectedRowKeys;
-      this.selectedCredRows = selectedRows;
-    },
-    onEqupSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedEqupRowKeys = selectedRowKeys;
-      this.selectedEqupRows = selectedRows;
-    },
-
-    
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
   },
   filters: {
-    statusFilter(status) {
+    typeFilter(type) {
       const statusMap = {
-        processing: "启用",
-        error: "禁用",
+        1: "年假 ",
+        2: "产假 ",
+        3: "陪产假",
+        4: "婚假",
+        5: "例假",
+        6: "丧假",
+        7: "哺乳假",
+        8: "事假",
+        9: "调休",
+        10: "病假",
+        11: "其他"
       };
-      return statusMap[status];
-    },
+      return statusMap[type];
+    }
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
-     ...mapGetters("account", ["user"]),
     rowCredSelection() {
       return {
         selectedRowKeys: this.selectedCredRowKeys,

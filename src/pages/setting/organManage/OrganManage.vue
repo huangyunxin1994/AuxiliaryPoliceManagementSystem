@@ -147,7 +147,7 @@ const organTitle = [
       value: "id",
     },
   },
-  { label: "组织名称", name: "name", type: "input" },
+  { label: "组织名称", name: "name", type: "picker" },
 ];
 
 const organRules = {

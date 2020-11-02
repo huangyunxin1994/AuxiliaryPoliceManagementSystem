@@ -66,6 +66,7 @@ const formTitle = [
     label: "上传文件",
     name: "fileList",
     type: "upload",
+    required:true,
     placeholder: "请输入请假原因",
   },
   {
@@ -151,7 +152,7 @@ export default {
     this.queryParam.oid = this.user.organizationId
   },
   mounted(){
-    this.BASE_URL = process.env.VUE_APP_API_BASE_URL2
+    this.BASE_URL = process.env.VUE_APP_API_BASE_URL
     console.log( this.BASE_URL)
   },
   methods: {

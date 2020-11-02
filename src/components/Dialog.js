@@ -33,7 +33,8 @@ export default (Vue) => {
       data () {
         return {
           visible: true,
-          loading:false
+          loading:false,
+          destroyOnClose:true
         }
       },
       router: _vm.$router,

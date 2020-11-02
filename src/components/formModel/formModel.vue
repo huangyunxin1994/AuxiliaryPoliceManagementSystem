@@ -2,7 +2,7 @@
   <a-form-model
     ref="ruleForm"
     :model="form"
-    :rules="rules"
+    :rules="formRules"
     :label-col="labelCol"
     :wrapper-col="wrapperCol"
     :layout="layout"
@@ -39,7 +39,7 @@
             <a-select-option
               v-for="(i, j) in item.select"
               :key="j"
-              :value="i.id || i.name"
+              :value="i.value || i.name"
             >
               {{ i.name }}
             </a-select-option>
@@ -123,6 +123,8 @@
             :keyName="item.name"
             :labelName="item.labelName"
             :allowClear="true"
+            :multiple="item.multiple"
+            :treeCheckStrictly="true"
             :replaceFields="item.replaceFields"
             @handleTreeChange="handleTreeChange"
           ></tree-select>
@@ -132,6 +134,7 @@
             :default-file-list="form[item.name]"
             action=""
             :before-upload="beforeUpload"
+            :remove="handleRemove"
             :show-upload-list="true"
             v-else-if="item.type == 'upload'"
           >
@@ -206,11 +209,23 @@ export default {
       form: {},
       dataSource: [],
       fileList: [],
+      formRules:{}
     };
   },
   created() {
+    this.formRules = Object.assign({},this.rules)
     this.formTitle.forEach((i) => {
       this.dataSource.push(i.name);
+      if(i.type === 'upload' && i.required){
+        let validatePass2 = (rule, value, callback) => {
+          if (this.fileList.length===0) {
+            callback(new Error('请上传文件'));
+          } else {
+            callback();
+          }
+        };
+        this.formRules.fileList = [{required:true, validator: validatePass2, trigger: "change" }]
+      }
     });
     if (this.record) {
       console.log(this.record);
@@ -220,6 +235,8 @@ export default {
       );
       console.log("*********" + JSON.stringify(this.form));
     }
+   
+
   },
   watch: {
     record(val) {
@@ -265,18 +282,17 @@ export default {
             .then((res) => {
               console.log(res);
               if(res.code === 0){
-                this.resetForm();
+                // this.resetForm();
                 this.$message.success(res.msg);
                 resolve(true);
               }else{
-                this.resetForm();
+                // this.resetForm();
                 this.$message.error(res.msg);
                 resolve(true);
               }
               
             })
             .catch((err) => {
-              this.resetForm();
               this.$message.success(err.msg);
               resolve(true);
             });
@@ -300,8 +316,16 @@ export default {
           });
       //
     },
+    handleRemove(file) {
+      const index = this.fileList.indexOf(file);
+      const newFileList = this.fileList.slice();
+      newFileList.splice(index, 1);
+      this.fileList = newFileList;
+      this.form.fileList = newFileList
+    },
     // 上传文件
     beforeUpload(file) {
+      this.fileList = [...this.fileList, file];
       this.form.fileList = [...this.fileList, file];
       return false;
     },

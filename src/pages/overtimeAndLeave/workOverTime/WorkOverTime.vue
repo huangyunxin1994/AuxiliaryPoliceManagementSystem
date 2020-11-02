@@ -113,6 +113,7 @@
       :rules="rules"
       :stepTitle="stepTitle"
       :submitFun="submitFun"
+      @refreshTable="reloadData"
     ></form-step>
   </div>
 </template>
@@ -129,12 +130,14 @@ const formTitle = [
     name: "startTime",
     type: "picker",
     placeholder: "请选择加班开始时间",
+    showTime:{ format: 'HH:mm' }
   },
   {
     label: "结束时间",
     name: "endTime",
     type: "picker",
     placeholder: "请选择加班结束时间",
+    showTime:{ format: 'HH:mm' }
   },
   {
     label: "时长(小时)",

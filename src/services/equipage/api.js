@@ -16,6 +16,6 @@ module.exports = {
   // PUTRANK:`${BASE_URL}/Other/rankest/rank`,//修改职级
   // DELETERANK:`${BASE_URL}/Other/rankest/rank/`,//删除职级 
 
-  GETLIST:`${BASE_URL.lk}/CertificateEquipment/history`,//获取证件或装备列表
-  POSTEDUCATION:`${BASE_URL.lk}/CertificateEquipment/certificateEquipment`,//新增发放证件或装备
+  GETLIST:`${BASE_URL}/CertificateEquipment/history`,//获取证件或装备列表
+  POSTEDUCATION:`${BASE_URL}/CertificateEquipment/certificateEquipment`,//新增发放证件或装备
 }

@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 export default {
   name: "OrganManage",
@@ -248,8 +248,8 @@ export default {
     };
   },
   created(){
-    this.queryParam.userId = this.policeId
-    this.equParam.userId = this.policeId
+    this.queryParam.userId = this.policeId || this.user.id
+    this.equParam.userId = this.policeId || this.user.id
   },
   methods: {
     
@@ -295,6 +295,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
+     ...mapGetters("account", ["user"]),
     rowCredSelection() {
       return {
         selectedRowKeys: this.selectedCredRowKeys,
