@@ -10,6 +10,7 @@
             @editTreeNode="editTreeNode"
             @addTreeNode="addTreeNode"
             @removeTreeNode="removeTreeNode"
+            @loadTreeNode="loadTreeNode"
           >
           </ant-tree>
         </a-col>
@@ -19,22 +20,21 @@
               <a-row :gutter="48">
                 <a-col :md="8" :sm="24">
                   <a-form-item label="模糊查询">
-                    <a-input placeholder="请输入要查询的关键词" />
+                    <a-input placeholder="请输入要查询的关键词" v-model="queryParam.search"/>
                   </a-form-item>
                 </a-col>
                 <a-col :md="8" :sm="24">
                   <a-form-item label="岗位选择">
-                    <a-select default-value="" @change="handleChange">
-                      <a-select-option value=""> 全部 </a-select-option>
-                      <a-select-option value="1"> 是 </a-select-option>
-                      <a-select-option value="2"> 否 </a-select-option>
-                    </a-select>
+                    <a-select  v-model="queryParam.postId" style="width: 100%">
+                          <a-select-option value=""> 全部 </a-select-option>
+                          <a-select-option :value="item.id" v-for="item in postList" :key="item.id"> {{item.name}} </a-select-option>
+                        </a-select>
                   </a-form-item>
                 </a-col>
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="是否专业辅警">
-                      <a-select default-value="" @change="handleChange">
+                      <a-select default-value="" v-model="queryParam.isMajor">
                         <a-select-option value=""> 全部 </a-select-option>
                         <a-select-option value="1"> 是 </a-select-option>
                         <a-select-option value="2"> 否 </a-select-option>
@@ -45,35 +45,34 @@
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="职级选择">
-                      <a-select default-value="" @change="handleChange">
-                        <a-select-option value=""> 全部 </a-select-option>
-                        <a-select-option value="1"> 是 </a-select-option>
-                        <a-select-option value="2"> 否 </a-select-option>
-                      </a-select>
+                      <a-select default-value=""  v-model="queryParam.rankId">
+												<a-select-option value=""> 全部 </a-select-option>
+                        <a-select-option v-for="(item,index) in rankMess" :key="index" :value="item.id"> {{item.name}} </a-select-option>
+											</a-select>
                     </a-form-item>
                   </a-col>
                 </template>
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="学历选择">
-                      <a-select default-value="" @change="handleChange">
+                      <a-select default-value=""  v-model="queryParam.education">
                         <a-select-option value=""> 全部 </a-select-option>
-                        <a-select-option value="1"> 专科 </a-select-option>
-                        <a-select-option value="2"> 本科 </a-select-option>
-                        <a-select-option value="3"> 硕士 </a-select-option>
-                        <a-select-option value="4"> 博士 </a-select-option>
-                        <a-select-option value="5"> 博士后 </a-select-option>
+                        <a-select-option value="专科"> 专科 </a-select-option>
+                        <a-select-option value="本科"> 本科 </a-select-option>
+                        <a-select-option value="硕士"> 硕士 </a-select-option>
+                        <a-select-option value="博士"> 博士 </a-select-option>
+                        <a-select-option value="博士后"> 博士后 </a-select-option>
                       </a-select>
                     </a-form-item>
                   </a-col>
                 </template>
-                <template v-if="advanced">
+                <!-- <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="工龄">
                       <a-input placeholder="请输入工龄" />
                     </a-form-item>
                   </a-col>
-                </template>
+                </template> -->
                 <a-col :md="(!advanced && 8) || 24" :sm="24">
                   <span
                     class="table-page-search-submitButtons"
@@ -86,8 +85,7 @@
                     >
                     <a-button
                       style="margin-left: 8px"
-                      @click="() => (queryParam = {})"
-                      >重置</a-button
+                      @click="resetTable">重置</a-button
                     >
                     <a @click="toggleAdvanced" style="margin-left: 8px">
                       {{ advanced ? "收起" : "展开" }}
@@ -293,28 +291,20 @@ export default {
           width: 100,
         },
       ],
-      diaData: [
-        {
-          key: "1",
-          rank: "阿斯顿发",
-          status: "processing",
-          date: "2020-05-02",
-          cause: "作风优良",
-          principal: "张三",
-        },
-        {
-          key: "2",
-          rank: "阿斯顿发",
-          status: "error",
-          date: "2020-05-02",
-          cause: "贪污腐败",
-          principal: "张三",
-        },
-      ],
-      queryParam: {},
+      diaData: [],
+      queryParam: {
+        search:'',
+        postId:'',
+        oid:'',
+        rankId:'',
+        education:'',
+        isMajor:'',
+        organizationId:''
+      },
       loadScheduleData: (params) => {
         this.queryParam.oid = this.user.organizationId;
         let param = Object.assign(params, this.queryParam);
+        console.log(param)
         return this.$api.auxiliaryPoliceService.getAuxiliaryPoliceData(param).then((res) => {
           res.data.data.list.map((i, k) => {
             i.key = k + 1;
@@ -374,9 +364,29 @@ export default {
         ],
       },
       advanced: false,
+      rankMess:[],//职级选择列表
+      postList:[],//岗位选择列表
     };
   },
   methods: {
+    // 获取职级列表
+    getRankList(){
+      let para = {
+        oid:this.user.organizationId
+      }
+      this.$api.rankPostService.getRankList(para).then((res)=>{
+        console.log(res)
+        let rank = res.data.data.list
+        console.log(rank)
+        this.rankMess = rank
+      })
+    },
+    // 获取岗位列表
+    getPostList(){
+      this.$api.rankPostService.getPostList().then(res=>{
+          this.postList = Object.assign([],res.data.data.list)
+      })
+    },
     handleEdit(id,name) {
       this.$router.push({
         path:"/baseMess",
@@ -401,8 +411,11 @@ export default {
     handleTitleClick(item) {
       console.log("handleTitleClick", item);
     },
-    handleChange(e) {
-      console.log(e);
+    
+    loadTreeNode(data){
+      console.log(data)
+      this.queryParam.organizationId = data.id
+      this.$refs.table.refresh(true)
     },
     //编辑树节点
     editTreeNode(params) {
@@ -422,6 +435,14 @@ export default {
       this.selectedRows = selectedRows;
     },
 
+    resetTable(){
+      this.queryParam.search = ''
+      this.queryParam.postId = ''
+      this.queryParam.oid = ''
+      this.queryParam.rankId = ''
+      this.queryParam.education = ''
+      this.queryParam.isMajor = ''
+    },
     // 职级变更
     changeRank() {
       console.log(this.selectedRows);
@@ -482,6 +503,10 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+  },
+  mounted () {
+      this.getRankList()
+      this.getPostList()
   },
   filters: {
     statusFilter(status) {

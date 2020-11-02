@@ -101,6 +101,7 @@ export default {
           title: "辅警编号",
           dataIndex: "number",
           key: "number",
+          width:100
         },
         {
           title: "所属组织",
@@ -112,11 +113,13 @@ export default {
           title: "配发日期",
           dataIndex: "allotmentDate",
           key: "allotmentDate",
+          width:100
         },
         {
           title: "有效期限",
           dataIndex: "termValidity",
           key: "termValidity",
+          width:100
         },
             {
               title: '回收日期',
