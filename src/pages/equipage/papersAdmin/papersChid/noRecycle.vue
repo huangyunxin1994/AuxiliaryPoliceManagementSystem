@@ -249,10 +249,12 @@ export default {
   created() {
     this.$api.certEquipService.getCertEqupType({ type: 1 }).then((res) => {
         this.certList = res.data.data.list   
+        console.log(this.certList)
         this.formTitle = [
         {
           label: "证件类型",
           name: "cqId",
+          labelName:"cqName",
           type: "select",
           refName: "cqId",
           placeholder: "请输入证件类型",
@@ -275,7 +277,8 @@ export default {
       ]
     })
     this.record = {
-        issuedBy:this.user.name
+        issuedBy:this.user.name,
+        issuedById:this.user.id
       }
       this.queryParam.oid = this.user.organizationId
   },
@@ -333,8 +336,19 @@ export default {
         cancelText: "取消",
         onOk() {
           console.log(_this);
+          let arr = [];
+          _this.selectedRowKeys
+            .map((i) => {
+              const param = {
+                id: i,
+                type: 1,
+                recycler: _this.user.name,
+                recyclerId: _this.user.id,
+              };
+              arr.push(param)
+            })
           _this.$api.certEquipService
-            .putCertEqup(_this.selectedRowKeys)
+            .putCertEqup(arr)
             .then((res) => {
               if (res.data.code == 0) {
                 _this.$message.success(res.data.msg);

@@ -4,6 +4,7 @@
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
         <a-button style="margin-left: 8px" icon="cloud-upload" @click="publish"
+        :disabled="disabled"
           >发布</a-button
         >
         <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -67,6 +68,7 @@ export default {
   },
   data() {
     return {
+      disabled:false,
       scheduleColumns: [
         {
           title: "序号",
@@ -98,6 +100,8 @@ export default {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         return this.$api.wageItemsService.getWageItems(requestParameters)
           .then(res => {
+            if(res.data.data.list.length === 0) this.disabled=true
+            else this.disabled=false
             res.data.data.list.map((i,k)=>i.key=k+1)
             return res.data
           })

@@ -3,7 +3,7 @@ const API_PROXY_PREFIX={
   lk:'/api/lk',
   rzh:'/api/rzh'
 }
-const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX.lk
+const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX.rzh
 module.exports = {
   // GETORGAN:`${BASE_URL}/organization/`,//查询该组织所有下级及人数
   // POSTORGAN:`${BASE_URL}/organization/`,//添加组织
@@ -20,5 +20,6 @@ module.exports = {
   GETDBLIST:`${BASE_URL}/Msg/user/dbList`,//管理员获取代办列表
   GETLIST:`${BASE_URL}/Msg/user/list`,//获取管理员个人消息通知列表
   POSTNOTICE:`${BASE_URL}/Msg/user/notice`,//管理员通知删除
+  DELETENOTICE:`${BASE_URL}/Msg/auxiliaryPolice/`,//辅警通知删除
   
 }

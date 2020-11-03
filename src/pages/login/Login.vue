@@ -222,7 +222,8 @@ export default {
         loginRes.data.expireAt = new Date(
           new Date().getTime() + 60 * 60 * 1000
         );
-        data.avatar =
+      //  `${this.BASE_URL}/img/${this.$route.query.photoPath}`;
+        data.avatar = 
           "https://gw.alipayobjects.com/zos/rmsportal/cnrhVkzwxjPwAaCfPbdc.png";
         this.setUser(data);
         let roleArr = [];

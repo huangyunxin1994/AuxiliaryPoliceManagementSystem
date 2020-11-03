@@ -1,4 +1,4 @@
-import {GETDATA,POSTDATA,PUTDATA} from './api'
+import {GETDATA,POSTDATA,PUTDATA,POSTHEAD} from './api'
 import {request, METHOD} from '@/utils/request'
 import Qs from 'qs'
 const auxiliaryPoliceService = {
@@ -25,7 +25,16 @@ const auxiliaryPoliceService = {
      */
     putAuxiliaryPolice(params){
         return request(PUTDATA, METHOD.PUT, Qs.stringify(params))
-    }
+    },
+     /**
+     * 修改头像
+     * @param params 
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    postAuxiliaryHead(params){
+        console.log(params)
+        return request(POSTHEAD, METHOD.POST, params)
+    },
 }
 
 

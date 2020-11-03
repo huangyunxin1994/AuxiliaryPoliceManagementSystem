@@ -124,7 +124,7 @@
     <form-step
       ref="modal"
       title="新建请假记录"
-      :record="{ type: 2 }"
+      :record="addRecord"
       :formTitle="formTitle"
       :rules="rules"
       :stepTitle="stepTitle"
@@ -164,7 +164,7 @@ const formTitle = [
     label: "开始时间",
     name: "startTime",
     type: "picker",
-    
+    valueFormat:'YYYY-MM-DD HH:mm',
     placeholder: "请选择请假开始时间",
     showTime:{ format: 'HH:mm' }
   },
@@ -172,8 +172,9 @@ const formTitle = [
     label: "结束时间",
     name: "endTime",
     type: "picker",
+    showTime: { format: 'HH:mm' },
+    valueFormat:'YYYY-MM-DD HH:mm',
     placeholder: "请选择请假结束时间",
-    showTime:{ format: 'HH:mm' }
   },
   {
     label: "时长(小时)",
@@ -285,6 +286,9 @@ const formCheckTitle = [
   {
     name: "approval",
   },
+  {
+    name: "approvalId",
+  },
 ];
 const stepTitle = [{ title: "选择人员" }, { title: "填写请假信息" }];
 const rules = {
@@ -315,6 +319,7 @@ export default {
           return res.data;
         });
       },
+      addRecord:{type:2},
       // 高级搜索 展开/关闭
       advanced: false,
       value: null,
@@ -432,6 +437,8 @@ export default {
     };
   },
   created() {
+    this.addRecord.approval = this.user.name;
+    this.addRecord.approvalId = this.user.id;
     this.queryParam.oid = this.user.organizationId;
   },
   methods: {
@@ -442,6 +449,7 @@ export default {
     handleEdit(record) {
       console.log(record);
       record.approval = this.user.name;
+      record.approvalId = this.user.id;
       let formProps = {
         record: record,
         formTitle: formCheckTitle,

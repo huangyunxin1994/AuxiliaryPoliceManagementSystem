@@ -54,11 +54,13 @@
                     v-model="form[item.title]"
                     :placeholder="item.placeholder"
                     v-else-if="item.type == 'select'"
+                    @change="handleChange(item)"
                   >
                     <a-select-option
                       v-for="(i, j) in item.select"
                       :key="j"
                       :value="i.id || i.name"
+                      
                     >
                       {{ i.name }}
                     </a-select-option>
@@ -678,6 +680,7 @@ export default {
   },
   props: {
     policeId: String,
+    fileList: Array
   },
   data() {
     return {
@@ -747,6 +750,7 @@ export default {
         }, //
         {
           title: "organizationId",
+          titleName: "organizationName",
           label: "所属组织",
           type: "select",
           placeholder: "请选择所属组织",
@@ -754,6 +758,7 @@ export default {
         },
         {
           title: "postId",
+          titleName: "postName",
           label: "所属岗位",
           type: "select",
           placeholder: "请选择所属岗位",
@@ -761,6 +766,7 @@ export default {
         },
         {
           title: "rankId",
+          titleName: "rankName",
           label: "所属职级",
           type: "select",
           placeholder: "请选择所属职级",
@@ -908,7 +914,7 @@ export default {
         });
       });
     this.$api.rankPostService
-      .getPostList({ organizationId: this.user.organizationId })
+      .getPostList({ organizationId: this.user.organizationId,state:1 })
       .then((res) => {
         this.baseMessTitle.find((i) => {
           if (i.title === "postId")
@@ -1110,8 +1116,11 @@ export default {
                 work: _this.$refs.table2.localDataSource,
                 family: _this.$refs.table3.localDataSource,
               };
+               const formData = new FormData();
+              formData.append("file", _this.fileList&&_this.fileList[0]||null);
+              formData.append("requestBody ", JSON.stringify(param) )
               _this.$api.auxiliaryPoliceService
-                .postAuxiliaryPolice(param)
+                .postAuxiliaryPolice(formData)
                 .then((res) => {
                   if (res.data.code == 0) {
                     _this.$message.success(
@@ -1133,6 +1142,12 @@ export default {
         }
       });
       // console.log(this.familySource)
+    },
+    handleChange(item){
+      if(item.titleName){
+        const param = item.select.find(i=>i.id === this.form[item.title])
+        this.form[item.titleName] = param.name
+      }
     },
     // 获取身份证里面的信息
     getIdData() {

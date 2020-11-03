@@ -134,9 +134,9 @@ export default {
           width: 120,
         },
         {
-          title: "发放人",
-          dataIndex: "issuedBy",
-          key: "issuedBy",
+          title: "回收人",
+          dataIndex: "recycler",
+          key: "recycler",
           width: 120,
         },
           ],

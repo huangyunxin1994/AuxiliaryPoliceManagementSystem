@@ -128,12 +128,12 @@ VUE_APP_API_BASE_URL=https://localhost:8000
 ## 跨域设置
 在开发环境中，通常我们的Vue应用和服务应用运行在不同的地址或端口上。我们可以通过简单的设置，代理前端请求，来避免跨域问题。如下：  
 
-首先，在 services/api.js 文件中设置 API_PROXY_PREFIX 常量，BASE_URL 像下面这样设置：
+首先，在 services/api.js 文件中设置 API_PROXY_PREFIX.lk 常量，BASE_URL 像下面这样设置：
 ```js {2,4}
 //跨域代理前缀
-const API_PROXY_PREFIX='/api'
+const API_PROXY_PREFIX.lk='/api'
 //base url
-const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX
+const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX.lk
 //导出api服务地址
 module.exports = {
   LOGIN: `${BASE_URL}/login`,
@@ -145,7 +145,7 @@ module.exports = {
 model.exports = {
   devServer: {
     proxy: {
-      '/api': {               //此处要与 /services/api.js 中的 API_PROXY_PREFIX 值保持一致
+      '/api': {               //此处要与 /services/api.js 中的 API_PROXY_PREFIX.lk 值保持一致
         target: process.env.VUE_APP_API_BASE_URL,
         changeOrigin: true,
         pathRewrite: {

@@ -47,7 +47,7 @@
                   :prop="item.title"
                 >
                   <a-input
-                    :disabled="!policeId"
+                    :disabled="!policeId || item.disabled"
                     v-model="form[item.title]"
                     v-if="item.type == 'input' && item.title == 'idCard'"
                     @blur.native.capture="getIdData"
@@ -61,7 +61,8 @@
                     v-model="form[item.title]"
                     :placeholder="item.placeholder"
                     v-else-if="item.type == 'select'"
-                    :disabled="!policeId"
+                    :disabled="!policeId || item.disabled"
+                    @change="handleChange(item)"
                   >
                     <a-select-option
                       v-for="(i, j) in item.select"
@@ -72,7 +73,7 @@
                     </a-select-option>
                   </a-select>
                   <a-date-picker
-                    :disabled="!policeId"
+                    :disabled="!policeId || item.disabled"
                     v-model="form[item.title]"
                     type="date"
                     placeholder="请选择入职时间"
@@ -96,7 +97,7 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-radio-group v-model="form['isMajor']" :disabled="!policeId">
+                  <a-radio-group v-model="form['isMajor']" disabled>
                     <a-radio :value="1"> 是 </a-radio>
                     <a-radio :value="2"> 否 </a-radio>
                   </a-radio-group>
@@ -274,7 +275,7 @@ import { mapState, mapGetters } from "vuex";
 import excelBtn from "@/components/importExcel/importExcel";
 import fromModel from "@/components/formModel/formModel";
 import StandardTable from "@/components/Table_/";
-import { validateIdNo, validatePhone } from "@/config/default/rules";
+import { validatePhone } from "@/config/default/rules";
 const studyColumns = [
   {
     title: "毕业院校",
@@ -738,62 +739,62 @@ export default {
           label: "辅警编号",
           type: "input",
           placeholder: "请输入辅警编号",
-          disabled: false,
+          disabled: true,
         }, //
         {
           title: "name",
           label: "姓名",
           type: "input",
           placeholder: "请输入辅警姓名",
-          disabled: false,
+          disabled: true,
         }, //
         {
           title: "idCard",
           label: "身份证号",
           type: "input",
           placeholder: "请输入身份证号",
-          disabled: false,
+          disabled: true,
         }, //
         {
           title: "phone",
           label: "手机号码",
           type: "input",
           placeholder: "请输入手机号码",
-          disabled: false,
         }, //
         {
-          title: "organizationId",
+          title: "organizationName",
           label: "所属组织",
-          type: "select",
+          type: "input",
           placeholder: "请选择所属组织",
-          select: [],
+          disabled: true,
         },
         {
-          title: "postId",
+          title: "postName",
           label: "所属岗位",
-          type: "select",
+          type: "input",
           placeholder: "请选择所属岗位",
-          select: [],
+          disabled: true,
         },
         {
-          title: "rankId",
+          title: "rankName",
           label: "所属职级",
-          type: "select",
+          type: "input",
           placeholder: "请选择所属职级",
-          select: [],
+          disabled: true,
         },
         {
           title: "nation",
           label: "民族",
           type: "input",
           placeholder: "请输入民族",
-          disabled: false,
+          disabled: true,
         }, //
         {
           title: "education",
           label: "学历",
           type: "select",
           placeholder: "请选择学历",
+          disabled: true,
           select: [
             { name: "专科" },
             { name: "本科" },
@@ -807,26 +808,28 @@ export default {
           label: "籍贯",
           type: "input",
           placeholder: "请输入籍贯",
-          disabled: false,
+          disabled: true,
         }, //
         {
           title: "height",
           label: "身高(cm)",
           type: "input",
           placeholder: "请输入身高",
-          disabled: false,
+          disabled: true,
         },
         {
           title: "entryTime",
           label: "入职时间",
           type: "time",
           placeholder: "请选择入职时间",
+          disabled: true,
         }, //
         {
           title: "politicalStatus",
           label: "政治面貌",
           type: "select",
           placeholder: "请选择政治面貌",
+          disabled: true,
           select: [
             { name: "团员" },
             { name: "党员" },
@@ -924,7 +927,7 @@ export default {
         });
       });
     this.$api.rankPostService
-      .getPostList({ organizationId: this.user.organizationId })
+      .getPostList({ organizationId: this.user.organizationId,state:1 })
       .then((res) => {
         this.baseMessTitle.find((i) => {
           if (i.title === "postId")
@@ -945,39 +948,12 @@ export default {
     getBaseRules() {
       let myrules = {};
       this.baseMessTitle.forEach((item) => {
-        if (
-          item.title == "number" ||
-          item.title == "name" ||
-          item.title == "nation"
-        ) {
-          myrules[item.title] = [
-            { required: true, message: "请输入必填项", trigger: "blur" },
-          ];
-        } else if (item.title == "idCard") {
-          myrules[item.title] = [
-            { required: true, message: "请输入必填项", trigger: "blur" },
-            { validator: validateIdNo, trigger: "blur" },
-          ];
-        } else if (item.title == "phone") {
+        if (item.title == "phone") {
           myrules[item.title] = [
             { required: true, message: "请输入必填项", trigger: "blur" },
             { validator: validatePhone, trigger: "blur" },
           ];
-        } else if (
-          item.title == "organization" ||
-          item.title == "post" ||
-          item.title == "rank" ||
-          item.title == "education" ||
-          item.title == "politicalStatus"
-        ) {
-          myrules[item.title] = [
-            { required: true, message: "请选择必填项", trigger: "change" },
-          ];
-        } else if (item.title == "entryTime") {
-          myrules[item.title] = [
-            { required: true, message: "请选择日期", trigger: "change" },
-          ];
-        }
+        } 
       });
       this.baseRules = myrules;
     },
@@ -1247,6 +1223,12 @@ export default {
         }
       });
       // console.log(this.familySource)
+    },
+    handleChange(item){
+      if(item.titleName){
+        const param = item.select.find(i=>i.id === this.form[item.title])
+        this.form[item.titleName] = param.name
+      }
     },
     // 获取身份证里面的信息
     getIdData() {

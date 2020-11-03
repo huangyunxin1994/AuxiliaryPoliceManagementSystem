@@ -245,11 +245,7 @@ export default {
       },
       selectedRowKeys: [],
       selectedRows: [],
-      rankList: [
-        { id: 1, edit: false, name: "初级" },
-        { id: 2, edit: false, name: "二级" },
-        { id: 3, edit: false, name: "三级" },
-      ],
+      rankList: [],
       submitType: null,
     };
   },

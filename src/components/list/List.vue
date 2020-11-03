@@ -10,8 +10,9 @@
         />
         <a-list-item-meta>
           <a slot="title" @click="handleClick(item)">{{ item.content }}</a>
+          <div slot="description">{{ item.releaseTime }}</div>
         </a-list-item-meta>
-        <div>{{ item.createTime }}</div>
+        
       </a-list-item>
     </a-list>
     <a-modal :title="itemData.title" :visible="visible" @cancel="hanldeCancel" :footer="null" centered>

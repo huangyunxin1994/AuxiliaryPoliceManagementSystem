@@ -146,7 +146,7 @@
                 style="width: 100%"
                 :value="value"
                 :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                placeholder="Please select"
+                placeholder="请选择组织"
                 allow-clear
                 multiple
                 :replaceFields="{
@@ -321,11 +321,9 @@ export default {
         const data = JSON.parse(JSON.stringify(res.data.data.data));
         this.tree = Object.assign([], res.data.data.data);
         this.treeData = filterArray(data);
+        this.searchDisabledTree()
         // this.$emit("getTreeData",this.filterTree)
       });
-    this.$nextTick(() => {
-      this.searchDisabledTree()
-    });
   },
   methods: {
     disabledDate(current) {
@@ -380,7 +378,14 @@ export default {
       this.queryParam.organizationId = obj.val;
     },
     downloadExcel() {
-      window.location.href = `${process.env.VUE_APP_API_BASE_URL}/salary/formwork?month=${this.queryParam.month}`;
+      this.$api.salaryService.getFormwork({month:this.queryParam.month}).then(res=>{
+        if(res.data.code===0){
+          window.location.href = `${process.env.VUE_APP_API_BASE_URL}/salary/formwork?month=${this.queryParam.month}`;
+        }else{
+          this.$message.error(res.data.msg)
+        }
+      })
+      
     },
     uploadExcel() {
       this.visible = true;

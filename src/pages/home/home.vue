@@ -2,37 +2,37 @@
   <div class="" >
     <a-row :gutter="24">
       <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
-        <div style="background:#578EBE" class="antd-pro-pages-home-quickCard" :showfooter="false" :loading="loading" total="">
+        <div style="background:#578EBE" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('personAdmin/rank')">
           <a-icon type="audit" />
           <span>职级评定</span>
         </div>
       </a-col>
       <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
-        <div style="background:#F29503" class="antd-pro-pages-home-quickCard" :showfooter="false" :loading="loading" total="">
+        <div style="background:#F29503" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('personAdmin/post')">
           <a-icon type="file-sync" />
           <span>岗位调动</span>
         </div>
       </a-col>
       <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
-        <div style="background:#44B6AE" class="antd-pro-pages-home-quickCard" :showfooter="false" :loading="loading" total="">
+        <div style="background:#44B6AE" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('wagesManage/wagesManage')">
           <a-icon type="pay-circle" />
           <span>工资管理</span>
         </div>
       </a-col>
       <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
-        <div style="background:#8775A7" class="antd-pro-pages-home-quickCard" :showfooter="false" :loading="loading" total="">
+        <div style="background:#8775A7" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('contract/contract')">
           <a-icon type="file-search" />
           <span>合同管理</span>
         </div>
       </a-col>
       <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
-        <div style="background:#4F5C65" class="antd-pro-pages-home-quickCard" :showfooter="false" :loading="loading" total="">
+        <div style="background:#4F5C65" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('workandleave/workovertime')">
           <a-icon type="calculator" />
           <span>加班管理</span>
         </div>
       </a-col>
       <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
-        <div style="background:#14AAE4" class="antd-pro-pages-home-quickCard" :showfooter="false" :loading="loading" total="">
+        <div style="background:#14AAE4" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('workandleave/askforleave')">
           <a-icon type="hourglass" />
           <span>请假管理</span>
         </div>
@@ -237,13 +237,13 @@ export default {
       businessList:[],//待办
       noticeList:[],//通知
       afficheList:[],//公告
-      fileList:[
-          {id:1,name:"【文档】辅警管理规范.PDF",date:"2020-06-16"},
-          {id:2,name:"【文档】辅警个人管理概要.docx",date:"2020-06-16"}
-      ]
+      fileList:[]
     }
   },
   methods:{
+    handleRoute(path){
+      this.$router.push(path)
+    },
     // 获取管理员个人消息通知列表(通知)
     async getUserMessList(){
       let _this = this

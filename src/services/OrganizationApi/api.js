@@ -14,5 +14,6 @@ module.exports = {
   POSTUSER:`${BASE_URL}/organization/user`,//添加管理员
   PUTUSER:`${BASE_URL}/organization/user`,//添加管理员
   PUTRESET:`${BASE_URL}/organization/reset`,//重置密码
+  DELETEUSER:`${BASE_URL}/organization/user`,//删除用户
   
 }

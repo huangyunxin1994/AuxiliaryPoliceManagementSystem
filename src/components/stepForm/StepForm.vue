@@ -116,6 +116,7 @@ export default {
   },
   created() {
     this.nowFormTitle = this.formTitle;
+    console.log(this.nowFormTitle)
   },
   methods: {
     nextStep() {
@@ -158,6 +159,7 @@ export default {
     },
     handleOk(params) {
       this.loading=true
+      console.log(params)
       params.police = this.$refs.person.rightColumnsData;
       setTimeout(() => {
         const result = this.submitFun(params);

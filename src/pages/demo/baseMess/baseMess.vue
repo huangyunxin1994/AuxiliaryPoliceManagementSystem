@@ -126,7 +126,7 @@
             showPagination="auto"
           >
           <template slot="name" slot-scope="name,record">
-              <a  @click="handleEdit(record.id,record.name)">{{name}}</a>
+              <a  @click="handleEdit(record)">{{name}}</a>
             </template>
             <template slot="status" slot-scope="status">
               <a-badge :status="status" :text="status | statusFilter" />
@@ -378,13 +378,17 @@ export default {
           this.postList = Object.assign([],res.data.data.list)
       })
     },
-    handleEdit(id,name) {
+    handleEdit(record) {
+      console.log(record)
+      let param = {
+        id:record.id,
+        name:record.name
+      }
+      if(record.photoPath)
+      param.photoPath=record.photoPath
       this.$router.push({
         path:"/baseMess",
-        query:{
-          id:id,
-          name:name
-        }
+        query:param
       });
     },
     handleClick(e) {

@@ -15,4 +15,5 @@ module.exports = {
   GETDATA:`${BASE_URL}/auxiliary-police/`,//获取辅警列表信息
   POSTDATA:`${BASE_URL}/auxiliary-police/`,//添加辅警
   PUTDATA:`${BASE_URL}/auxiliary-police/`,//修改辅警
+  POSTHEAD:`${BASE_URL}/auxiliary-police/head` //修改头像
 }

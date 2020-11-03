@@ -109,7 +109,7 @@
       ref="modal"
       title="新建加班记录"
       :formTitle="formTitle"
-      :record="{ type: 1 }"
+      :record="addRecord"
       :rules="rules"
       :stepTitle="stepTitle"
       :submitFun="submitFun"
@@ -129,6 +129,7 @@ const formTitle = [
     label: "开始时间",
     name: "startTime",
     type: "picker",
+    valueFormat:'YYYY-MM-DD HH:mm',
     placeholder: "请选择加班开始时间",
     showTime:{ format: 'HH:mm' }
   },
@@ -136,8 +137,9 @@ const formTitle = [
     label: "结束时间",
     name: "endTime",
     type: "picker",
+    showTime: { format: 'HH:mm' },
+    valueFormat:'YYYY-MM-DD HH:mm',
     placeholder: "请选择加班结束时间",
-    showTime:{ format: 'HH:mm' }
   },
   {
     label: "时长(小时)",
@@ -278,6 +280,7 @@ export default {
       formTitle,
       rules,
       stepTitle,
+      addRecord:{type: 1},
       submitFun: (parameter) => {
         return this.$api.overTimeService.postByUser(parameter).then((res) => {
           return res.data;
@@ -399,6 +402,8 @@ export default {
     };
   },
   created() {
+    this.addRecord.approval = this.user.name;
+    this.addRecord.approvalId = this.user.id;
     this.queryParam.oid = this.user.organizationId;
   },
   methods: {
@@ -408,6 +413,7 @@ export default {
     handleEdit(record) {
       console.log(record);
       record.approval = this.user.name;
+      record.approvalId = this.user.id;
       let formProps = {
         record: record,
         formTitle: formCheckTitle,

@@ -35,26 +35,28 @@
             :disabled="item.disabled"
             v-else-if="item.type == 'select'"
             :placeholder="item.placeholder"
+            @change="handleChange(item)"
           >
             <a-select-option
               v-for="(i, j) in item.select"
               :key="j"
-              :value="i.value || i.name"
+              :value="i.value || i.id || i.name"
             >
               {{ i.name }}
             </a-select-option>
           </a-select>
           <!-- 时间框 -->
           <a-date-picker
-            v-model="form[item.name]"
-            v-else-if="item.type == 'picker'"
-            :disabled="item.disabled"
-            :show-time="{ format: 'HH:mm:ss' }"
-            valueFormat="YYYY-MM-DD HH:mm:ss"
-            type="date"
-            :placeholder="item.placeholder"
-            style="width: 100%"
-          />
+                    v-model="form[item.name]"
+                    v-else-if="item.type == 'picker'"
+                    :disabled="item.disabled"
+                    :show-time="item.showTime&&item.showTime||false"
+                    :format="item.valueFormat&&item.valueFormat || 'YYYY-MM-DD'"
+                    :valueFormat="item.valueFormat&&item.valueFormat || 'YYYY-MM-DD'"
+                    type="date"
+                    :placeholder="item.placeholder"
+                    style="width: 100%"
+                  />
           <!-- 日期框 -->
           <a-date-picker 
             v-model="form[item.name]"
@@ -250,6 +252,12 @@ export default {
     
   },
   methods: {
+    handleChange(item){
+      if(item.labelName){
+        const param = item.select.find(i=>i.id === this.form[item.name])
+        this.form[item.labelName] = param.name
+      }
+    },
     change(e) {
       console.log(this.form);
       console.log("checked = ", e);
@@ -293,7 +301,7 @@ export default {
               
             })
             .catch((err) => {
-              this.$message.success(err.msg);
+              this.$message.error(err.msg);
               resolve(true);
             });
         }, 1000);

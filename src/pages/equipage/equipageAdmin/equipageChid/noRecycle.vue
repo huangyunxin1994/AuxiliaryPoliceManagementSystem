@@ -6,12 +6,20 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="关键词搜索">
-                <a-input v-model="queryParam.describes" placeholder="请输入要查询的关键词" />
+                <a-input
+                  v-model="queryParam.describes"
+                  placeholder="请输入要查询的关键词"
+                />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <select-tree ref="selectTree" :value="queryParam.organizationId" style="width: 100%" @handleTreeChange="handleTreeChange"></select-tree>
+                <select-tree
+                  ref="selectTree"
+                  :value="queryParam.organizationId"
+                  style="width: 100%"
+                  @handleTreeChange="handleTreeChange"
+                ></select-tree>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -98,7 +106,7 @@
       </div>
       <s-table
         ref="table"
-        :rowKey="(record)=>record.id"
+        :rowKey="(record) => record.id"
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :rowSelection="rowSelection"
@@ -107,7 +115,12 @@
       >
         <template slot="action" slot-scope="equState">
           <!-- {{equState}} -->
-          <a-badge :status="equState==1 ? 'processing' : (equState==2 ? 'success' : 'error')" :text="equState | statusFilter" />
+          <a-badge
+            :status="
+              equState == 1 ? 'processing' : equState == 2 ? 'success' : 'error'
+            "
+            :text="equState | statusFilter"
+          />
         </template>
       </s-table>
     </a-card>
@@ -148,9 +161,9 @@ export default {
   },
   data() {
     return {
-      formTitle:[],
+      formTitle: [],
       rules,
-      record:{},
+      record: {},
       stepTitle,
       submitFun: (params) => {
         params.type = 2;
@@ -261,10 +274,11 @@ export default {
         {
           label: "装备类型",
           name: "cqId",
+          labelName:"cqName",
           type: "select",
           refName: "cqId",
           placeholder: "请输入装备类型",
-          select: res.data.data.list
+          select: res.data.data.list,
         },
         {
           label: "配发日期",
@@ -280,12 +294,13 @@ export default {
           refName: "termValidity",
           placeholder: "请选择有效期限",
         },
-      ]
-    })
+      ];
+    });
     this.record = {
-        issuedBy:this.user.name
-      }
-      this.queryParam.oid = this.user.organizationId
+      issuedBy: this.user.name,
+      issuedById: this.user.id,
+    };
+    this.queryParam.oid = this.user.organizationId;
   },
   methods: {
     
@@ -326,13 +341,12 @@ export default {
       this.advanced = !this.advanced;
     },
     //树选择回调
-    handleTreeChange(obj){
-      this.queryParam.organizationId = obj.val
-      console.log(this.queryParam)
+    handleTreeChange(obj) {
+      this.queryParam.organizationId = obj.val;
+      console.log(this.queryParam);
     },
-    
-    handleClick(e){
-      console.log(e)
+    handleClick(e) {
+      console.log(e);
       const _this = this;
       this.$confirm({
         title: "警告",
@@ -343,13 +357,24 @@ export default {
         cancelText: "取消",
         onOk() {
           console.log(_this);
+           let arr = [];
+          _this.selectedRowKeys
+            .map((i) => {
+              const param = {
+                id: i,
+                type: 2,
+                recycler: _this.user.name,
+                recyclerId: _this.user.id,
+              };
+              arr.push(param)
+            })
           _this.$api.certEquipService
-            .putCertEqup(_this.selectedRowKeys)
+            .putCertEqup(arr)
             .then((res) => {
               if (res.data.code == 0) {
                 _this.$message.success(res.data.msg);
-                _this.selectedRowKeys = []
-                _this.selectedRows = []
+                _this.selectedRowKeys = [];
+                _this.selectedRows = [];
                 _this.$refs.table.refresh();
               } else {
                 _this.$message.error(res.data.msg);
@@ -362,12 +387,12 @@ export default {
         onCancel() {},
       });
     },
-    refreshTable(){
-      this.queryParam.organizationId=""
-      this.queryParam.describes=""
-      this.queryParam.allotmentDate=""
-      this.queryParam.termValidity=""
-      this.queryParam.certificatesEquipmentHistory=""
+    refreshTable() {
+      this.queryParam.organizationId = "";
+      this.queryParam.describes = "";
+      this.queryParam.allotmentDate = "";
+      this.queryParam.termValidity = "";
+      this.queryParam.certificatesEquipmentHistory = "";
       this.$refs.table.refresh(true);
     },
     resetParam(){
@@ -399,7 +424,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["pageMinHeight"]),
-    ...mapGetters("account", ['user']),
+    ...mapGetters("account", ["user"]),
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,

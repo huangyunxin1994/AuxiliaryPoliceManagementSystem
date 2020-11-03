@@ -6,22 +6,28 @@
           <a-card :bordered="true">
             <div class="account-center-avatarHolder">
               <div class="username" v-if="policeName">{{policeName}}</div>
-              <div class="avatar">
+              <!-- <div class="avatar">
                 <img v-if="imageUrl==''" src="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png">
                 <img v-else :src="imageUrl" alt="">
-              </div>  
+              </div>   -->
               <div class="bio">
                 <a-upload
-                  name="file"
-                  :multiple="true"
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  @change="handleChange"
-                  :before-upload="beforeUpload"
-                  :show-upload-list="false"
-                  ref="upLoad"
-                >
-                  <a-button type="primary"> <a-icon type="upload" /> 更换头像 </a-button>
-                </a-upload>
+                name="file"
+                listType="picture-card"
+                class="avatar-uploader"
+                :showUploadList="false"
+                :beforeUpload="beforeUpload"
+                accept="image/jpeg,image/jpg,image/png"
+              >
+                <div class="avatar">
+                  <a-avatar :size="108" :src="imageUrl" v-if="imageUrl!==''" />
+                  <a-avatar :size="108" icon="user" v-else />
+                  <div class="upload-icon">
+                    <a-icon :style="{fontSize : '24px'}" type="camera" theme="twoTone"/>
+                    <!-- <img src="../../../assets/images/camera.png" /> -->
+                  </div>
+                </div>
+              </a-upload>
               </div>
             </div>
             <a-divider/>
@@ -57,7 +63,7 @@
           </a-card>
         </a-col>
         <a-col :md="24" :lg="16" :xl="20">
-          <aux-msg-form-a :policeId="policeId" ></aux-msg-form-a>
+          <aux-msg-form-a :policeId="policeId" :fileList="fileList" ></aux-msg-form-a>
         </a-col>
       </a-row> 
   </div>
@@ -66,6 +72,7 @@
 <script>
   import {mapState} from 'vuex'
   import auxMsgFormA from '@/components/auxMsgForm/auxMsgFormA'
+  
   export default {
     name: 'Demo',
     components:{
@@ -73,6 +80,8 @@
     },
     data() {
       return {
+        previewVisible:false,
+        previewImage:"",
         tabIndex:1,
         policeId:undefined,
         policeName:undefined,
@@ -121,49 +130,78 @@
           }
         ],
          imageUrl:'',// 用来存放图片的路径
+         fileList:[]
       }
     },
     computed: {
       ...mapState('setting', ['theme','pageMinHeight']),
     },
     created(){
+      Object.assign
       console.log(this.$route.query.id)
       this.policeId = this.$route.query.id
       this.policeName = this.$route.query.name
     },
     methods:{
-      // 图片上传
-      handleChange(info){
-        if (info.file.status === 'uploading') {
-          this.loading = true;
-          return;
-        }
-        if (info.file.status === 'done') {
-          this.getBase64(info.file.originFileObj, imageUrl => {
-            this.imageUrl = imageUrl;
-            this.loading = false;
-          });
-        }
-        
-      },
+      handleChange({ fileList }) {
+      this.fileList = fileList;
+      console.log(this.fileList)
+    },
       // 上传图片前先进行验证
       beforeUpload(file) {
+        console.log(file)
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
           this.$message.error('抱歉，你只能上传JPG或者png格式的图片!');
+          return false;
         }
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) {
           this.$message.error('图片不能小于2MB!');
+          return false;
         }
-        return isJpgOrPng && isLt2M;
+        this.fileList.splice(0,1,file)
+        console.log(this.fileList)
+        this.imageToBase64(file)
+       return false;
       },
+      imageToBase64 (file) {
+      var reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => {
+        this.imageUrl = reader.result
+      }
+      reader.onerror = function (error) {
+        console.log('Error: ', error)
+      }
+    },
     }
   }
 </script>
 
 <style scoped lang="less">
   @import "index";
+  .avatar-uploader{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /deep/ .ant-upload-select-picture-card{
+    background-color: transparent;
+    border:none;
+    margin: 0;
+  }
+  .avatar{
+    position: relative;
+    .upload-icon{
+      position: absolute;
+      width: 100%;
+      text-align: right;
+      bottom: 0;
+
+    }
+  }
+  
+}
   .saveBtn{
     display: flex;
     justify-content: flex-end;
@@ -209,7 +247,7 @@
 
     .username {
       color: rgba(0, 0, 0, 0.85);
-      font-size: 14px;
+      font-size: 24px;
       line-height: 28px;
       font-weight: 500;
       margin-bottom: 14px;

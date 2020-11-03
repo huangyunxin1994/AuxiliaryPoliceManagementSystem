@@ -98,7 +98,7 @@ const options = {
           component: BlankView,
           children: [
             {
-              path: 'demo2',
+              path: 'contract',
               name: '合同管理',
               meta: {
                 authority: {
@@ -110,7 +110,7 @@ const options = {
           ]
         },
         {
-          path: 'parent3',
+          path: 'personAdmin',
           name: '人事管理',
           meta: {
             icon: 'hourglass',
@@ -424,7 +424,8 @@ const options = {
               role: 'fj'
             }
           },
-          component: () => import('@/pages/home/home')
+          component:  () => import('@/pages/dashboard/workplace/WorkPlace'),
+          
         },
         {
           path: 'baseMess',
@@ -438,7 +439,7 @@ const options = {
           component: BlankView,
           children: [
             {
-              path: 'demo1',
+              path: 'basemess',
               name: '基础资料',
               meta: {
                 authority: {
@@ -450,7 +451,7 @@ const options = {
           ]
         },
         {
-          path: 'parent2',
+          path: 'servicemess',
           name: '业务信息',
           meta: {
             icon: 'solution',
@@ -461,7 +462,7 @@ const options = {
           component: BlankView,
           children: [
             {
-              path: 'demo2',
+              path: 'awardduty',
               name: '奖励与责任追究',
               meta: {
                 authority: {
@@ -471,7 +472,7 @@ const options = {
               component: () => import('@/pages/subsystem/businessMess/awardAndDuty'),
             },
             {
-              path: 'demo3',
+              path: 'contract',
               name: '合同与工资信息',
               meta: {
                 authority: {
@@ -481,7 +482,7 @@ const options = {
               component: () => import('@/pages/subsystem/businessMess/contract'),
             },
             {
-              path: 'demo4',
+              path: 'personAdmin',
               name: '人事信息',
               meta: {
                 authority: {
@@ -491,7 +492,7 @@ const options = {
               component: () => import('@/pages/subsystem/businessMess/personnel'),
             },
             {
-              path: 'demo5',
+              path: 'education',
               name: '培训记录',
               meta: {
                 authority: {
@@ -501,7 +502,7 @@ const options = {
               component: () => import('@/pages/subsystem/businessMess/education'),
             },
             {
-              path: 'demo6',
+              path: 'credequp',
               name: '证件装备',
               meta: {
                 authority: {
@@ -511,7 +512,7 @@ const options = {
               component: () => import('@/pages/subsystem/businessMess/equipage'),
             },
             {
-              path: 'demo7',
+              path: 'overtimeleave',
               name: '加班与请假',
               meta: {
                 authority: {

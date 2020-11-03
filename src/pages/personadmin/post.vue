@@ -398,15 +398,7 @@
           return this.$api.personAdminService
             .changeManyPost(parameter)
             .then((res) => {
-              if(res.data.code == 0){
-                // this.$message.success(res.data.msg)
-                return res.data;
-              }else{
-                this.$message.error(res.data.msg)
-              }
-            })
-            .catch((res)=>{
-              this.$message.error(res.data.msg)
+               return res.data;
             })
         },
       }

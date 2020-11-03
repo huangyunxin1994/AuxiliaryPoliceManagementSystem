@@ -12,8 +12,8 @@
           <span style="width: 100px">上午上班时间：</span>
           <a-time-picker
             v-model="commData.morningUppertime"
-            format="HH:mm:ss"
-            valueFormat="HH:mm:ss"
+            format="HH:mm"
+            valueFormat="HH:mm"
             style="width: calc(100% - 100px); margin-bottom: 24px"
           />
         </a-col>
@@ -21,8 +21,8 @@
           <span style="width: 100px">上午下班时间：</span>
           <a-time-picker
             v-model="commData.morningLowertime"
-            format="HH:mm:ss"
-            valueFormat="HH:mm:ss"
+            format="HH:mm"
+            valueFormat="HH:mm"
             style="width: calc(100% - 100px); margin-bottom: 24px"
             :disabled="commData.state === 2 || commData.state === 4 "
           />
@@ -34,8 +34,8 @@
           <span style="width: 100px">下午下班时间：</span>
           <a-time-picker
             v-model="commData.afternoonLowertime"
-            format="HH:mm:ss"
-            valueFormat="HH:mm:ss"
+            format="HH:mm"
+            valueFormat="HH:mm"
             style="width: calc(100% - 100px); margin-bottom: 24px"
           />
         </a-col>
@@ -43,8 +43,8 @@
           <span style="width: 100px">下午上班时间：</span>
           <a-time-picker
             v-model="commData.afternoonUppertime"
-            format="HH:mm:ss"
-            valueFormat="HH:mm:ss"
+            format="HH:mm"
+            valueFormat="HH:mm"
             style="width: calc(100% - 100px); margin-bottom: 24px"
             :disabled="commData.state === 1 || commData.state === 4 "
           />
@@ -194,7 +194,13 @@ export default {
   },
   data() {
     return {
-      commData:{},
+      commData:{
+        morningUppertime:"",
+        morningLowertime:"",
+        afternoonUppertime:"",
+        afternoonLowertime:"",
+        state:4
+      },
       credColumns: [
         {
           title: "序号",

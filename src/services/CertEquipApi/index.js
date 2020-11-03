@@ -1,6 +1,6 @@
 import {GETCERTEQUPUSER,POSTCERTEQUP,PUTCERTEQUP,GETCERTEQUPLIST,GETCERTEQUPTYPES} from './api'
 import {request, METHOD} from '@/utils/request'
-import Qs from 'qs'
+// import Qs from 'qs'
 import { Object } from 'core-js'
 const certEquipService = {
     /**
@@ -41,8 +41,7 @@ const certEquipService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     async putCertEqup(params){
-        const ids = params.toString()
-        return request(PUTCERTEQUP, METHOD.PUT, Qs.stringify({id:ids}))
+        return request(PUTCERTEQUP, METHOD.PUT, params)
     },
     /**
      * 获取证件或装备列表

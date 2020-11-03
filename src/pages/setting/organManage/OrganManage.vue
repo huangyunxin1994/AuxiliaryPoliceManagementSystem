@@ -91,10 +91,8 @@
               >新建</a-button
             >
             <a-dropdown v-if="selectedRowKeys.length > 0">
-              <a-menu slot="overlay">
+              <a-menu slot="overlay" @click="handleDel">
                 <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-                <!-- lock | unlock -->
-                <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
               </a-menu>
               <a-button style="margin-left: 8px">
                 批量操作 <a-icon type="down" />
@@ -129,7 +127,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import AntTree from "@/components/tree_/Tree";
 import TaskForm from "@/components/formModel/formModel";
@@ -147,7 +145,7 @@ const organTitle = [
       value: "id",
     },
   },
-  { label: "组织名称", name: "name", type: "picker" },
+  { label: "组织名称", name: "name", type: "input" },
 ];
 
 const organRules = {
@@ -496,8 +494,10 @@ export default {
         const list = res.data.data.data.sort(function(a,b){
             return a.number-b.number;
         })
+        console.log(list)
+        list.splice(list.findIndex(i=>i.code==='xtgl'),1)
         this.roleList = Object.assign([],list)
-        this.$api.rankPostService.getPostList().then(res=>{
+        this.$api.rankPostService.getPostList({state:1}).then(res=>{
           this.postList = Object.assign([],res.data.data.list)
           this.tableTitle = [
           {
@@ -573,6 +573,7 @@ export default {
           _this.$api.organizationService.putResetPassword({id:row.id}).then(res=>{
             if(res.data.code ===0){
               _this.$message.success(res.data.msg)
+              _this.$refs.table.refresh()
             }else{
               _this.$message.error(res.data.msg)
             }
@@ -583,6 +584,31 @@ export default {
         onCancel() {},
       });
       
+    },
+    handleDel(e){
+      console.log(e)
+       const _this = this
+      this.$confirm({
+        title: "警告",
+        content: `真的要删除所选用户吗?`,
+        okText: "删除",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          _this.$api.organizationService.deleteUser({list:_this.selectedRowKeys}).then(res=>{
+            if(res.data.code ===0){
+              _this.$message.success(res.data.msg)
+              _this.$refs.table.refresh()
+            }else{
+              _this.$message.error(res.data.msg)
+            }
+          }).catch(err=>{
+            _this.$message.error(err.data.msg)
+          })
+        },
+        onCancel() {},
+      });
     }
   
   },
@@ -597,6 +623,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["pageMinHeight"]),
+    ...mapGetters("account", ["user"]),
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,
