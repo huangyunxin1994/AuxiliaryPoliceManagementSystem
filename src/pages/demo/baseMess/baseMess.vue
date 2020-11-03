@@ -138,16 +138,7 @@
               <span >{{isMajor | majorFilter}}</span>
             </template>
             <span slot="action" slot-scope="text, record">
-              <a-popconfirm
-                title="该人员的登录密码将重置为123456，是否继续？"
-                ok-text="确认"
-                cancel-text="取消"
-                @confirm="confirm(record)"
-                @cancel="cancel"
-                v-if="text != 1"
-              >
-                <a href="#">重置</a>
-              </a-popconfirm>
+              <a @click="confirm(record)">重置</a>
             </span>
           </s-table>
         </a-col>
@@ -442,6 +433,7 @@ export default {
       this.queryParam.rankId = ''
       this.queryParam.education = ''
       this.queryParam.isMajor = ''
+      this.$refs.table.refresh(true)
     },
     // 职级变更
     changeRank() {
@@ -489,11 +481,33 @@ export default {
     // 重置密码
     confirm(e) {
       console.log(e);
-      this.$message.success("修改成功");
-    },
-    cancel(e) {
-      console.log(e);
-      this.$message.error("已取消");
+      // this.$message.success("修改成功");
+      const _this = this;
+      this.$confirm({
+        title: "警告",
+        content: `确认要重置密码为123456吗?`,
+        okText: "确认",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          let param = {
+            id:e.id,
+            password:123456
+          }
+          _this.$api.auxiliaryPoliceService.putAuxiliaryPolice(param).then((res)=>{
+            if(res.data.code == 0){
+              _this.$refs.table.refresh(true)
+              return res.data
+            }else{
+              _this.$message.error(res.data.msg);
+            }
+          }).catch((err) => {
+            _this.$message.error(err.data.msg);
+          });
+        },
+        onCancel() {},
+      });
     },
     // 新增人员
     addPerson() {

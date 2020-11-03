@@ -24,12 +24,16 @@
 								</a-col>
 								<a-col :md="8" :sm="24">
 									<a-form-item label="岗位">
-										<a-input placeholder="请输入岗位" v-model="queryParam.currentRank" />
+										<!-- <a-input placeholder="请输入岗位" v-model="queryParam.currentRank" /> -->
+                    <a-select  v-model="queryParam.currentRank" style="width: 100%">
+                          <a-select-option value=""> 全部 </a-select-option>
+                          <a-select-option :value="item.name" v-for="item in postList" :key="item.name"> {{item.name}} </a-select-option>
+                        </a-select>
 									</a-form-item>
 								</a-col>
 								<template v-if="advanced">
 									<a-col :md="8" :sm="24">
-										<a-form-item label="生效时间">
+										<a-form-item label="生效时间" v-model="queryParam.time">
 											<a-date-picker @change="onChange" style="width: 100%"/>
 										</a-form-item>
 									</a-col>
@@ -43,7 +47,7 @@
 										<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
 										<a-button
 											style="margin-left: 8px"
-											@click="() => (queryParam = {})"
+											@click="resetParam"
 										>重置</a-button
 										>
 										<a @click="toggleAdvanced" style="margin-left: 8px">
@@ -56,18 +60,7 @@
 						</a-form>
 					</div>
                     <div class="table-operator" style="margin-bottom: 24px">
-                      <!-- <a-button type="primary" @click="changePost" :disabled="selectedRows.length == 0">调动岗位与组织</a-button> -->
 						<a-button type="primary" icon="swap" @click="changePost" v-if="selectedRows.length != 0">调动岗位与组织</a-button>
-                      <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
-                        <a-menu slot="overlay">
-                          <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-                          
-                          <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-                        </a-menu>
-                        <a-button style="margin-left: 8px">
-                          批量操作 <a-icon type="down" />
-                        </a-button>
-                      </a-dropdown> -->
                     </div>
                       <s-table
                         ref="table"
@@ -239,7 +232,8 @@
             reason: [{ required: true, message: '请输入变动原因', trigger: 'blur'}],
             effectiveDate: [{ required: true, message: '请选择生效日期', trigger: 'change' }]
           },
-          postMess:[],
+          postList:[],
+          postMess:[]
       }
     },
     created () {
@@ -247,27 +241,15 @@
       // this.getOrgList()
     },
     methods:{
+      // 获取岗位列表
       getPostList(){
-        let para = {
-          oid:this.user.organizationId
-        }
-        this.$api.rankPostService.getPostList(para).then((res)=>{
-          // console.log(res)
-          let post = res.data.data.list
-          console.log(post)
-          this.extension.forEach((item)=>{
-            if(item.name == 'currentRank'){
-              let arr = []
-              post.forEach((i)=>{
-                let obj = {
-                  name:i.name
-                }
-                arr.push(obj)
-              })
-              item.select = arr
-              this.postMess = arr
-            }
-          })
+        this.$api.rankPostService.getPostList().then(res=>{
+            this.postList = Object.assign([],res.data.data.list)
+            this.extension.forEach((item)=>{
+              if(item.name == 'currentRank'){
+                item.select = this.postList
+              }
+            })
         })
       },
       handleEdit(record){
@@ -341,12 +323,12 @@
             userId:item.userId,//用户id
             beforeRank:item.currentRank,//变动前岗位
             approvedBy:this.user.name,//审批人
+            approvedById:this.user.id,//审批人id
             type:2
           }
-          // console.log(obj)
           arrName += item.policeName + ",";
           if(index == this.selectedRows.length - 1 ){
-            arrName.slice(0,arrName.length - 1);
+            arrName = arrName.slice(0,arrName.length - 1);
           }
           arr.push(obj)
         })
@@ -362,10 +344,22 @@
               return this.$api.personAdminService
                 .changeManyPost(parameter)
                 .then((res) => {
-                  this.$refs.table.refresh(true)
-                  return res.data;
-                });
+                  if(res.data.code == 0){
+                    return res.data;
+                  }else{
+                    this.$message.error(res.data.msg)
+                  }
+                })
+                .catch((res)=>{
+                  this.$message.error(res.data.msg)
+                })
             },
+            
+        }
+        let callback = () => {
+          this.$refs.table.refresh(true);
+          this.selectedRows = []
+          this.selectedRowKeys = []
         }
         let option = {
             title: '岗位调动',
@@ -374,46 +368,51 @@
             maskClosable: false,
             okText:"提交",
           }
-        this.modal(param,option,fromModel)
+        this.modal(param,option,fromModel,callback)
       },
 		// 调动单个岗位
 		changeOnePost(e){
       console.log(e)
+      let policeArr = []
+      let obj = {
+        policeName:e.policeName,//名字
+        number:e.number,//警员编号
+        beforeRank:e.currentRank,//变动前职级
+        approvedBy:this.user.name,//审批人
+        approvedById:this.user.id,//审批人id
+        type:2,
+        userId:e.userId
+      }
+      policeArr.push(obj)
 			let param ={
 				formTitle:this.extension,
 				rules:this.changeRankRules,
 				record:{
           policeName:e.policeName,//名字
-          number:e.number,//警员编号
-          beforeRank:e.currentRank,//变动前职级
-          approvedBy:this.user.name,//审批人
+          policeArr:policeArr,
+          organizationId:"",
           beforeOrg:e.organizationName,
           beforePost:e.currentRank,
-          organizationId:"",
-          type:2,
-          userId:e.userId
         },
         submitFun: (parameter) => {
           return this.$api.personAdminService
-            .changePost(parameter)
+            .changeManyPost(parameter)
             .then((res) => {
-              console.log(res)
-              
               if(res.data.code == 0){
-                this.$refs.table.refresh(true)
-                this.$message.success(res.data.msg)
+                // this.$message.success(res.data.msg)
                 return res.data;
               }else{
                 this.$message.error(res.data.msg)
               }
             })
             .catch((res)=>{
-              console.log("错误的返回")
-              console.log(res)
               this.$message.error(res.data.msg)
             })
         },
-			}
+      }
+      let callback = () => {
+        this.$refs.table.refresh(true);
+      }
 			let option = {
 				title: '岗位调动',
 				width: 500,
@@ -421,14 +420,15 @@
 				maskClosable: false,
 				okText:"提交",
 			}
-			this.modal(param,option,fromModel)
+			this.modal(param,option,fromModel,callback)
 		},
       // 弹窗
-      modal(obj,option,model){
+      modal(obj,option,model,callback){
         const defaultProps = {
           on: {
                 ok () {
                     // console.log('ok 回调')
+                    callback()
                 },
                 cancel () {
                     // e.handleDestroy()
@@ -441,7 +441,7 @@
             }
         }
         let formProps =  Object.assign(obj, defaultProps);
-        console.log(formProps)
+        // console.log(formProps)
         this.$dialog(model,
           // form props 
           formProps,
@@ -464,7 +464,7 @@
             time:'',
             type:2
         },
-        this.$refs.table.refresh(true)
+        this.$refs.table.refresh(false)
       },
       // 生效时间
       onChange(date, dateString) {

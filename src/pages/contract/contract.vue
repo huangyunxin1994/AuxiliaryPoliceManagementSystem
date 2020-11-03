@@ -558,6 +558,7 @@ export default {
         endTime: "",
         organizationId: "",
       };
+      this.$refs.table.refresh(false)
     },
     // 获取到组织树信息
     getTreeData(data) {

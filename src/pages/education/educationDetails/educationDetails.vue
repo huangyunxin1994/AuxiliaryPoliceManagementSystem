@@ -95,7 +95,7 @@
                 >
                 <a-button
                   style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                  @click="resetParam"
                   >重置</a-button
                 >
                 <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -321,8 +321,6 @@ export default {
     },
     // 填写结果(单个)
     handleCredAddOne(e){
-      console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-      console.log(e)
       let queryPa = {
         id:e.id,
         trainId:e.trainId,
@@ -420,6 +418,17 @@ export default {
     handleChange(e) {
       console.log(e);
     },
+    //重置查询参数
+    resetParam(){
+      this.queryParam={
+        organizationId:'',
+        id:'',
+        oid:'',
+        state:'',
+        search:''
+      }
+      this.$refs.table.refresh(false)
+    }
   },
   created(){
     // param

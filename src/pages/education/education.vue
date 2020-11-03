@@ -6,7 +6,7 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="关键词搜索">
-                <a-input placeholder="请输入要查询的关键词" />
+                <a-input placeholder="请输入要查询的关键词" v-model="queryParam.search"/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -21,10 +21,10 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="状态">
-                  <a-select default-value="" @change="handleChange">
+                  <a-select default-value="" @change="handleChange" v-model="queryParam.state">
                     <a-select-option value=""> 全部： </a-select-option>
-                    <a-select-option value="1"> 是 </a-select-option>
-                    <a-select-option value="2"> 否 </a-select-option>
+                    <a-select-option value="1"> 未结束 </a-select-option>
+                    <a-select-option value="2"> 已结束 </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -32,10 +32,10 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="培训方式">
-                  <a-select default-value="" @change="handleChange">
+                  <a-select default-value="" @change="handleChange" v-model="queryParam.learningStyle">
                     <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option value="1"> 离岗培训 </a-select-option>
-                    <a-select-option value="2"> 在岗培训 </a-select-option>
+                    <a-select-option value="2"> 脱岗 </a-select-option>
+                    <a-select-option value="1"> 不脱岗 </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -52,7 +52,7 @@
                 >
                 <a-button
                   style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                  @click="reset"
                   >重置</a-button
                 >
                 <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -339,7 +339,8 @@ export default {
           _this.$api.trainService.deleteEducation({id:_this.selectedRowKeys}).then((res)=>{
             if(res.data.code == 0){
               _this.$refs.table.refresh(true)
-              _this.selectedRowKeys.length = 0
+              _this.selectedRowKeys = []
+              _this.selectedRows = []
               return res.data
             }else{
               _this.$message.error(res.data.msg);
@@ -350,13 +351,17 @@ export default {
         },
         onCancel() {},
       });
+    },
+    reset(){
+      this.queryParam = {}
+      this.$refs.table.refresh(true)
     }
   },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        1: "已结束",
-        2: "未结束",
+        1: "未结束",
+        2: "已结束",
       };
       return statusMap[status];
     },

@@ -27,6 +27,7 @@
 
 <script>
     import STable from '@/components/Table_/'
+    import {mapGetters} from 'vuex'
     export default {
         name: 'OrganManage',
         components:{
@@ -63,9 +64,11 @@
                 // 查询条件参数
                 queryParam: {
                     type:this.person.type,
-                    userId:this.person.userId
+                    userId:this.person.userId,
+                    oid:''
                 },
                 loadScheduleData: (params) => {
+                    this.queryParam.oid = this.user.organizationId
                     let param = Object.assign(params,this.queryParam)
                         return this.$api.personAdminService.getRankPostHistory(param).then((res)=>{
                             console.log(res)
@@ -99,13 +102,13 @@
         },
         computed: {
         // ...mapState('setting', ['pageMinHeight']),
-        
-        rowSelection () {
-            return {
-            selectedRowKeys: this.selectedRowKeys,
-            onChange: this.onSelectChange
+            ...mapGetters("account",["user"]),// 获取登录者信息
+            rowSelection () {
+                return {
+                selectedRowKeys: this.selectedRowKeys,
+                onChange: this.onSelectChange
+                }
             }
-        }
         }
     }
 </script>

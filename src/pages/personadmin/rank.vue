@@ -373,13 +373,14 @@
             userId:item.userId,//用户id
             beforeRank:item.currentRank,//变动前职级
             approvedBy:this.user.name,//审批人
+            approvedById:this.user.id,//审批人id
             organizationName:item.organizationName,//组织名
             organizationId:item.organizationId,//组织id
             type:1
           }
           arrName += item.policeName + ",";
           if(index == this.selectedRows.length - 1 ){
-            arrName.slice(0,arrName.length - 1);
+            arrName = arrName.slice(0,arrName.length - 1);
           }
           arr.push(obj)
         })
@@ -395,10 +396,14 @@
               return this.$api.personAdminService
                 .changeManyPostRank(parameter)
                 .then((res) => {
-                  this.$refs.table.refresh(true)
                   return res.data;
                 });
             },
+        }
+        let callback = () => {
+          this.$refs.table.refresh(true);
+          this.selectedRows = []
+          this.selectedRowKeys = []
         }
         let option = {
             title: '职级变更',
@@ -407,34 +412,42 @@
             maskClosable: false,
             okText:"提交",
         }
-        this.modal(param,option,fromModel)
+        this.modal(param,option,fromModel,callback)
       },
 		// 变更单个职级
 		changeOneRank(e){
-      console.log(e)
-      console.log(this.user)
+      let obj = {
+        policeName:e.policeName,//名字
+        number:e.number,//警员编号
+        userId:e.userId,//用户id
+        beforeRank:e.currentRank,//变动前职级
+        approvedBy:this.user.name,//审批人
+        approvedById:this.user.id,//审批人id
+        organizationName:e.organizationName,//组织名
+        organizationId:e.organizationId,//组织id
+        type:1
+      }
+      let arr = []
+      arr.push(obj)
 			let param ={
 				formTitle:this.extension,
 				rules:this.changeRankRules,
 				record:{
           policeName:e.policeName,//名字
-          number:e.number,//警员编号
-          userId:e.userId,//用户id
           beforeRank:e.currentRank,//变动前职级
-          approvedBy:this.user.name,//审批人
-          organizationName:e.organizationName,//组织名
-          organizationId:e.organizationId,//组织id
-          type:1
+          policeArr:arr
         },
         submitFun: (parameter) => {
           return this.$api.personAdminService
-            .changePostRank(parameter)
+            .changeManyPostRank(parameter)
             .then((res) => {
-              this.$refs.table.refresh(true)
               return res.data;
             });
         },
-			}
+      }
+      let callback = () => {
+        this.$refs.table.refresh(true);
+      }
 			let option = {
 				title: '职级变更',
 				width: 500,
@@ -442,14 +455,15 @@
 				maskClosable: false,
 				okText:"提交",
 			}
-			this.modal(param,option,fromModel)
+			this.modal(param,option,fromModel,callback)
 		},
       // 弹窗
-      modal(obj,option,model){
+      modal(obj,option,model,callback){
         const defaultProps = {
           on: {
                 ok () {
                     // console.log('ok 回调')
+                    callback()
                 },
                 cancel () {
                     // e.handleDestroy()
@@ -485,7 +499,7 @@
             search:'',
             type:1
         },
-        this.$refs.table.refresh(true)
+        this.$refs.table.refresh(false)
       },
     },
     filters: {

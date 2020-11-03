@@ -36,7 +36,7 @@
 										<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
 										<a-button
 											style="margin-left: 8px"
-											@click="() => (queryParam = {})"
+											@click="resetParam"
 										>重置</a-button
 										>
 										<a @click="toggleAdvanced" style="margin-left: 8px">
@@ -379,6 +379,16 @@
       },
       toggleAdvanced() {
         this.advanced = !this.advanced;
+      },
+      // 重置查询条件
+      resetParam() {
+        this.queryParam= {
+            name: "",
+            time:'',
+            organizationId:'',
+			oid:''
+        },
+        this.$refs.table.refresh(false)
       },
     },
     filters: {
