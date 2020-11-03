@@ -7,7 +7,7 @@
         :before-upload="beforeUpload"
         :show-upload-list="false"
       >
-      <a-button type="primary">导入</a-button>
+      <a-button type="primary" icon="vertical-align-bottom">{{btnName}}</a-button>
     </a-upload>
   </div>
 </template>
@@ -22,6 +22,11 @@
           return []
         }
       },
+      // 按钮名称
+      btnName:{
+        type:String,
+        default:"导入"
+      }
     },
     data(){
       return{

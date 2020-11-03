@@ -17,24 +17,24 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="配发日期">
-                  <a-date-picker @change="onChange" style="width: 100%" />
+                  <a-date-picker @change="allotmentDate" style="width: 100%" />
                 </a-form-item>
               </a-col>
             </template>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="到期日期">
-                  <a-date-picker @change="onChange" style="width: 100%" />
+                  <a-date-picker @change="validity" style="width: 100%" />
                 </a-form-item>
               </a-col>
             </template>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="状态选择">
-                  <a-select default-value="" @change="handleChange">
+                  <a-select default-value="" @change="handleChange" v-model="queryParam.state">
                     <a-select-option value=""> 全部 </a-select-option>
                     <a-select-option value="1">已发放</a-select-option>
-                    <a-select-option value="2">逾期未回收</a-select-option>
+                    <a-select-option value="3">逾期未回收</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -42,9 +42,9 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="证件类型">
-                  <a-select default-value="" @change="handleChange">
+                  <a-select default-value="" @change="handleChange" v-model="queryParam.cqName">
                     <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option :value="item.id" v-for="item in certList" :key="item.id">{{item.name}}</a-select-option>
+                    <a-select-option :value="item.name" v-for="item in certList" :key="item.id">{{item.name}}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -61,7 +61,7 @@
                 >
                 <a-button
                   style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                  @click="resetParam"
                   >重置</a-button
                 >
                 <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -214,12 +214,18 @@ export default {
         describes: "",
         allotmentDate: "",
         termValidity: "",
-        state:1,
+        state:'',
         type: 1,
         certificatesEquipmentHistory: "",
-        oid:""
+        cqName:'',//证件或装备类型
+        oid:"",
+        recycler:'',//回收人
+        recyclerId:'',//回收人id
       },
       loadScheduleData: (params) => {
+        this.queryParam.recycler = this.user.name
+        this.queryParam.recyclerId = this.user.id
+        this.queryParam.oid = this.user.organizationId
         let param = Object.assign(params, this.queryParam);
         return this.$api.certEquipService.getCertEqup(param).then((res) => {
           res.data.data.list.map((i, k) => {
@@ -276,7 +282,16 @@ export default {
   methods: {
     // 配发日期
     handleChange() {},
-    //
+    // 配发日期
+    allotmentDate(date, dateString) {
+      console.log(date, dateString);
+      this.queryParam.allotmentDate = dateString
+    },
+    //到期日期
+    validity(date, dateString) {
+      console.log(date, dateString);
+      this.queryParam.termValidity = dateString
+    },
     onChange() {},
     // 多选触发
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -344,6 +359,23 @@ export default {
       this.queryParam.termValidity=""
       this.queryParam.certificatesEquipmentHistory=""
       this.$refs.table.refresh(true);
+    },
+    //重置
+    resetParam(){
+      this.queryParam = {
+        organizationId: "",
+        describes: "",
+        allotmentDate: "",
+        termValidity: "",
+        state:'',
+        type: 1,
+        certificatesEquipmentHistory: "",
+        cqName:'',//证件或装备类型
+        oid:"",
+        recycler:'',//回收人
+        recyclerId:'',//回收人id
+      }
+      this.$refs.table.refresh(false);
     }
   },
   filters: {

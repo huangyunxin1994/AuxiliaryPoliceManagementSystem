@@ -17,7 +17,7 @@
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="配发日期">
-                      <a-date-picker @change="onChange" style="width: 100%"/>
+                      <a-date-picker @change="handleChange" style="width: 100%"/>
                     </a-form-item>
                   </a-col>
                 </template>
@@ -145,9 +145,14 @@ export default {
             describes:"",
             type:2,
             state:2,
-            oid:""
+            oid:"",
+            recycler:'',//回收人
+            recyclerId:'',//回收人id
           },
           loadScheduleData:  (parameter) => {
+              this.queryParam.recycler = this.user.name
+              this.queryParam.recyclerId = this.user.id
+              this.queryParam.oid = this.user.organizationId
               const requestParameters = Object.assign({}, parameter, this.queryParam);
               return this.$api.certEquipService
                 .getCertEqup(requestParameters)
@@ -171,12 +176,14 @@ export default {
   },
     methods:{
         // 配发日期
-        handleChange(){
-
+        handleChange(date, dateString) {
+          console.log(date, dateString);
+          this.queryParam.allotmentDate = dateString
         },
-        // 
-        onChange(){
-
+        // 回收日期
+        onChange(date, dateString) {
+          console.log(date, dateString);
+          this.queryParam.termValidity = dateString
         },
         toggleAdvanced(){
           this.advanced = !this.advanced;

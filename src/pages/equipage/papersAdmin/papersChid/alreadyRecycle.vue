@@ -17,14 +17,14 @@
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="配发日期">
-                      <a-date-picker @change="onChange" style="width: 100%"/>
+                      <a-date-picker @change="allotmentDate" style="width: 100%"/>
                     </a-form-item>
                   </a-col>
                 </template>
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="回收日期">
-                      <a-date-picker @change="onChange" style="width: 100%"/>
+                      <a-date-picker @change="validity" style="width: 100%"/>
                     </a-form-item>
                   </a-col>
                 </template>
@@ -143,11 +143,18 @@ export default {
           queryParam:{
             organizationId: "",
             describes:"",
+            allotmentDate: "",
+            termValidity: "",
             type:1,
             state:2,
-            oid:""
+            oid:"",
+            recycler:'',//回收人
+            recyclerId:'',//回收人id
           },
           loadScheduleData:  (parameter) => {
+              this.queryParam.recycler = this.user.name
+              this.queryParam.recyclerId = this.user.id
+              this.queryParam.oid = this.user.organizationId
               const requestParameters = Object.assign({}, parameter, this.queryParam);
               return this.$api.certEquipService
                 .getCertEqup(requestParameters)
@@ -177,6 +184,16 @@ export default {
         // 
         onChange(){
 
+        },
+        // 配发日期
+        allotmentDate(date, dateString) {
+          console.log(date, dateString);
+          this.queryParam.allotmentDate = dateString
+        },
+        //到期日期
+        validity(date, dateString) {
+          console.log(date, dateString);
+          this.queryParam.termValidity = dateString
         },
         toggleAdvanced(){
           this.advanced = !this.advanced;
