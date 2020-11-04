@@ -249,7 +249,7 @@ export default {
         this.queryParam.id = this.param.id
         let param = Object.assign(params,this.queryParam)
         return this.$api.trainService.getEducationDetails(param).then((res)=>{
-          console.log(res)
+          // console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
           })
@@ -342,7 +342,6 @@ export default {
                 res.data.data.list.map((i,k)=>{
                     i.key=k+1
                 })
-                this.$refs.table.refresh(true)
                 return res.data
             })
         },
@@ -367,6 +366,7 @@ export default {
         on: {
           ok() {
             console.log("ok 回调");
+            this.$refs.table.refresh(true)
           },
           cancel() {
             console.log("cancel 回调");

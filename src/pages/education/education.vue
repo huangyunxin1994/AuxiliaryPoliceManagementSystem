@@ -320,8 +320,6 @@ export default {
     },
     // 新建培训
     newEducation(){
-      console.log("66666666")
-      console.log(this.user)
       this.$refs.modal.visible=true
     },
     // 删除培训

@@ -246,7 +246,7 @@
 			this.queryParam.oid = this.user.organizationId
             let param = Object.assign(params,this.queryParam)
             return this.$api.personAdminService.getRankList(param).then((res)=>{
-              console.log(res)
+              // console.log(res)
               res.data.data.list.map((i,k)=>{
                 i.key=k+1
               })
@@ -361,8 +361,6 @@
 
       // 职级变更
       changeRank(){
-        console.log("askdjflasdkfjsaow ")
-        console.log(this.selectedRows)
         let arr = []
         let arrName = ''
         this.selectedRows.forEach((item,index)=>{

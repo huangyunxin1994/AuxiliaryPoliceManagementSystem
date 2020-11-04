@@ -208,7 +208,7 @@
 			this.queryParam.oid = this.user.organizationId
             let param = Object.assign(params,this.queryParam)
             return this.$api.personAdminService.getRankList(param).then((res)=>{
-              // console.log(res)
+              console.log(res)
               res.data.data.list.map((i,k)=>{
                 i.key=k+1
               })
