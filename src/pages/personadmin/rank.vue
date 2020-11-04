@@ -172,7 +172,7 @@
               title: '变动原因',
               dataIndex: 'reason',
               key: 'reason',
-              width: 100
+              width: 150
             },
             {
               title: '生效日期',

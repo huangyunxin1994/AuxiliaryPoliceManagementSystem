@@ -1,5 +1,10 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
+    <div class="table-page-search-wrapper">
+      <div class="submitBtn">
+          <a-button type="primary"  @click="submit">返回</a-button>
+      </div>
+    </div>
     <a-card :bordered="false">
       <div
         class="position-and-level-title"
@@ -122,7 +127,7 @@
         <template slot="state" slot-scope="state">  
           <span  v-if="state != ''">
             <a-badge
-              :status="state == '1' ? 'success' : state == '2' ? 'processing' : 'error'"
+              :status="state == '1' ? 'success' : state == '2' ? 'processing' : state == '3' ? 'error' : ''"
               :text="state | statusFilter(state)"
             />
           </span>
@@ -132,11 +137,7 @@
           <a @click="handleCredAddOne(record)">填写结果</a>
         </span>
       </s-table>
-      <div class="table-page-search-wrapper">
-        <div class="submitBtn">
-            <a-button type="primary" icon="plus" @click="submit">完成</a-button>
-        </div>
-      </div>
+      
     </a-card>
   </div>
 </template>
@@ -483,7 +484,7 @@ export default {
 }
 .submitBtn{
     width: 100%;
-    margin-top: 20px;
+    padding: 20px 20px 0px 0px;
     display: flex;
     justify-content: flex-end;
 }
