@@ -87,9 +87,9 @@
 				<template slot="status" slot-scope="isExpire">
 					<!-- <a-badge :status="isExpire" :text="isExpire | statusFilter" /> -->
           <a-badge
-                :status="isExpire == '1' ? 'processing' : 'error'"
-                :text="isExpire | statusFilter"
-              />
+            :status="isExpire == '1' ? 'processing' : 'error'"
+            :text="isExpire | statusFilter"
+          />
 				</template>
 				<span slot="action" slot-scope="text, record">
 					<a @click="handleEdit(record)">历史合同</a>
@@ -108,6 +108,7 @@
       :rules="rules"
       :stepTitle="stepTitle"
       :submitFun="submitFun"
+      @refreshTable="refreshTable"
     ></form-step>
   </div>
 </template>
@@ -305,6 +306,10 @@ export default {
     };
   },
   methods: {
+    //新建合同之后刷新页面
+    refreshTable(){
+      this.$refs.table.refresh(false)
+    },
     handleEdit(record) {
       console.log(record);
       let param = {

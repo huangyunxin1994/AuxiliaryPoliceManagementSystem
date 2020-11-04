@@ -237,7 +237,7 @@ export default {
           width: 100,
         },
         {
-          title: "操作",
+          title: "重置密码",
           dataIndex: "action",
           scopedSlots: { customRender: "action" },
           width: 150,

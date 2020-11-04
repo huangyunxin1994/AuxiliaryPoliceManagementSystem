@@ -134,10 +134,16 @@ export default {
         );
         this.selcetPersonName = Object.assign(this.selcetPersonName,this.record)
         this.$refs.form.loadData()
-        if (columnData.length > 1) {
+        if (columnData.length > 1) {//选择多个人时，不能上传
           this.nowFormTitle.forEach((item) => {
             if (item.type == "upload") {
               item.disabled = true;
+            }
+          });
+        }else{
+          this.nowFormTitle.forEach((item) => { //选单个人时，允许上传
+            if (item.type == "upload") {
+              item.disabled = false;
             }
           });
         }

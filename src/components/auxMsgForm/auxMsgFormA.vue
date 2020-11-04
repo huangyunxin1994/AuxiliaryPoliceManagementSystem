@@ -424,16 +424,20 @@ const fromTitle = {
     {
       label: "学习形式",
       name: "learningForm",
-      type: "input",
+      type: "select",
       refName: "learningForm",
       placeholder: "请输入学习形式",
+      select: [
+        { name: "全日制" },
+        { name: "在职教育" },
+      ],
     },
     {
       label: "学制",
       name: "schoolSystem",
-      type: "select",
+      type: "input",
       refName: "schoolSystem",
-      placeholder: "请选择学制",
+      placeholder: "请输入学制",
       select: [
         { name: "2年制" },
         { name: "3年制" },
@@ -470,26 +474,18 @@ const fromTitle = {
       refName: "education",
       placeholder: "请选择学历",
       select: [
-        { name: "专科" },
-        { name: "本科" },
-        { name: "硕士" },
-        { name: "博士" },
-        { name: "博士后" },
+        { name: "大专" },
+        { name: "本科生" },
+        { name: "研究生" },
       ],
     },
     {
       label: "学位",
       name: "academic",
       props: "name",
-      type: "select",
+      type: "input",
       refName: "academic",
-      placeholder: "请选择学位",
-      select: [
-        { name: "学士" },
-        { name: "硕士" },
-        { name: "博士" },
-        { name: "博士后" },
-      ],
+      placeholder: "请输入学位"
     },
     {
       label: "学位授予日期",
@@ -626,22 +622,22 @@ const fromTitle = {
 const rules = {
   table1: {
     school: [{ required: true, message: "请输入学院姓名", trigger: "blur" }],
-    courtyard: [{ required: true, message: "请输入所在院系", trigger: "blur" }],
+    courtyard: [{ required: false, message: "请输入所在院系", trigger: "blur" }],
     learningForm: [
-      { required: true, message: "请输入学习形式", trigger: "blur" },
+      { required: false, message: "请输入学习形式", trigger: "blur" },
     ],
     schoolSystem: [
-      { required: true, message: "请选择学制", trigger: "change" },
+      { required: false, message: "请选择学制", trigger: "change" },
     ],
     startDate: [
       { required: true, message: "请选择入学时间", trigger: "change" },
     ],
     endDate: [{ required: true, message: "请选择毕业时间", trigger: "change" }],
-    major: [{ required: true, message: "请输入专业", trigger: "blur" }],
-    education: [{ required: true, message: "请选择学历", trigger: "change" }],
-    academic: [{ required: true, message: "请选择学位", trigger: "change" }],
+    major: [{ required: false, message: "请输入专业", trigger: "blur" }],
+    education: [{ required: false, message: "请选择学历", trigger: "change" }],
+    academic: [{ required: false, message: "请选择学位", trigger: "change" }],
     academicTime: [
-      { required: true, message: "请选择学位授予日期", trigger: "change" },
+      { required: false, message: "请选择学位授予日期", trigger: "change" },
     ],
   },
   table2: {

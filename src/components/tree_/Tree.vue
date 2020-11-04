@@ -151,7 +151,6 @@ export default {
             this.selectedNode = e.node.dataRef
             let params = {}
             params[this.replaceFields.key] = this.selectedKeys[0]
-            console.log(params)
             this.$emit('loadTreeNode',params)
         },
         //编辑
