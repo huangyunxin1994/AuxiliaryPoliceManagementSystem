@@ -22,7 +22,7 @@
                 </template>
                 <span slot="action" slot-scope="text, record">
                     <!-- <a @click="handleEdit (record)">下载</a> -->
-                    <a  name="file" :download="record.name" :href="BASE_URL+'/contract/downloadFile?noticeId='+record.id">下载</a>
+                    <a  name="file" :download="record.name" @click="downContract(record.id)">下载</a>
                     <a-divider type="vertical"/>
                     <a-upload
                         name="file"
@@ -166,6 +166,15 @@
             handleUpData(record){
                 console.log(record)
                 this.handleData = record
+            },
+            downContract(id){
+                this.$api.contractService.downNotice({contractId:id}).then(res=>{
+                    if(res.data.code===0){
+                    window.location.href = `${this.BASE_URL}/contract/downloadFile?contractId=${id}`;
+                    }else{
+                    this.$message.error(res.data.msg)
+                    }
+                })
             }
         },
         filters: {

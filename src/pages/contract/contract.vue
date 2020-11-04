@@ -45,7 +45,6 @@
 								:style="
 								(advanced && { float: 'right', overflow: 'hidden' }) || {}
 								">
-								<!-- <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button> -->
                 <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
 								<a-button
 									style="margin-left: 8px"
@@ -93,7 +92,7 @@
               />
 				</template>
 				<span slot="action" slot-scope="text, record">
-					<a @click="handleEdit(record)">查看历史合同</a>
+					<a @click="handleEdit(record)">历史合同</a>
 					<a-divider type="vertical"/>
 					<a @click=" extensionOneCon(record)">续约合同</a>
 				</span>
@@ -151,7 +150,7 @@ const formTitle = [
     name: "probation",
     type: "picker",
     refName: "probation",
-    placeholder: "请选择工作结束日期",
+    placeholder: "请选择试用结束日期",
   },
   {
     label: "合同附件",
@@ -226,8 +225,8 @@ export default {
         },
         {
           title: "合同终止日期",
-          dataIndex: "startDate",
-          key: "startDate",
+          dataIndex: "endDate",
+          key: "endDate",
           width: 100,
         },
         {

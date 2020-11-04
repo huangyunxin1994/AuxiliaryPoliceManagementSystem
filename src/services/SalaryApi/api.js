@@ -16,4 +16,5 @@ module.exports = {
   GETSALARYFILETER:`${BASE_URL}/salary/filter`,//查询该管理员已经导入过工资条的组织
   GETFORMWORK:`${BASE_URL}/salary/formwork`,//查看工资模板
   GETSYNCHRO:`${BASE_URL}/salary/synchro`,//同步工资条
+  GETBYAUX:`${BASE_URL}/salary/personal`,//根据id查询工资条
 }

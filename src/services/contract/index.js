@@ -5,14 +5,10 @@ import moment from 'moment'
 
 const contractService = {
     /**
-     * 获取加班或请假的分页列表
+     * 获取合同信息
      * @param params 查询条件
      * @returns {Promise<AxiosResponse<T>>}
      */
-    // getOverTimeLeave(params) {
-    //     return request(GETDATA, METHOD.GET, params)
-    // },
-    //获取合同信息
     getContractData(params){
         return request(GETDATA, METHOD.GET, params)
     },
@@ -41,12 +37,19 @@ const contractService = {
         return request(POSTdATA, METHOD.POST, formData)
         
     },
-    //根据辅警id查询合同信息
+    /**
+     * 根据辅警id查询合同信息
+     * @param params 查询条件
+     * @returns {Promise<AxiosResponse<T>>}
+     */
     getdetails(params){
         return request(GETDETAILS, METHOD.GET, params)
     },
-
-    // 续约合同(单选)
+    /**
+     * 续约合同(单选)
+     * @param params 查询条件
+     * @returns {Promise<AxiosResponse<T>>}
+     */
     postExtensionCon(params){
         let policeId=[]
         policeId.push(params.policeId)
@@ -69,8 +72,11 @@ const contractService = {
         // console.log(PODTEXTENSION)
         
     },
-
-    // 续约合同，多选
+    /**
+     * 续约合同，多选
+     * @param params 查询条件
+     * @returns {Promise<AxiosResponse<T>>}
+     */
     postManyExtensionCon(params){
         // const file = Object.assign([],params.fileList) 
         // console.log(file)

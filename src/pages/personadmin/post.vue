@@ -247,7 +247,7 @@
             this.postList = Object.assign([],res.data.data.list)
             this.extension.forEach((item)=>{
               if(item.name == 'currentRankId'){
-                item.select = this.postList
+                item.select = this.postList.filter(i=>i.state===1)
               }
             })
         })

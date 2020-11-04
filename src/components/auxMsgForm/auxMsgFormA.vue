@@ -4,6 +4,7 @@
     <a-card :bordered="true">
       <div class="saveBtn">
         <a-button type="primary" @click="saveBtn">保存</a-button>
+        <a-button @click="cancelBtn" style="margin-left:8px">取消并返回</a-button>
       </div>
     </a-card>
     <a-card :bordered="true">
@@ -49,6 +50,12 @@
                     v-model="form[item.title]"
                     v-if="item.type == 'input' && item.title != 'idCard'"
                     :disabled="item.disabled"
+                  />
+                  <a-input-number
+                    v-model="form[item.title]"
+                    v-else-if="item.type == 'number'"
+                    :disabled="item.disabled"
+                     style="width: 100%"
                   />
                   <a-select
                     v-model="form[item.title]"
@@ -802,7 +809,7 @@ export default {
         {
           title: "height",
           label: "身高(cm)",
-          type: "input",
+          type: "number",
           placeholder: "请输入身高",
           disabled: false,
         },
@@ -1142,6 +1149,21 @@ export default {
         }
       });
       // console.log(this.familySource)
+    },
+    cancelBtn(){
+      const _this = this;
+        this.$confirm({
+        title: "警告",
+        content: `系统不会保存填写的内容，真的要取消吗?`,
+        okText: "取消",
+        okType: "primary",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+         _this.$router.push("/auxMess/personList")
+        },
+        onCancel() {},
+      });
     },
     handleChange(item){
       if(item.titleName){

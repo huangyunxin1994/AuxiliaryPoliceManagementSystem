@@ -133,7 +133,7 @@ import AntTree from "@/components/tree_/Tree";
 import TaskForm from "@/components/formModel/formModel";
 import { validatePhone } from "@/config/default/rules";
 
-const organTitle = [
+let organTitle = [
   {
     label: "上级组织",
     name: "parentId",
@@ -360,6 +360,11 @@ export default {
       const code = params.code;
       const parentId = params.parentId || "";
       let obj = { id, name, code, parentId };
+      if(parentId == ""){
+        organTitle = [
+          { label: "组织名称", name: "name", type: "input" }
+        ]
+      }
       let formProps = {
         record: obj,
         formTitle: organTitle,
@@ -497,7 +502,7 @@ export default {
         console.log(list)
         list.splice(list.findIndex(i=>i.code==='xtgl'),1)
         this.roleList = Object.assign([],list)
-        this.$api.rankPostService.getPostList({state:1}).then(res=>{
+        this.$api.rankPostService.getPostList().then(res=>{
           this.postList = Object.assign([],res.data.data.list)
           this.tableTitle = [
           {
@@ -538,7 +543,7 @@ export default {
             label: "岗位",
             name: "postId",
             type: "select",
-            select:this.postList
+            select:this.postList.filter(i=>i.state === 1)
           },
           {
             label: "联系电话",

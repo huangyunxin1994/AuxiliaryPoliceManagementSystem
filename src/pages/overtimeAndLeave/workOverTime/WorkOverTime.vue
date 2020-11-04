@@ -144,7 +144,7 @@ const formTitle = [
   {
     label: "时长(小时)",
     name: "duration",
-    type: "input",
+    type: "number",
   },
   {
     label: "法定假日",

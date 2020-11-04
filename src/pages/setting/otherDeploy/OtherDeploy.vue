@@ -277,17 +277,13 @@ export default {
       selectedCredRows: [],
       selectedEqupRowKeys: [],
       selectedEqupRows: [],
-      levelList: [
-        { id: 1, edit: false, name: "初级" },
-        { id: 2, edit: false, name: "二级" },
-        { id: 3, edit: false, name: "三级" },
-      ],
+      levelList: [],
     };
   },
   created(){
     this.$api.otherItemsService.getCommDataList()
     .then(res => {
-      console.log(res.data.data.list[0])
+      if(res.data.data.list.length>0)
       this.commData = res.data.data.list[0]
     })
   },

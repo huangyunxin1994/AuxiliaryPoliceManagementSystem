@@ -33,6 +33,14 @@
                     :disabled="item.disabled"
                     :placeholder="item.placeholder"
                   />
+                    <!-- 数字输入框  -->
+                  <a-input-number
+                    v-model="form[item.name]"
+                    v-if="item.type == 'number'"
+                    :disabled="item.disabled"
+                    :placeholder="item.placeholder"
+                    style="width: 100%"
+                  />
                   <!-- 下拉框 -->
                   <a-select
                     v-model="form[item.name]"

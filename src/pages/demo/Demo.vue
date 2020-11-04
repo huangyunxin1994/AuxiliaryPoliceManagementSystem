@@ -97,7 +97,7 @@
           :policeId="policeId"
           v-else-if="tabIndex === 2"
         ></award-duty>
-        <contract :policeId="policeId" v-else-if="tabIndex === 3"></contract>
+        <contract :policeId="policeId" :policeNumber="policeNumber" v-else-if="tabIndex === 3"></contract>
         <personnel :policeId="policeId" v-else-if="tabIndex === 4"></personnel>
         <education :policeId="policeId" v-else-if="tabIndex === 5"></education>
         <equipage :policeId="policeId" v-else-if="tabIndex === 6"></equipage>
@@ -134,6 +134,7 @@ export default {
       tabIndex: 1,
       policeId: undefined,
       policeName: undefined,
+      policeNumber: undefined,
       teams: [
         {
           avatar:
@@ -196,6 +197,7 @@ export default {
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL;
     this.policeId = this.$route.query.id;
     this.policeName = this.$route.query.name;
+    this.policeNumber = this.$route.query.number;
     if (this.$route.query.photoPath)
       this.imageUrl = `${this.BASE_URL}/img/${this.$route.query.photoPath}`;
   },

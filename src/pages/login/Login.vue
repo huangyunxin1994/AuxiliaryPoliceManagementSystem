@@ -222,9 +222,9 @@ export default {
         loginRes.data.expireAt = new Date(
           new Date().getTime() + 60 * 60 * 1000
         );
-      //  `${this.BASE_URL}/img/${this.$route.query.photoPath}`;
-        data.avatar = 
-          "https://gw.alipayobjects.com/zos/rmsportal/cnrhVkzwxjPwAaCfPbdc.png";
+      //  `${process.env.VUE_APP_API_BASE_URL}/img/${data.photoPath}`;
+
+        data.avatar = data.photoPath && `${process.env.VUE_APP_API_BASE_URL}/img/${data.photoPath}` || "";
         this.setUser(data);
         let roleArr = [];
         console.log(type)
@@ -234,6 +234,7 @@ export default {
             param.id = i.code;
             roleArr.push(param);
           });
+          console.log(data.isSystem)
           if(data.account==='huachen2020'){
             roleArr=[
               { id: "jczl" },

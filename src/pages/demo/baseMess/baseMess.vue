@@ -363,7 +363,8 @@ export default {
     // 获取职级列表
     getRankList(){
       let para = {
-        oid:this.user.organizationId
+        oid:this.user.organizationId,
+        state:1
       }
       this.$api.rankPostService.getRankList(para).then((res)=>{
         console.log(res)
@@ -382,7 +383,8 @@ export default {
       console.log(record)
       let param = {
         id:record.id,
-        name:record.name
+        name:record.name,
+        number:record.number
       }
       if(record.photoPath)
       param.photoPath=record.photoPath

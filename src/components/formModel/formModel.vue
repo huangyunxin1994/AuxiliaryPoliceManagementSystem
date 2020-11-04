@@ -29,6 +29,14 @@
             :disabled="item.disabled"
             :placeholder="item.placeholder"
           />
+          <!-- 数字输入框  -->
+          <a-input-number
+            v-model="form[item.name]"
+            v-if="item.type == 'number'"
+            :disabled="item.disabled"
+            :placeholder="item.placeholder"
+            style="width: 100%"
+          />
           <!-- 下拉框 -->
           <a-select
             v-model="form[item.name]"
@@ -228,6 +236,21 @@ export default {
         };
         this.formRules.fileList = [{required:true, validator: validatePass2, trigger: "change" }]
       }
+      if(i.validata === 'checkpass' && i.required){
+         let validateCheckPass = (rule, value, callback) => {
+         console.log(value)
+         console.log("password= "+this.form.password)
+        if (!value) {
+          callback(new Error('请再输入一次新密码'));
+        } else if (value !== this.form.password) {
+          console.log(58)
+          callback(new Error("两次输入不一致"));
+        } else {
+          callback();
+        }
+      };
+      this.formRules.again = [{required:true, validator: validateCheckPass, trigger: "blur" }]
+      }
     });
     if (this.record) {
       console.log(this.record);
@@ -237,6 +260,7 @@ export default {
       );
       console.log("*********" + JSON.stringify(this.form));
     }
+    
    
 
   },

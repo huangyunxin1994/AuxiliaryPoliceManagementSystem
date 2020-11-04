@@ -67,7 +67,6 @@
                     <a-list-item-meta>
                       <!-- <a-avatar slot="avatar" :src="item.user.avatar" /> -->
                       <a slot="title" @click="handleDel(item.id)">{{ item.content }}</a>
-                      <div slot="description">9小时前</div>
                     </a-list-item-meta>
                   </a-list-item>
                 </a-list>

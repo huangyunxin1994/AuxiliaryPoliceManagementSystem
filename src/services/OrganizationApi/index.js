@@ -1,4 +1,4 @@
-import {GETORGAN, POSTORGAN, PUTORGAN, DELETEORGAN, GETROLE, GETUSER, POSTUSER, PUTUSER, PUTRESET, DELETEUSER} from './api'
+import {GETORGAN, POSTORGAN, PUTORGAN, DELETEORGAN, GETROLE, GETUSER, POSTUSER, PUTUSER, PUTRESET, DELETEUSER, PUTPASSWORD} from './api'
 import {request, METHOD} from '@/utils/request'
 import Qs from 'qs'
 const organizationService = {
@@ -98,7 +98,15 @@ const organizationService = {
      */
     async deleteUser(params){
         return request(DELETEUSER, METHOD.DELETE,{data:params})
-    }
+    },
+    /**
+     * 修改管理员密码
+     * @param params 
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    async putPassword(params){
+        return request(PUTPASSWORD, METHOD.PUT, Qs.stringify(params))
+    },
 }
 
 
