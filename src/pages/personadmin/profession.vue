@@ -66,7 +66,6 @@
                         rowKey="key"
                         :columns="scheduleColumns"
                         :data="loadScheduleData"
-                        :rowSelection="rowSelection"
                         :scroll="{ y: 600, x: 800 }"
                         showPagination="auto">
 

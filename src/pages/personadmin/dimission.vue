@@ -63,7 +63,6 @@
 				:rowKey="(record) => record.id"
 				:columns="scheduleColumns"
 				:data="loadScheduleData"
-				:rowSelection="rowSelection"
 				:scroll="{ y: 600, x: 800 }"
 				showPagination="auto">
 				<span slot="action" slot-scope="text, record">
