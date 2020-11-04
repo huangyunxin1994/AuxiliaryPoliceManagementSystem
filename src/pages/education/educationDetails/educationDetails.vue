@@ -1,11 +1,11 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
-    <div class="table-page-search-wrapper">
-      <div class="submitBtn">
-          <a-button type="primary"  @click="submit">返回</a-button>
-      </div>
-    </div>
     <a-card :bordered="false">
+      <div class="table-page-search-wrapper">
+        <div class="submitBtn">
+            <a-button type="primary"  @click="submit">返回</a-button>
+        </div>
+      </div>
       <div
         class="position-and-level-title"
         :style="{ 'border-color': theme.color }"
@@ -484,7 +484,7 @@ export default {
 }
 .submitBtn{
     width: 100%;
-    padding: 20px 20px 0px 0px;
+    // padding: 20px 20px 0px 0px;
     display: flex;
     justify-content: flex-end;
 }
