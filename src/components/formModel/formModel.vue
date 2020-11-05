@@ -59,7 +59,7 @@
                     v-model="form[item.name]"
                     v-else-if="item.type == 'picker'"
                     :disabled="item.disabled"
-                     :disabled-date="disabledTime&&disabledDate||''"
+                     :disabled-date="disabledDate"
                     :show-time="item.showTime&&item.showTime||false"
                     :format="item.valueFormat&&item.valueFormat || 'YYYY-MM-DD'"
                     :valueFormat="item.valueFormat&&item.valueFormat || 'YYYY-MM-DD'"
@@ -277,7 +277,11 @@ export default {
   },
   methods: {
     disabledDate(current) {
-      return current && current < moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf("day");
+      if(this.disabledTime === false){
+        return false
+      }else{
+        return current && current < moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf("day");
+      }
     },
     handleChange(item){
       if(item.labelName){

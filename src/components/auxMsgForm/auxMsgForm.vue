@@ -79,7 +79,6 @@
                     value-format="YYYY-MM-DD"
                     style="width: 100%"
                     v-else-if="item.type == 'time' && item.title == 'entryTime'"
-                    @change="getDate"
                   />
                 </a-form-model-item>
               </a-col>

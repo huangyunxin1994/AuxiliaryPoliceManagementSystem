@@ -295,7 +295,7 @@ export default {
         {
           label: "姓名",
           name: "name",
-          type: "input",
+          type: "text",
           refName: "name",
           placeholder: "请输入姓名",
           disabled: true,
@@ -506,9 +506,9 @@ export default {
       let arrName = "";
       let policeId = [];
       arr.forEach((item, index) => {
-        arrName = item.name + ",";
+        arrName += item.name + ",";
         if (index == arr.length - 1) {
-          arrName.slice(0, arrName.length - 1);
+          arrName = arrName.slice(0, arrName.length - 1);
         }
         policeId.push(item.police_id);
       });
