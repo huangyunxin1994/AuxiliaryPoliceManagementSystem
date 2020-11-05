@@ -13,7 +13,7 @@
         @expand="onExpand"
         >
             <a-icon slot="switcherIcon" type="down" />
-            <template slot="custom" slot-scope="item">
+            <template slot="custom" slot-scope="item" class="tree_item">
                 <span v-if="item[replaceFields.title].indexOf(searchValue) > -1">
                     {{ item[replaceFields.title].substr(0, item[replaceFields.title].indexOf(searchValue)) }}
                     <span style="color: #f50">{{ searchValue }}</span>
@@ -237,12 +237,12 @@ export default {
   .custom-tree {
       border-right: 1px solid @border-color-split;
       
-      /deep/ .ant-tree-node-content-wrapper {
-        position: relative;
+      /deep/ .ant-tree-title {
+          display: flex;
+          justify-content: space-between;
+          text-align: center;
         /deep/ .btnPosition {
-            position: absolute;
-            top: 0;
-            right: 10px;
+            
             font-size: 14px;
             z-index: 1;
             color:@text-color;
@@ -262,7 +262,7 @@ export default {
             display: inline-block;
         }
         /deep/ .btnReload{
-             margin-left: 20px;
+             margin-left: 10px;
         }
     }
       

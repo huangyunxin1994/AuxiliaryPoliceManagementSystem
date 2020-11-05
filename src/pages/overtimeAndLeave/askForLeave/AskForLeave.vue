@@ -95,7 +95,8 @@
       </div>
       <s-table
         ref="table"
-        rowKey="key"
+        :rowKey="(record) => record.id"
+        bordered
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :scroll="{ y: 550, x: 800 }"

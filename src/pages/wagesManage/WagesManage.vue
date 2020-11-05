@@ -379,7 +379,7 @@ export default {
     },
     downloadExcel() {
       this.$api.salaryService.getFormwork({month:this.queryParam.month}).then(res=>{
-        if(res.data.code===0){
+        if(!res.data.code){
           window.location.href = `${process.env.VUE_APP_API_BASE_URL}/salary/formwork?month=${this.queryParam.month}`;
         }else{
           this.$message.error(res.data.msg)

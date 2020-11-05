@@ -67,6 +67,7 @@
                     <a-list-item-meta>
                       <!-- <a-avatar slot="avatar" :src="item.user.avatar" /> -->
                       <a slot="title" @click="handleDel(item.id)">{{ item.content }}</a>
+                      <div slot="description">{{ formatTime(item.createTime)}}</div>
                     </a-list-item-meta>
                   </a-list-item>
                 </a-list>
@@ -208,6 +209,38 @@ export default {
           onCancel() {},
         });
       
+    },
+    formatTime(time){
+      if(!time)
+        return undefined
+      time = new Date(time.replace(/-/g,"/")).getTime()
+      if (time.length === 10) {
+        time = parseInt(time) * 1000
+      }
+      const d = new Date(time)
+      const now = Date.now()
+      const diff = (now - time) / 1000
+      if (diff < 30) {
+        return '刚刚'
+      } else if (diff < 3600) {
+        return Math.ceil(diff / 60) + '分钟前'
+      } else if (diff < 3600 * 24) {
+        return Math.ceil(diff / 3600) + '小时前'
+      } else if (diff < 3600 * 24 * 2) {
+        return '1天前'
+      }
+      
+      return (
+      d.getMonth() +
+      1 +
+      '月' +
+      d.getDate() +
+      '日' +
+      d.getHours() +
+      '时'+
+      d.getMinutes() +
+      '分' 
+      )
     }
   }
 }

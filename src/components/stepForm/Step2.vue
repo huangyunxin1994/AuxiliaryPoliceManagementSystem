@@ -145,9 +145,8 @@
                   </a-tree-select>
                   <a-upload
                     name="file"
-                    :multiple="true"
-                    
-                    :default-file-list="form[item.name]"
+                    :default-file-list="fileList"
+                    :file-list="fileList"
                     action=""
                     :before-upload="beforeUpload"
                     :show-upload-list="true"
@@ -269,7 +268,21 @@ export default {
     },
     // 上传文件
     beforeUpload(file){
-      this.form.fileList=[...this.fileList, file];
+      
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'application/pdf';
+      if (!isJpgOrPng) {
+        this.$message.error('你只能上传PDF,JPG,PNG格式的文件');
+        console.log(this.fileList)
+        console.log(this.form)
+        return false
+      }
+      const isLt2M = file.size / 1024 / 1024 < 10;
+      if (!isLt2M) {
+        this.$message.error('上传的文件大小不能超过10M');
+        return false
+      }
+      this.fileList = [file]
+      this.form.fileList=[...this.fileList];
       return false
     }
   },

@@ -156,9 +156,9 @@ export default {
           scopedSlots: { customRender: 'state' }
         },
         {
-          title: "证件描述",
-          dataIndex: "describes",
-          key: "describes",
+          title: "证件类型",
+          dataIndex: "cqName",
+          key: "cqName",
           ellipsis: true,
           width: 150
         },
@@ -207,9 +207,9 @@ export default {
           scopedSlots: { customRender: 'state' }
         },
         {
-          title: "装备描述",
-          dataIndex: "describes",
-          key: "describes",
+          title: "装备类型",
+          dataIndex: "cqName",
+          key: "cqName",
           ellipsis: true,
           width: 150
         }
@@ -287,8 +287,9 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        processing: "启用",
-        error: "禁用",
+        1: "已发放",
+        2: "已回收",
+        3: "逾期未回收",
       };
       return statusMap[status];
     },

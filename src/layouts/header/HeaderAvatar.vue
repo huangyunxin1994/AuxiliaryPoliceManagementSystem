@@ -1,7 +1,8 @@
 <template>
   <a-dropdown>
     <div class="header-avatar" style="cursor: pointer">
-      <a-avatar class="avatar" size="small" shape="circle" :src="user.avatar"/>
+      <a-avatar class="avatar" size="small" shape="circle" :src="user.avatar" v-if="user.avatar"/>
+       <a-avatar class="avatar" size="small" shape="circle" icon="user" :style="{backgroundColor:theme.color}" v-else/>
       <span class="name">{{user.name}}</span>
     </div>
     <a-menu :class="['avatar-menu']" slot="overlay">
@@ -19,13 +20,14 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 // import {userApi} from '@/services/api'
 import TaskForm from "@/components/formModel/formModel";
 
 export default {
   name: 'HeaderAvatar',
   computed: {
+    ...mapState("setting", ['theme']),
     ...mapGetters('account', ['user']),
   },
   methods: {

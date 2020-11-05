@@ -10,7 +10,7 @@
         />
         <a-list-item-meta>
           <a slot="title" @click="handleClick(item)">{{ item.content }}</a>
-          <div slot="description">{{ item.releaseTime }}</div>
+          <div slot="description">{{ formatTime(item.releaseTime) ||  formatTime(item.createTime)}}</div>
         </a-list-item-meta>
         
       </a-list-item>
@@ -18,7 +18,7 @@
     <a-modal :title="itemData.title" :visible="visible" @cancel="hanldeCancel" :footer="null" centered>
       <a-row>
         <a-col :span="12" >
-          发布时间:{{itemData.releaseTime}}
+          发布时间:{{formatTime(itemData.releaseTime)}}
         </a-col>
         <a-col :span="12" >
           发布人:{{itemData.publisher}}
@@ -98,15 +98,15 @@ export default {
         //待办
         if(item.state == 1){//合同
           this.$router.push({
-            path:"/contract/demo2"
+            path:"/contract/contract"
           });
         }else if(item.state == 2){//职级
           this.$router.push({
-            path:"/parent3/rank"
+            path:"/personAdmin/rank"
           });
         }else if(item.state == 3){//岗位
           this.$router.push({
-            path:"/parent3/post"
+            path:"/personAdmin/post"
           });
         }else if(item.state == 4){//工资
           this.$router.push({
@@ -146,7 +146,7 @@ export default {
           });
         }else if(item.state == 13){//专业技术资格
           this.$router.push({
-            path:"/parent3/profession"
+            path:"/personAdmin/profession"
           });
         }
       }else if(item.type == 1){//通知
@@ -185,12 +185,47 @@ export default {
     hanldeCancel(){
       this.visible=false
       this.itemData = ''
+    },
+    formatTime(time){
+      if(!time)
+        return undefined
+      time = new Date(time.replace(/-/g,"/")).getTime()
+      if (time.length === 10) {
+        time = parseInt(time) * 1000
+      }
+      const d = new Date(time)
+      const now = Date.now()
+      const diff = (now - time) / 1000
+      if (diff < 30) {
+        return '刚刚'
+      } else if (diff < 3600) {
+        return Math.ceil(diff / 60) + '分钟前'
+      } else if (diff < 3600 * 24) {
+        return Math.ceil(diff / 3600) + '小时前'
+      } else if (diff < 3600 * 24 * 2) {
+        return '1天前'
+      }
+      
+      return (
+      d.getMonth() +
+      1 +
+      '月' +
+      d.getDate() +
+      '日' +
+      d.getHours() +
+      '时'+
+      d.getMinutes() +
+      '分' 
+      )
     }
+    
+    
   },
   mounted(){
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL
     console.log( this.BASE_URL)
-  },
+  }
+  
 };
 </script>
 <style>

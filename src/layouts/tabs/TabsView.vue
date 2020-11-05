@@ -28,7 +28,7 @@
         :animate="animate.name"
         :direction="animate.direction"
       >
-        <a-keep-alive v-if="multiPage&&!$route.meta.defalutInvisible" v-model="clearCaches">
+        <a-keep-alive v-if="multiPage&&$route.meta.keepAlive" v-model="clearCaches">
           <router-view ref="tabContent" :key="$route.fullPath" />
         </a-keep-alive>
         <router-view v-else />

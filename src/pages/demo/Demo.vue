@@ -47,7 +47,8 @@
                   <a-button class="abutton" type="link" @click="tabIndex = 1">
                     <a-avatar
                       size="small"
-                      src="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"
+                      icon="user"
+                      :style="{backgroundColor:theme.color}"
                     />
                     <span
                       class="member"
@@ -74,7 +75,8 @@
                   >
                     <a-avatar
                       size="small"
-                      src="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"
+                      icon="solution"
+                      :style="{backgroundColor:theme.color}"
                     />
                     <span
                       class="member"

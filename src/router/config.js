@@ -33,7 +33,8 @@ const options = {
             icon: 'home',
             authority: {
               role: 'gly'
-            }
+            },
+            keepAlive:true
           },
           component: () => import('@/pages/home/home')
         },
@@ -44,7 +45,8 @@ const options = {
             icon: 'user',
             authority: {
               role: 'jczl'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -54,7 +56,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'jczl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/demo/baseMess/baseMess')
             },
@@ -93,7 +96,8 @@ const options = {
             icon: 'solution',
             authority: {
               role: 'htgl'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -103,7 +107,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'htgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/contract/contract'),
             }
@@ -116,7 +121,8 @@ const options = {
             icon: 'hourglass',
             authority: {
               role: 'rsgl'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -126,7 +132,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'rsgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/personadmin/rank'),
             },
@@ -136,7 +143,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'rsgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/personadmin/post'),
             },
@@ -146,7 +154,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'rsgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/personadmin/dimission'),
             },
@@ -156,7 +165,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'rsgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/personadmin/profession'),
             }
@@ -169,7 +179,8 @@ const options = {
             icon: 'pay-circle',
             authority: {
               role: 'gzgl'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -179,7 +190,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'gzgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/wagesManage/WagesManage'),
             }
@@ -192,7 +204,8 @@ const options = {
             icon: 'desktop',
             authority: {
               role: 'jypx'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -202,7 +215,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'jypx'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/education/education'),
             },
@@ -214,7 +228,8 @@ const options = {
                 defalutInvisible: true,
                 authority: {
                   role: 'jypx'
-                }
+                },
+                keepAlive:false
               },
               component: () => import('@/pages/education/educationDetails/educationDetails'),
             }
@@ -227,7 +242,8 @@ const options = {
             icon: 'idcard',
             authority: {
               role: 'zzzb'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -237,7 +253,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'zzzb'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/equipage/equipageAdmin/equipageAdmin'),
             },
@@ -247,7 +264,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'zzzb'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/equipage/papersAdmin/papersAdmin'),
             }
@@ -260,7 +278,8 @@ const options = {
             icon: 'thunderbolt',
             authority: {
               role: 'jcgl'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -270,7 +289,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'jcgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/awardAndDuty/award/Award'),
             },
@@ -280,7 +300,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'jcgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/awardAndDuty/duty/Duty'),
             }
@@ -293,7 +314,8 @@ const options = {
             icon: 'calculator',
             authority: {
               role: 'jbqj'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -303,7 +325,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'jbqj'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/overtimeAndLeave/workOverTime/WorkOverTime'),
             },
@@ -313,7 +336,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'jbqj'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/overtimeAndLeave/askForLeave/AskForLeave'),
             },
@@ -323,7 +347,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'jbqj'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/overtimeAndLeave/overtimeLeaveCount/OvertimeLeaveCount'),
             }
@@ -336,7 +361,8 @@ const options = {
             icon: 'folder',
             authority: {
               role: 'wdgg'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -346,7 +372,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'wdgg'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/fileAndNotice/fileCenter/FileCenter'),
             },
@@ -356,7 +383,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'wdgg'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/fileAndNotice/notice/Notice'),
             }
@@ -369,7 +397,8 @@ const options = {
             icon: 'setting',
             authority: {
               role: 'xtgl'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -379,7 +408,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'xtgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/setting/organManage/OrganManage'),
             },
@@ -389,7 +419,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'xtgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/setting/positionAndLevel/PositionAndLevel'),
             },
@@ -399,7 +430,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'xtgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/setting/salaryItem/SalaryItem'),
             },
@@ -409,7 +441,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'xtgl'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/setting/otherDeploy/OtherDeploy'),
             }
@@ -422,7 +455,8 @@ const options = {
             icon: 'home',
             authority: {
               role: 'fj'
-            }
+            },
+            keepAlive:false
           },
           component:  () => import('@/pages/dashboard/workplace/WorkPlace'),
           
@@ -434,7 +468,8 @@ const options = {
             icon: 'user',
             authority: {
               role: 'fj'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -444,7 +479,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'fj'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/components/auxMsgForm/auxMsgForm')
             }
@@ -457,7 +493,8 @@ const options = {
             icon: 'solution',
             authority: {
               role: 'fj'
-            }
+            },
+            keepAlive:true
           },
           component: BlankView,
           children: [
@@ -467,7 +504,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'fj'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/subsystem/businessMess/awardAndDuty'),
             },
@@ -477,7 +515,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'fj'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/subsystem/businessMess/contract'),
             },
@@ -487,7 +526,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'fj'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/subsystem/businessMess/personnel'),
             },
@@ -497,7 +537,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'fj'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/subsystem/businessMess/education'),
             },
@@ -507,7 +548,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'fj'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/subsystem/businessMess/equipage'),
             },
@@ -517,7 +559,8 @@ const options = {
               meta: {
                 authority: {
                   role: 'fj'
-                }
+                },
+                keepAlive:true
               },
               component: () => import('@/pages/subsystem/businessMess/vacate'),
             }

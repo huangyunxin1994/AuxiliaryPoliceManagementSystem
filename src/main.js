@@ -28,9 +28,19 @@ Vue.use(Dialog)//this.$dialog
 Vue.prototype.$api = api;
 bootstrap({router, store, i18n, message: Vue.prototype.$message})
 
-new Vue({
+const vue = new Vue({
   router,
   store,
   i18n,
   render: h => h(App),
 }).$mount('#app')
+
+window.addEventListener('load', function () {
+  if (vue.$route.path === '/education/educationDetails') { // /date 表示日期选择路由
+      vue.$router.replace('/education/education') // 列表页面的路由
+  }
+  if (vue.$route.path === '/baseMess') { // /date 表示日期选择路由
+    vue.$router.replace('/auxMess/personList') // 列表页面的路由
+}
+  
+})

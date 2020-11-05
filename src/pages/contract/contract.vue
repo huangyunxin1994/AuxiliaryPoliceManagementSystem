@@ -15,90 +15,104 @@
           </ant-tree>
         </a-col>
         <a-col :md="24" :lg="17" :xl="19" :xxl="20">
-			<div class="table-page-search-wrapper">
-				<a-form layout="inline">
-					<a-row :gutter="48">
-						<a-col :md="8" :sm="24">
-							<a-form-item label="关键词搜索">
-								<a-input placeholder="请输入要查询的关键词" v-model="queryParam.search" />
-							</a-form-item>
-						</a-col>
-						<a-col :md="8" :sm="24">
-							<a-form-item label="合同终止日期">
-								<a-date-picker @change="onChange" style="width: 100%"/>
-							</a-form-item>
-						</a-col>
-						<template v-if="advanced">
-							<a-col :md="8" :sm="24">
-								<a-form-item label="即将到期">
-									<a-select default-value="" v-model="queryParam.isExpire">
-										<a-select-option value=""> 全部 </a-select-option>
-										<a-select-option value="1"> 是 </a-select-option>
-										<a-select-option value="2"> 否 </a-select-option>
-									</a-select>
-								</a-form-item>
-							</a-col>
-						</template>
-						<a-col :md="(!advanced && 8) || 24" :sm="24">
-							<span
-								class="table-page-search-submitButtons"
-								:style="
-								(advanced && { float: 'right', overflow: 'hidden' }) || {}
-								">
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-								<a-button
-									style="margin-left: 8px"
-									@click="resetSearch"
-								>重置</a-button
-								>
-								<a @click="toggleAdvanced" style="margin-left: 8px">
-								{{ advanced ? "收起" : "展开" }}
-								<a-icon :type="advanced ? 'up' : 'down'" />
-								</a>
-							</span>
-						</a-col>
-					</a-row>
-				</a-form>
-			</div>
-			<div class="table-operator" style="margin-bottom: 24px" >
-        <a-button
-          type="primary"
-          @click="newContract"
-          icon="plus"
-        >新建合同</a-button>
-        <a-button
-					type="primary"
-					@click="extensionCon"
-          style="margin-left: 18px"
-					:disabled="selectedRows.length == 0"
-          v-if="selectedRowKeys.length > 0"
-          icon="form"
-				>续约合同</a-button>
-			</div>
-			<s-table
-				ref="table"
-				rowKey="key"
-				:columns="scheduleColumns"
-				:data="loadScheduleData"
-				:rowSelection="rowSelection"
-				:scroll="{ y: 600, x: 800 }"
-				:showPagination="true"
-			>
-				<template slot="status" slot-scope="isExpire">
-					<!-- <a-badge :status="isExpire" :text="isExpire | statusFilter" /> -->
-          <a-badge
-            :status="isExpire == '2' ? 'processing' : 'error'"
-            :text="isExpire | statusFilter"
-          />
-				</template>
-				<span slot="action" slot-scope="text, record">
-          <!-- <a-badge :dot="show"> -->
-            <a @click="handleEdit(record)">历史合同</a>
-          <!-- </a-badge> -->
-					<a-divider type="vertical"/>
-					<a @click=" extensionOneCon(record)">续约合同</a>
-				</span>
-			</s-table>
+          <div class="table-page-search-wrapper">
+            <a-form layout="inline">
+              <a-row :gutter="48">
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="关键词搜索">
+                    <a-input
+                      placeholder="请输入要查询的关键词"
+                      v-model="queryParam.search"
+                    />
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="合同终止日期">
+                    <a-date-picker @change="onChange" style="width: 100%" />
+                  </a-form-item>
+                </a-col>
+                <template v-if="advanced">
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="即将到期">
+                      <a-select default-value="" v-model="queryParam.isExpire">
+                        <a-select-option value=""> 全部 </a-select-option>
+                        <a-select-option value="1"> 是 </a-select-option>
+                        <a-select-option value="2"> 否 </a-select-option>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                </template>
+                <a-col :md="(!advanced && 8) || 24" :sm="24">
+                  <span
+                    class="table-page-search-submitButtons"
+                    :style="
+                      (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                    "
+                  >
+                    <a-button type="primary" @click="$refs.table.refresh(true)"
+                      >查询</a-button
+                    >
+                    <a-button style="margin-left: 8px" @click="resetSearch"
+                      >重置</a-button
+                    >
+                    <a @click="toggleAdvanced" style="margin-left: 8px">
+                      {{ advanced ? "收起" : "展开" }}
+                      <a-icon :type="advanced ? 'up' : 'down'" />
+                    </a>
+                  </span>
+                </a-col>
+              </a-row>
+            </a-form>
+          </div>
+          <div class="table-operator" style="margin-bottom: 24px">
+            <a-button
+              type="primary"
+              @click="extensionCon"
+              :disabled="selectedRows.length == 0"
+              v-if="selectedRowKeys.length > 0"
+              icon="form"
+              >续约合同</a-button
+            >
+            <a-badge dot v-if="isSignUp===1">
+            <a-button
+              type="primary"
+              style="margin-left: 8px"
+              @click="newContract"
+              icon="plus"
+              >新建合同</a-button
+            >
+            </a-badge>
+             <a-button
+             v-else
+              type="primary"
+              style="margin-left: 8px"
+              @click="newContract"
+              icon="plus"
+              >新建合同</a-button
+            >
+          </div>
+          <s-table
+            ref="table"
+            rowKey="key"
+            :columns="scheduleColumns"
+            :data="loadScheduleData"
+            :rowSelection="rowSelection"
+            :scroll="{ y: 600, x: 800 }"
+            :showPagination="true"
+          >
+            <template slot="status" slot-scope="isExpire">
+              <!-- <a-badge :status="isExpire" :text="isExpire | statusFilter" /> -->
+              <a-badge
+                :status="isExpire == '1' ? 'error' : 'processing'"
+                :text="isExpire | statusFilter"
+              />
+            </template>
+            <span slot="action" slot-scope="text, record">
+              <a @click="handleEdit(record)">历史合同</a>
+              <a-divider type="vertical" />
+              <a @click="extensionOneCon(record)">续约合同</a>
+            </span>
+          </s-table>
         </a-col>
       </a-row>
     </a-card>
@@ -106,6 +120,7 @@
       ref="modal"
       title="新增合同"
       formTitleName="name"
+      :filter="{contract:'no'}"
       :formTitle="formTitle"
       :rules="rules"
       :stepTitle="stepTitle"
@@ -144,7 +159,7 @@ const formTitle = [
   {
     label: "合同期限(月)",
     name: "contractPeriod",
-    type: "input",
+    type: "number",
     refName: "contractPeriod",
     placeholder: "请输入合同期限",
   },
@@ -159,7 +174,7 @@ const formTitle = [
     label: "合同附件",
     name: "uploadFile",
     type: "upload",
-    refName: "uploadFile"
+    refName: "uploadFile",
   },
 ];
 const stepTitle = [{ title: "选择人员" }, { title: "填写合同信息" }];
@@ -199,6 +214,7 @@ export default {
           });
       },
       // 高级搜索 展开/关闭
+      isSignUp:undefined,
       advanced: false,
       openKeys: ["key-01"],
       tree: [],
@@ -226,25 +242,25 @@ export default {
           title: "所属组织",
           dataIndex: "organizationName",
           key: "organizationName",
-          width: 250,
+          width: 200,
         },
         {
           title: "合同终止日期",
           dataIndex: "endDate",
           key: "endDate",
-          width: 100,
+          width: 120,
         },
         {
           title: "合同期限(月)",
           dataIndex: "contractPeriod",
           key: "contractPeriod",
-          width: 150,
+          width: 120,
         },
         {
           title: "是否即将到期",
           dataIndex: "isExpire",
           key: "isExpire",
-          width: 100,
+          width: 120,
           scopedSlots: { customRender: "status" },
         },
         {
@@ -268,6 +284,7 @@ export default {
           res.data.data.list.map((i, k) => {
             i.key = k + 1;
           });
+          this.isSignUp = res.data.data.isSignUp
           console.log(res);
           return res.data;
         });
@@ -295,7 +312,7 @@ export default {
           name: "uploadFile",
           type: "upload",
           refName: "uploadFile",
-          disabled:false
+          disabled: false,
         },
       ],
       extensionRules: {
@@ -311,8 +328,8 @@ export default {
   },
   methods: {
     //新建合同之后刷新页面
-    refreshTable(){
-      this.$refs.table.refresh(false)
+    refreshTable() {
+      this.$refs.table.refresh(false);
     },
     handleEdit(record) {
       console.log(record);
@@ -437,25 +454,74 @@ export default {
     },
 
     //续约单个合同
-	extensionOneCon(e){
-    if(e.isExpire == 2){
-      this.$message.error('合同未到期，不能续约!');
-    }else{
-      this.extension.forEach(item => {
-      if(item.type == 'upload'){
-          item.disabled = false
+    extensionOneCon(e) {
+      if (e.isExpire == 2) {
+        this.$message.error("合同未到期，不能续约!");
+      } else {
+        this.extension.forEach((item) => {
+          if (item.type == "upload") {
+            item.disabled = false;
+          }
+        });
+        let param = {
+          formTitle: this.extension,
+          rules: this.extensionRules,
+          record: {
+            name: e.name,
+            policeId: e.police_id,
+          },
+          submitFun: (parameter) => {
+            return this.$api.contractService
+              .postExtensionCon(parameter)
+              .then((res) => {
+                return res.data;
+              });
+          },
+        };
+        let option = {
+          title: "续约合同",
+          width: 500,
+          centered: true,
+          maskClosable: false,
+          okText: "提交",
+        };
+        this.modal(param, option, fromModel);
+      }
+    },
+    // 续约合同
+    extensionCon() {
+      console.log(this.selectedRows);
+      const bool = this.selectedRows.some((i) => i.isExpire === 2);
+      if (bool) {
+        this.$message.error("选项存在未到期合同，不能续约!");
+        return false;
+      }
+
+      this.extension.forEach((item) => {
+        if (item.type == "upload") {
+          item.disabled = true;
         }
+      });
+      let arr = this.selectedRows;
+      let arrName = "";
+      let policeId = [];
+      arr.forEach((item, index) => {
+        arrName = item.name + ",";
+        if (index == arr.length - 1) {
+          arrName.slice(0, arrName.length - 1);
+        }
+        policeId.push(item.police_id);
       });
       let param = {
         formTitle: this.extension,
         rules: this.extensionRules,
-        record:{
-          name:e.name,
-          policeId:e.police_id,
+        record: {
+          name: arrName,
+          policeId: policeId,
         },
         submitFun: (parameter) => {
           return this.$api.contractService
-            .postExtensionCon(parameter)
+            .postManyExtensionCon(parameter)
             .then((res) => {
               return res.data;
             });
@@ -469,55 +535,6 @@ export default {
         okText: "提交",
       };
       this.modal(param, option, fromModel);
-    }
-	},
-    // 续约合同
-    extensionCon() {
-      console.log(this.selectedRows);
-      this.selectedRows.forEach((i)=>{
-        if(i.isExpire == 2){
-          this.$message.error('选项存在未到期合同，不能续约!');
-        }else{
-          this.extension.forEach(item => {
-          if(item.type == 'upload'){
-              item.disabled = true
-            }
-          });
-          let arr = this.selectedRows
-          let arrName = ""
-          let policeId = []
-          arr.forEach((item,index)=>{
-            arrName = item.name + ",";
-            if(index == arr.length - 1){
-              arrName.slice(0,arrName.length - 1);
-            }
-            policeId.push(item.police_id)
-          })
-          let param = {
-            formTitle: this.extension,
-            rules: this.extensionRules,
-            record:{
-              name:arrName,
-              policeId:policeId,
-            },
-            submitFun: (parameter) => {
-              return this.$api.contractService
-                .postManyExtensionCon(parameter)
-                .then((res) => {
-                  return res.data;
-                });
-              },
-          };
-          let option = {
-            title: "续约合同",
-            width: 500,
-            centered: true,
-            maskClosable: false,
-            okText: "提交",
-          };
-          this.modal(param, option, fromModel);
-        }
-      })
     },
     // 新建合同
     newContract() {
@@ -566,7 +583,7 @@ export default {
         endTime: "",
         organizationId: "",
       };
-      this.$refs.table.refresh(false)
+      this.$refs.table.refresh(false);
     },
     // 获取到组织树信息
     getTreeData(data) {
@@ -576,8 +593,8 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        '1': "是",
-        '2': "否",
+        1: "即将到期",
+        2: "未到期",
       };
       return statusMap[status];
     },
@@ -591,8 +608,8 @@ export default {
         onChange: this.onSelectChange,
         getCheckboxProps: (record) => ({
           props: {
-            disabled: record.status === "error", // Column configuration not to be checked
-            name: record.status,
+            disabled: record.isExpire === 2, // Column configuration not to be checked
+            name: record.id,
           },
         }),
       };
@@ -606,4 +623,8 @@ export default {
 
 <style scoped lang="less">
 @import "index";
+/deep/ .ant-badge-dot{
+  width: 10px;
+  height: 10px;
+}
 </style>

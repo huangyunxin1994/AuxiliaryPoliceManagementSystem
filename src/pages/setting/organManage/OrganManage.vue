@@ -115,8 +115,8 @@
               />
             </template>
             <span slot="action" slot-scope="text, record">
-              <a @click="handleEdit(record)">编辑</a>
-              <a-divider type="vertical" />
+              <a @click="handleEdit(record)" v-if="record.isSystem===2">编辑</a>
+              <a-divider type="vertical"  v-if="record.isSystem===2"/>
               <a @click="handleReset(record)">重置密码</a>
             </span>
           </s-table>
@@ -298,6 +298,7 @@ export default {
       let formProps = {
         record: {
           organizationId: this.queryParam.organizationId,
+          isEnable:1
         },
         formTitle: this.tableTitle,
         rules: tableRules,
@@ -633,6 +634,12 @@ export default {
       return {
         selectedRowKeys: this.selectedRowKeys,
         onChange: this.onSelectChange,
+         getCheckboxProps: (record) => ({
+          props: {
+            disabled: record.isSystem === 1, // Column configuration not to be checked
+            name: record.id,
+          },
+        }),
       };
     },
   },

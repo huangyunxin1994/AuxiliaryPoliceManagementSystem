@@ -132,6 +132,12 @@ export default {
     STable,
     treeSelect
   },
+  props:{
+    filter:{
+      type:Object,
+      default:undefined
+    }
+  },
   data() {
     return {
       leftColumns: leftTableColumns,
@@ -141,6 +147,11 @@ export default {
       },
       leftColumnsData: params => {
         let param = Object.assign(params,this.queryParams)
+        if(this.filter){
+          Object.keys(this.filter).map(i => {
+            param[i] = this.filter[i]
+          })
+        }
         return this.$api.auxiliaryPoliceService.getAuxiliaryPoliceData(param).then((res)=>{
           this.tableData=res.data.data.list;
           res.data.data.list=res.data.data.list.filter(x=>!this.rightColumnsData.some(i=>i.id===x.id))

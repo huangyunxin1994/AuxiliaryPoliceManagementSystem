@@ -32,7 +32,7 @@
       />
     </a-steps>
     <div class="content">
-      <step1 ref="person" v-show="current === 0" @nextStep="nextStep"></step1>
+      <step1 ref="person" :filter="filter" v-show="current === 0" @nextStep="nextStep"></step1>
       <step2
         ref="form"
         v-show="current === 1"
@@ -67,6 +67,10 @@ export default {
     formTitle: {
       type: Array,
       default: () => [],
+    },
+    filter:{
+      type:Object,
+      default:undefined
     },
     submitFun: {
       type: Function,

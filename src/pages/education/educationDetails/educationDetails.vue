@@ -159,7 +159,7 @@ const credTitle = [
     label: "培训情况",
     name: "state",
     type: "select",
-    select:[{name:'优秀',value:'1'},{name:'良好',value:'2'},{name:'不合格',value:'3'}]
+    select:[{name:'优秀',value:1},{name:'良好',value:2},{name:'不合格',value:3}]
   },
   {
     label: "说明",
@@ -362,11 +362,12 @@ export default {
      * @param modalProps 弹窗配置项 Object
      */
     openModal(form, formProps, modalProps) {
+      const _this=this
       const defaultModalProps = {
         on: {
           ok() {
             console.log("ok 回调");
-            this.$refs.table.refresh(true)
+            _this.$refs.table.refresh(true)
           },
           cancel() {
             console.log("cancel 回调");

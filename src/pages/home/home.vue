@@ -87,7 +87,7 @@
                 <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false">
                     <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">公告</div>
                     <div class="ant-table-wrapper">
-                        <list :iconColor="theme.color" icon="sound" :list="afficheList"/>
+                        <list :iconColor="theme.color" icon="profile" :list="afficheList"/>
                     </div>
                 </a-card>
             </a-col>

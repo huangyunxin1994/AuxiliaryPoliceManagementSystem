@@ -169,7 +169,7 @@
             },
             downContract(id){
                 this.$api.contractService.downNotice({contractId:id}).then(res=>{
-                    if(res.data.code===0){
+                    if(!res.data.code){
                     window.location.href = `${this.BASE_URL}/contract/downloadFile?contractId=${id}`;
                     }else{
                     this.$message.error(res.data.msg)
