@@ -65,30 +65,30 @@
             </a-form>
           </div>
           <div class="table-operator" style="margin-bottom: 24px">
+            
+            <a-badge dot v-if="isSignUp===1">
+              <a-button
+                type="primary"
+                @click="newContract"
+                icon="plus"
+                >新建合同</a-button
+              >
+            </a-badge>  
+             <a-button
+             v-else
+              type="primary"
+              @click="newContract"
+              icon="plus"
+              >新建合同</a-button
+            >
             <a-button
               type="primary"
               @click="extensionCon"
+              style="margin-left: 8px"
               :disabled="selectedRows.length == 0"
               v-if="selectedRowKeys.length > 0"
               icon="form"
               >续约合同</a-button
-            >
-            <a-badge dot v-if="isSignUp===1">
-            <a-button
-              type="primary"
-              style="margin-left: 8px"
-              @click="newContract"
-              icon="plus"
-              >新建合同</a-button
-            >
-            </a-badge>
-             <a-button
-             v-else
-              type="primary"
-              style="margin-left: 8px"
-              @click="newContract"
-              icon="plus"
-              >新建合同</a-button
             >
           </div>
           <s-table
@@ -606,7 +606,7 @@ export default {
       return {
         selectedRowKeys: this.selectedRowKeys,
         onChange: this.onSelectChange,
-        getCheckboxProps: (record) => ({
+        getCheckboxProps: (record) => ({ // 用来限制 多选框是否可选
           props: {
             disabled: record.isExpire === 2, // Column configuration not to be checked
             name: record.id,

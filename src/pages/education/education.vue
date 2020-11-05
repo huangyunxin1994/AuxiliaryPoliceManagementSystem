@@ -65,9 +65,10 @@
         </a-form>
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
-        <a-button type="primary" icon="delete" style="margin-right: 10px" :disabled="selectedRowKeys.length == 0" @click="handleDel">删除培训</a-button>
+        <a-button type="primary" icon="plus" @click="newEducation" style="margin-right: 10px">新建培训</a-button>
+        <a-button type="primary" icon="delete"  :disabled="selectedRowKeys.length == 0" @click="handleDel">删除培训</a-button>
         <!-- <a-button type="primary" icon="plus" @click="$router.push({path:'newEducation'})">新建培训</a-button> -->
-        <a-button type="primary" icon="plus" @click="newEducation">新建培训</a-button>
+        
         <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>

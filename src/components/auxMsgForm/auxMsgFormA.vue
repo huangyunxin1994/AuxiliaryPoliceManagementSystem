@@ -57,10 +57,18 @@
                     :disabled="item.disabled"
                      style="width: 100%"
                   />
+                  <tree-select  
+                    v-if="item.type == 'select' && item.title == 'organizationId'"
+                    style="width: 100%" 
+                    ref="selectTree" 
+                    :value="form.organizationId" 
+                    @handleTreeChange="handleTreeChange"
+                  ></tree-select>
                   <a-select
                     v-model="form[item.title]"
                     :placeholder="item.placeholder"
                     v-else-if="item.type == 'select'"
+                    :disabled="item.disabled"
                     @change="handleChange(item)"
                   >
                     <a-select-option
@@ -262,6 +270,7 @@ import excelBtn from "@/components/importExcel/importExcel";
 import dialogData from "@/components/dialogPersonalData/dialogPersonalData";
 import fromModel from "@/components/formModel/formModel";
 import StandardTable from "@/components/Table_/";
+import treeSelect from "@/components/treeSelect/TreeSelect"
 import { validateIdNo, validatePhone } from "@/config/default/rules";
 const studyColumns = [
   {
@@ -680,6 +689,7 @@ export default {
     StandardTable,
     excelBtn,
     dialogData,
+    treeSelect,
   },
   props: {
     policeId: String,
@@ -788,11 +798,9 @@ export default {
           type: "select",
           placeholder: "请选择学历",
           select: [
-            { name: "专科" },
-            { name: "本科" },
-            { name: "硕士" },
-            { name: "博士" },
-            { name: "博士后" },
+            { name: "大专" },
+            { name: "本科生" },
+            { name: "研究生" },
           ],
         }, //
         {
@@ -837,9 +845,13 @@ export default {
         {
           title: "sex",
           label: "性别",
-          type: "input",
+          type: "select",
           placeholder: "请输入性别",
           disabled: true,
+          select: [
+            { id:1,name: "男" },
+            { id:2,name: "女" },
+          ],
         }, //
         {
           title: "age",
@@ -903,19 +915,20 @@ export default {
   created() {
     console.log(this.policeId);
     this.queryPa.id = this.policeId || "";
+    this.form.organizationId = this.user.organizationId
     this.$api.auxiliaryPoliceService
       .getAuxiliaryPoliceData({ policeId: this.policeId || "undefined" })
       .then((res) => {
         this.form = Object.assign({}, this.form, res.data.data.list[0]);
       });
-    this.$api.organizationService
-      .getOrganization({ organizationId: this.user.organizationId })
-      .then((res) => {
-        this.baseMessTitle.find((i) => {
-          if (i.title === "organizationId")
-            i.select = Object.assign([], res.data.data.data);
-        });
-      });
+    // this.$api.organizationService
+    //   .getOrganization({ organizationId: this.user.organizationId })
+    //   .then((res) => {
+    //     this.baseMessTitle.find((i) => {
+    //       if (i.title === "organizationId")
+    //         i.select = Object.assign([], res.data.data.data);
+    //     });
+    //   });
     this.$api.rankPostService
       .getPostList({ organizationId: this.user.organizationId,state:1 })
       .then((res) => {
@@ -941,7 +954,7 @@ export default {
         if (
           item.title == "number" ||
           item.title == "name" ||
-          item.title == "nation"
+          item.title == "nation" 
         ) {
           myrules[item.title] = [
             { required: true, message: "请输入必填项", trigger: "blur" },
@@ -957,9 +970,9 @@ export default {
             { validator: validatePhone, trigger: "blur" },
           ];
         } else if (
-          item.title == "organization" ||
-          item.title == "post" ||
-          item.title == "rank" ||
+          item.title == "organizationId" ||
+          item.title == "postId" ||
+          item.title == "rankId" ||
           item.title == "education" ||
           item.title == "politicalStatus"
         ) {
@@ -1091,6 +1104,7 @@ export default {
     saveBtn() {
       const _this = this;
       console.log("保存按钮");
+      console.log(_this.form)
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.$confirm({
@@ -1102,16 +1116,15 @@ export default {
             cancelText: "取消",
             onOk() {
               console.log(" submit!!");
-              _this.form.sex = _this.form.sex === "男" ? 1 : 2;
               _this.$refs.table1.localDataSource.map((i) => delete i.key);
               _this.$refs.table2.localDataSource.map((i) => {
                 delete i.key;
                 i.orderly = i.orderly === "是" ? 1 : 2;
               });
-              _this.$refs.table3.localDataSource.map((i) => {
-                delete i.key;
-                i.sex = i.sex === "男" ? 1 : 2;
-              });
+              // _this.$refs.table3.localDataSource.map((i) => {
+              //   delete i.key;
+              //   i.sex = i.sex === "男" ? 1 : 2;
+              // });
               const param = {
                 basic: _this.form,
                 major:_this.form.isMajor === 1 && _this.major || {},
@@ -1151,7 +1164,7 @@ export default {
         this.$confirm({
         title: "警告",
         content: `系统不会保存填写的内容，真的要取消吗?`,
-        okText: "取消",
+        okText: "确认",
         okType: "primary",
         centered: true,
         cancelText: "取消",
@@ -1188,11 +1201,11 @@ export default {
       let sex = "";
       if (parseInt(UUserCard.substr(16, 1)) % 2 == 1) {
         //男
-        sex = "男";
+        sex = 1;
         // return "男";
       } else {
         //女
-        sex = "女";
+        sex = 2;
         // return "女";
       }
       // 获取年龄
@@ -1227,6 +1240,10 @@ export default {
       var d2 = Date.parse(new Date());
       return (d2 - d1) / 1000 / 60 / 60 / 24 / 365;
     },
+    // 获取修改的组织
+    handleTreeChange(data){
+      this.form.organizationId = data.val
+    }
   },
   mounted() {
     this.getBaseRules();

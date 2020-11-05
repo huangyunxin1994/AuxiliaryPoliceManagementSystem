@@ -798,11 +798,9 @@ export default {
           placeholder: "请选择学历",
           disabled: true,
           select: [
-            { name: "专科" },
-            { name: "本科" },
-            { name: "硕士" },
-            { name: "博士" },
-            { name: "博士后" },
+            { name: "大专" },
+            { name: "本科生" },
+            { name: "研究生" },
           ],
         }, //
         {
@@ -849,9 +847,13 @@ export default {
         {
           title: "sex",
           label: "性别",
-          type: "input",
+          type: "select",
           placeholder: "请输入性别",
           disabled: true,
+          select: [
+            { id:1,name: "男" },
+            { id:2,name: "女" },
+          ],
         }, //
         {
           title: "age",
