@@ -69,17 +69,15 @@
 					<span>{{text==1?'已回收':'未回收'}}</span>
 					<a-divider type="vertical" v-if="text !=1" />
 					<a @click="confirm (record)" v-if="text !=1">修改</a>
-					<!-- <a-popconfirm
-						title="是否将此人员的证件装备回收状态改为“已回收”?"
-						ok-text="是"
-						cancel-text="否"
-						@confirm="confirm (record)"
-						@cancel="cancel"
-						v-if="text !=1"
-					>
-						<a href="#">修改</a>
-					</a-popconfirm> -->
 				</span>
+        <template
+          slot="isEffective"
+          slot-scope="isEffective">
+          <a-badge
+            :status="isEffective == '1' ? 'processing':'error'"
+            :text="isEffective | statusFilter"
+          />
+        </template>
 			</s-table>
        </a-card>
       <form-step ref="modal" title="新增离职" formTitleName="name" :formTitle="formTitle" :rules="rules" :stepTitle="stepTitle" :submitFun="submitFun"></form-step>
@@ -144,6 +142,13 @@
               dataIndex: 'reason',
               key: 'reason',
               width: 200
+            },
+            {
+              title: '是否生效',
+              dataIndex: 'isEffective',
+              key: 'isEffective',
+              scopedSlots: {customRender: 'isEffective'},
+              width: 150
             },
             {
               title: '审批人',
@@ -323,6 +328,13 @@
         const statusMap = {
           '1': '已回收',
           '2': '未回收'
+        }
+        return statusMap[status]
+      },
+      statusFilter (status) {
+        const statusMap = {
+          '1': '是',
+          '2': '否'
         }
         return statusMap[status]
       }
