@@ -61,19 +61,19 @@
 				</a-form>
 			</div>
 			<div class="table-operator" style="margin-bottom: 24px" >
-				<a-button
+        <a-button
+          type="primary"
+          @click="newContract"
+          icon="plus"
+        >新建合同</a-button>
+        <a-button
 					type="primary"
 					@click="extensionCon"
+          style="margin-left: 18px"
 					:disabled="selectedRows.length == 0"
           v-if="selectedRowKeys.length > 0"
           icon="form"
 				>续约合同</a-button>
-				<a-button
-					type="primary"
-					style="margin-left: 8px"
-					@click="newContract"
-          icon="plus"
-				>新建合同</a-button>
 			</div>
 			<s-table
 				ref="table"
@@ -87,12 +87,14 @@
 				<template slot="status" slot-scope="isExpire">
 					<!-- <a-badge :status="isExpire" :text="isExpire | statusFilter" /> -->
           <a-badge
-            :status="isExpire == '1' ? 'processing' : 'error'"
+            :status="isExpire == '2' ? 'processing' : 'error'"
             :text="isExpire | statusFilter"
           />
 				</template>
 				<span slot="action" slot-scope="text, record">
-					<a @click="handleEdit(record)">历史合同</a>
+          <!-- <a-badge :dot="show"> -->
+            <a @click="handleEdit(record)">历史合同</a>
+          <!-- </a-badge> -->
 					<a-divider type="vertical"/>
 					<a @click=" extensionOneCon(record)">续约合同</a>
 				</span>
@@ -186,6 +188,8 @@ export default {
       formTitle,
       rules,
       stepTitle,
+      show:true,//历史合同提示
+      num:23,//表示新建合同的右上角的点数
       submitFun: (params, file) => {
         // let param = Object.assign(params,this.queryParams)
         return this.$api.contractService
