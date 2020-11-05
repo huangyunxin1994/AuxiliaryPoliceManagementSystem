@@ -32,7 +32,7 @@
 			</a-form>
 		</div>
         <div class="table-operator" style="margin-bottom: 24px">
-            <a-button type="primary" icon="clock-circle"   style="margin-right: 10px" @click="overtime">申请加班</a-button>
+            <a-button v-if="loginType==1" type="primary" icon="clock-circle"   style="margin-right: 10px" @click="overtime">申请加班</a-button>
         </div>
 		<s-table
 			ref="table"
@@ -42,14 +42,15 @@
 			:scroll="{ y: 600, x: 650 }"
 			showPagination="auto"
 		>
-      <template
-        slot="state"
-        slot-scope="state">
-        <a-badge
-          :status="state == '1' ? 'success' : state == '2' ? 'error':'processing'"
-          :text="state | statusFilter"
-        />
-      </template>
+      <template slot="holiday" slot-scope="holiday">
+          <span>{{holiday === 1 ? '是' : '否'}}</span>
+        </template>
+      <template slot="approvalResults" slot-scope="approvalResults">
+          <a-badge
+            :status="approvalResults == '0' ? 'processing' : (approvalResults == 1 ? 'success' : 'error')"
+            :text="approvalResults | resultFilter"
+          />
+        </template>
 		</s-table>
     </a-card>
     <a-card :bordered="false">
@@ -87,7 +88,7 @@
         </a-form>
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
-        <a-button type="primary" icon="clock-circle"   style="margin-right: 10px" @click="vacate">申请请假</a-button>
+        <a-button v-if="loginType==1" type="primary" icon="clock-circle"   style="margin-right: 10px" @click="vacate">申请请假</a-button>
       </div>
       <s-table
         ref="table"
@@ -97,6 +98,7 @@
         :scroll="{ y: 600, x: 650 }"
         showPagination="auto"
       >
+        
         <template slot="approvalResults" slot-scope="approvalResults">
           <a-badge
             :status="approvalResults == '0' ? 'processing' : (approvalResults == 1 ? 'success' : 'error')"
@@ -177,10 +179,10 @@ export default {
         },
         {
           title: "状态",
-          dataIndex: "state",
-          key: "state",
+          dataIndex: "approvalResults",
+          key: "approvalResults",
           ellipsis: true,
-          scopedSlots: { customRender: 'state' }
+          scopedSlots: { customRender: 'approvalResults' }
         },
         {
           title: "审批人",
@@ -305,42 +307,36 @@ export default {
             label: "开始时间",
             name: "startTime",
             type: "picker",
-            placeholder: "请选择开始时间"
+            placeholder: "请选择开始时间",
+            valueFormat:'YYYY-MM-DD HH:mm',
+            showTime:{ format: 'HH:mm' }
           },
           {
             label: "结束时间",
             name: "endTime",
             type: "picker",
             placeholder: "请选择结束时间",
+            valueFormat:'YYYY-MM-DD HH:mm',
+            showTime:{ format: 'HH:mm' }
           },
           {
             label: "时长(小时)",
             name: "duration",
-            type: "input",
+            type: "number",
             placeholder: "请输入时长",
           },
           {
             label: "法定假日",
             name: "holiday",
-            type: "select",
-            placeholder: "请选择法定假日",
+            type: "radio",
             select: [
-              { value: 1, name: "年假" },
-              { value: 2, name: "产假" },
-              { value: 3, name: "陪产假" },
-              { value: 4, name: "婚假 " },
-              { value: 5, name: "例假 " },
-              { value: 6, name: "丧假" },
-              { value: 7, name: "哺乳假" },
-              { value: 8, name: "事假" },
-              { value: 9, name: "调休" },
-              { value: 10, name: "病假" },
-              { value: 11, name: "其他" }
+              { value: 1, name: "是" },
+              { value: 2, name: "否" }
             ],
           },
           {
             label: "加班原因",
-            name: "cause",
+            name: "reason",
             type: "textarea",
             placeholder: "请输入加班原因",
           }
@@ -365,7 +361,7 @@ export default {
         vacateModel: [
           {
             label: "请假类型",
-            name: "vacateType",
+            name: "state",
             type: "select",
             placeholder: "请选择请假类型",
             select: [
@@ -386,23 +382,34 @@ export default {
             label: "开始时间",
             name: "startTime",
             type: "picker",
-            placeholder: "请选择开始时间"
+            placeholder: "请选择开始时间",
+            valueFormat:'YYYY-MM-DD HH:mm',
+            showTime:{ format: 'HH:mm' }
+            
           },
           {
             label: "结束时间",
             name: "endTime",
             type: "picker",
             placeholder: "请选择结束时间",
+            valueFormat:'YYYY-MM-DD HH:mm',
+            showTime:{ format: 'HH:mm' }
+          },
+           {
+            label: "时长(小时)",
+            name: "duration",
+            type: "number",
+            placeholder: "请输入时长",
           },
           {
-            label: "加班原因",
-            name: "cause",
+            label: "请假原因",
+            name: "reason",
             type: "textarea",
-            placeholder: "请输入加班原因",
+            placeholder: "请输入请假原因",
           }
         ],
         vacateRules:{
-          vacateType:[
+          state:[
             { required: true, message: "请选择请假类型", trigger: "change"},
           ],
           startTime: [
@@ -411,9 +418,12 @@ export default {
           endTime: [
             { required: true, message: "请选择结束时间", trigger: "change"},
           ],
-          cause: [
+          reason: [
             { required: true, message: "请输入加班原因", trigger: "blur"},
-          ]
+          ],
+          holiday: [
+            { required: true, message: "请选择是否法定假日", trigger: "change"},
+          ],
         }
     };
   },
@@ -427,7 +437,21 @@ export default {
     overtime(){
       let param = {
         formTitle: this.overtimeModel,
+        record:{
+          holiday:2,
+          type:1,
+          number:this.user.number,
+          policeName:this.user.name,
+          userId:this.user.id,
+          organizationId:this.user.organizationId,
+          organizationName:this.user.organizationName,
+        },
         rules: this.overtimeRules,
+        submitFun:(params) => {
+          return this.$api.overTimeService.postByAux(params).then((res)=>{
+            return res.data
+          })
+        },
       };
       let option = {
         title: "加班申请",
@@ -443,6 +467,19 @@ export default {
       let param = {
         formTitle: this.vacateModel,
         rules: this.vacateRules,
+        record:{
+          type:2,
+          number:this.user.number,
+          policeName:this.user.name,
+          userId:this.user.id,
+          organizationId:this.user.organizationId,
+          organizationName:this.user.organizationName,
+        },
+        submitFun:(params) => {
+          return this.$api.overTimeService.postByAux(params).then((res)=>{
+            return res.data
+          })
+        },
       };
       let option = {
         title: "请假申请",
@@ -519,7 +556,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
-    ...mapGetters("account", ["user"]),
+    ...mapGetters("account", ["user","loginType"]),
     rowCredSelection() {
       return {
         selectedRowKeys: this.selectedCredRowKeys,

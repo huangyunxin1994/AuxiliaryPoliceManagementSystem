@@ -196,7 +196,7 @@
             {
               label: "离职生效日期",
               name: "effectiveDate",
-              type: "pickerDate",
+              type: "picker",
               placeholder: "请选择离职生效日期"
             },
             {

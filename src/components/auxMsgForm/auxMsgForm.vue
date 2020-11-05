@@ -50,7 +50,6 @@
                     :disabled="!policeId || item.disabled"
                     v-model="form[item.title]"
                     v-if="item.type == 'input' && item.title == 'idCard'"
-                    @blur.native.capture="getIdData"
                   />
                   <a-input
                     v-model="form[item.title]"
@@ -1233,67 +1232,7 @@ export default {
         const param = item.select.find(i=>i.id === this.form[item.title])
         this.form[item.titleName] = param.name
       }
-    },
-    // 获取身份证里面的信息
-    getIdData() {
-      console.log("获取到身份证里的信息");
-      let mess = this.IdCard(this.form.idCard);
-      console.log(mess);
-      this.form.birthday = mess.birth;
-      this.form.sex = mess.sex;
-      this.form.age = mess.age;
-    },
-    IdCard(UUserCard) {
-      // 获取生日
-      let birth =
-        UUserCard.substring(6, 10) +
-        "-" +
-        UUserCard.substring(10, 12) +
-        "-" +
-        UUserCard.substring(12, 14);
-      // 获取性别
-      let sex = "";
-      if (parseInt(UUserCard.substr(16, 1)) % 2 == 1) {
-        //男
-        sex = "男";
-        // return "男";
-      } else {
-        //女
-        sex = "女";
-        // return "女";
-      }
-      // 获取年龄
-      var myDate = new Date();
-      var month = myDate.getMonth() + 1;
-      var day = myDate.getDate();
-      var age = myDate.getFullYear() - UUserCard.substring(6, 10) - 1;
-      if (
-        UUserCard.substring(10, 12) < month ||
-        (UUserCard.substring(10, 12) == month &&
-          UUserCard.substring(12, 14) <= day)
-      ) {
-        age++;
-      }
-      let obj = {
-        birth: birth,
-        sex: sex,
-        age: age,
-      };
-      return obj;
-    },
-    //获取入职时间，计算工龄
-    getDate(date, dateString) {
-      let year = this.compareDate(dateString);
-      year = Math.ceil(year * 10) / 10;
-      //   this.form.seniority = year;
-      console.log(year);
-    },
-    compareDate(date) {
-      var d1 = new Date(date);
-      d1 = Date.parse(d1);
-      var d2 = Date.parse(new Date());
-      return (d2 - d1) / 1000 / 60 / 60 / 24 / 365;
-    },
+    }
   },
   mounted() {
     this.getBaseRules();

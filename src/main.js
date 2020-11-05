@@ -12,12 +12,12 @@ import 'animate.css/source/animate.css'
 import Plugins from '@/plugins'
 import {initI18n} from '@/utils/i18n'
 import bootstrap from '@/bootstrap'
- import moment from'moment'; 
+//  import moment from'moment'; 
  import 'moment/locale/zh-cn'; 
  import Vuex from 'vuex'
- moment.locale('zh-CN');
+//  moment.locale('zh-CN');
 const router = initRouter(store.state.setting.asyncRoutes)
-const i18n = initI18n('CN', 'US')
+const i18n = initI18n('CN')
 
 Vue.use(Antd)
 Vue.use(Vuex)

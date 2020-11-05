@@ -913,7 +913,7 @@ export default {
     },
   },
   created() {
-    console.log(this.policeId);
+    this.form.organizationId=this.user.organizationId
     this.queryPa.id = this.policeId || "";
     this.form.organizationId = this.user.organizationId
     this.$api.auxiliaryPoliceService
@@ -1045,12 +1045,10 @@ export default {
     // 获取到Excel表格数据
     getTableData(tdata) {
       tdata.map((item) => {
-        console.log(item);
         item.map((j, k) => {
           j.key = k;
         });
       });
-      console.log(tdata);
       this.$refs.table1.changeDataForImport(tdata[0]);
       this.$refs.table2.changeDataForImport(tdata[1]);
       this.$refs.table3.changeDataForImport(tdata[2]);
@@ -1066,7 +1064,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           _this.$refs[index].localDataSource.splice(_this.$refs[index].localDataSource.findIndex(i=>i.key === key.key),1)
         },
         onCancel() {},
@@ -1077,7 +1074,6 @@ export default {
     },
     // 添加记录
     addStudyData(index) {
-      console.log(index)
       this.tableName = index
       this.option = {
           title: index === 'table1' ? "新增学习经历" : (index === 'table2' ? '新增工作经历' : '新增家庭及社会关系'),
@@ -1089,11 +1085,9 @@ export default {
       this.$refs.studyData.visible = true
     },
     handleOk(form){
-      console.log(form)
       if(!form.key){
         let arr =[]
       arr.push(form)
-      console.log(this.tableName)
       this.$refs[this.tableName].changeDataForImport(arr);
       }else{
         this.$refs[this.tableName].localDataSource.splice(this.$refs[this.tableName].localDataSource.findIndex(i=>i.key === form.key),1,form)
@@ -1103,8 +1097,6 @@ export default {
     // 点击保存按钮
     saveBtn() {
       const _this = this;
-      console.log("保存按钮");
-      console.log(_this.form)
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.$confirm({
@@ -1121,10 +1113,6 @@ export default {
                 delete i.key;
                 i.orderly = i.orderly === "是" ? 1 : 2;
               });
-              // _this.$refs.table3.localDataSource.map((i) => {
-              //   delete i.key;
-              //   i.sex = i.sex === "男" ? 1 : 2;
-              // });
               const param = {
                 basic: _this.form,
                 major:_this.form.isMajor === 1 && _this.major || {},
@@ -1163,7 +1151,7 @@ export default {
       const _this = this;
         this.$confirm({
         title: "警告",
-        content: `系统不会保存填写的内容，真的要取消吗?`,
+        content: `系统不会保存填写的内容，真的要返回吗?`,
         okText: "确认",
         okType: "primary",
         centered: true,

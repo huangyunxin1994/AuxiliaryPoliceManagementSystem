@@ -96,7 +96,6 @@
       <s-table
         ref="table"
         :rowKey="(record) => record.id"
-        bordered
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :scroll="{ y: 550, x: 800 }"
@@ -320,7 +319,7 @@ export default {
           return res.data;
         });
       },
-      addRecord:{type:2},
+      addRecord:{type:2,approvalResults:1},
       // 高级搜索 展开/关闭
       advanced: false,
       value: null,

@@ -55,9 +55,11 @@
           </a-select>
           <!-- 时间框 -->
           <a-date-picker
+          :locale="locale"
                     v-model="form[item.name]"
                     v-else-if="item.type == 'picker'"
                     :disabled="item.disabled"
+                     :disabled-date="disabledTime&&disabledDate||''"
                     :show-time="item.showTime&&item.showTime||false"
                     :format="item.valueFormat&&item.valueFormat || 'YYYY-MM-DD'"
                     :valueFormat="item.valueFormat&&item.valueFormat || 'YYYY-MM-DD'"
@@ -65,15 +67,6 @@
                     :placeholder="item.placeholder"
                     style="width: 100%"
                   />
-          <!-- 日期框 -->
-          <a-date-picker 
-            v-model="form[item.name]"
-            :disabled="item.disabled"
-            :placeholder="item.placeholder"
-            valueFormat="YYYY-MM-DD"
-            type="date"
-            style="width: 100%"
-            v-else-if="item.type == 'pickerDate'" />
           <!-- 开关 -->
           <a-switch
             :disabled="item.disabled"
@@ -156,13 +149,19 @@
   </a-form-model>
 </template>
 <script>
+import locale from 'ant-design-vue/es/date-picker/locale/zh_CN';
 import pick from "lodash.pick";
+import moment from 'moment'
 import treeSelect from "@/components/treeSelect/TreeSelect";
 export default {
   props: {
     formTitle: {
       type: Array,
       default: () => [],
+    },
+    disabledTime:{
+      type:Boolean,
+      default:false
     },
     submitFun: {
       type: Function,
@@ -215,6 +214,7 @@ export default {
   },
   data() {
     return {
+      locale,
       other: "",
       form: {},
       dataSource: [],
@@ -276,6 +276,9 @@ export default {
     
   },
   methods: {
+    disabledDate(current) {
+      return current && current < moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf("day");
+    },
     handleChange(item){
       if(item.labelName){
         const param = item.select.find(i=>i.id === this.form[item.name])

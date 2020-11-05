@@ -303,7 +303,7 @@ export default {
         {
           label: "合同期限(月)",
           name: "contractPeriod",
-          type: "input",
+          type: "number",
           refName: "contractPeriod",
           placeholder: "请输入整数",
         },

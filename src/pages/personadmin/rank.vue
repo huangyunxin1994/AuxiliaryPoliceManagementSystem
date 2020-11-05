@@ -260,7 +260,7 @@
                 {label:'变动前职级',name:'beforeRank',type:'text',refName:'beforeRank',placeholder:'请输入变动前职级',disabled:true},
                 {label:'变动后职级',name:'currentRank',type:'select',refName:'rank',placeholder:'请选择变动后职级'},
                 {label:'变动原因',name:'reason',type:'input',refName:'cause',placeholder:'请输入变动原因'},
-                {label:'生效日期',name:'effectiveDate',type:'pickerDate',refName:'date',placeholder:'请选择变动原因'}
+                {label:'生效日期',name:'effectiveDate',type:'picker',refName:'date',placeholder:'请选择变动原因'}
           ],
           changeRankRules:{
             currentRank:[{ required: true, message: '请选择变动后职级', trigger: 'change'}],

@@ -280,7 +280,7 @@ export default {
       formTitle,
       rules,
       stepTitle,
-      addRecord:{type: 1},
+      addRecord:{type: 1,approvalResults:1,holiday:2},
       submitFun: (parameter) => {
         return this.$api.overTimeService.postByUser(parameter).then((res) => {
           return res.data;

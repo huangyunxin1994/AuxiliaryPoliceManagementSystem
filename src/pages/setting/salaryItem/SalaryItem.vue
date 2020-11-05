@@ -100,7 +100,7 @@ export default {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         return this.$api.wageItemsService.getWageItems(requestParameters)
           .then(res => {
-            if(res.data.data.list.length === 0) this.disabled=true
+            if(res.data.data.list.length <=2) this.disabled=true
             else this.disabled=false
             res.data.data.list.map((i,k)=>i.key=k+1)
             return res.data
