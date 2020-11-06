@@ -65,6 +65,7 @@ const personAdminService = {
             item.organizationId = params.organizationId
             item.organizationName = params.organizationName
         })
+        console.log(arr)
         return request(CHANGERANKPOST, METHOD.POST, arr)
     },
 

@@ -240,18 +240,38 @@ export default {
       }
       if(i.validata === 'checkpass' && i.required){
          let validateCheckPass = (rule, value, callback) => {
-         console.log(value)
-         console.log("password= "+this.form.password)
-        if (!value) {
-          callback(new Error('请再输入一次新密码'));
-        } else if (value !== this.form.password) {
-          console.log(58)
-          callback(new Error("两次输入不一致"));
-        } else {
-          callback();
+          console.log(value)
+          console.log("password= "+this.form.password)
+          if (!value) {
+            callback(new Error('请再输入一次新密码'));
+          } else if (value !== this.form.password) {
+            console.log(58)
+            callback(new Error("两次输入不一致"));
+          } else {
+            callback();
+          }
+        };
+        this.formRules.again = [{required:true, validator: validateCheckPass, trigger: "blur" }]
+      }
+      if(i.validata =="organizationId"){
+        let validateCheckPass = (rule, value, callback) => {
+          if (value == this.record.beforeOrgId && this.form.currentRank === this.record.beforePost) {
+            callback(new Error("调动后组织与岗位未发生变化，请重新选择"));
+          } else {
+            callback();
+          }
         }
-      };
-      this.formRules.again = [{required:true, validator: validateCheckPass, trigger: "blur" }]
+        this.formRules.organizationId = [{required:true, validator: validateCheckPass, trigger: "change" }]
+      }
+      if(i.validata =="currentRank"){
+        let validateCheckPass = (rule, value, callback) => {
+          if (value === this.record.beforePost && this.form.organizationId === this.record.beforeOrgId) {
+            callback(new Error("调动后组织与岗位未发生变化，请重新选择"));
+          } else {
+            callback();
+          }
+        }
+        this.formRules.currentRank = [{required:true, validator: validateCheckPass, trigger: "change" }]
       }
     });
     if (this.record) {
@@ -260,7 +280,7 @@ export default {
         JSON.parse(JSON.stringify(this.record)),
         pick(this.record, this.dataSource)
       );
-      console.log("*********" + JSON.stringify(this.form));
+      // console.log("*********" + JSON.stringify(this.form));
     }
     
    

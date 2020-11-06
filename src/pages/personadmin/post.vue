@@ -77,8 +77,9 @@
                           <a-badge :status="status" :text="status | statusFilter"/>
                         </template>
                         <span slot="action" slot-scope="text, record">
-							<a @click="changeOnePost(record)">调动岗位</a>
-							<a-divider type="vertical"  />
+							<!-- <a @click="changeOnePost(record)">岗位/组织调动</a> -->
+                    <a-button  type="link" @click="changeOnePost(record)" :disabled="record.effDisabled" style="padding:0px;">岗位/组织调动</a-button>
+                    <a-divider type="vertical"  />
                           <a @click="handleEdit (record)">查看</a>
                         </span>
                       </s-table>
@@ -105,6 +106,7 @@
       return {
           openKeys: ['key-01'],
           loading:false,
+          postDisabled:false,
           // 高级搜索 展开/关闭
           advanced: false,
           scheduleColumns: [
@@ -154,7 +156,7 @@
               title: '操作',
               dataIndex: 'action',
               scopedSlots: {customRender: 'action'},
-              width: 150
+              width: 250
             }
           ],
           diaColumns:[
@@ -211,6 +213,7 @@
               console.log(res)
               res.data.data.list.map((i,k)=>{
                 i.key=k+1
+                i.effDisabled = this.compareDate(i.effectiveDate)
               })
               return res.data
             })
@@ -222,8 +225,8 @@
                 {label:'原组织',name:'beforeOrg',type:'text',placeholder:'请输入变动前职级'},
                 {label:'原岗位',name:'beforePost',type:'text',placeholder:'请输入变动前职级'},
                 {label:'生效日期',name:'effectiveDate',type:'picker',placeholder:'请选择生效日期'},
-                {label:'调动后组织',name:'organizationId',labelName:"organizationName",type:'treeSelect',placeholder:'请选择变动后组织'},
-                {label:'调动后岗位',name:'currentRank',type:'select',placeholder:'请选择调动后岗位'},
+                {label:'调动后组织',name:'organizationId',labelName:"organizationName",type:'treeSelect',validata:'organizationId',placeholder:'请选择变动后组织'},
+                {label:'调动后岗位',name:'currentRank',type:'select',validata:'currentRank',placeholder:'请选择调动后岗位'},
                 {label:'变动原因',name:'reason',type:'textarea',placeholder:'请输入变动原因'},
           ],
           extensionPost:[
@@ -257,6 +260,16 @@
       // this.getOrgList()
     },
     methods:{
+      //比较时间大小
+      compareDate(date1){
+        var effectiveDate = new Date(date1);
+        var nowTime = new Date();
+        if(effectiveDate.getTime() > nowTime.getTime()){ 
+            return true; //第一个大
+        } else {
+            return false; //第二个大
+        }
+      },
       // 获取岗位列表
       getPostList(){
         this.$api.rankPostService.getPostList().then(res=>{
@@ -478,15 +491,15 @@
           beforePost:e.currentRank,
         },
         submitFun: (parameter) => {
-          if(parameter.beforeOrgId == parameter.organizationId && parameter.beforePost == parameter.currentRank) {
-            this.$message.error("操作失败！存在辅警调动岗位或职级与原岗位或职级相同！不能提交!")
-          }else{
+          // if(parameter.beforeOrgId == parameter.organizationId && parameter.beforePost == parameter.currentRank) {
+          //   this.$message.error("操作失败！存在辅警调动岗位或职级与原岗位或职级相同！不能提交!")
+          // }else{
             return this.$api.personAdminService
             .changeManyPost(parameter)
             .then((res) => {
                return res.data;
             })
-          }
+          // }
         },
       }
       let callback = () => {
