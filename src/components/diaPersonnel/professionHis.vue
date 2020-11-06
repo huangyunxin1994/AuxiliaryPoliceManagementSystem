@@ -7,7 +7,7 @@
                     <p><span>警员编号: </span><span>{{nameMess.number}}</span></p>
                 </div>
                 <div>
-                    <a-button type="primary" @click="addProfession">新增记录</a-button>
+                    <a-button type="primary" icon="plus" @click="addProfession">新增记录</a-button>
                 </div>
             </div>
             <s-table
@@ -117,18 +117,7 @@
                         
                         let param = Object.assign(params,this.queryParam)
                         return this.$api.personAdminService.addProfessionMess(param).then((res)=>{
-                            res.data.data.list.map((i,k)=>{
-                                i.key=k+1
-                            })
                             return res.data
-
-                            // if(res.data.code == 0){
-                            //     res.data.data.list.map((i,k)=>{
-                            //         i.key=k+1
-                            //     })
-                            //     this.$message.success(res.data.msg);
-                            //     return res.data
-                            // }
                         })
                     },
                     on: {

@@ -56,6 +56,7 @@ const personAdminService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     changeManyPost(params){
+        console.log(params)
         let arr = params.policeArr
         arr.forEach((item)=>{
             item.currentRank = params.currentRank,
@@ -141,7 +142,7 @@ const personAdminService = {
         return request(POSTPROFESSION, METHOD.POST, arr)
     },
     /**
-     * 新增记录
+     * 新增专业人员记录
      * @param params 用户id  警员编号  警员名称 组织id 组织名 专业技术任职资格 资格审批单位 获得资格日期
      * @returns {Promise<AxiosResponse<T>>}
      */

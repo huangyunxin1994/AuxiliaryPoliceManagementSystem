@@ -3,7 +3,7 @@
   <div>
     <a-card :bordered="true">
       <div class="saveBtn">
-        <a-button type="primary" @click="saveBtn">保存</a-button>
+        <a-button type="primary" @click="saveBtn" icon="save">保存</a-button>
         <a-button @click="cancelBtn" style="margin-left:8px">取消并返回</a-button>
       </div>
     </a-card>

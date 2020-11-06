@@ -3,7 +3,7 @@
     <a-card :bordered="false">
       <div class="table-page-search-wrapper">
         <div class="submitBtn">
-            <a-button type="primary"  @click="submit">返回</a-button>
+            <a-button type="primary" icon="rollback"  @click="submit">返回</a-button>
         </div>
       </div>
       <div

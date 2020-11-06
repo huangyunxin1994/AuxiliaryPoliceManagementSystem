@@ -3,7 +3,7 @@
   <div>
     <a-card :bordered="true">
       <div class="saveBtn">
-        <a-button type="primary" @click="saveBtn" v-if="policeId"
+        <a-button type="primary" @click="saveBtn" v-if="policeId" icon="save"
           >保存</a-button
         >
       </div>

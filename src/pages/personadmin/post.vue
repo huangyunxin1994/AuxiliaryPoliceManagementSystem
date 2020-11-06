@@ -67,7 +67,6 @@
                         rowKey="key"
                         :columns="scheduleColumns"
                         :data="loadScheduleData"
-                        :rowSelection="rowSelection"
                         :scroll="{ y: 600, x: 800 }"
                         showPagination="auto">
 
@@ -223,7 +222,7 @@
                 {label:'原岗位',name:'beforePost',type:'text',placeholder:'请输入变动前职级'},
                 {label:'生效日期',name:'effectiveDate',type:'picker',placeholder:'请选择生效日期'},
                 {label:'调动后组织',name:'organizationId',labelName:"organizationName",type:'treeSelect',placeholder:'请选择变动后组织'},
-                {label:'调动后岗位',name:'currentRankId',type:'select',labelName:'currentRank',placeholder:'请选择调动后岗位'},
+                {label:'调动后岗位',name:'currentRank',type:'select',placeholder:'请选择调动后岗位'},
                 {label:'变动原因',name:'reason',type:'textarea',placeholder:'请输入变动原因'},
           ],
           changeRankRules:{
@@ -246,8 +245,9 @@
         this.$api.rankPostService.getPostList().then(res=>{
             this.postList = Object.assign([],res.data.data.list)
             this.extension.forEach((item)=>{
-              if(item.name == 'currentRankId'){
+              if(item.name == 'currentRank'){
                 item.select = this.postList.filter(i=>i.state===1)
+                item.select.map(i=> delete i.id)
               }
             })
         })
@@ -390,16 +390,23 @@
 				record:{
           policeName:e.policeName,//名字
           policeArr:policeArr,
-          organizationId:"",
-          beforeOrg:e.organizationName,
+          organizationId:e.organizationId,
+          organizationName:e.organizationName,
+          currentRank:e.currentRank,
+          beforeOrg:e.organizationName, 
+          beforeOrgId:e.organizationId,
           beforePost:e.currentRank,
         },
         submitFun: (parameter) => {
-          return this.$api.personAdminService
+          if(parameter.beforeOrgId == parameter.organizationId && parameter.beforePost == parameter.currentRank) {
+            this.$message.error("操作失败！存在辅警调动岗位或职级与原岗位或职级相同！不能提交!")
+          }else{
+            return this.$api.personAdminService
             .changeManyPost(parameter)
             .then((res) => {
                return res.data;
             })
+          }
         },
       }
       let callback = () => {
