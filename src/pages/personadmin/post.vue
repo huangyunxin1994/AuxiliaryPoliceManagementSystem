@@ -61,6 +61,7 @@
 					</div>
                     <div class="table-operator" style="margin-bottom: 24px">
 						<a-button type="primary" icon="swap" @click="changePost" v-if="selectedRows.length != 0">调动岗位与组织</a-button>
+            <a-button type="primary" icon="swap" @click="changeOrgan" v-if="selectedRows.length != 0">调动组织</a-button>
                     </div>
                       <s-table
                         ref="table"
@@ -225,6 +226,22 @@
                 {label:'调动后岗位',name:'currentRank',type:'select',placeholder:'请选择调动后岗位'},
                 {label:'变动原因',name:'reason',type:'textarea',placeholder:'请输入变动原因'},
           ],
+          extensionPost:[
+                {label:'姓名',name:'policeName',type:'text',placeholder:'请输入姓名'},
+                // {label:'原组织',name:'beforeOrg',type:'text',placeholder:'请输入变动前职级'},
+                // {label:'原岗位',name:'beforePost',type:'text',placeholder:'请输入变动前职级'},
+                {label:'生效日期',name:'effectiveDate',type:'picker',placeholder:'请选择生效日期'},
+                // {label:'调动后组织',name:'organizationId',labelName:"organizationName",type:'treeSelect',placeholder:'请选择变动后组织'},
+                {label:'调动后岗位',name:'currentRankId',type:'select',labelName:'currentRank',placeholder:'请选择调动后岗位'},
+                {label:'变动原因',name:'reason',type:'textarea',placeholder:'请输入变动原因'},
+          ],
+          extensionOrgan:[
+                {label:'姓名',name:'policeName',type:'text',placeholder:'请输入姓名'},
+                // {label:'原组织',name:'beforeOrg',type:'text',placeholder:'请输入变动前职级'},
+                {label:'生效日期',name:'effectiveDate',type:'picker',placeholder:'请选择生效日期'},
+                {label:'调动后组织',name:'organizationId',labelName:"organizationName",type:'treeSelect',placeholder:'请选择变动后组织'},
+                {label:'变动原因',name:'reason',type:'textarea',placeholder:'请输入变动原因'},
+          ],
           changeRankRules:{
             currentRank:[{ required: true, message: '请选择变动后岗位', trigger: 'change'}],
             organizationId:[{ required: true, message: '请选择变动后组织', trigger: 'change'}],
@@ -248,6 +265,11 @@
               if(item.name == 'currentRank'){
                 item.select = this.postList.filter(i=>i.state===1)
                 item.select.map(i=> delete i.id)
+              }
+            })
+            this.extensionPost.forEach((item)=>{
+              if(item.name == 'currentRankId'){
+                item.select = this.postList.filter(i=>i.state===1)
               }
             })
         })
@@ -333,7 +355,7 @@
           arr.push(obj)
         })
         let param ={
-            formTitle:this.extension,
+            formTitle:this.extensionPost,
             rules:this.changeRankRules,
             record:{
               policeName:arrName,//名字
@@ -363,6 +385,64 @@
         }
         let option = {
             title: '岗位调动',
+            width: 500,
+            centered: true,
+            maskClosable: false,
+            okText:"提交",
+          }
+        this.modal(param,option,fromModel,callback)
+      },
+      // 批量组织调动
+      changeOrgan(){
+        let arr = []
+        let arrName = ''
+        this.selectedRows.forEach((item,index)=>{
+          let obj = {
+            policeName:item.policeName,//名字
+            number:item.number,//警员编号
+            userId:item.userId,//用户id
+            // beforeRank:item.currentRank,//变动前岗位
+            approvedBy:this.user.name,//审批人
+            approvedById:this.user.id,//审批人id
+            type:2
+          }
+          arrName += item.policeName + ",";
+          if(index == this.selectedRows.length - 1 ){
+            arrName = arrName.slice(0,arrName.length - 1);
+          }
+          arr.push(obj)
+        })
+        let param ={
+            formTitle:this.extensionOrgan,
+            rules:this.changeRankRules,
+            record:{
+              policeName:arrName,//名字
+              policeArr:arr,
+              organizationId:"",
+            },
+            submitFun: (parameter) => {
+              return this.$api.personAdminService
+                .changeManyPost(parameter)
+                .then((res) => {
+                  if(res.data.code == 0){
+                    return res.data;
+                  }else{
+                    this.$message.error(res.data.msg)
+                  }
+                })
+                .catch((res)=>{
+                  this.$message.error(res.data.msg)
+                })
+            },
+            
+        }
+        let callback = () => {
+          this.$refs.table.refresh(true);
+          this.selectedRows = []
+          this.selectedRowKeys = []
+        }
+        let option = {
+            title: '组织调动',
             width: 500,
             centered: true,
             maskClosable: false,

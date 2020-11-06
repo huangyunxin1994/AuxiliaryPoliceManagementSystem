@@ -39,7 +39,9 @@
           />
           <!-- 下拉框 -->
           <a-select
+            show-search
             v-model="form[item.name]"
+            :filter-option="filterOption"
             :disabled="item.disabled"
             v-else-if="item.type == 'select'"
             :placeholder="item.placeholder"
@@ -375,7 +377,12 @@ export default {
       this.form[obj.keyName] = obj.val
       this.form[obj.labelName] = obj.label
       console.log( this.form)
-    }
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      );
+    },
   },
 };
 </script>

@@ -22,8 +22,9 @@
                 </template>
                 <span slot="action" slot-scope="text, record">
                     <!-- <a @click="handleEdit (record)">下载</a> -->
-                    <a  name="file" :download="record.name" @click="downContract(record.id)">下载</a>
+                    <a  name="file" :download="record.name" @click="downContract(record.id)" :disabled="!record.electronicContract">下载</a>
                     <a-divider type="vertical"/>
+                    <a-badge dot v-if="!record.electronicContract">
                     <a-upload
                         name="file"
                         :multiple="true"
@@ -34,7 +35,18 @@
                     >
                         <a @click="handleUpData (record)">上传</a>
                     </a-upload>
-                    
+                    </a-badge>
+                    <a-upload
+                        v-else
+                        name="file"
+                        :multiple="true"
+                        :default-file-list="form.file"
+                        action=""
+                        :before-upload="beforeUpload"
+                        :show-upload-list="false"
+                    >
+                        <a @click="handleUpData (record)">上传</a>
+                    </a-upload>
                 </span>
             </s-table>
         </a-card>

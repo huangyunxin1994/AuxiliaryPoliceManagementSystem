@@ -8,6 +8,7 @@ const auxiliaryPoliceService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     getAuxiliaryPoliceData(params){
+        params.tenureStatus = 1
         return request(GETDATA, METHOD.GET, params)
     },
     /**

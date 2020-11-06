@@ -103,7 +103,7 @@
             <template slot="status" slot-scope="isExpire">
               <!-- <a-badge :status="isExpire" :text="isExpire | statusFilter" /> -->
               <a-badge
-                :status="isExpire == '1' ? 'error' : 'processing'"
+                :status="isExpire == 1 ? 'warning' : ( isExpire == 2 ? 'processing' : 'error')"
                 :text="isExpire | statusFilter"
               />
             </template>
@@ -542,10 +542,12 @@ export default {
     },
     // 弹窗
     modal(obj, option, model) {
+      const _this = this
       const defaultProps = {
         on: {
           ok() {
             // console.log('ok 回调')
+            _this.$refs.table.refresh(true)
           },
           cancel() {
             // e.handleDestroy()
@@ -595,6 +597,7 @@ export default {
       const statusMap = {
         1: "即将到期",
         2: "未到期",
+        3: "已过期"
       };
       return statusMap[status];
     },

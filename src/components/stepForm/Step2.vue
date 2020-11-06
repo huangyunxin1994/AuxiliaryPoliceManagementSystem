@@ -43,8 +43,10 @@
                   />
                   <!-- 下拉框 -->
                   <a-select
+                    show-search
                     v-model="form[item.name]"
                     :disabled="item.disabled"
+                    :filter-option="filterOption"
                     v-else-if="item.type == 'select'"
                     :placeholder="item.placeholder"
                     @change="handleChange(item)"
@@ -291,7 +293,12 @@ export default {
       this.fileList = [file]
       this.form.fileList=[...this.fileList];
       return false
-    }
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      );
+    },
   },
 };
 </script>

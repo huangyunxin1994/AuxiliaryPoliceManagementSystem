@@ -65,8 +65,10 @@
                     @handleTreeChange="handleTreeChange"
                   ></tree-select>
                   <a-select
+                    show-search
                     v-model="form[item.title]"
                     :placeholder="item.placeholder"
+                    :filter-option="filterOption"
                     v-else-if="item.type == 'select'"
                     :disabled="item.disabled"
                     @change="handleChange(item)"
@@ -1231,7 +1233,12 @@ export default {
     // 获取修改的组织
     handleTreeChange(data){
       this.form.organizationId = data.val
-    }
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      );
+    },
   },
   mounted() {
     this.getBaseRules();

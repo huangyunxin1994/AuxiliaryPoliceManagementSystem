@@ -25,9 +25,10 @@
         </a-col>
       </a-row>
       <a-divider />
-      <p>
+      <div v-html="text2" style="text-indent:2em;"></div>
+      <!-- <pre>
         {{itemData.contentA}}
-      </p>
+      </pre> -->
       <a-divider />
       <!-- 附件：<a ><a-icon type="paper-clip" />{{itemData.name}}</a> -->
       附件：<a  name="file" :download="itemData.name" :href="BASE_URL+'/DocumentAnnouncement/notice/download?noticeId='+itemData.id">{{ itemData.name }}</a>
@@ -81,15 +82,27 @@ export default {
       loading: true,
       data,
       itemData:'',
-      BASE_URL:''
+      BASE_URL:'',
+      text2:"",
     };
   },
   watch:{
     user(newVal){
       console.log(newVal)
+    },
+    visible(newVal){
+      if(newVal)
+      this.submitText()
     }
   },
   methods: {
+    // js部分
+    submitText(){
+        let arr = [];
+        this.itemData.contentA.split('\n').forEach(item=>arr.push(`<p>${item.trim()}</p>`));
+        console.log(arr)
+        this.text2 =  arr.join('<br>');
+    },
     handleClick(item) {
       console.log(item)
       

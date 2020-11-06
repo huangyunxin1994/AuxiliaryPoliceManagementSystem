@@ -172,7 +172,7 @@ export default {
           dataIndex: "name",
           key: "name",
           scopedSlots: { customRender: "name" },
-          width: 80,
+          width: 120,
         },
         {
           title: "辅警编号",
@@ -184,7 +184,7 @@ export default {
           title: "所属组织",
           dataIndex: "organizationName",
           key: "organizationName",
-          width: 250,
+          width: 150,
         },
         {
           title: "岗位",
@@ -202,20 +202,20 @@ export default {
           title: "工龄",
           dataIndex: "seniority",
           key: "seniority",
-          width: 100,
+          width: 80,
         },
         {
           title: "年龄",
           dataIndex: "age",
           key: "age",
-          width: 100,
+          width: 80,
         },
         {
           title: "性别",
           dataIndex: "sex",
           key: "sex",
           scopedSlots: { customRender: "sex" },
-          width: 100,
+          width: 80,
         },
         {
           title: "政治面貌",
@@ -234,13 +234,13 @@ export default {
           dataIndex: "isMajor",
           key: "isMajor",
           scopedSlots: { customRender: "isMajor" },
-          width: 100,
+          width: 120,
         },
         {
           title: "重置密码",
           dataIndex: "action",
           scopedSlots: { customRender: "action" },
-          width: 150,
+          width: 100,
         },
       ],
       diaColumns: [
