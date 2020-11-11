@@ -19,6 +19,6 @@ module.exports = {
   GETLIST:`${BASE_URL}/train/`,//查询培训列表
   POSTEDUCATION:`${BASE_URL}/train/`,//查询培训列表
   DELETEEDUCATION:`${BASE_URL}/train/`,//删除培训
-  GETDETAILSDATA:`${BASE_URL}/train/details`,//根据id查找培训详情
+  GETDETAILSDATA:`${BASE_URL}/train/s`,//根据id查找培训详情
   PUTEDUCATION:`${BASE_URL}/train/`,//填写结果
 }

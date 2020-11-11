@@ -62,6 +62,7 @@
                     style="width: 100%" 
                     ref="selectTree" 
                     :value="form.organizationId" 
+                    labelName="organizationName"
                     @handleTreeChange="handleTreeChange"
                   ></tree-select>
                   <a-select
@@ -917,7 +918,7 @@ export default {
   created() {
     this.form.organizationId=this.user.organizationId
     this.queryPa.id = this.policeId || "";
-    this.form.organizationId = this.user.organizationId
+    this.form.organizationName= this.user.organizationName
     this.$api.auxiliaryPoliceService
       .getAuxiliaryPoliceData({ policeId: this.policeId || "undefined" })
       .then((res) => {
@@ -1233,6 +1234,7 @@ export default {
     // 获取修改的组织
     handleTreeChange(data){
       this.form.organizationId = data.val
+      this.form[data.labelName] = data.label
     },
     filterOption(input, option) {
       return (
