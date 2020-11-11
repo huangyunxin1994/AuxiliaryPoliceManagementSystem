@@ -19,6 +19,8 @@ import workService from "./WorkApi/index"
 import familyService from "./FamilyApi/index"
 import messageService from "./messageApi/index"
 import salaryService from "./SalaryApi/index"
+import salaryRecordService from "./SalaryRecordApi/index"
+
 export default{
   userService,
   overTimeService,
@@ -39,5 +41,6 @@ export default{
   workService,
   familyService,
   messageService,
-  salaryService
+  salaryService,
+  salaryRecordService
 }

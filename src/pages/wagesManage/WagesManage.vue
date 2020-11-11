@@ -7,6 +7,8 @@
             v-model="queryParam.month"
             :valueFormat="monthFormat"
             :disabled-date="disabledDate"
+            @openChange="handleOpen"
+            :panelChange="handlePanelChange"
             @change="handleChange"
           >
             <h2 style="" :style="{ color: theme.color }">
@@ -32,22 +34,24 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="模糊查询">
-                <a-input v-model="queryParam.search" placeholder="请输入要查询的关键词" />
+                <a-input
+                  v-model="queryParam.search"
+                  placeholder="请输入要查询的关键词"
+                />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <tree-select :value="queryParam.organ" @handleTreeChange="handleTreeChange"></tree-select>
+                <tree-select
+                  :value="queryParam.organ"
+                  @handleTreeChange="handleTreeChange"
+                ></tree-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="工资状态">
-                  <a-select
-                    v-model="queryParam.state"
-                    style="width: 100%"
-                    @change="handleChange"
-                  >
+                  <a-select v-model="queryParam.state" style="width: 100%">
                     <a-select-option value=""> 全部 </a-select-option>
                     <a-select-option value="1"> 已发放 </a-select-option>
                     <a-select-option value="2"> 未发放 </a-select-option>
@@ -90,8 +94,12 @@
           @click="uploadExcel"
           >上传工资表</a-button
         >
-        <a-button type="primary" icon="sync" style="margin-left: 8px"
-          @click="synchroExcel">同步工资表</a-button
+        <a-button
+          type="primary"
+          icon="sync"
+          style="margin-left: 8px"
+          @click="synchroExcel"
+          >同步工资表</a-button
         >
       </div>
       <s-table
@@ -116,10 +124,21 @@
         </span>
       </s-table>
     </a-card>
-    <a-modal v-model="visible" title="上传工资表" on-ok="handleOk" centered destroyOnClose>
+    <a-modal
+      v-model="visible"
+      title="上传工资表"
+      on-ok="handleOk"
+      centered
+      destroyOnClose
+    >
       <template slot="footer">
         <a-button key="back" @click="handleCancel"> 取消 </a-button>
-        <a-button key="submit" type="primary" :loading="loading" @click="handleOk">
+        <a-button
+          key="submit"
+          type="primary"
+          :loading="loading"
+          @click="handleOk"
+        >
           确认
         </a-button>
       </template>
@@ -217,13 +236,14 @@ export default {
         organizationId: [],
         fileList: [],
       },
-      loading:false,
+      loading: false,
       fileList: [],
       rules: {},
       tree: [],
-      treeSelect:[],
+      treeSelect: [],
       disableTree: [],
       treeData: [],
+      recordMonth:[],
       visible: false,
       salaryTitle: {},
       advanced: false,
@@ -274,10 +294,10 @@ export default {
         month: moment(
           new Date(new Date().setMonth(new Date().getMonth() - 1))
         ).format("YYYY-MM"),
-        organizationId:"",
-        oid:"",
-        search:"",
-        state:""
+        organizationId: "",
+        oid: "",
+        search: "",
+        state: "",
       },
       loadScheduleData: (params) => {
         this.queryParam.oid = this.user.organizationId;
@@ -321,14 +341,12 @@ export default {
         const data = JSON.parse(JSON.stringify(res.data.data.data));
         this.tree = Object.assign([], res.data.data.data);
         this.treeData = filterArray(data);
-        this.searchDisabledTree()
+        this.searchDisabledTree();
         // this.$emit("getTreeData",this.filterTree)
       });
   },
   methods: {
     disabledDate(current) {
-      console.log(current);
-      console.log(moment().endOf("month"));
       return (
         current &&
         current >
@@ -338,27 +356,19 @@ export default {
       );
     },
     getBadgeData(value) {
-      let result = moment(value).format("M");
-      let arr = [
-        { month: "1", result: 1 },
-        { month: "2", result: 1 },
-        { month: "3", result: 1 },
-        { month: "4", result: 1 },
-        { month: "5", result: 1 },
-        { month: "6", result: 2 },
-        { month: "7", result: 2 },
-        { month: "8", result: 2 },
-        { month: "9", result: 1 },
-      ];
-      let params = arr.find((i) => i.month === result);
+      let result = moment(value).format("YYYY-MM");
+      let params = this.recordMonth.find((i) => i.recordMonth === result);
       if (params) {
-        if (params.result === 1) {
           return <a-icon type="check-circle" style="color:#87d068" />;
-        } else {
-          return <a-icon type="info-circle" style="color:#f50" />;
-        }
       } else {
-        return null;
+       
+        if(value > moment(
+            new Date(new Date().setMonth(new Date().getMonth() - 1))
+          ).endOf("month")){
+               return null
+          }
+            return <a-icon type="info-circle" style="color:#f50" />;
+       
       }
     },
     getMonthData(value) {
@@ -368,7 +378,38 @@ export default {
     //打开关闭日期选择器
     handleChange() {
       this.$refs.table.refresh(true);
-      this.searchDisabledTree()
+      this.searchDisabledTree();
+    },
+    handleOpen(state) {
+      if (state) {
+        setTimeout(() => {
+          const year = document
+            .querySelector(".ant-calendar-year-select")
+            .innerText.replace("年", "");
+          const param = {
+            year: year,
+          };
+          this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
+            this.recordMonth  = Object.assign([],res.data.data.list)
+          });
+          const dateDom = document.querySelector(".ant-calendar-ym-select");
+          dateDom.addEventListener("DOMCharacterDataModified", () => {
+            const year = document
+              .querySelector(".ant-calendar-year-select")
+              .innerText.replace("年", "");
+            console.log(year);
+            const param = {
+              year: year,
+            };
+            this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
+              this.recordMonth  = Object.assign([],res.data.data.list)
+            });
+          });
+        }, 0);
+      }
+    },
+    handlePanelChange(value, mode) {
+      console.log(value, mode);
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
@@ -378,20 +419,21 @@ export default {
       this.queryParam.organizationId = obj.val;
     },
     downloadExcel() {
-      this.$api.salaryService.getFormwork({month:this.queryParam.month}).then(res=>{
-        if(!res.data.code){
-          window.location.href = `${process.env.VUE_APP_API_BASE_URL}/salary/formwork?month=${this.queryParam.month}`;
-        }else{
-          this.$message.error(res.data.msg)
-        }
-      })
-      
+      this.$api.salaryService
+        .getFormwork({ month: this.queryParam.month })
+        .then((res) => {
+          if (!res.data.code) {
+            window.location.href = `${process.env.VUE_APP_API_BASE_URL}/salary/formwork?month=${this.queryParam.month}`;
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        });
     },
     uploadExcel() {
       this.visible = true;
     },
-    synchroExcel(){
-      const _this = this
+    synchroExcel() {
+      const _this = this;
       this.$confirm({
         title: "提示",
         content: `真的要同步 ${_this.queryParam.month} 月份工资表吗 吗?`,
@@ -400,31 +442,101 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          _this.$api.salaryService.getSynchro({month:_this.queryParam.month,organizationId:_this.user.organizationId }).then((res) => {
-            console.log(res);
-            if(res.data.code === 0){
-              _this.$message.success(res.data.msg)
-              _this.$refs.table.refresh(true)
-            }else{
-              _this.$message.error(res.data.msg)
-            }
-          });
+          _this.$api.salaryService
+            .getSynchro({
+              month: _this.queryParam.month,
+              organizationId: _this.user.organizationId,
+            })
+            .then((res) => {
+              console.log(res);
+              if (res.data.code === 0) {
+                _this.$message.success(res.data.msg);
+                _this.$refs.table.refresh(true);
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            });
         },
         onCancel() {},
       });
-      
     },
     handleOk() {
-      this.loading = true
+      this.loading = true;
       this.form.month = this.queryParam.month;
       this.$api.salaryService.postSalary(this.form).then((res) => {
-        this.loading = false
+        this.loading = false;
         this.visible = false;
-        if(res.data.code === 0){
-          this.$message.success(res.data.msg)
-          this.$refs.table.refresh(true)
-        }else{
-          this.$message.error(res.data.msg)
+        if (res.data.code === 0) {
+          if(res.data.data.result === 0){
+            this.$message.success(res.data.msg);
+            this.$refs.table.refresh(true);
+          }else if(res.data.data.result === 1){
+            this.$error({
+              title: '表字段不正确',
+              content: '当前上传工资表的字段与系统模板不必配，请查看模板，修改正确后重新上传。',
+            });
+          }else if(res.data.data.result === 2){
+            this.$error({
+              title: '含有所属组织不存在的警员编号',
+              content: (
+                <div>
+                
+                 {
+                    res.data.data.list.map(item => {
+                      return (
+                        <p class="messgeItem">
+                        <span>警员编号：{item}</span>
+                        <span>问题：所属组织不存在的警员编号</span>
+                        </p>
+                      )
+                    })
+                  }
+                  
+                </div>
+              ),
+            });
+          }else if(res.data.data.result === 3){
+            this.$error({
+              width:500,
+              title: '工资表缺少警员编号',
+              content: (
+                <div>
+                 {
+                    res.data.data.list.map(item => {
+                      return (
+                        <p class="messgeItem">
+                        <span>警员编号：{item}</span>
+                        <span>问题：工资表缺少此警员编号</span>
+                        </p>
+                      )
+                    })
+                  }
+                  
+                </div>
+              ),
+            });
+          }else if(res.data.data.result === 4){
+            this.$error({
+              title: '含有重复警员编号',
+              content: (
+                <div>
+                 {
+                    res.data.data.list.map(item => {
+                      return (
+                        <p class="messgeItem">
+                        <span>警员编号：{item}</span>
+                        <span>问题：警员编号重复</span>
+                        </p>
+                      )
+                    })
+                  }
+                  
+                </div>
+              ),
+            });
+          }
+        } else {
+          this.$message.error(res.data.msg);
         }
       });
     },
@@ -438,13 +550,16 @@ export default {
       return false;
     },
     //查询已上传工资条的组织
-    searchDisabledTree(){
+    searchDisabledTree() {
       this.$api.salaryService
-        .getSalaryfileter({ id: this.user.organizationId, month: this.queryParam.month })
+        .getSalaryfileter({
+          id: this.user.organizationId,
+          month: this.queryParam.month,
+        })
         .then((res) => {
           this.disableTree = res.data.data.list;
-          this.treeSelect = JSON.parse(JSON.stringify(this.tree))
-          this.treeSelect = this.treeFilter(this.treeSelect)
+          this.treeSelect = JSON.parse(JSON.stringify(this.tree));
+          this.treeSelect = this.treeFilter(this.treeSelect);
         });
     },
     treeFilter(data) {
@@ -461,7 +576,7 @@ export default {
         map[item.id] = item;
       });
       var val = [];
-    data.forEach(function (item) {
+      data.forEach(function (item) {
         var parent = map[item.parentId] || map[item.code];
         if (parent) {
           (parent.children || (parent.children = [])).push(item);
@@ -501,4 +616,13 @@ export default {
 
 <style scoped lang="less">
 @import "./index";
+.messgeItem{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/deep/ .ant-modal-confirm-content{
+  margin-top: 38px;
+  margin-left: 0;
+}
 </style>

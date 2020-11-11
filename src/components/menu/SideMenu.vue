@@ -1,7 +1,7 @@
 <template>
   <a-layout-sider :theme="sideTheme" :class="['side-menu', 'beauty-scroll', isMobile ? null : 'shadow']" width="256px" :collapsible="collapsible" v-model="collapsed" :trigger="null">
     <div :class="['logo', theme]">
-      <router-link to="/dashboard/workplace">
+      <router-link :to="loginType === 1 ? '/auxhome' : '/home'">
         <img src="@/assets/img/logo.png">
         <h1>{{systemName}}</h1>
       </router-link>
@@ -12,7 +12,7 @@
 
 <script>
 import IMenu from './menu'
-import {mapState} from 'vuex'
+import {mapState,mapGetters} from 'vuex'
 export default {
   name: 'SideMenu',
   components: {IMenu},
@@ -41,7 +41,8 @@ export default {
     sideTheme() {
       return this.theme == 'light' ? this.theme : 'dark'
     },
-    ...mapState('setting', ['isMobile', 'systemName'])
+    ...mapState('setting', ['isMobile', 'systemName']),
+    ...mapGetters('account',['loginType'])
   },
   methods: {
     onSelect (obj) {

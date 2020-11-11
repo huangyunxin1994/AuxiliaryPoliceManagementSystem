@@ -31,7 +31,7 @@
         <a-keep-alive v-if="multiPage&&$route.meta.keepAlive" v-model="clearCaches">
           <router-view ref="tabContent" :key="$route.fullPath" />
         </a-keep-alive>
-        <router-view v-else />
+        <router-view ref="tabContent" :key="$route.fullPath"  v-else />
       </page-toggle-transition>
     </div>
   </admin-layout>
