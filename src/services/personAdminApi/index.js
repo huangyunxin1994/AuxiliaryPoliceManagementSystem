@@ -29,7 +29,6 @@ const personAdminService = {
     changePostRank(params){
         let arr = []
         arr.push(params)
-        console.log(params)
         return request(CHANGERANKPOST, METHOD.POST, arr)
     },
 
@@ -45,7 +44,6 @@ const personAdminService = {
             item.effectiveDate = params.effectiveDate,
             item.reason = params.reason
         })
-        console.log(params)
 
         return request(CHANGERANKPOST, METHOD.POST, arr)
     },
@@ -56,7 +54,6 @@ const personAdminService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     changeManyPost(params){
-        console.log(params)
         let arr = params.policeArr
         arr.forEach((item)=>{
             item.currentRank = params.currentRank,
@@ -65,7 +62,6 @@ const personAdminService = {
             item.organizationId = params.organizationId
             item.organizationName = params.organizationName
         })
-        console.log(arr)
         return request(CHANGERANKPOST, METHOD.POST, arr)
     },
 

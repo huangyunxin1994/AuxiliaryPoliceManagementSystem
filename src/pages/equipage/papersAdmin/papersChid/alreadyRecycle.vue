@@ -187,12 +187,10 @@ export default {
         },
         // 配发日期
         allotmentDate(date, dateString) {
-          console.log(date, dateString);
           this.queryParam.allotmentDate = dateString
         },
         //到期日期
         validity(date, dateString) {
-          console.log(date, dateString);
           this.queryParam.termValidity = dateString
         },
         toggleAdvanced(){
@@ -201,7 +199,6 @@ export default {
         //树选择回调
     handleTreeChange(obj){
       this.queryParam.organizationId = obj.val
-      console.log(this.queryParam)
     },
     reloadData(){
       this.queryParam.organizationId=""

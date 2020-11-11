@@ -141,10 +141,8 @@ export default {
       this.$api.documentAnnouncementService
           .getDocument(requestParameters)
           .then((res) => {
-            console.log(res)
             // return res.data;
             this.fileList = res.data.data.list
-            console.log(this.fileList)
           });
     },
     // 获取辅警个人消息通知列表(通知)
@@ -157,7 +155,6 @@ export default {
        _this.$api.messageService
         .getPoliceList(requestParameters)
         .then((res) => {
-          console.log(res)
           let list = res.data.data.list
           this.noticeList = list
         });
@@ -172,7 +169,6 @@ export default {
       _this.$api.documentAnnouncementService
           .getNotice(requestParameters)
           .then((res) => {
-            console.log(res)
             res.data.data.list.forEach(item => {
               item.notice = 1
               item.contentA = item.content

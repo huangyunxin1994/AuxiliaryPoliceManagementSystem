@@ -37,7 +37,7 @@
     <a-card :bordered="false">
       <div class="position-and-level-title" :style="{ 'border-color': theme.color }">专业技术辅警资格信息</div>
       <div class="table-operator" style="margin-bottom: 24px">
-        <a-button type="primary" icon="upload"  style="margin-right: 10px">导出</a-button>
+        <a-button type="primary" icon="upload"  style="margin-right: 10px" @click="exportToExcel">导出</a-button>
       </div>
       <s-table
         ref="table"
@@ -56,6 +56,7 @@
 <script>
 import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
+// import ExportJsonExcel from "js-export-excel";
 export default {
   name: "OrganManage",
   components: {
@@ -247,8 +248,7 @@ export default {
     },
 
     // 开始时间和结束时间
-    onChange(date, dateString) {
-      console.log(date, dateString);
+    onChange() {
     },
 
     // 点击完成
@@ -256,16 +256,50 @@ export default {
 
     },
     // 点击删除人员
-    confirm(e) {
-        console.log(e);
+    confirm() {
         this.$message.success('删除成功');
     },
-    cancel(e) {
-        console.log(e);
+    cancel() {
         this.$message.error('已取消删除');
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
+    },
+    //导出Excel
+    exportToExcel() {
+      // let requestParameters = {
+      //   currentPage: 1,
+      //   pageSize: 99999,
+      // };
+      // requestParameters = Object.assign({}, requestParameters, this.queryParam);
+      // this.$api.overTimeService.statistics(requestParameters).then((res) => {
+        // if (res.data.data.list.length > 0) {
+        //   res.data.data.list.map((i, k) => (i.key = k + 1));
+        //   const ReqDetailList = res.data.data.list;
+        //   const columns = this.scheduleColumns; // 表头数据
+        //   const option = {};
+        //   option.fileName = "excel";
+        //   option.datas = [
+        //     {
+        //       sheetData: ReqDetailList.map((item) => {
+        //         const result = {};
+        //         columns.forEach((c) => {
+        //           result[c.dataIndex] = item[c.dataIndex];
+        //         });
+        //         return result;
+        //       }),
+        //       sheetName: "加班请假统计表", // Excel文件名称
+        //       sheetFilter: columns.map((item) => item.dataIndex),
+        //       sheetHeader: columns.map((item) => item.title),
+        //       columnWidths: columns.map(() => 5),
+        //     },
+        //   ];
+        //   const toExcel = new ExportJsonExcel(option);
+        //   toExcel.saveExcel();
+        // } else {
+        //   this.$message.warning("没有可以导出的数据");
+        // }
+      // });
     },
   },
   filters: {

@@ -34,7 +34,6 @@ function filterArray(data) {
       val.push(item);
     }
   });
-  console.log(val);
   return val;
 }
 export default {
@@ -83,14 +82,12 @@ export default {
             item.scopedSlots = { title: "custom" }
         })
         this.tree = filterArray(res.data.data.data)
-        console.log(this.tree);
         // this.$emit("getTreeData",this.filterTree)
     })
     
   },
   watch:{
-    value(val){
-      console.log('organizationId='+val)
+    value(){
     }
   },
   methods: {

@@ -185,9 +185,6 @@ export default {
       handleAdd(){
           this.rightColumnsData=[...this.rightColumnsData,
           ...this.tableData.filter(x => this.selectedLeftRows.some(i=>i.id===x.id))]
-          
-          console.log(this.selectedLeftRows)
-          console.log(this.selectedRightRows)
           this.selectedLeftRows=[]
             this.selectedRightRows=[]
            this.selectedLeftRowKeys=[]
@@ -206,7 +203,6 @@ export default {
             this.selectedRightRows=[]
            this.selectedLeftRowKeys=[]
             this.selectedRightRowKeys=[]
-         console.log( this.selectedLeftRowKeys)
           this.$refs.table.refresh(true)
       },
       reloadData(){
@@ -220,7 +216,6 @@ export default {
       
       this.selectedLeftRowKeys = selectedRowKeys;
       this.selectedLeftRows = selectedRows;
-      console.log(this.selectedLeftRows)
     },
     onRightSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRightRowKeys = selectedRowKeys;

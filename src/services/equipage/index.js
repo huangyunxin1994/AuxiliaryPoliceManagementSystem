@@ -34,9 +34,7 @@ const equipageService = {
      * @param params 证件或装备修改数据
      * @returns {Promise<AxiosResponse<T>>}
      */
-    addEducation(params) {
-        console.log("******************************")
-        console.log(params)
+    addEducation() {
         // return request(POSTEDUCATION, METHOD.POST, arr)
     },
 

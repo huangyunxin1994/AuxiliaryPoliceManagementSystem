@@ -182,7 +182,6 @@ export default {
       loadCredData: (params) => {
         let param = Object.assign(params, this.queryParam);
         return this.$api.contractService.getdetails(param).then((res) => {
-          console.log(res);
           res.data.data.list.map((i, k) => {
             i.key = k + 1;
           });
@@ -218,8 +217,6 @@ export default {
   },
   methods: {
     disabledDate(current) {
-      console.log(current);
-      console.log(moment().endOf("month"));
       return (
         current &&
         current >
@@ -238,13 +235,13 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
+            
           },
           cancel() {
-            console.log("cancel 回调");
+            
           },
           close() {
-            console.log("modal close 回调");
+            
           },
         },
       };
@@ -259,15 +256,13 @@ export default {
     },
 
     // 开始时间和结束时间
-    onChange(date, dateString) {
-      console.log(date, dateString);
+    onChange() {
     },
 
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
-    handleEdit(data) {
-      console.log(data);
+    handleEdit() {
     },
     changeMonth() {
       this.$refs.wageTable.refresh(true);

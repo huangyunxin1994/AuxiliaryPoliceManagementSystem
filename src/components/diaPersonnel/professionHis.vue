@@ -76,7 +76,6 @@
             },
             loadScheduleData: (params) => {
                 let param = Object.assign(params,this.nameMess)
-                console.log(param)
                 return this.$api.personAdminService.getPersonProfession(param).then((res)=>{
                     res.data.data.list.map((i,k)=>{
                         i.key=k+1
@@ -99,14 +98,11 @@
         }
         },
         methods:{
-            handleEdit(record){
-                console.log(record)
+            handleEdit(){
             },
-            beforeUpload(file){
-                console.log(file)
+            beforeUpload(){
             },
             addProfession(){
-                // console.log("新增记录")
                 const _this = this
                 this.$dialog(fromModel,
                     // component props
@@ -122,14 +118,13 @@
                     },
                     on: {
                         ok () {
-                            console.log('ok 回调')
                            _this.$refs.table.refresh(true);
                         },
                         cancel () {
-                            console.log('cancel 回调')
+                            
                         },
                         close () {
-                            console.log('modal close 回调')
+                            
                         }
                     }
                     },

@@ -208,7 +208,6 @@ export default {
       loadCredData: (params) => {
         let param = Object.assign(params,this.overTimeParam)
         return this.$api.overTimeService.getOverTimeLeave(param).then((res)=>{
-          console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
           })
@@ -278,7 +277,6 @@ export default {
       dutyData:(params) => {
         let param = Object.assign(params,this.leaveParam)
         return this.$api.overTimeService.getOverTimeLeave(param).then((res)=>{
-          console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
           })
@@ -430,7 +428,6 @@ export default {
   created(){
     this.overTimeParam.userId = this.policeId||this.user.id
     this.leaveParam.userId = this.policeId||this.user.id
-    console.log(this.overTimeParam.userId)
   },
   methods: {
     // 加班
@@ -508,7 +505,6 @@ export default {
         },
       };
       let formProps = Object.assign(obj, defaultProps);
-      console.log(formProps);
       this.$dialog(
         model,
         // form props

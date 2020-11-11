@@ -210,7 +210,6 @@
 			this.queryParam.oid = this.user.organizationId
             let param = Object.assign(params,this.queryParam)
             return this.$api.personAdminService.getRankList(param).then((res)=>{
-              console.log(res)
               res.data.data.list.map((i,k)=>{
                 i.key=k+1
                 i.effDisabled = this.compareDate(i.effectiveDate)
@@ -288,7 +287,6 @@
         })
       },
       handleEdit(record){
-        console.log(record)
         let param ={
             diaColumns:this.diaColumns,
             person:record
@@ -305,22 +303,18 @@
         this.modal(param,option,diaHisRank)
       },
       handleClick (e) {
-          console.log('handleClick', e)
           this.queryParam = {
               key: e.key
           }
           this.$refs.table.refresh(true)
       },
       handleAdd (item) {
-          console.log('add button, item', item)
           this.$message.info(`提示：你点了 ${item.key} - ${item.title} `)
           this.$refs.modal.add(item.key)
       },
-      handleTitleClick (item) {
-          console.log('handleTitleClick', item)
+      handleTitleClick () {
       },
-      handleChange(e){
-          console.log(e)
+      handleChange(){
       },
       // 选中树节点
       loadTreeNode(data){
@@ -328,16 +322,13 @@
         this.$refs.table.refresh(true)
       },
       //编辑树节点
-      editTreeNode(params){
-          console.log(params)
+      editTreeNode(){
       },
       //添加树节点
-      addTreeNode(params){
-          console.log(params)
+      addTreeNode(){
       },
         //删除树节点
-      removeTreeNode(params){
-            console.log(params)
+      removeTreeNode(){
       },
       // 获取多选的数据
       onSelectChange (selectedRowKeys, selectedRows) {
@@ -348,7 +339,6 @@
 
       // 批量岗位调动
       changePost(){
-        console.log(this.selectedRows)
         let arr = []
         let arrName = ''
         this.selectedRows.forEach((item,index)=>{
@@ -465,7 +455,6 @@
       },
 		// 调动单个岗位
 		changeOnePost(e){
-      console.log(e)
       let policeArr = []
       let obj = {
         policeName:e.policeName,//名字
@@ -560,7 +549,6 @@
       },
       // 生效时间
       onChange(date, dateString) {
-        console.log(date, dateString);
         this.queryParam.time = dateString
       },
     },

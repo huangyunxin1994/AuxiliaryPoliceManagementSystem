@@ -285,7 +285,6 @@ export default {
             i.key = k + 1;
           });
           this.isSignUp = res.data.data.isSignUp
-          console.log(res);
           return res.data;
         });
       },
@@ -332,7 +331,6 @@ export default {
       this.$refs.table.refresh(false);
     },
     handleEdit(record) {
-      console.log(record);
       let param = {
         person: record,
       };
@@ -348,23 +346,19 @@ export default {
       this.modal(param, option, diaHisContract);
     },
     handleClick(e) {
-      console.log("handleClick", e);
       this.queryParam = {
         key: e.key,
       };
       this.$refs.table.refresh(true);
     },
     handleAdd(item) {
-      console.log("add button, item", item);
       this.$message.info(`提示：你点了 ${item.key} - ${item.title} `);
       this.$refs.modal.add(item.key);
     },
-    handleTitleClick(item) {
-      console.log("handleTitleClick", item);
+    handleTitleClick() {
     },
     // 是否即将到期
     handleChange(e) {
-      console.log(e);
       this.isExpire = e;
     },
     //编辑树节点
@@ -389,13 +383,13 @@ export default {
           },
           on: {
             ok() {
-              console.log("ok 回调");
+              
             },
             cancel() {
-              console.log("cancel 回调");
+              
             },
             close() {
-              console.log("modal close 回调");
+              
             },
           },
         },
@@ -418,13 +412,13 @@ export default {
           record: params,
           on: {
             ok() {
-              console.log("ok 回调");
+              
             },
             cancel() {
-              console.log("cancel 回调");
+              
             },
             close() {
-              console.log("modal close 回调");
+              
             },
           },
         },
@@ -439,8 +433,7 @@ export default {
       );
     },
     //删除树节点
-    removeTreeNode(params) {
-      console.log(params);
+    removeTreeNode() {
     },
     // 选中树节点
     loadTreeNode(data) {
@@ -490,7 +483,6 @@ export default {
     },
     // 续约合同
     extensionCon() {
-      console.log(this.selectedRows);
       const bool = this.selectedRows.some((i) => i.isExpire === 2);
       if (bool) {
         this.$message.error("选项存在未到期合同，不能续约!");
@@ -560,7 +552,6 @@ export default {
         },
       };
       let formProps = Object.assign(obj, defaultProps);
-      console.log(formProps);
       this.$dialog(
         model,
         // form props
@@ -574,7 +565,6 @@ export default {
     },
     // 时间框选择
     onChange(date, dateString) {
-      console.log(date, dateString);
       this.queryParam.endTime = dateString;
     },
     // 点击重置

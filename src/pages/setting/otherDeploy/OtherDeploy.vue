@@ -301,7 +301,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log("OK");
           // 在这里调用删除接口
           if(! _this.commData.id){
             _this.$api.otherItemsService.postCommuting(_this.commData)
@@ -329,7 +328,6 @@ export default {
          
         },
         onCancel() {
-          console.log("Cancel");
         },
       });
     },
@@ -366,7 +364,6 @@ export default {
      * 编辑证件方法
      */
     handleCredEdit(record) {
-      console.log(record);
       let formProps = {
         record: record,
         formTitle: credTitle,
@@ -402,7 +399,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           _this.$api.otherItemsService
             .deleteCertEquip(param.id)
             .then((res) => {
@@ -488,7 +484,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           _this.$api.otherItemsService
             .deleteCertEquip(param.id)
             .then((res) => {
@@ -516,14 +511,12 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
+            
             fn()
           },
           cancel() {
-            console.log("cancel 回调");
           },
           close() {
-            console.log("modal close 回调");
           },
         },
       };
@@ -583,7 +576,6 @@ export default {
           break;
         }
       }
-      console.log(this.commData.state)
     }
   },
   filters: {

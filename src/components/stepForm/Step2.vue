@@ -262,13 +262,10 @@ export default {
         }
     },
     nextStep() {
-      console.log(this.form)
       this.$refs.ruleForm.validate((valid) => {
             if (valid) {
                this.$emit("handleOk", this.form);
-            } else {
-              console.log("error submit!!");
-            }
+            } 
           });
       //
     },
@@ -281,8 +278,6 @@ export default {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'application/pdf';
       if (!isJpgOrPng) {
         this.$message.error('你只能上传PDF,JPG,PNG格式的文件');
-        console.log(this.fileList)
-        console.log(this.form)
         return false
       }
       const isLt2M = file.size / 1024 / 1024 < 10;

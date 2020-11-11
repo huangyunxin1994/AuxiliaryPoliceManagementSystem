@@ -33,7 +33,6 @@ const auxiliaryPoliceService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     postAuxiliaryHead(params){
-        console.log(params)
         return request(POSTHEAD, METHOD.POST, params)
     },
 }

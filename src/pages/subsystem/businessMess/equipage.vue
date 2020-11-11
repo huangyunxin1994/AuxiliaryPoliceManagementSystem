@@ -170,7 +170,6 @@ export default {
       loadCredData: (params) => {
         let param = Object.assign(params,this.queryParam)
         return this.$api.certEquipService.getCertEqup(param).then((res)=>{
-          console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
           })
@@ -221,7 +220,6 @@ export default {
       dutyData:(params) => {
         let param = Object.assign(params,this.equParam)
         return this.$api.certEquipService.getCertEqup(param).then((res)=>{
-          console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
           })
@@ -263,8 +261,7 @@ export default {
     },
 
     // 开始时间和结束时间
-    onChange(date, dateString) {
-      console.log(date, dateString);
+    onChange() {
     },
 
     // 点击完成
@@ -272,12 +269,10 @@ export default {
 
     },
     // 点击删除人员
-    confirm(e) {
-        console.log(e);
+    confirm() {
         this.$message.success('删除成功');
     },
-    cancel(e) {
-        console.log(e);
+    cancel() {
         this.$message.error('已取消删除');
     },
     toggleAdvanced() {

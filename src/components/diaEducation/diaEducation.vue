@@ -106,7 +106,6 @@ export default {
     },
     // 搜索
     onSearch(){
-        console.log(this.searchVal)
         this.queryParam.search = this.searchVal
         this.$refs.table.refresh(true)
     },
@@ -114,43 +113,16 @@ export default {
     onSelectChange (selectedRowKeys, selectedRows) {
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
-        console.log(this.selectedRows)
-        console.log(this.selectedRowKeys)
     },
     // 选中树节点
     loadTreeNode(data){
-        console.log(data)
         this.queryParam.organizationId = data.id
     },
     // 点击提交时
     onOk() {
-      console.log("监听了 modal ok 事件");
-      console.log("*****************************")
         this.$emit("getSelectData",this.selectedRowKeys)
-    //   return new Promise((resolve) => {
-    //         setTimeout(()=>{
-    //           resolve(true);
-    //           const result = this.submitFun(this.form);
-    //             result
-    //               .then((res) => {
-    //                 console.log(res);
-    //                 this.resetForm()
-    //                 this.$message.success(res.msg);
-    //                 resolve(true);
-    //               })
-    //               .catch((err) => {
-    //                 console.log(err);
-    //                  this.$message.success(err.msg);
-    //                 resolve(true);
-    //               });
-    //         },1000)
-
-        
-    //     });
-      
     },
     onCancel () {
-      console.log('监听了 modal cancel 事件')
       return new Promise(resolve => {
         resolve(true)
       })

@@ -120,16 +120,12 @@
                 }
             ],
             loadScheduleData: params => {
-                console.log(this.person)
                 this.queryParam.id = this.person.police_id
-                console.log(this.queryParam)
                 let param = Object.assign(params,this.queryParam)
-                console.log(param)
                 return this.$api.contractService.getdetails(param).then((res)=>{
                     res.data.data.list.map((i,k)=>{
                         i.key=k+1
                     })
-                    console.log(res)
                     return res.data
                 })
             },
@@ -147,15 +143,11 @@
         },
         methods:{
             handleEdit(record){
-                console.log(record)
                 let param = {
                     contractId:record.id
                 }
-                console.log(param)
-                this.$api.contractService.downNotice(param).then((res)=>{
-                    console.log(res)
-                }).catch((res)=>{
-                    console.log(res)
+                this.$api.contractService.downNotice(param).then(()=>{
+                }).catch(()=>{
                 })
             },
             beforeUpload(file){
@@ -169,14 +161,12 @@
                     }else{
                         this.$message.error('上传失败，请重试');
                     }
-                }).catch((res)=>{
-                    console.log(res)
+                }).catch(()=>{
                     this.$message.error('上传失败，请重试');
                 })
                 return false
             },
             handleUpData(record){
-                console.log(record)
                 this.handleData = record
             },
             downContract(id){

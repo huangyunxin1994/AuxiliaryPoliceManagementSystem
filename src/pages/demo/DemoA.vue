@@ -175,18 +175,15 @@ export default {
   },
   created() {
     Object.assign;
-    console.log(this.$route.query.id);
     this.policeId = this.$route.query.id;
     this.policeName = this.$route.query.name;
   },
   methods: {
     handleChange({ fileList }) {
       this.fileList = fileList;
-      console.log(this.fileList);
     },
     // 上传图片前先进行验证
     beforeUpload(file) {
-      console.log(file);
       const isJpgOrPng =
         file.type === "image/jpeg" || file.type === "image/png";
       if (!isJpgOrPng) {
@@ -199,7 +196,6 @@ export default {
         return false;
       }
       this.fileList.splice(0, 1, file);
-      console.log(this.fileList);
       this.imageToBase64(file);
       return false;
     },
@@ -209,8 +205,7 @@ export default {
       reader.onload = () => {
         this.imageUrl = reader.result;
       };
-      reader.onerror = function (error) {
-        console.log("Error: ", error);
+      reader.onerror = function () {
       };
     },
   },

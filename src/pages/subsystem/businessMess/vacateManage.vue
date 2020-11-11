@@ -176,7 +176,6 @@ export default {
       loadCredData: (params) => {
         let param = Object.assign(params,this.overTimeParam)
         return this.$api.overTimeService.statistics(param).then((res)=>{
-          console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
           })

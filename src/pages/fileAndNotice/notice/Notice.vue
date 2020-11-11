@@ -203,14 +203,11 @@ export default {
   },
   mounted(){
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL
-    console.log( this.BASE_URL)
   },
   methods: {
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
-      console.log(this.selectedRowKeys);
-      console.log(this.selectedRows);
     },
     //新增文件
     handleAdd() {
@@ -248,14 +245,12 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log("OK");
           // 在这里调用删除接口
           return new Promise((resolve, reject) => {
             setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
           }).catch(() => console.log("Oops errors!"));
         },
         onCancel() {
-          console.log("Cancel");
         },
       });
     },
@@ -270,14 +265,11 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
             _this.$refs.table.refresh(true)
           },
           cancel() {
-            console.log("cancel 回调");
           },
           close() {
-            console.log("modal close 回调");
           },
         },
       };
@@ -297,8 +289,7 @@ export default {
       },
       this.$refs.table.refresh(true)
     },
-    handleDel(e){
-      console.log(e)
+    handleDel(){
       const _this = this;
       this.$confirm({
         title: "警告",
@@ -308,7 +299,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           _this.$api.documentAnnouncementService
             .deleteNotice({ id:_this.selectedRowKeys })
             .then((res) => {

@@ -137,7 +137,6 @@ export default {
       this.openModal(TaskForm, formProps, modalProps);
     },
     handleEdit(record) {
-      console.log(record);
       let formProps = {
         record: record,
         formTitle: wageTitle,
@@ -169,14 +168,13 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
             _this.$refs.table.refresh(true)
           },
           cancel() {
-            console.log("cancel 回调");
+            
           },
           close() {
-            console.log("modal close 回调");
+            
           },
         },
       };
@@ -191,7 +189,6 @@ export default {
     },
     publish() {
       const _this = this
-      console.log(_this.$refs.table.localDataSource)
       let content = []
       _this.$refs.table.localDataSource.map(i => content.push(i.itemName))
       this.$confirm({
@@ -202,7 +199,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log("OK");
            _this.$api.wageItemsService.releaseWageItems({content:content})
           .then(res => {
             if(res.data.code === 0){
@@ -216,7 +212,7 @@ export default {
           })
         },
         onCancel() {
-          console.log("Cancel");
+         
         },
       });
     },
@@ -230,7 +226,7 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log("OK");
+          
           // 在这里调用删除接口
           _this.$api.wageItemsService.deleteWageItems({id:row.id})
           .then(res => {
@@ -245,7 +241,7 @@ export default {
           })
         },
         onCancel() {
-          console.log("Cancel");
+          
         },
       });
     },

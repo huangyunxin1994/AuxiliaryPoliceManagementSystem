@@ -268,7 +268,6 @@ export default {
         this.queryParam.oid = this.user.organizationId
         let param = Object.assign(params,this.queryParam)
         return this.$api.trainService.geteducationList(param).then((res)=>{
-          console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
           })
@@ -293,7 +292,6 @@ export default {
   },
   methods: {
     handleEdit(record) {
-      console.log(record);
       this.$router.push(
         {
           path:'educationDetails',
@@ -303,14 +301,11 @@ export default {
         }
       )
     },
-    handleChange(e) {
-      console.log(e);
+    handleChange() {
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
-      console.log(this.selectedRowKeys);
-      console.log(this.selectedRows);
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
@@ -334,7 +329,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           _this.$api.trainService.deleteEducation({id:_this.selectedRowKeys}).then((res)=>{
             if(res.data.code == 0){
               _this.$refs.table.refresh(true)

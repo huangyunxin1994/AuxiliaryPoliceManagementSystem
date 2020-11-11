@@ -34,7 +34,6 @@ export default {
     changPass(){
       const _this=this
         let validateOldPass = (rule, value, callback) => {
-          console.log(value)
         if (!value) {
           callback(new Error('请输入原密码'));
         } else {
@@ -45,7 +44,6 @@ export default {
         }
       };
       let validateNewPass = (rule, value, callback) => {
-         console.log(value)
         if (!value) {
           callback(new Error('请输入新密码'));
         } else {

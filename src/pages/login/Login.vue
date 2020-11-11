@@ -227,14 +227,12 @@ export default {
         data.avatar = data.photoPath && `${process.env.VUE_APP_API_BASE_URL}/img/${data.photoPath}` || "";
         this.setUser(data);
         let roleArr = [];
-        console.log(type)
         if (type === 2) {
           list.map((i) => {
             let param = {};
             param.id = i.code;
             roleArr.push(param);
           });
-          console.log(data.isSystem)
           if(data.account==='huachen2020'){
             roleArr=[
               { id: "jczl" },
@@ -253,7 +251,6 @@ export default {
         } else {
           roleArr.push({ id: "fj" });
         }
-        console.log(roleArr)
         this.setRoles(roleArr);
         this.setloginType(type);
         setAuthorization({
@@ -269,7 +266,6 @@ export default {
         if(type===2){
           this.$router.push("/");
         }else{
-          console.log(256)
           this.$router.push("/auxhome");
         }
       } else {

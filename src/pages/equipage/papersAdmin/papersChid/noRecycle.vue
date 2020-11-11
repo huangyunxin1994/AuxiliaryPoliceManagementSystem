@@ -231,7 +231,6 @@ export default {
           res.data.data.list.map((i, k) => {
             i.key = k + 1;
           });
-          console.log(res);
           return res.data;
         });
       },
@@ -249,7 +248,6 @@ export default {
   created() {
     this.$api.certEquipService.getCertEqupType({ type: 1 }).then((res) => {
         this.certList = res.data.data.list   
-        console.log(this.certList)
         this.formTitle = [
         {
           label: "证件类型",
@@ -287,12 +285,10 @@ export default {
     handleChange() {},
     // 配发日期
     allotmentDate(date, dateString) {
-      console.log(date, dateString);
       this.queryParam.allotmentDate = dateString
     },
     //到期日期
     validity(date, dateString) {
-      console.log(date, dateString);
       this.queryParam.termValidity = dateString
     },
     onChange() {},
@@ -300,16 +296,12 @@ export default {
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
-      console.log(this.selectedRowKeys);
-      console.log(this.selectedRows);
     },
     //证件回收
-    confirm(e) {
-      console.log(e);
+    confirm() {
       this.$message.success("回收成功");
     },
-    cancel(e) {
-      console.log(e);
+    cancel() {
       this.$message.error("已取消回收");
     },
     // 新增发放
@@ -322,10 +314,8 @@ export default {
     //树选择回调
     handleTreeChange(obj){
       this.queryParam.organizationId = obj.val
-      console.log(this.queryParam)
     },
-    handleClick(e){
-      console.log(e)
+    handleClick(){
       const _this = this;
       this.$confirm({
         title: "警告",
@@ -335,7 +325,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           let arr = [];
           _this.selectedRowKeys
             .map((i) => {

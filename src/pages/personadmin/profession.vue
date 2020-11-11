@@ -341,7 +341,6 @@ export default {
   },
   methods: {
     handleEdit(record) {
-      console.log(record);
       let param = {
         nameMess: record,
       };
@@ -356,22 +355,18 @@ export default {
       this.modal(param, option, diaHisFro);
     },
     handleClick(e) {
-      console.log("handleClick", e);
       this.queryParam = {
         key: e.key,
       };
       // this.$refs.table.refresh(true)
     },
     handleAdd(item) {
-      console.log("add button, item", item);
       this.$message.info(`提示：你点了 ${item.key} - ${item.title} `);
       this.$refs.modal.add(item.key);
     },
-    handleTitleClick(item) {
-      console.log("handleTitleClick", item);
+    handleTitleClick() {
     },
-    handleChange(e) {
-      console.log(e);
+    handleChange() {
     },
     // 选中组织树
     loadTreeNode(data) {
@@ -379,16 +374,13 @@ export default {
       this.$refs.table.refresh(true);
     },
     //编辑树节点
-    editTreeNode(params) {
-      console.log(params);
+    editTreeNode() {
     },
     //添加树节点
-    addTreeNode(params) {
-      console.log(params);
+    addTreeNode() {
     },
     //删除树节点
-    removeTreeNode(params) {
-      console.log(params);
+    removeTreeNode() {
     },
     // 获取多选的数据
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -418,7 +410,6 @@ export default {
         },
       };
       let formProps = Object.assign(obj, defaultProps);
-      console.log(formProps);
       this.$dialog(
         model,
         // form props
@@ -429,7 +420,6 @@ export default {
     },
     //日期框筛选
     onChange(date, dateString) {
-      console.log(date, dateString);
       this.queryParam.time = dateString;
     },
     toggleAdvanced() {

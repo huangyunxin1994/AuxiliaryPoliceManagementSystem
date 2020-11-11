@@ -42,7 +42,6 @@ const rewardService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     deleteReward(params) {
-        console.log(params)
         return request(DELETEREWARD, METHOD.DELETE, {data:params} )
     },
     /**

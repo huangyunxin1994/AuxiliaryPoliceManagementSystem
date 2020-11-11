@@ -33,7 +33,6 @@ const overTimeService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     postByUser(params) {
-        console.log(params)
         const police = Object.assign([],params.police)
         delete params.police
         let overtimeLeaveList = []

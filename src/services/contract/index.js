@@ -14,8 +14,6 @@ const contractService = {
     },
     // 批量添加合同信息
     addContractData(params){
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-        console.log(params)
         const endDate =  DateAdd('m',params.contractPeriod,new Date(params.startDate))
         params.endDate = moment(endDate).format('YYYY-MM-DD')
         const contract = params;
@@ -78,13 +76,9 @@ const contractService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     postManyExtensionCon(params){
-        // const file = Object.assign([],params.fileList) 
-        // console.log(file)
         let policeId=params.policeId
-        console.log(policeId)
 
         const formData = new FormData();
-        // console.log(formData)
         const contract = {
             contractPeriod:params.contractPeriod
         }
@@ -92,10 +86,8 @@ const contractService = {
             contract:contract,
             policeId:policeId,
         }
-        console.log(para)
         formData.append("file", "");
         formData.append("requestBody", JSON.stringify(para))
-        // console.log(PODTEXTENSION)
         return request(PODTEXTENSION, METHOD.POST, formData)
     },
 

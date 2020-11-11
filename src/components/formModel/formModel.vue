@@ -240,12 +240,9 @@ export default {
       }
       if(i.validata === 'checkpass' && i.required){
          let validateCheckPass = (rule, value, callback) => {
-          console.log(value)
-          console.log("password= "+this.form.password)
           if (!value) {
             callback(new Error('请再输入一次新密码'));
           } else if (value !== this.form.password) {
-            console.log(58)
             callback(new Error("两次输入不一致"));
           } else {
             callback();
@@ -275,12 +272,10 @@ export default {
       }
     });
     if (this.record) {
-      console.log(this.record);
       this.form = Object.assign(
         JSON.parse(JSON.stringify(this.record)),
         pick(this.record, this.dataSource)
       );
-      // console.log("*********" + JSON.stringify(this.form));
     }
     
    
@@ -311,37 +306,30 @@ export default {
         this.form[item.labelName] = param.name
       }
     },
-    change(e) {
-      console.log(this.form);
-      console.log("checked = ", e);
+    change() {
     },
     onSubmit() {
-      console.log("监听了 modal submit 事件");
       return new Promise((resolve) => {
         this.$refs.ruleForm.validate((valid) => {
           if (valid) {
             resolve(true);
           } else {
-            console.log("error submit!!");
             resolve(false);
           }
         });
       });
     },
     onFieldBlur() {
-      console.log("哈哈哈");
     },
     resetForm() {
       this.$refs.ruleForm.resetFields();
     },
     onOk() {
-      console.log("监听了 modal ok 事件");
       return new Promise((resolve) => {
         setTimeout(() => {
           const result = this.submitFun(this.form);
           result
             .then((res) => {
-              console.log(res);
               if(res.code === 0){
                 // this.resetForm();
                 this.$message.success(res.msg);
@@ -361,19 +349,15 @@ export default {
       });
     },
     onCancel() {
-      console.log("监听了 modal cancel 事件");
       return new Promise((resolve) => {
         resolve(true);
       });
     },
     onSelfOk() {
-      console.log(this.form)
       this.$refs.ruleForm.validate((valid) => {
             if (valid) {
                this.$emit("handleOk", this.form);
-            } else {
-              console.log("error submit!!");
-            }
+            } 
           });
       //
     },
@@ -392,11 +376,8 @@ export default {
     },
     //树选择回调
     handleTreeChange(obj){
-      console.log(obj)
-      console.log(obj.keyName)
       this.form[obj.keyName] = obj.val
       this.form[obj.labelName] = obj.label
-      console.log( this.form)
     },
     filterOption(input, option) {
       return (

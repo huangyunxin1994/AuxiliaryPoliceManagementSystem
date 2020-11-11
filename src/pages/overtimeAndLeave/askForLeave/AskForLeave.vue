@@ -447,7 +447,6 @@ export default {
     },
     //请假审批
     handleEdit(record) {
-      console.log(record);
       record.approval = this.user.name;
       record.approvalId = this.user.id;
       let formProps = {
@@ -470,14 +469,11 @@ export default {
       };
       this.openModal(TaskForm, formProps, modalProps);
     },
-    handleChange(e) {
-      console.log(e);
+    handleChange() {
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
-      console.log(this.selectedRowKeys);
-      console.log(this.selectedRows);
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
@@ -493,14 +489,11 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
             _this.$refs.table.refresh(true);
           },
           cancel() {
-            console.log("cancel 回调");
           },
           close() {
-            console.log("modal close 回调");
           },
         },
       };
@@ -516,7 +509,6 @@ export default {
     //树选择回调
     handleTreeChange(obj) {
       this.queryParam.organizationId = obj.val;
-      console.log(this.queryParam);
     },
     //重置
     reloadData() {

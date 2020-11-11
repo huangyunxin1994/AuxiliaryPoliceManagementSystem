@@ -397,7 +397,6 @@ export default {
             const year = document
               .querySelector(".ant-calendar-year-select")
               .innerText.replace("年", "");
-            console.log(year);
             const param = {
               year: year,
             };
@@ -408,8 +407,7 @@ export default {
         }, 0);
       }
     },
-    handlePanelChange(value, mode) {
-      console.log(value, mode);
+    handlePanelChange() {
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
@@ -448,7 +446,6 @@ export default {
               organizationId: _this.user.organizationId,
             })
             .then((res) => {
-              console.log(res);
               if (res.data.code === 0) {
                 _this.$message.success(res.data.msg);
                 _this.$refs.table.refresh(true);
@@ -545,7 +542,6 @@ export default {
     },
     // 上传文件
     beforeUpload(file) {
-      console.log(file);
       this.form.fileList = [...this.fileList, file];
       return false;
     },

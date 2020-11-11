@@ -74,7 +74,7 @@
     </a-card>
     <form-step
       ref="modal"
-      title="新建请假记录"
+      title="新建责任记录"
       :formTitle="formTitle"
       :rules="rules"
       :stepTitle="stepTitle"
@@ -204,7 +204,7 @@ const formCheckTitle = [
     type: "textarea",
   }
 ];
-const stepTitle = [{ title: "选择人员" }, { title: "填写请假信息" }];
+const stepTitle = [{ title: "选择人员" }, { title: "填写责任信息" }];
 const rules = {
   reason: [{ required: true, message: "请输入原因", trigger: "blur" }],
   startTime: [
@@ -311,7 +311,6 @@ export default {
     },
     //请假审批
     handleEdit(record) {
-      console.log(record);
       let formProps = {
         record: record,
         formTitle: formCheckTitle,
@@ -338,14 +337,11 @@ export default {
       };
       this.openModal(TaskForm, formProps, modalProps);
     },
-    handleChange(e) {
-      console.log(e);
+    handleChange() {
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
-      console.log(this.selectedRowKeys);
-      console.log(this.selectedRows);
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
@@ -360,13 +356,13 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
+            
           },
           cancel() {
-            console.log("cancel 回调");
+            
           },
           close() {
-            console.log("modal close 回调");
+            
           },
         },
       };
@@ -382,8 +378,7 @@ export default {
     handleTreeChange(obj) {
       this.queryParam.organizationId = obj.val;
     },
-    handleDel(e) {
-        console.log(e)
+    handleDel() {
       const _this = this;
       this.$confirm({
         title: "警告",
@@ -393,7 +388,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           _this.$api.accountabilityService
             .deleteAccountability({ list:_this.selectedRowKeys })
             .then((res) => {

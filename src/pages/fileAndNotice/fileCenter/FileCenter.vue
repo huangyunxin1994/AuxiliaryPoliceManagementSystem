@@ -153,14 +153,11 @@ export default {
   },
   mounted(){
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL
-    console.log( this.BASE_URL)
   },
   methods: {
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
-      console.log(this.selectedRowKeys);
-      console.log(this.selectedRows);
     },
     //新增文件
     handleAdd() {
@@ -200,14 +197,13 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
             _this.$refs.table.refresh(true)
           },
           cancel() {
-            console.log("cancel 回调");
+            
           },
           close() {
-            console.log("modal close 回调");
+            
           },
         },
       };
@@ -227,12 +223,10 @@ export default {
       this.$refs.table.refresh(true)
     },
     handleDown(obj){
-      console.log(obj)
       this.$api.documentAnnouncementService
           .downDocument({documentId:obj.id})
     },
-    handleDel(e){
-      console.log(e)
+    handleDel(){
       const _this = this;
       this.$confirm({
         title: "警告",
@@ -242,7 +236,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           _this.$api.documentAnnouncementService
             .deleteDocument({ id:_this.selectedRowKeys })
             .then((res) => {

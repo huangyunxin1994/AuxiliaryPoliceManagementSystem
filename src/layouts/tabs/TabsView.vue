@@ -73,7 +73,6 @@ export default {
   created() {
     this.loadCachedTabs();
     const route = this.$route;
-    console.log(route);
     this.activePage = route.fullPath;
     if (!route.meta.defalutInvisible) {
       if (

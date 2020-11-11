@@ -136,17 +136,14 @@ export default {
                     val.push(item);
                 }
             });
-            console.log(val);
             return val;
         },
         onExpand(expandedKeys) {
-            console.log(expandedKeys)
             this.expandedKeys = expandedKeys;
             this.autoExpandParent = false;
         },
         //选中树节点
         onSelect(selectedKeys,e) {
-            console.log(154)
             this.selectedKeys = selectedKeys
             this.selectedNode = e.node.dataRef
             let params = {}
@@ -206,16 +203,12 @@ export default {
          * @param tree
          */
         getParentKey(key,tree){
-            console.log(key)
-            console.log(tree)
             let parentKey;
             for (let i = 0; i < tree.length; i++) {
                 const node = tree[i];
-                if (node.children) {
-                   console.log(this.replaceFields.key) 
+                if (node.children) { 
                    node.children.some(item => {
                         item[this.replaceFields.key] == key
-                        console.log(item[this.replaceFields.key] +","+key)
                    })
                     if (node.children.some(item => item[this.replaceFields.key] == key)) {
                         parentKey = node[this.replaceFields.key];

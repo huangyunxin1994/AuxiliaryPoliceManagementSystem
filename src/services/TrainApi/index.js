@@ -36,7 +36,6 @@ const trainService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     addEducation(params) {
-        console.log(params)
         let submitData = {
             train:{
                 className:params.className,
@@ -52,7 +51,6 @@ const trainService = {
         }
         let arr = []
         let dataArr = params.police
-        console.log(dataArr)
         dataArr.forEach(element => {
             let obj = {
                 policeId:element.id,
@@ -65,7 +63,6 @@ const trainService = {
             arr.push(obj)
         });
         submitData.list = arr
-        console.log(submitData)
         return request(POSTEDUCATION, METHOD.POST, submitData)
     },
 
@@ -94,8 +91,6 @@ const trainService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     putEducation(params){
-        console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-        console.log(params)
         let obj = {
             id:params.id,
             policeId:params.policeId,
@@ -108,10 +103,8 @@ const trainService = {
             trainExplain:params.trainExplain,
             state:params.state
         }
-        console.log(obj)
         let submitData = []
         submitData.push(obj)
-        console.log(submitData)
         return request(PUTEDUCATION, METHOD.PUT,submitData)
     },
 
@@ -121,8 +114,6 @@ const trainService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     putManyEducation(params,selectArr){
-        console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&")
-        console.log(selectArr)
         selectArr.forEach((item)=>{
             item.state = params.state
             item.trainExplain = params.trainExplain

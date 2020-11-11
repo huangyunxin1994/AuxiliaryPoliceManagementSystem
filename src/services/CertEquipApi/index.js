@@ -17,8 +17,6 @@ const certEquipService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     async postCertEqup(params){
-        console.log(params)
-        console.log(POSTCERTEQUP)
         const police = Object.assign([],params.police)
         delete params.police
         let arr = []

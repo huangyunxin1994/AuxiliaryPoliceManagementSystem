@@ -500,7 +500,6 @@ export default {
         const list = res.data.data.data.sort(function(a,b){
             return a.number-b.number;
         })
-        console.log(list)
         list.splice(list.findIndex(i=>i.code==='xtgl'),1)
         this.roleList = Object.assign([],list)
         this.$api.rankPostService.getPostList().then(res=>{
@@ -591,8 +590,7 @@ export default {
       });
       
     },
-    handleDel(e){
-      console.log(e)
+    handleDel(){
        const _this = this
       this.$confirm({
         title: "警告",

@@ -219,6 +219,7 @@
             :columns="workColumns"
             :data="workSource"
             showPagination="auto"
+            :scroll="{ y: 600, x: 650 }"
           >
             <template slot="status" slot-scope="status">
               <a-badge :status="status" :text="status | statusFilter" />
@@ -252,6 +253,7 @@
             :columns="familyColumns"
             :data="familySource"
             showPagination="auto"
+            :scroll="{ y: 600, x: 650 }"
           >
             <template slot="status" slot-scope="status">
               <a-badge :status="status" :text="status | statusFilter" />
@@ -279,55 +281,66 @@ const studyColumns = [
     title: "毕业院校",
     dataIndex: "school",
     key: "school",
+    width:150,
   },
   {
     title: "所在院系",
     dataIndex: "courtyard",
     key: "courtyard",
+    width:150,
   },
   {
     title: "学习形式",
     dataIndex: "learningForm",
     key: "learningForm",
+    width:150,
   },
   {
     title: "学制",
     dataIndex: "schoolSystem",
     key: "schoolSystem",
+    width:100,
   },
   {
     title: "入学日期",
     dataIndex: "startDate",
     key: "startDate",
+    width:150,
   },
   {
     title: "毕业日期",
     dataIndex: "endDate",
     key: "endDate",
+    width:150,
   },
   {
     title: "所学专业",
     dataIndex: "major",
     key: "major",
+    width:150,
   },
   {
     title: "学历",
     dataIndex: "education",
     key: "education",
+    width:100,
   },
   {
     title: "学位",
     dataIndex: "academic",
     key: "academic",
+    width:150,
   },
   {
     title: "学位授予日期",
     dataIndex: "academicTime",
     key: "academicTime",
+    width:150,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
+    width:100,
   },
 ];
 
@@ -336,46 +349,55 @@ const workColumns = [
     title: "工作起始日期",
     dataIndex: "startDate",
     key: "startDate",
+    width:100,
   },
   {
     title: "工作结束日期",
     dataIndex: "endData",
     key: "endData",
+    width:100,
   },
   {
     title: "所在单位",
     dataIndex: "company",
     key: "company",
+    width:150,
   },
   {
     title: "单位类型",
     dataIndex: "unitType",
     key: "unitType",
+    width:150,
   },
   {
     title: "职务级别",
     dataIndex: "jobLevel",
     key: "jobLevel",
+    width:150,
   },
   {
     title: "是否公务员",
     dataIndex: "orderly",
     key: "orderly",
+    width:80,
   },
   {
     title: "从事或担任工作",
     dataIndex: "post",
     key: "post",
+    width:150,
   },
   {
     title: "备注",
     dataIndex: "remarks",
     scopedSlots: { customRender: "description" },
     key: "remarks",
+    width:150,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "workaction" },
+    width:100,
   },
 ];
 
@@ -384,35 +406,42 @@ const familyColumns = [
     title: "成员姓名",
     dataIndex: "familyName",
     key: "familyName",
+    width:100,
   },
   {
     title: "与本人关系",
     dataIndex: "relationship",
     key: "relationship",
+    width:100,
   },
   {
     title: "性别",
     dataIndex: "sex",
     key: "sex",
+    width:100,
   },
   {
     title: "成员身份证",
     dataIndex: "idCard",
     key: "idCard",
+    width:150,
   },
   {
     title: "出生日期",
     dataIndex: "birthday",
     key: "birthday",
+    width:100,
   },
   {
     title: "民族",
     dataIndex: "nation",
     key: "nation",
+    width:100,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "familyaction" },
+    width:100,
   },
 ];
 
@@ -913,7 +942,6 @@ export default {
     },
   },
   created() {
-    console.log(this.policeId);
     this.queryPa.id = this.policeId || this.user.id;
     this.$api.auxiliaryPoliceService
       .getAuxiliaryPoliceData({ policeId: this.policeId || this.user.id || "undefined" })
@@ -974,7 +1002,6 @@ export default {
     // 编辑
     editRecord(key, index) {
       // fromTitle[index]
-      console.log(key);
       let param = {
         formTitle: fromTitle[index],
         record: key,
@@ -1036,8 +1063,7 @@ export default {
     modal(obj, option, callback) {
       const defaultProps = {
         on: {
-          ok(e,k) {
-            console.log(e,k)
+          ok() {
             // console.log('ok 回调')
             callback();
           },
@@ -1050,7 +1076,6 @@ export default {
         },
       };
       let formProps = Object.assign(obj, defaultProps);
-      console.log(formProps);
       this.$dialog(
         fromModel,
         // form props
@@ -1067,12 +1092,10 @@ export default {
     // 获取到Excel表格数据
     getTableData(tdata) {
       tdata.map((item) => {
-        console.log(item);
         item.map((j, k) => {
           j.key = k;
         });
       });
-      console.log(tdata);
       this.$refs.table.changeDataForImport(tdata[0]);
       this.$refs.worktable.changeDataForImport(tdata[1]);
       this.$refs.familytable.changeDataForImport(tdata[2]);
@@ -1088,7 +1111,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           if(index == "table1"){
             _this.$api.educationService.deleteEdu({id:key.id}).then((res) => {
                if (res.data.code == 0) {
@@ -1130,7 +1152,6 @@ export default {
     },
     // 添加记录
     addStudyData(index) {
-      console.log(rules[index]);
       let param = {
         record: {
           policeId: this.queryPa.id,
@@ -1195,7 +1216,6 @@ export default {
     // 点击保存按钮
     saveBtn() {
       const _this = this;
-      console.log("保存按钮");
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.$confirm({
@@ -1206,8 +1226,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(" submit!!");
-          
             _this.$api.auxiliaryPoliceService
             .putAuxiliaryPolice(_this.form)
             .then((res) => {
@@ -1220,8 +1238,6 @@ export default {
         },
         onCancel() {},
       });
-        } else {
-          console.log("error submit!!");
         }
       });
       // console.log(this.familySource)

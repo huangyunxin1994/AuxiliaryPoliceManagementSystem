@@ -120,18 +120,15 @@ export default {
   },
   created() {
     this.nowFormTitle = this.formTitle;
-    console.log(this.nowFormTitle)
   },
   methods: {
     nextStep() {
       const columnData = this.$refs.person.rightColumnsData;
-      console.log(columnData)
       if (columnData.length > 0) {
         let arrName = "";
         columnData.forEach((item) => {
           arrName += item.name + ",";
         });
-        console.log(arrName)
         this.selcetPersonName[this.formTitleName] = arrName.slice(
           0,
           arrName.length - 1
@@ -164,12 +161,10 @@ export default {
       }
     },
     handleSubmit() {
-      console.log("监听了 modal submit 事件");
       this.$refs.form.nextStep();
     },
     handleOk(params) {
       this.loading=true
-      console.log(params)
       params.police = this.$refs.person.rightColumnsData;
       setTimeout(() => {
         const result = this.submitFun(params);
@@ -179,14 +174,12 @@ export default {
             this.$emit('refreshTable')
             this.handleCancel();
           })
-          .catch((err) => {
+          .catch(() => {
             this.loading = false;
-            console.log(err);
           });
       }, 1000);
     },
     handleCancel() {
-      console.log("监听了 modal cancel 事件");
       this.loading = false;
       this.current = 0;
       this.visible = false;
@@ -194,7 +187,6 @@ export default {
   },
   watch:{
     formTitle(){
-      console.log(180)
       this.nowFormTitle = this.formTitle
     }
   }

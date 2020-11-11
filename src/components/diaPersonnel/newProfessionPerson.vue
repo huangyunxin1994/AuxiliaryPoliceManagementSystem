@@ -227,20 +227,16 @@ export default {
     },
     methods:{
         //编辑树节点
-        editTreeNode(params){
-            console.log(params)
+        editTreeNode(){
         },
         //添加树节点
-        addTreeNode(params){
-            console.log(params)
+        addTreeNode(){
         },
             //删除树节点
-        removeTreeNode(params){
-                console.log(params)
+        removeTreeNode(){
         },
         // 搜索
-        onSearch(value){
-            console.log(value)
+        onSearch(){
         },
     },
     computed:{

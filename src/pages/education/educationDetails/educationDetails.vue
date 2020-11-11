@@ -339,9 +339,6 @@ export default {
         submitFun:(params) => {
             let param = Object.assign(params,queryPa)
             return this.$api.trainService.putEducation(param).then((res)=>{
-                res.data.data.list.map((i,k)=>{
-                    i.key=k+1
-                })
                 return res.data
             })
         },
@@ -366,14 +363,11 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
             _this.$refs.table.refresh(true)
           },
           cancel() {
-            console.log("cancel 回调");
           },
           close() {
-            console.log("modal close 回调");
           },
         },
       };
@@ -391,8 +385,6 @@ export default {
       
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-      console.log(this.selectedRowKeys)
-      console.log(this.selectedRows)
     },
 
     // 组织树选择
@@ -402,8 +394,7 @@ export default {
     },
 
     // 开始时间和结束时间
-    onChange(date, dateString) {
-      console.log(date, dateString);
+    onChange() {
     },
 
     // 点击返回
@@ -417,8 +408,7 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
-    handleChange(e) {
-      console.log(e);
+    handleChange() {
     },
     //重置查询参数
     resetParam(){

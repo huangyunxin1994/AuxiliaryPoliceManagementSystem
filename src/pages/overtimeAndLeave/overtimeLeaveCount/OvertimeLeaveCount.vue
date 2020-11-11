@@ -297,13 +297,10 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
           },
           cancel() {
-            console.log("cancel 回调");
           },
           close() {
-            console.log("modal close 回调");
           },
         },
       };
@@ -318,7 +315,6 @@ export default {
     },
     //打开关闭日期选择器
     handleChange(date) {
-      console.log(moment(date).format("YYYY年MM月"));
       this.time1 = moment(date).format("YYYY年MM月");
       this.$refs.table.refresh(true);
     },
@@ -386,10 +382,7 @@ export default {
       return statusMap[holiday];
     },
     filtersTime(time) {
-      console.log(322);
-      console.log(time);
       const dateTime = moment(new Date(time)).format("YYYY年MM月");
-      console.log(dateTime);
       return dateTime;
     },
   },

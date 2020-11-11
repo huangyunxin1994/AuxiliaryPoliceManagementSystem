@@ -52,10 +52,8 @@ export function DateAdd(interval, number, date) {
       return date;
     }
     case "m": {
-      console.log(date.getMonth() + number)
       date.setMonth(date.getMonth() + number);
       date.setDate(date.getDate() - 1);
-      console.log(date)
       return date;
     }
     case "w": {

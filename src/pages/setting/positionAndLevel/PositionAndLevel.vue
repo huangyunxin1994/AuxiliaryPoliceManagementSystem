@@ -260,7 +260,6 @@ export default {
         if (rankList.length === 0) return;
         rankList.forEach((i) => (i.edit = false));
         this.rankList = rankList.reverse();
-        console.log(this.rankList);
       });
     },
     handleAddRank() {
@@ -276,7 +275,6 @@ export default {
       this.rankList.push(param);
     },
     handEditRank(id) {
-      console.log(id);
       this.submitType = "update";
       this.rankList.find((i) => {
         if (i.id == id) i.edit = !i.edit;
@@ -298,7 +296,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           _this.$api.rankPostService
             .deleteRank(param.id)
             .then((res) => {
@@ -329,7 +326,6 @@ export default {
     },
 
     handSaveRank(item) {
-      console.log(item, this.submitType);
       /** 调用保存方法,根据 submitType 判断新增或编辑
        * 保存完成 submitType 置 null
        * 调用职级查询方法重新查询职级
@@ -350,7 +346,6 @@ export default {
             this.$message.error(err.msg);
           });
       } else {
-        console.log(312);
         this.$api.rankPostService
           .putRank(item)
           .then((res) => {
@@ -392,7 +387,6 @@ export default {
     },
     //岗位编辑
     handleEdit(record) {
-      console.log(record);
       let formProps = {
         record: record,
         formTitle: postTitle,
@@ -423,7 +417,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          console.log(_this);
           _this.$api.rankPostService
             .deletePost(record.id)
             .then((res) => {
@@ -455,10 +448,8 @@ export default {
             _this.$refs.table.refresh(true);
           },
           cancel() {
-            console.log("cancel 回调");
           },
           close() {
-            console.log("modal close 回调");
           },
         },
       };
@@ -481,14 +472,11 @@ export default {
       };
       this.$refs.table.refresh(true)
     },
-    handleChange(e) {
-      console.log(e);
+    handleChange() {
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
-      console.log(this.selectedRowKeys);
-      console.log(this.selectedRows);
     },
   },
   filters: {

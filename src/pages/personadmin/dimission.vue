@@ -175,7 +175,6 @@
 			this.queryParam.oid = this.user.organizationId
             let param = Object.assign(params,this.queryParam)
             return this.$api.personAdminService.getDimissionList(param).then((res)=>{
-              console.log(res)
               res.data.data.list.map((i,k)=>{
                 i.key=k+1
               })
@@ -231,8 +230,7 @@
       }
     },
     methods:{
-      handleChange(e){
-          console.log(e)
+      handleChange(){
       },
       // 获取多选的数据
       onSelectChange (selectedRowKeys, selectedRows) {
@@ -246,7 +244,6 @@
       },
       // 离职生效时间
       onChange(date, dateString){
-          console.log(date, dateString);
           this.queryParam.time = dateString
       },
       // 弹窗
@@ -267,7 +264,6 @@
             }
         }
         let formProps =  Object.assign(obj, defaultProps);
-        console.log(formProps)
         this.$dialog(model,
           // form props 
           formProps,
@@ -277,7 +273,6 @@
       },
       //修改装备状态
       confirm(e) {
-          console.log(e);
           const _this = this;
           this.$confirm({
             title: "警告",
@@ -287,13 +282,11 @@
             centered: true,
             cancelText: "否",
             onOk() {
-              console.log(_this);
               let param = {
                 id:e.id,
                 state:1
               }
               _this.$api.personAdminService.putDimission(param).then((res)=>{
-                console.log(res)
                 if(res.data.code == 0){
                   _this.$message.success('修改成功');
                   _this.$refs.table.refresh(true)
@@ -305,8 +298,7 @@
             onCancel() {},
           });
       },
-      cancel(e) {
-          console.log(e);
+      cancel() {
           this.$message.error('已取消');
       },
       toggleAdvanced() {

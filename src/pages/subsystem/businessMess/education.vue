@@ -121,7 +121,6 @@ export default {
       loadCredData: (params) => {
         let param = Object.assign(params,this.queryParam)
         return this.$api.trainService.getEducationDetails(param).then((res)=>{
-          console.log(res)
           res.data.data.count = res.data.data.list.length;
               res.data.data.currentPage = 1;
           res.data.data.list.map((i,k)=>{

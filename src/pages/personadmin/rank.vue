@@ -280,9 +280,7 @@
           oid:this.user.organizationId
         }
         this.$api.rankPostService.getRankList(para).then((res)=>{
-          // console.log(res)
           let rank = res.data.data.list
-          console.log(rank)
           this.extension.forEach((item)=>{
             if(item.name == 'currentRank'){
               let arr = []
@@ -299,7 +297,6 @@
         })
       },
       handleEdit(record){
-        console.log(record)
         let param ={
             diaColumns:this.diaColumns,
             person:record
@@ -316,42 +313,33 @@
         this.modal(param,option,diaHisRank)
       },
       handleClick (e) {
-          console.log('handleClick', e)
           this.queryParam = {
               key: e.key
           }
           this.$refs.table.refresh(true)
       },
       handleAdd (item) {
-          console.log('add button, item', item)
           this.$message.info(`提示：你点了 ${item.key} - ${item.title} `)
           this.$refs.modal.add(item.key)
       },
-      handleTitleClick (item) {
-          console.log('handleTitleClick', item)
+      handleTitleClick () {
       },
-      handleChange(e){
-          console.log(e)
+      handleChange(){
       },
       //编辑树节点
-      editTreeNode(params){
-          console.log(params)
+      editTreeNode(){
       },
       //添加树节点
-      addTreeNode(params){
-          console.log(params)
+      addTreeNode(){
       },
         //删除树节点
-      removeTreeNode(params){
-            console.log(params)
+      removeTreeNode(){
       },
       // 获取多选的数据
       onSelectChange (selectedRowKeys, selectedRows) {
         
         this.selectedRowKeys = selectedRowKeys
         this.selectedRows = selectedRows
-        console.log(this.selectedRowKeys)
-        console.log(this.selectedRows)
       },
       // 选中树节点
       loadTreeNode(data){
@@ -364,7 +352,6 @@
         let arr = []
         let arrName = ''
         this.selectedRows.forEach((item,index)=>{
-          console.log(item)
           let obj = {
             policeName:item.policeName,//名字
             number:item.number,//警员编号
@@ -474,7 +461,6 @@
             }
         }
         let formProps =  Object.assign(obj, defaultProps);
-        console.log(formProps)
         this.$dialog(model,
           // form props 
           formProps,

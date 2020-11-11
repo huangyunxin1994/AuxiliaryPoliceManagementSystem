@@ -160,7 +160,6 @@ export default {
       // eslint-disable-next-line
       if ((typeof result === 'object' || typeof result === 'function') && typeof result.then === 'function') {
         result.then(r => {
-          console.log(r)
           this.localPagination = this.showPagination && Object.assign({}, this.localPagination, {
             current: r.data.currentPage, // 返回结果中的当前分页数
             total: r.data.count, // 返回结果中的总记录数
@@ -252,7 +251,6 @@ export default {
       )
     },
     renderAlert () {
-      console.log(this.selectedRows)
       // 绘制统计列数据
       const needTotalItems = this.needTotalList.map((item) => {
         return (<span style="margin-right: 12px">

@@ -195,7 +195,6 @@ export default {
     ...mapState("setting", ["theme", "pageMinHeight"]),
   },
   created() {
-    console.log(this.$route.query.id);
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL;
     this.policeId = this.$route.query.id;
     this.policeName = this.$route.query.name;
@@ -220,16 +219,13 @@ export default {
       var reader = new FileReader()
       reader.readAsDataURL(file)
       reader.onload = () => {
-        console.log('file 转 base64结果：' + reader.result)
         this.imageUrl = reader.result
       }
-      reader.onerror = function (error) {
-        console.log('Error: ', error)
+      reader.onerror = function () {
       }
     },
     // 上传头像
     uploadImage(file) {
-      console.log(file)
       this.avatarLoading = true
       const formData = new FormData()
       formData.append('file', file.file)

@@ -15,7 +15,6 @@ const documentAnnouncementService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     async postDocument(params){
-        console.log(params)
         const file = Object.assign([],params.fileList) 
         const formData = new FormData();
         formData.append("file", file[0]);

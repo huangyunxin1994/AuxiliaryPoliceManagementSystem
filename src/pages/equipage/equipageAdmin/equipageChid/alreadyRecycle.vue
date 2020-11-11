@@ -177,12 +177,10 @@ export default {
     methods:{
         // 配发日期
         handleChange(date, dateString) {
-          console.log(date, dateString);
           this.queryParam.allotmentDate = dateString
         },
         // 回收日期
         onChange(date, dateString) {
-          console.log(date, dateString);
           this.queryParam.termValidity = dateString
         },
         toggleAdvanced(){
@@ -191,7 +189,6 @@ export default {
         //树选择回调
     handleTreeChange(obj){
       this.queryParam.organizationId = obj.val
-      console.log(this.queryParam)
     },
     reloadData(){
       this.queryParam.organizationId=""

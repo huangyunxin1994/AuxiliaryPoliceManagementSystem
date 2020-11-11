@@ -87,8 +87,7 @@ export default {
     };
   },
   watch:{
-    user(newVal){
-      console.log(newVal)
+    user(){
     },
     visible(newVal){
       if(newVal)
@@ -100,14 +99,11 @@ export default {
     submitText(){
         let arr = [];
         this.itemData.contentA.split('\n').forEach(item=>arr.push(`<p>${item.trim()}</p>`));
-        console.log(arr)
         this.text2 =  arr.join('<br>');
     },
     handleClick(item) {
-      console.log(item)
       
       if(item.type == 2){
-        console.log("哈哈哈哈")
         //待办
         if(item.state == 1){//合同
           this.$router.push({
@@ -164,7 +160,6 @@ export default {
         }
       }else if(item.type == 1){//通知
         const _this = this;
-        console.log(_this.user)
         this.$confirm({
           title: "警告",
           content: `是否删除该条通知?`,
@@ -236,7 +231,6 @@ export default {
   },
   mounted(){
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL
-    console.log( this.BASE_URL)
   }
   
 };

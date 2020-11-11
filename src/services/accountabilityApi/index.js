@@ -42,7 +42,6 @@ const accountabilityService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     deleteAccountability(params) {
-        console.log(params)
         return request(DELETEACCOUNTABILITY, METHOD.DELETE, {data:params} )
     },
     /**

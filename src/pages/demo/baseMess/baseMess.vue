@@ -57,11 +57,9 @@
                     <a-form-item label="学历选择">
                       <a-select default-value=""  v-model="queryParam.education">
                         <a-select-option value=""> 全部 </a-select-option>
-                        <a-select-option value="专科"> 专科 </a-select-option>
+                        <a-select-option value="研究生"> 研究生 </a-select-option>
                         <a-select-option value="本科"> 本科 </a-select-option>
-                        <a-select-option value="硕士"> 硕士 </a-select-option>
-                        <a-select-option value="博士"> 博士 </a-select-option>
-                        <a-select-option value="博士后"> 博士后 </a-select-option>
+                        <a-select-option value="大专"> 大专 </a-select-option>
                       </a-select>
                     </a-form-item>
                   </a-col>
@@ -121,7 +119,6 @@
             :rowKey="(record)=>record.id"
             :columns="scheduleColumns"
             :data="loadScheduleData"
-            :rowSelection="rowSelection"
             :scroll="{ y: 600, x: 700 }"
             showPagination="auto"
           >
@@ -295,12 +292,10 @@ export default {
       loadScheduleData: (params) => {
         this.queryParam.oid = this.user.organizationId;
         let param = Object.assign(params, this.queryParam);
-        console.log(param)
         return this.$api.auxiliaryPoliceService.getAuxiliaryPoliceData(param).then((res) => {
           res.data.data.list.map((i, k) => {
             i.key = k + 1;
           });
-          console.log(res);
           return res.data;
         });
       },
@@ -367,9 +362,7 @@ export default {
         state:1
       }
       this.$api.rankPostService.getRankList(para).then((res)=>{
-        console.log(res)
         let rank = res.data.data.list
-        console.log(rank)
         this.rankMess = rank
       })
     },
@@ -380,7 +373,6 @@ export default {
       })
     },
     handleEdit(record) {
-      console.log(record)
       let param = {
         id:record.id,
         name:record.name,
@@ -394,37 +386,30 @@ export default {
       });
     },
     handleClick(e) {
-      console.log("handleClick", e);
       this.queryParam = {
         key: e.key,
       };
       this.$refs.table.refresh(true);
     },
     handleAdd(item) {
-      console.log("add button, item", item);
       this.$message.info(`提示：你点了 ${item.key} - ${item.title} `);
       this.$refs.modal.add(item.key);
     },
-    handleTitleClick(item) {
-      console.log("handleTitleClick", item);
+    handleTitleClick() {
     },
     
     loadTreeNode(data){
-      console.log(data)
       this.queryParam.organizationId = data.id
       this.$refs.table.refresh(true)
     },
     //编辑树节点
-    editTreeNode(params) {
-      console.log(params);
+    editTreeNode() {
     },
     //添加树节点
-    addTreeNode(params) {
-      console.log(params);
+    addTreeNode() {
     },
     //删除树节点
-    removeTreeNode(params) {
-      console.log(params);
+    removeTreeNode() {
     },
     // 获取多选的数据
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -443,7 +428,6 @@ export default {
     },
     // 职级变更
     changeRank() {
-      console.log(this.selectedRows);
       let param = {
         formTitle: this.extension,
         rules: this.changeRankRules,
@@ -475,7 +459,6 @@ export default {
         },
       };
       let formProps = Object.assign(obj, defaultProps);
-      console.log(formProps);
       this.$dialog(
         model,
         // form props
@@ -486,7 +469,6 @@ export default {
     },
     // 重置密码
     confirm(e) {
-      console.log(e);
       // this.$message.success("修改成功");
       const _this = this;
       this.$confirm({
@@ -504,6 +486,7 @@ export default {
           _this.$api.auxiliaryPoliceService.putAuxiliaryPolice(param).then((res)=>{
             if(res.data.code == 0){
               _this.$refs.table.refresh(true)
+              _this.$message.success("重置成功")
               return res.data
             }else{
               _this.$message.error(res.data.msg);

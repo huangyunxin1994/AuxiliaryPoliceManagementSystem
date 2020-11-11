@@ -29,8 +29,6 @@ const messageService = {
     async deleteNotice(params){
         let arr = []
         arr.push(params)
-        console.log("laskdjfalsdkfjasdlkfasjd")
-        console.log(arr)
         return request(POSTNOTICE, METHOD.POST, arr)
     },
     /**

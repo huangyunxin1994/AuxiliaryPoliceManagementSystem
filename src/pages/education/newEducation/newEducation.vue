@@ -380,7 +380,6 @@ export default {
       this.openModal(addPerson, formProps, modalProps);
     },
     handleCredEdit(record) {
-      console.log(record);
       let formProps = {
         record: record,
         formTitle: credTitle,
@@ -418,13 +417,10 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            console.log("ok 回调");
           },
-          cancel() {
-            console.log("cancel 回调");
+          cancel() {;
           },
           close() {
-            console.log("modal close 回调");
           },
         },
       };
@@ -447,8 +443,7 @@ export default {
     },
 
     // 开始时间和结束时间
-    onChange(date, dateString) {
-      console.log(date, dateString);
+    onChange() {
     },
 
     // 点击完成
@@ -456,12 +451,10 @@ export default {
 
     },
     // 点击删除人员
-    confirm(e) {
-        console.log(e);
+    confirm() {
         this.$message.success('删除成功');
     },
-    cancel(e) {
-        console.log(e);
+    cancel() {
         this.$message.error('已取消删除');
     },
     toggleAdvanced() {

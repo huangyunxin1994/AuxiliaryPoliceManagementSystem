@@ -254,7 +254,6 @@ export default {
        _this.$api.messageService
         .getUSerList(requestParameters)
         .then((res) => {
-          console.log(res)
           let list = res.data.data.list
           this.noticeList = list
         });
@@ -269,7 +268,6 @@ export default {
        _this.$api.messageService
         .getDbList(requestParameters)
         .then((res) => {
-          console.log(res)
           let gzList = res.data.data.gzList //工资
           let htList = res.data.data.htList //合同
           let jbList = res.data.data.jbList //加班
@@ -323,7 +321,6 @@ export default {
             arr.push(zjList[0])
           }
           this.businessList = arr
-          console.log(arr)
         });
     },
     // 公告
@@ -336,7 +333,6 @@ export default {
       _this.$api.documentAnnouncementService
           .getNotice(requestParameters)
           .then((res) => {
-            console.log(res)
             res.data.data.list.forEach(item => {
               item.notice = 1
               item.contentA = item.content
@@ -354,7 +350,6 @@ export default {
       this.$api.documentAnnouncementService
           .getDocument(requestParameters)
           .then((res) => {
-            console.log(res)
             // return res.data;
             this.fileList = res.data.data.list
           });

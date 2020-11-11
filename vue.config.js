@@ -33,7 +33,6 @@ const assetsCDN = {
     '//cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js'
   ]
 }
-console.log(process.env.VUE_APP_API_BASE_URL)
 module.exports = {
   devServer: {
     proxy: {

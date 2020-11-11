@@ -35,18 +35,14 @@
     },
     methods:{
       beforeUpload(file){
-        console.log(file)
-        // if(file.)
         let name = file.name
         if(name){
           if(/\.(xls|xlsx)$/.test(name.toLowerCase())){
               this.importfxx(file);
           }else{
-            // console.log("附件格式错误，请删除后重新上传！")
             this.$message.error("附件格式错误，请重新上传！", 3)
           }
         }else{
-          // console.log("附件格式错误，请删除后重新上传!")
           this.$message.error("附件格式错误，请重新上传！", 3)
         }
         return false
@@ -87,7 +83,6 @@
                     //data就是读取的数据（不包含标题行即表头，表头会作为对象的下标）
                     //此处可对数据进行处理
                     let arr = [];
-                    console.log(data)
                     data.map(v => {
                         let obj = {}
                         // obj[this.tableTitle.name] = v[this.tableTitle.title]
@@ -98,7 +93,6 @@
                     });
                     allData.push(arr)
                   }
-                  console.log(allData)
                   // _this.tableData = arr
                   // _this.dalen=arr.length;
                   _this.$emit("getTableData",allData)

@@ -68,7 +68,6 @@ const rankPostService = {
      */
     deleteRank(id) {
         const DELETERSFLRANK = DELETERANK+ id
-        console.log(DELETERSFLRANK)
         return request(DELETERSFLRANK, METHOD.DELETE)
     }
 }

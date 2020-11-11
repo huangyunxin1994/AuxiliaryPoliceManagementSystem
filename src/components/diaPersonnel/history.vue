@@ -78,7 +78,6 @@ export default {
         return this.$api.personAdminService
           .getRankPostHistory(param)
           .then((res) => {
-            console.log(res);
             res.data.data.list.map((i, k) => {
               i.key = k + 1;
             });
@@ -90,11 +89,9 @@ export default {
     };
   },
   methods: {
-    handleEdit(record) {
-      console.log(record);
+    handleEdit() {
     },
-    beforeUpload(file) {
-      console.log(file);
+    beforeUpload() {
     },
   },
   filters: {
