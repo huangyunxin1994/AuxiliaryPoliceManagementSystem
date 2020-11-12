@@ -133,6 +133,7 @@ export default {
     logout() {
       this.$api.userService.logout()
       this.$router.push('/login')
+      
     }
   }
 }

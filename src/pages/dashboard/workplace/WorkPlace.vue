@@ -21,7 +21,7 @@
               </div>
             </a-col>
           </a-row>
-          <a-card :loading="loading" :bordered="false">
+          <a-card :loading="loading" :bordered="false"  class="antd-pro-pages-home-salesCard" style="height:490px">
             <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">文档中心</div>
             <div class="members">
               <file-list :iconColor="theme.color" icon="folder" :list="fileList"/>
@@ -54,7 +54,7 @@
           </a-card> -->
           <a-row style="margin: 0 -12px">
             <a-col style="padding: 0 12px" :xl="12" :lg="12" :md="24">
-              <a-card :loading="loading" :bordered="false">
+              <a-card :loading="loading" :bordered="false"  class="antd-pro-pages-home-salesCard">
                 <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">通知</div>
                 <a-list>
                   <a-list-item :key="index" v-for="(item, index) in noticeList">
@@ -74,9 +74,9 @@
               </a-card>
             </a-col>
             <a-col style="padding: 0 12px" :xl="12" :lg="12" :md="24">
-              <a-card :loading="loading" :bordered="false">
+              <a-card :loading="loading" :bordered="false"  class="antd-pro-pages-home-salesCard">
                 <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">公告</div>
-                 <list :iconColor="theme.color" icon="profile" :list="afficheList"/>
+                 <list :iconColor="theme.color" icon="profile" :list="afficheList" style="height:500px"/>
               </a-card>
             </a-col>
           </a-row>
@@ -270,7 +270,19 @@ export default {
             height: 38px;
         }
   }
-  .antd-pro-pages-home-salesCard-title{
+  .antd-pro-pages-home-salesCard {
+      height: 638px;
+      margin-bottom: 24px;
+    /deep/ .ant-card-head {
+      position: relative;
+    }
+    /deep/ .ant-card-body{
+            height: calc(100% - 57px);
+            box-sizing: border-box;
+            overflow: auto;
+            
+    }
+    .antd-pro-pages-home-salesCard-title{
         border-style: solid;
         border-width: 5px ;
         border-top:none;
@@ -281,4 +293,5 @@ export default {
         font-size: 16px;
         text-indent: 10px;
     }
+  }
 </style>

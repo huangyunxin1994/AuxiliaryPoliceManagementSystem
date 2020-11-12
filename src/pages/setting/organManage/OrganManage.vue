@@ -290,7 +290,6 @@ export default {
   },
   methods: {
     loadTreeNode(obj) {
-      //console.log(302)
       this.queryParam.organizationId = obj.id || "";
       this.$refs.table.refresh(true);
     },
@@ -347,7 +346,6 @@ export default {
       });
     },
     handleClick(e) {
-      //console.log("handleClick", e);
       this.queryParam = {
         key: e.key,
       };
@@ -355,7 +353,6 @@ export default {
     },
     //编辑树节点
     editTreeNode(params) {
-      //console.log(params)
       const id = params.id;
       const name = params.name;
       const code = params.code;
@@ -428,7 +425,6 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          //console.log(_this);
           _this.$api.organizationService
             .deleteOrganization({organizationId :params.id})
             .then((res) => {
@@ -458,14 +454,11 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            //console.log("ok 回调");
              fn()
           },
           cancel() {
-            //console.log("cancel 回调");
           },
           close() {
-            //console.log("modal close 回调");
           },
         },
       };
@@ -481,8 +474,6 @@ export default {
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       this.selectedRows = selectedRows;
-      //console.log(this.selectedRowKeys);
-      //console.log(this.selectedRows);
     },
     //重新加载数据
     reloadData() {

@@ -5,7 +5,10 @@ export default {
     permissions: null,
     roles: null,
     routesConfig: null,
-    loginType:undefined
+    loginType:undefined,
+    autoLogin:false,
+    account:undefined,
+    password:undefined
   },
   getters: {
     user: state => {
@@ -58,15 +61,48 @@ export default {
     loginType: state => {
       if (!state.loginType) {
         try {
-          sessionStorage
-          const loginType = sessionStorage.getItem(process.env.VUE_APP_LOGIN_TYPE)
+          const loginType = localStorage.getItem(process.env.VUE_APP_LOGIN_TYPE)
           state.loginType = JSON.parse(loginType)
         } catch (e) {
           console.error(e)
         }
       }
       return state.loginType
-    }
+    },
+    autoLogin: state => {
+      if (!state.autoLogin) {
+        try {
+          const autoLogin = localStorage.getItem(process.env.VUE_APP_AUTO_LOGIN)
+          console.log(autoLogin)
+          state.autoLogin = JSON.parse(autoLogin)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      return state.autoLogin
+    },
+    account: state => {
+      if (!state.account) {
+        try {
+          const account = localStorage.getItem(process.env.VUE_APP_ACCOUNT)
+          state.account = JSON.parse(account)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      return state.account
+    },
+    password: state => {
+      if (!state.password) {
+        try {
+          const password = localStorage.getItem(process.env.VUE_APP_PASSWORD)
+          state.password = JSON.parse(password)
+        } catch (e) {
+          console.error(e)
+        }
+      }
+      return state.password
+    },
   },
   mutations: {
     setUser (state, user) {
@@ -87,7 +123,19 @@ export default {
     },
     setloginType (state, loginType) {
       state.loginType = loginType
-      sessionStorage.setItem(process.env.VUE_APP_LOGIN_TYPE, JSON.stringify(loginType))
+      localStorage.setItem(process.env.VUE_APP_LOGIN_TYPE, JSON.stringify(loginType))
+    },
+    setAutoLogin (state, autoLogin) {
+      state.autoLogin = autoLogin
+      localStorage.setItem(process.env.VUE_APP_AUTO_LOGIN, JSON.stringify(autoLogin))
+    },
+    setAccount (state, account) {
+      state.account = account
+      localStorage.setItem(process.env.VUE_APP_ACCOUNT, JSON.stringify(account))
+    },
+    setPassword (state, password) {
+      state.password = password
+      localStorage.setItem(process.env.VUE_APP_PASSWORD, JSON.stringify(password))
     },
   }
 }

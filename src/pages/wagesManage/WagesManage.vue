@@ -182,7 +182,7 @@
         </a-row>
         <a-row>
           <a-col :xs="24" :sm="24">
-            <a-form-model-item label="上传文件">
+            <a-form-model-item label="上传文件" prop="file">
               <a-upload
                 name="file"
                 :multiple="true"
@@ -231,6 +231,23 @@ export default {
     treeSelect,
   },
   data() {
+    //验证组织是否选择
+    let validateOrgan = (rule, value, callback) => {
+      if (this.form.organizationId.length === 0) {
+        callback(new Error("请选择组织"));
+      } else {
+        callback();
+      }
+    };
+    //验证文件是否上传
+    let validateFile = (rule, value, callback) => {
+      if (this.form.fileList.length === 0) {
+        callback(new Error("请上传文件"));
+      } else {
+        callback();
+      }
+    };
+    
     return {
       form: {
         organizationId: [],
@@ -238,12 +255,15 @@ export default {
       },
       loading: false,
       fileList: [],
-      rules: {},
+      rules: {
+        organizationId:[{ required: true, validator: validateOrgan, trigger: "change" }],
+        file: [{ required: true, validator: validateFile, trigger: "change" }],
+      },
       tree: [],
       treeSelect: [],
       disableTree: [],
       treeData: [],
-      recordMonth:[],
+      recordMonth: [],
       visible: false,
       salaryTitle: {},
       advanced: false,
@@ -334,7 +354,7 @@ export default {
   },
   mounted() {
     const oid =
-      (this.user.account !== "huachen2020" && this.user.organizationId) || "";
+      (this.user.isSystem !== "1" && this.user.organizationId) || "";
     this.$api.organizationService
       .getOrganization({ organizationId: oid })
       .then((res) => {
@@ -359,16 +379,17 @@ export default {
       let result = moment(value).format("YYYY-MM");
       let params = this.recordMonth.find((i) => i.recordMonth === result);
       if (params) {
-          return <a-icon type="check-circle" style="color:#87d068" />;
+        return <a-icon type="check-circle" style="color:#87d068" />;
       } else {
-       
-        if(value > moment(
+        if (
+          value >
+          moment(
             new Date(new Date().setMonth(new Date().getMonth() - 1))
-          ).endOf("month")){
-               return null
-          }
-            return <a-icon type="info-circle" style="color:#f50" />;
-       
+          ).endOf("month")
+        ) {
+          return null;
+        }
+        return <a-icon type="info-circle" style="color:#f50" />;
       }
     },
     getMonthData(value) {
@@ -390,7 +411,7 @@ export default {
             year: year,
           };
           this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
-            this.recordMonth  = Object.assign([],res.data.data.list)
+            this.recordMonth = Object.assign([], res.data.data.list);
           });
           const dateDom = document.querySelector(".ant-calendar-ym-select");
           dateDom.addEventListener("DOMCharacterDataModified", () => {
@@ -401,7 +422,7 @@ export default {
               year: year,
             };
             this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
-              this.recordMonth  = Object.assign([],res.data.data.list)
+              this.recordMonth = Object.assign([], res.data.data.list);
             });
           });
         }, 0);
@@ -458,82 +479,89 @@ export default {
       });
     },
     handleOk() {
-      this.loading = true;
-      this.form.month = this.queryParam.month;
-      this.$api.salaryService.postSalary(this.form).then((res) => {
-        this.loading = false;
-        this.visible = false;
-        if (res.data.code === 0) {
-          if(res.data.data.result === 0){
-            this.$message.success(res.data.msg);
-            this.$refs.table.refresh(true);
-          }else if(res.data.data.result === 1){
-            this.$error({
-              title: '表字段不正确',
-              content: '当前上传工资表的字段与系统模板不必配，请查看模板，修改正确后重新上传。',
-            });
-          }else if(res.data.data.result === 2){
-            this.$error({
-              title: '含有所属组织不存在的警员编号',
-              content: (
-                <div>
-                
-                 {
-                    res.data.data.list.map(item => {
-                      return (
-                        <p class="messgeItem">
-                        <span>警员编号：{item}</span>
-                        <span>问题：所属组织不存在的警员编号</span>
-                        </p>
-                      )
-                    })
-                  }
-                  
-                </div>
-              ),
-            });
-          }else if(res.data.data.result === 3){
-            this.$error({
-              width:500,
-              title: '工资表缺少警员编号',
-              content: (
-                <div>
-                 {
-                    res.data.data.list.map(item => {
-                      return (
-                        <p class="messgeItem">
-                        <span>警员编号：{item}</span>
-                        <span>问题：工资表缺少此警员编号</span>
-                        </p>
-                      )
-                    })
-                  }
-                  
-                </div>
-              ),
-            });
-          }else if(res.data.data.result === 4){
-            this.$error({
-              title: '含有重复警员编号',
-              content: (
-                <div>
-                 {
-                    res.data.data.list.map(item => {
-                      return (
-                        <p class="messgeItem">
-                        <span>警员编号：{item}</span>
-                        <span>问题：警员编号重复</span>
-                        </p>
-                      )
-                    })
-                  }
-                  
-                </div>
-              ),
-            });
-          }
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          this.loading = true;
+          this.form.month = this.queryParam.month;
+          this.$api.salaryService.postSalary(this.form).then((res) => {
+            this.loading = false;
+            this.visible = false;
+            this.form = {
+              organizationId: [],
+              fileList: [],
+            }
+            if (res.data.code === 0) {
+              if (res.data.data.result === 0) {
+                this.$message.success(res.data.msg);
+                this.$refs.table.refresh(true);
+              } else if (res.data.data.result === 1) {
+                this.$error({
+                  title: "表字段不正确",
+                  content:
+                    "当前上传工资表的字段与系统模板不必配，请查看模板，修改正确后重新上传。",
+                });
+              } else if (res.data.data.result === 2) {
+                this.$error({
+                   width: 500,
+                  title: "含有所属组织不存在的警员编号",
+                  content: (
+                    <div>
+                      {res.data.data.list.map((item) => {
+                        return (
+                          <p class="messgeItem">
+                            <span>警员编号：{item}</span>
+                            <span>问题：所属组织不存在的警员编号</span>
+                          </p>
+                        );
+                      })}
+                    </div>
+                  ),
+                });
+              } else if (res.data.data.result === 3) {
+                this.$error({
+                  width: 500,
+                  title: "工资表缺少警员编号",
+                  content: (
+                    <div>
+                      {res.data.data.list.map((item) => {
+                        return (
+                          <p class="messgeItem">
+                            <span>警员编号：{item}</span>
+                            <span>问题：工资表缺少此警员编号</span>
+                          </p>
+                        );
+                      })}
+                    </div>
+                  ),
+                });
+              } else if (res.data.data.result === 4) {
+                this.$error({
+                   width: 500,
+                  title: "含有重复警员编号",
+                  content: (
+                    <div>
+                      {res.data.data.list.map((item) => {
+                        return (
+                          <p class="messgeItem">
+                            <span>警员编号：{item}</span>
+                            <span>问题：警员编号重复</span>
+                          </p>
+                        );
+                      })}
+                    </div>
+                  ),
+                });
+              }
+            } else {
+              this.form = {
+                organizationId: [],
+                fileList: [],
+              }
+              this.$message.error(res.data.msg);
+            }
+          });
         } else {
-          this.$message.error(res.data.msg);
+          console.log("error submit!!");
         }
       });
     },
@@ -612,12 +640,12 @@ export default {
 
 <style scoped lang="less">
 @import "./index";
-.messgeItem{
+.messgeItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-/deep/ .ant-modal-confirm-content{
+/deep/ .ant-modal-confirm-content {
   margin-top: 38px;
   margin-left: 0;
 }

@@ -110,7 +110,7 @@
             <span slot="action" slot-scope="text, record">
               <a @click="handleEdit(record)">历史合同</a>
               <a-divider type="vertical" />
-              <a @click="extensionOneCon(record)">续约合同</a>
+              <a @click="extensionOneCon(record)" :disabled="record.isExpire===2">续约合同</a>
             </span>
           </s-table>
         </a-col>

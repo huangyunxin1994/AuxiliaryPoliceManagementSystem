@@ -10,25 +10,17 @@
     <div class="login">
       <a-form @submit="onSubmit" :form="form">
         <a-tabs
-          v-model="loginType"
+          v-model="LoginType"
           size="large"
           :tabBarStyle="{ textAlign: 'center' }"
           style="padding: 0 2px"
         >
-          <a-tab-pane tab="辅警登录" key="1">
-            <a-alert
-              type="error"
-              :closable="true"
-              v-show="error"
-              :message="error"
-              showIcon
-              style="margin-bottom: 24px"
-            />
+          <a-tab-pane tab="辅警登录" key="1" >
             <a-form-item>
               <a-input
                 autocomplete="autocomplete"
                 size="large"
-                placeholder="admin"
+                placeholder="请输入账户名"
                 v-decorator="[
                   'name',
                   {
@@ -48,7 +40,7 @@
             <a-form-item>
               <a-input
                 size="large"
-                placeholder="888888"
+                placeholder="请输入密码"
                 autocomplete="autocomplete"
                 type="password"
                 v-decorator="[
@@ -69,19 +61,11 @@
             </a-form-item>
           </a-tab-pane>
           <a-tab-pane tab="管理员登录" key="2">
-            <a-alert
-              type="error"
-              :closable="true"
-              v-show="error"
-              :message="error"
-              showIcon
-              style="margin-bottom: 24px"
-            />
             <a-form-item>
               <a-input
                 autocomplete="autocomplete"
                 size="large"
-                placeholder="admin"
+                placeholder="请输入账户名"
                 v-decorator="[
                   'name',
                   {
@@ -101,7 +85,7 @@
             <a-form-item>
               <a-input
                 size="large"
-                placeholder="888888"
+                placeholder="请输入密码"
                 autocomplete="autocomplete"
                 type="password"
                 v-decorator="[
@@ -123,8 +107,8 @@
           </a-tab-pane>
         </a-tabs>
         <div>
-          <a-checkbox :checked="true">自动登录</a-checkbox>
-          <a style="float: right">忘记密码</a>
+          <a-checkbox :checked="AutoLogin" @change="changeAutoLogin">记住密码</a-checkbox>
+          <!-- <a style="float: right">忘记密码</a> -->
         </div>
         <a-form-item>
           <a-button
@@ -146,7 +130,7 @@ import CommonLayout from "@/layouts/CommonLayout";
 // import {login} from '@/services/user'
 import { setAuthorization } from "@/utils/request";
 import { loadRoutes } from "@/utils/routerUtil";
-import { mapMutations } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 const timeList = [
   {
     CN: "早上好",
@@ -181,14 +165,27 @@ export default {
     return {
       logging: false,
       error: "",
+      AutoLogin:false,
+      showError:false,
       form: this.$form.createForm(this),
-      loginType: "1",
+      LoginType: "1",
     };
   },
   computed: {
+    ...mapGetters('account', ['account','password','autoLogin','loginType']),
     systemName() {
       return this.$store.state.setting.systemName;
     },
+  },
+  mounted(){
+    const autoLogin = localStorage.getItem(process.env.VUE_APP_AUTO_LOGIN)
+    const loginType = localStorage.getItem(process.env.VUE_APP_LOGIN_TYPE)
+    this.AutoLogin = autoLogin==='true' && true || false;
+    this.LoginType = loginType==='2' && '2' || '1';
+    
+    if(this.AutoLogin){
+      this.form.setFieldsValue({name:this.account,password:this.password})
+    }
   },
   methods: {
     ...mapMutations("account", [
@@ -196,15 +193,18 @@ export default {
       "setPermissions",
       "setRoles",
       "setloginType",
+      "setAutoLogin",
+      "setAccount",
+      "setPassword"
     ]),
     onSubmit(e) {
-      e.preventDefault();
+       e.preventDefault();
       this.form.validateFields((err) => {
         if (!err) {
           this.logging = true;
           const name = this.form.getFieldValue("name");
           const password = this.form.getFieldValue("password");
-          const type = this.loginType;
+          const type = this.LoginType;
           // login(name, password).then(this.afterLogin)
           this.$api.userService
             .login(name, password, type)
@@ -230,10 +230,10 @@ export default {
         if (type === 2) {
           list.map((i) => {
             let param = {};
-            param.id = i.code;
+            param.id = i&&i.code||"";
             roleArr.push(param);
           });
-          if(data.account==='huachen2020'){
+          if(data.isSystem==='1'){
             roleArr=[
               { id: "jczl" },
               { id: "htgl" },
@@ -253,6 +253,9 @@ export default {
         }
         this.setRoles(roleArr);
         this.setloginType(type);
+        this.setAutoLogin(this.AutoLogin),
+        this.setAccount(data.account)
+        this.setPassword(data.password)
         setAuthorization({
           token: loginRes.data.token,
           expireAt: new Date(loginRes.data.expireAt),
@@ -269,8 +272,11 @@ export default {
           this.$router.push("/auxhome");
         }
       } else {
-        this.error = loginRes.msg;
+        this.$message.error(loginRes.msg) ;
       }
+    },
+    changeAutoLogin(){
+      this.AutoLogin = !this.AutoLogin
     },
     timeFix() {
       const time = new Date();
