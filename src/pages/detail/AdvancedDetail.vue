@@ -158,8 +158,7 @@ export default {
     ...mapState('setting', ['isMobile'])
   },
   methods: {
-    onTabChange (key) {
-      console.log(key)
+    onTabChange () {
     }
   },
 }

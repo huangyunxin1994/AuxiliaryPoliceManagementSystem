@@ -434,13 +434,13 @@ export default {
     
   },
   filters: {
-    statusFilter(status) {
+    statusFilter(state) {
       const statusMap = {
         1: "优秀",
         2: "良好",
         3: "不及格"
       };
-      return statusMap[status];
+      return statusMap[state];
     },
   },
   computed: {
