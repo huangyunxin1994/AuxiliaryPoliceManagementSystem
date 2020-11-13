@@ -103,7 +103,7 @@
             <template slot="status" slot-scope="isExpire">
               <!-- <a-badge :status="isExpire" :text="isExpire | statusFilter" /> -->
               <a-badge
-                :status="isExpire == 1 ? 'warning' : ( isExpire == 2 ? 'processing' : 'error')"
+                :status="isExpire == 1 ? 'warning' : ( isExpire == 2 ? 'processing' : ( isExpire == 3 ? 'error' : ''))"
                 :text="isExpire | statusFilter"
               />
             </template>
