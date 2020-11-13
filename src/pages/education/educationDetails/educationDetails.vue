@@ -153,10 +153,10 @@ const credTitle = [
   {
     label: "姓名",
     name: "policeName",
-    type: "input",
+    type: "text",
   },
   {
-    label: "培训情况",
+    label: "培训结果",
     name: "state",
     type: "select",
     select:[{name:'优秀',value:1},{name:'良好',value:2},{name:'不合格',value:3}]
@@ -168,7 +168,7 @@ const credTitle = [
   },
 ];
 const credRules = {
-  policeName: [{ required: true, message: "请输入证件类型名称", trigger: "blur" }],
+  policeName: [{ required: false, message: "请输入证件类型名称", trigger: "blur" }],
   state:[{ required: true, message: "请选择培训情况", trigger: "change" }]
 };
 export default {
@@ -218,7 +218,7 @@ export default {
           ellipsis: true,
         },
         {
-          title: "培训情况",
+          title: "培训结果",
           dataIndex: "state",
           key: "state",
           scopedSlots: { customRender: "state" },
@@ -249,7 +249,6 @@ export default {
         this.queryParam.id = this.param.id
         let param = Object.assign(params,this.queryParam)
         return this.$api.trainService.getEducationDetails(param).then((res)=>{
-          // console.log(res)
           res.data.data.list.map((i,k)=>{
             i.key=k+1
           })
@@ -279,7 +278,7 @@ export default {
   methods: {
     //填写结果(批量)
     handleCredAdd() {
-      let arrName = "";
+      // let arrName = "";
       let selectArr = []
       let arr = this.selectedRows
       arr.forEach((e)=>{
@@ -293,20 +292,20 @@ export default {
           organizationId:e.organizationId,
           organizationName:e.organizationName
         }
-        arrName = e.policeName + ",";
-        this.selcetPersonName.policeName = arrName.slice(0,arrName.length - 1);
         selectArr.push(queryPa)
       })
+      let newTitle = credTitle.filter(function (item) {
+        return item.name != "policeName" && item.name != "text"
+      })
       let formProps = {
-        formTitle: credTitle,
+        formTitle: newTitle,
         rules: credRules,
         record:this.selcetPersonName,
         submitFun:(params) => {
             // let param = Object.assign(params,queryPa)
             return this.$api.trainService.putManyEducation(params,selectArr).then((res)=>{
-                res.data.data.list.map((i,k)=>{
-                    i.key=k+1
-                })
+                this.selectedRowKeys = []
+                this.selectedRows = []
                 return res.data
             })
         },
