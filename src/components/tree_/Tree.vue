@@ -107,7 +107,7 @@ export default {
     },
     methods: {
         loadTree(){
-            const oid = this.user.organizationId||""
+            const oid = this.user.isSystem !== 1 && this.user.organizationId ||""
             this.$api.organizationService.getOrganization({organizationId:oid}).then((res)=>{
             let tree = res.data.data.data
             tree.forEach(item => {

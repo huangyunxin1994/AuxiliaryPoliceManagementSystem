@@ -59,7 +59,7 @@ export default {
         okText: "提交",
       };
       let fn;
-      if(this.user.isSystem){
+      if(this.user.isSystem===1){
         fn = (parameter) => {
           return this.$api.organizationService
             .putPassword(parameter)

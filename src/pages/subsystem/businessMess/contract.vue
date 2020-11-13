@@ -107,6 +107,8 @@ export default {
       wageData: (params) => {
         let param = Object.assign(params, this.salaryParam);
         return this.$api.salaryService.getSalaryByAux(param).then((res) => {
+          res.data.data.currentPage=1
+          res.data.data.count=1
           if (res.data.data.list.length > 0) {
             const salaryTitle = Object.assign(
               {},

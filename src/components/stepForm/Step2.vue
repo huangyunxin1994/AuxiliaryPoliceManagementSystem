@@ -65,7 +65,7 @@
                     v-model="form[item.name]"
                     v-else-if="item.type == 'picker'"
                     :disabled="item.disabled"
-                     :disabled-date="disabledDate"
+                    :disabled-date="disabledDate"
                     :show-time="item.showTime&&item.showTime||false"
                     :format="item.valueFormat&&item.valueFormat || 'YYYY-MM-DD'"
                     :valueFormat="item.valueFormat&&item.valueFormat || 'YYYY-MM-DD'"

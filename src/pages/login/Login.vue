@@ -233,7 +233,7 @@ export default {
             param.id = i&&i.code||"";
             roleArr.push(param);
           });
-          if(data.isSystem==='1'){
+          if(data.isSystem===1){
             roleArr=[
               { id: "jczl" },
               { id: "htgl" },

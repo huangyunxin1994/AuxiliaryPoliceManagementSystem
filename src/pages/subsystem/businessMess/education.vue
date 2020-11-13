@@ -42,6 +42,12 @@
     <template slot="learningStyle" slot-scope="learningStyle">
           <span>{{learningStyle | eduFilter}}</span>
         </template>
+        <template slot="state" slot-scope="state">
+            <a-badge
+              :status="state == '1' ? 'success' : (state == '2' ? 'processing' : (state == '3' ? 'error' : ''))"
+              :text="state | statusFilter(state)"
+            />
+        </template>
 		</s-table>
     </a-card>
   </div>
@@ -86,6 +92,14 @@ export default {
           title: "结束时间",
           dataIndex: "endTime",
           key: "endTime",
+          ellipsis: true,
+          width: 150
+        },
+        {
+          title: "培训情况",
+          dataIndex: "state",
+          key: "state",
+          scopedSlots: { customRender: "state" },
           ellipsis: true,
           width: 150
         },
@@ -167,19 +181,20 @@ export default {
     },
   },
   filters: {
-    statusFilter(status) {
-      const statusMap = {
-        processing: "启用",
-        error: "禁用",
-      };
-      return statusMap[status];
-    },
     eduFilter(edu) {
       const statusMap = {
             "1":'不脱岗 ' ,
             "2":'脱岗' ,
       };
       return statusMap[edu];
+    },
+    statusFilter(status) {
+      const statusMap = {
+        1: "优秀",
+        2: "良好",
+        3: "不及格"
+      };
+      return statusMap[status];
     },
   },
   computed: {

@@ -175,7 +175,7 @@ export default {
             _this.$api.messageService.deleteNotice(param).then((res)=>{
               if(res.data.code == 0){
                 _this.$message.success(res.data.msg);
-                return res.data
+                this.$emit("refresh")
               }else{
                 _this.$message.error(res.data.msg);
               }

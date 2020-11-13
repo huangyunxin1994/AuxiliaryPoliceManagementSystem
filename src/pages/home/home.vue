@@ -79,7 +79,7 @@
                 <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false">
                     <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">通知</div>
                     <div class="ant-table-wrapper">
-                        <list :iconColor="theme.color" icon="sound" :list="noticeList" :user="user"/>
+                        <list :iconColor="theme.color" icon="sound" :list="noticeList" :user="user" @refresh="refresh"/>
                     </div>
                 </a-card>
             </a-col>
@@ -244,6 +244,9 @@ export default {
     handleRoute(path){
       this.$router.push(path)
     },
+    refresh(){
+      this.getUserMessList()
+    },
     // 获取管理员个人消息通知列表(通知)
     async getUserMessList(){
       let _this = this
@@ -262,7 +265,8 @@ export default {
     async getUserDbList(){
       let _this = this
       let query = {
-        oid:this.user.organizationId
+        oid:this.user.organizationId,
+        id:this.user.id
       }
       const requestParameters = Object.assign({}, query);
        _this.$api.messageService
