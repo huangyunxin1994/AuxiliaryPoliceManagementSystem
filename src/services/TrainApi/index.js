@@ -1,26 +1,10 @@
-import {GETLIST,POSTEDUCATION,DELETEEDUCATION,GETDETAILSDATA,PUTEDUCATION} from './api'
+import {GETLIST,POSTEDUCATION,DELETEEDUCATION,GETDETAILSDATA,PUTEDUCATION,GETDETAILSBYAUX} from './api'
 import {request, METHOD} from '@/utils/request'
 
 // import Qs from 'qs'
 import store from '@/store/index.js'
 
 const trainService = {
-    // /**
-    //  * 获取岗位配置列表
-    //  * @param params 条件参数
-    //  * @returns {Promise<AxiosResponse<T>>}
-    //  */
-    // getPostList(params) {
-    //     return request(GETPOST, METHOD.GET, params)
-    // },
-    // /**
-    //  * 添加岗位
-    //  * @param params 证件或装备修改数据
-    //  * @returns {Promise<AxiosResponse<T>>}
-    //  */
-    // postPost(params) {
-    //     return request(POSTPOST, METHOD.POST, Qs.stringify(params))
-    // },
 
     /**
      * 获取培训配置列表
@@ -83,6 +67,15 @@ const trainService = {
     getEducationDetails(params){
         // const GETDETAILS = GETDETAILSDATA + id.id
         return request(GETDETAILSDATA, METHOD.GET,params)
+    },
+    /**
+     * 根据id获得培训详情
+     * @param params 培训id
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    getEducationDetailsByAux(params){
+        // const GETDETAILS = GETDETAILSDATA + id.id
+        return request(GETDETAILSBYAUX, METHOD.GET,params)
     },
 
     /**

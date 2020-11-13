@@ -39,6 +39,9 @@
 			:scroll="{ y: 600, x: 650 }"
 			showPagination="auto"
 		>
+    <template slot="learningStyle" slot-scope="learningStyle">
+          <span>{{learningStyle | eduFilter}}</span>
+        </template>
 		</s-table>
     </a-card>
   </div>
@@ -97,6 +100,7 @@ export default {
           title: "培训方式",
           dataIndex: "learningStyle",
           key: "learningStyle",
+          scopedSlots: { customRender: "learningStyle" },
           ellipsis: true,
           width: 100
         },
@@ -116,11 +120,11 @@ export default {
         },
       ],
       queryParam:{
-        id:undefined
+        policeId:undefined
       },
       loadCredData: (params) => {
         let param = Object.assign(params,this.queryParam)
-        return this.$api.trainService.getEducationDetails(param).then((res)=>{
+        return this.$api.trainService.getEducationDetailsByAux(param).then((res)=>{
           res.data.data.count = res.data.data.list.length;
               res.data.data.currentPage = 1;
           res.data.data.list.map((i,k)=>{
@@ -144,7 +148,7 @@ export default {
     };
   },
   created(){
-    this.queryParam.id = this.policeId || this.user.id
+    this.queryParam.policeId = this.policeId || this.user.id
   },
   methods: {
     
@@ -170,6 +174,13 @@ export default {
       };
       return statusMap[status];
     },
+    eduFilter(edu) {
+      const statusMap = {
+            "1":'不脱岗 ' ,
+            "2":'脱岗' ,
+      };
+      return statusMap[edu];
+    },
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
@@ -186,6 +197,7 @@ export default {
         onChange: this.onEqupSelectChange,
       };
     },
+    
   },
 };
 </script>
