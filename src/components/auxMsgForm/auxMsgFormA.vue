@@ -341,6 +341,7 @@ const studyColumns = [
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
+    width:150,
   },
 ];
 
@@ -397,7 +398,7 @@ const workColumns = [
   {
     title: "操作",
     scopedSlots: { customRender: "workaction" },
-    width:80,
+    width:150,
   },
 ];
 
@@ -441,7 +442,7 @@ const familyColumns = [
   {
     title: "操作",
     scopedSlots: { customRender: "familyaction" },
-    width:100,
+    width:150,
   },
 ];
 

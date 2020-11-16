@@ -214,7 +214,7 @@ export default {
         describes: "",
         allotmentDate: "",
         termValidity: "",
-        state:'',
+        state:1,
         type: 1,
         certificatesEquipmentHistory: "",
         cqName:'',//证件或装备类型
@@ -275,10 +275,10 @@ export default {
       ]
     })
     this.record = {
-        issuedBy:this.user.name,
-        issuedById:this.user.id
-      }
-      this.queryParam.oid = this.user.organizationId
+      issuedBy:this.user.name,
+      issuedById:this.user.id
+    }
+    this.queryParam.oid = this.user.organizationId
   },
   methods: {
     // 配发日期
