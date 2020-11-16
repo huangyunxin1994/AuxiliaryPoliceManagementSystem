@@ -323,16 +323,19 @@ export default {
         this.queryParam.oid = this.user.organizationId;
         let param = Object.assign(params, this.queryParam);
         return this.$api.salaryService.getSalary(param).then((res) => {
+           res.data.data.list.map((i, k) => {
+              i.key = k + 1;
+           })
           if (res.data.data.list.length > 0) {
-            const salaryTitle = Object.assign(
+            if(res.data.data.list[0].salaryContent){
+              const salaryTitle = Object.assign(
               {},
               JSON.parse(res.data.data.list[0].salaryContent)
             );
             this.scheduleColumns.map(
               (j) => salaryTitle[j.title] && delete salaryTitle[j.title]
             );
-            res.data.data.list.map((i, k) => {
-              i.key = k + 1;
+            res.data.data.list.map((i) => {
               const salaryVal = JSON.parse(i.salaryContent);
               i = Object.assign(i, salaryVal);
             });
@@ -345,6 +348,8 @@ export default {
                 params.key = i;
                 this.scheduleColumns.splice(4, 0, params);
               });
+            }
+            
           }
 
           return res.data;

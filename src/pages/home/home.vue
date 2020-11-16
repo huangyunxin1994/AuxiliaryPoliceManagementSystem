@@ -331,7 +331,8 @@ export default {
     async getAfficheList(){
       let  _this = this
       let query = {
-        oid:this.user.organizationId
+        oid:this.user.organizationId,
+        type:2
       }
       const requestParameters = Object.assign({}, query);
       _this.$api.documentAnnouncementService
@@ -348,7 +349,8 @@ export default {
     },
     async getFile(){
       let query = {
-        oid:this.user.organizationId
+        oid:this.user.organizationId,
+        type:2
       }
       const requestParameters = Object.assign({}, query);
       this.$api.documentAnnouncementService

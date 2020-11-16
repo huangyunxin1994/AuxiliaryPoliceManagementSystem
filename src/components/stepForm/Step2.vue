@@ -12,145 +12,228 @@
             :layout="layout"
           >
             <a-row>
-              <a-col
-                :xs="item.xsCol || 24"
-                :sm="item.smCol || 24"
-                v-for="(item, index) in formTitle"
-                :key="index"
-              >
-                <a-form-model-item
-                  :labelCol="item.labelCol"
-                  :wrapperCol="item.wrapperCol"
-                  :label="item.label"
-                  :prop="item.name"
-                  :ref="item.refName"
-                >
-                  <span v-if="item.type == 'text'">{{ form[item.name] }}</span>
-                  <!-- 输入框  -->
-                  <a-input
-                    v-model="form[item.name]"
-                    v-if="item.type == 'input'"
-                    :disabled="item.disabled"
-                    :placeholder="item.placeholder"
-                  />
+              <div v-for="(item, index) in formTitle" :key="index">
+                <div v-if="item.type === 'rangePicker'">
+                  <a-col :xs="item.xsCol || 24" :sm="item.smCol || 24">
+                    <a-form-model-item
+                      :labelCol="item.labelCol"
+                      :wrapperCol="item.wrapperCol"
+                      :label="item.label1"
+                      :prop="item.name1"
+                      :ref="item.refName1"
+                    >
+                      <a-date-picker
+                        :locale="locale"
+                        v-model="form[item.name1]"
+                        :disabled="item.disabled"
+                        :disabled-date="
+                          item.disabledDate &&disabledDateStart ||
+                          function () {
+                            return false;
+                          }
+                        "
+                        :show-time="(item.showTime && item.showTime) || false"
+                        :format="
+                          (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
+                        "
+                        :valueFormat="
+                          (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
+                        "
+                        type="date"
+                        :placeholder="item.placeholder"
+                        style="width: 100%"
+                      />
+                    </a-form-model-item>
+                  </a-col>
+                  <a-col
+                    :xs="item.xsCol || 24"
+                    :sm="item.smCol || 24"
+                  >
+                    <a-form-model-item
+                      :labelCol="item.labelCol"
+                      :wrapperCol="item.wrapperCol"
+                      :label="item.label2"
+                      :prop="item.name2"
+                      :ref="item.refName2"
+                    >
+                      <a-date-picker
+                        :locale="locale"
+                        v-model="form[item.name2]"
+                        :disabled="item.disabled"
+                        :disabled-date="
+                          item.disabledDate &&disabledDateEnd ||
+                          function () {
+                            return false;
+                          }
+                        "
+                        :show-time="(item.showTime && item.showTime) || false"
+                        :format="
+                          (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
+                        "
+                        :valueFormat="
+                          (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
+                        "
+                        type="date"
+                        :placeholder="item.placeholder"
+                        style="width: 100%"
+                      />
+                    </a-form-model-item>
+                  </a-col>
+                </div>
+                <a-col :xs="item.xsCol || 24" :sm="item.smCol || 24" v-else>
+                  <a-form-model-item
+                    :labelCol="item.labelCol"
+                    :wrapperCol="item.wrapperCol"
+                    :label="item.label"
+                    :prop="item.name"
+                    :ref="item.refName"
+                  >
+                    <span v-if="item.type == 'text'">{{
+                      form[item.name]
+                    }}</span>
+                    <!-- 输入框  -->
+                    <a-input
+                      v-model="form[item.name]"
+                      v-if="item.type == 'input'"
+                      :disabled="item.disabled"
+                      :placeholder="item.placeholder"
+                    />
                     <!-- 数字输入框  -->
-                  <a-input-number
-                    v-model="form[item.name]"
-                    v-if="item.type == 'number'"
-                    :disabled="item.disabled"
-                    :placeholder="item.placeholder"
-                    style="width: 100%"
-                  />
-                  <!-- 下拉框 -->
-                  <a-select
-                    show-search
-                    v-model="form[item.name]"
-                    :disabled="item.disabled"
-                    :filter-option="filterOption"
-                    v-else-if="item.type == 'select'"
-                    :placeholder="item.placeholder"
-                    @change="handleChange(item)"
-                  >
-                    <a-select-option
-                      v-for="(i, j) in item.select"
-                      :key="j"
-                      :value="i.value || i.id || i.name"
+                    <a-input-number
+                      v-model="form[item.name]"
+                      v-if="item.type == 'number'"
+                      :disabled="item.disabled"
+                      :placeholder="item.placeholder"
+                      style="width: 100%"
+                    />
+                    <!-- 下拉框 -->
+                    <a-select
+                      show-search
+                      v-model="form[item.name]"
+                      :disabled="item.disabled"
+                      :filter-option="filterOption"
+                      v-else-if="item.type == 'select'"
+                      :placeholder="item.placeholder"
+                      @change="handleChange(item)"
                     >
-                      {{ i.name }}
-                    </a-select-option>
-                  </a-select>
-                  <!-- 时间框 -->
-                  <a-date-picker
-                  :locale="locale"
-                    v-model="form[item.name]"
-                    v-else-if="item.type == 'picker'"
-                    :disabled="item.disabled"
-                    :disabled-date="disabledDate"
-                    :show-time="item.showTime&&item.showTime||false"
-                    :format="item.valueFormat&&item.valueFormat || 'YYYY-MM-DD'"
-                    :valueFormat="item.valueFormat&&item.valueFormat || 'YYYY-MM-DD'"
-                    type="date"
-                    :placeholder="item.placeholder"
-                    style="width: 100%"
-                  />
-                  <!-- 开关 -->
-                  <a-switch
-                    :disabled="item.disabled"
-                    v-else-if="item.type == 'switch'"
-                    v-model="form[item.name]"
-                  />
-                  <!-- 复选框组 -->
-                  <a-checkbox-group
-                    v-model="form[item.name]"
-                    :disabled="item.disabled"
-                    @change="change"
-                    v-else-if="item.type == 'checkboxgroup'"
-                    :style="item.showBgc ? 'background:rgba(0,0,0,.02);' : ''"
-                    style="padding: 10px"
-                  >
-                    <a-row>
-                      <a-col :span="12" v-for="(i, j) in item.select" :key="j">
-                        <a-checkbox :value="i.value || i.name">
-                          {{ i.name }}
-                        </a-checkbox>
-                      </a-col>
-                    </a-row>
-                  </a-checkbox-group>
-                  <!-- 复选框 -->
-                  <a-checkbox
-                    v-model="form[item.name]"
-                    :disabled="item.disabled"
-                    v-else-if="item.type == 'checkbox'"
-                  />
-                  <!-- 单选框 -->
-                  <a-radio-group
-                    v-model="form[item.name]"
-                    :disabled="item.disabled"
-                    v-else-if="item.type == 'radio'"
-                  >
-                    <a-radio
-                      v-for="(i, j) in item.select"
-                      :key="j"
-                      :value="i.value || i.name"
+                      <a-select-option
+                        v-for="(i, j) in item.select"
+                        :key="j"
+                        :value="i.value || i.id || i.name"
+                      >
+                        {{ i.name }}
+                      </a-select-option>
+                    </a-select>
+                    <!-- 时间框 -->
+                    <a-date-picker
+                      :locale="locale"
+                      v-model="form[item.name]"
+                      v-else-if="item.type == 'picker'"
+                      :disabled="item.disabled"
+                      :disabled-date="
+                        (item.disabledDate &&
+                          ((item.disabledDateFun && item.disabledDateFun) ||
+                            disabledDate)) ||
+                        function () {
+                          return false;
+                        }
+                      "
+                      :show-time="(item.showTime && item.showTime) || false"
+                      :format="
+                        (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
+                      "
+                      :valueFormat="
+                        (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
+                      "
+                      type="date"
+                      :placeholder="item.placeholder"
+                      style="width: 100%"
+                    />
+                    <!-- 开关 -->
+                    <a-switch
+                      :disabled="item.disabled"
+                      v-else-if="item.type == 'switch'"
+                      v-model="form[item.name]"
+                    />
+                    <!-- 复选框组 -->
+                    <a-checkbox-group
+                      v-model="form[item.name]"
+                      :disabled="item.disabled"
+                      @change="change"
+                      v-else-if="item.type == 'checkboxgroup'"
+                      :style="item.showBgc ? 'background:rgba(0,0,0,.02);' : ''"
+                      style="padding: 10px"
                     >
-                      {{ i.name }}
-                    </a-radio>
-                  </a-radio-group>
-                  <!-- 文本域 -->
-                  <a-input
-                    v-model="form[item.name]"
-                    type="textarea"
-                    :autoSize="{ minRows: 4, maxRows: 6 }"
-                    :disabled="item.disabled"
-                    v-else-if="item.type == 'textarea'"
-                    :placeholder="item.placeholder"
-                  />
-                  <!-- 树选择 -->
-                  <a-tree-select
-                    v-else-if="item.type == 'treeSelect'"
-                    v-model="form[item.name]"
-                    :disabled="item.disabled"
-                    :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                    :tree-data="item.select"
-                    :allowClear="true"
-                    :replaceFields="item.replaceFields"
-                    placeholder="请选择组织"
-                    tree-default-expand-all
-                  >
-                  </a-tree-select>
-                  <a-upload
-                    name="file"
-                    :default-file-list="fileList"
-                    :file-list="fileList"
-                    action=""
-                    :before-upload="beforeUpload"
-                    :show-upload-list="true"
-                    v-else-if="item.type == 'upload'"
-                  >
-                    <a-button type="primary" :disabled="item.disabled">选择文件</a-button>
-                  </a-upload>
-                </a-form-model-item>
-              </a-col>
+                      <a-row>
+                        <a-col
+                          :span="12"
+                          v-for="(i, j) in item.select"
+                          :key="j"
+                        >
+                          <a-checkbox :value="i.value || i.name">
+                            {{ i.name }}
+                          </a-checkbox>
+                        </a-col>
+                      </a-row>
+                    </a-checkbox-group>
+                    <!-- 复选框 -->
+                    <a-checkbox
+                      v-model="form[item.name]"
+                      :disabled="item.disabled"
+                      v-else-if="item.type == 'checkbox'"
+                    />
+                    <!-- 单选框 -->
+                    <a-radio-group
+                      v-model="form[item.name]"
+                      :disabled="item.disabled"
+                      v-else-if="item.type == 'radio'"
+                    >
+                      <a-radio
+                        v-for="(i, j) in item.select"
+                        :key="j"
+                        :value="i.value || i.name"
+                      >
+                        {{ i.name }}
+                      </a-radio>
+                    </a-radio-group>
+                    <!-- 文本域 -->
+                    <a-input
+                      v-model="form[item.name]"
+                      type="textarea"
+                      :autoSize="{ minRows: 4, maxRows: 6 }"
+                      :disabled="item.disabled"
+                      v-else-if="item.type == 'textarea'"
+                      :placeholder="item.placeholder"
+                    />
+                    <!-- 树选择 -->
+                    <a-tree-select
+                      v-else-if="item.type == 'treeSelect'"
+                      v-model="form[item.name]"
+                      :disabled="item.disabled"
+                      :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                      :tree-data="item.select"
+                      :allowClear="true"
+                      :replaceFields="item.replaceFields"
+                      placeholder="请选择组织"
+                      tree-default-expand-all
+                    >
+                    </a-tree-select>
+                    <a-upload
+                      name="file"
+                      :default-file-list="fileList"
+                      :file-list="fileList"
+                      action=""
+                      :before-upload="beforeUpload"
+                      :show-upload-list="true"
+                      v-else-if="item.type == 'upload'"
+                    >
+                      <a-button type="primary" :disabled="item.disabled"
+                        >选择文件</a-button
+                      >
+                    </a-upload>
+                  </a-form-model-item>
+                </a-col>
+              </div>
             </a-row>
           </a-form-model>
         </a-col>
@@ -160,9 +243,9 @@
 </template>
 
 <script>
-import locale from 'ant-design-vue/es/date-picker/locale/zh_CN';
+import locale from "ant-design-vue/es/date-picker/locale/zh_CN";
 import pick from "lodash.pick";
-import moment from 'moment'
+import moment from "moment";
 export default {
   name: "Step2",
   props: {
@@ -173,10 +256,6 @@ export default {
     rules: {
       type: Object,
       default: null,
-    },
-    disabledTime:{
-      type:Boolean,
-      default:false
     },
     record: {
       type: Object,
@@ -224,74 +303,106 @@ export default {
       default: "horizontal",
     },
   },
-  data(){
+  data() {
     return {
       locale,
       form: {},
       dataSource: [],
-      fileList:[]
-    }
+      fileList: [],
+    };
   },
   mounted() {
     this.formTitle.forEach((i) => {
-          this.dataSource.push(i.name);
+      this.dataSource.push(i.name);
     });
-    this.loadData()
-    
+    this.loadData();
   },
   methods: {
     disabledDate(current) {
-      if(this.disabledTime === false){
-        return false
+      const obj = this.formTitle.find(i=>i.type==='rangePicker')
+      console.log(obj)
+      return (
+        current &&
+        current <
+          moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf(
+            "day"
+          )
+      );
+    },
+    disabledDateStart(current) {
+      const obj = this.formTitle.find(i=>i.type==='rangePicker')
+      if(current&&this.form[obj.name2]){
+        return  current < moment(new Date()).endOf("day") || current > moment(new Date(this.form[obj.name2])).endOf("day")
+      }else if(current){
+        return current < moment(new Date()).endOf("day")
       }else{
-        return current && current < moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf("day");
+        return false
       }
     },
-    handleChange(item){
-      if(item.labelName){
-        const param = item.select.find(i=>i.id === this.form[item.name])
-        this.form[item.labelName] = param.name
-      }
-    },
-    loadData(){
-      if (this.record) {
-          this.form = Object.assign(
-            JSON.parse(JSON.stringify(this.record)) ,
-            pick(this.record, this.dataSource)
-          );
+    disabledDateEnd(current) {
+       const obj = this.formTitle.find(i=>i.type==='rangePicker')
+      if(current&&this.form[obj.name1]){
+        if( moment(new Date()).endOf("day") >= moment(new Date(this.form[obj.name1])).endOf("day") ){
+           return current < moment(new Date()).endOf("day")  
+        }else{
+           return current < moment(new Date(this.form[obj.name1])).endOf("day")
         }
+       
+      }else if(current){
+        return current < moment(new Date()).endOf("day")
+      }else{
+        return false
+      }
+    },
+    handleChange(item) {
+      if (item.labelName) {
+        const param = item.select.find((i) => i.id === this.form[item.name]);
+        this.form[item.labelName] = param.name;
+      }
+    },
+    loadData() {
+      if (this.record) {
+        this.form = Object.assign(
+          JSON.parse(JSON.stringify(this.record)),
+          pick(this.record, this.dataSource)
+        );
+      }
     },
     nextStep() {
       this.$refs.ruleForm.validate((valid) => {
-            if (valid) {
-               this.$emit("handleOk", this.form);
-            } 
-          });
+        if (valid) {
+          this.$emit("handleOk", this.form);
+        }
+      });
       //
     },
     prevStep() {
       this.$emit("prevStep");
     },
     // 上传文件
-    beforeUpload(file){
-      
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'application/pdf';
+    beforeUpload(file) {
+      const isJpgOrPng =
+        file.type === "image/jpeg" ||
+        file.type === "image/png" ||
+        file.type === "application/pdf";
       if (!isJpgOrPng) {
-        this.$message.error('你只能上传PDF,JPG,PNG格式的文件');
-        return false
+        this.$message.error("你只能上传PDF,JPG,PNG格式的文件");
+        return false;
       }
       const isLt2M = file.size / 1024 / 1024 < 10;
       if (!isLt2M) {
-        this.$message.error('上传的文件大小不能超过10M');
-        return false
+        this.$message.error("上传的文件大小不能超过10M");
+        return false;
       }
-      this.fileList = [file]
-      this.form.fileList=[...this.fileList];
-      return false
+      this.fileList = [file];
+      this.form.fileList = [...this.fileList];
+      return false;
     },
     filterOption(input, option) {
       return (
-        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        option.componentOptions.children[0].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
       );
     },
   },

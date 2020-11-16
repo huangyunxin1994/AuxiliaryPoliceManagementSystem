@@ -1139,6 +1139,10 @@ export default {
                 delete i.key;
                 i.orderly = i.orderly === "是" ? 1 : 2;
               });
+              _this.$refs.table3.localDataSource.map((i) => {
+                delete i.key;
+                i.sex = i.sex === "男" ? 1 : 2;
+              });
               const param = {
                 basic: _this.form,
                 major:_this.form.isMajor === 1 && _this.major || {},

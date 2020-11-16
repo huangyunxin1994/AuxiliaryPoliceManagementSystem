@@ -96,7 +96,7 @@ export default {
           width: 150
         },
         {
-          title: "培训情况",
+          title: "培训结果",
           dataIndex: "state",
           key: "state",
           scopedSlots: { customRender: "state" },

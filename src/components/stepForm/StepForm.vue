@@ -39,7 +39,6 @@
         :submitFun="submitFun"
         :formTitle="nowFormTitle"
         :record="selcetPersonName"
-        :disabledTime="true"
         :rules="rules"
         @nextStep="nextStep"
         @prevStep="prevStep"

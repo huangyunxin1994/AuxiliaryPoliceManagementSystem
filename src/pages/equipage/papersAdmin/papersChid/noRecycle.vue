@@ -259,19 +259,17 @@ export default {
           select: res.data.data.list
         },
         {
-          label: "配发日期",
-          name: "allotmentDate",
-          type: "picker",
-          refName: "allotmentDate",
-          placeholder: "请选择配发日期",
-        },
-        {
-          label: "有效期限",
-          name: "termValidity",
-          type: "picker",
-          refName: "termValidity",
-          placeholder: "请选择有效期限",
-        },
+          label1: "配发日期",
+          name1: "allotmentDate",
+          type: "rangePicker",
+          disabledDate:true,
+          refName1: "allotmentDate",
+          placeholder1: "请选择配发日期",
+          label2: "有效期限",
+          name2: "termValidity",
+          refName2: "termValidity",
+          placeholder2: "请选择有效期限",
+        }
       ]
     })
     this.record = {
