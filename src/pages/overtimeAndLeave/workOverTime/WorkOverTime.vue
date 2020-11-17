@@ -446,10 +446,11 @@ export default {
      * @param modalProps 弹窗配置项 Object
      */
     openModal(form, formProps, modalProps) {
+      const _this = this
       const defaultModalProps = {
         on: {
           ok() {
-            
+            _this.$refs.table.refresh(true)
           },
           cancel() {
             

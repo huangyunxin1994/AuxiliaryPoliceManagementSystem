@@ -368,7 +368,7 @@ export default {
         describes: "",
         allotmentDate: "",
         termValidity: "",
-        state:'',
+        state:1,
         type: 1,
         certificatesEquipmentHistory: "",
         cqName:'',//证件或装备类型

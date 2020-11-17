@@ -391,7 +391,7 @@ export default {
         describes: "",//描述
         allotmentDate: "",//配发日期
         termValidity: "",//有效期限
-        state:'',//1:发放 2：回收 3:逾期未回收
+        state:1,//1:发放 2：回收 3:逾期未回收
         type: 2,//1:证件 2：装备
         certificatesEquipmentHistory: "",//
         cqName:'',//证件或装备类型

@@ -2,35 +2,7 @@
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
 		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">培训记录</div>
-		<div class="table-page-search-wrapper">
-			<a-form layout="inline">
-				<a-row :gutter="48">
-					<a-col :md="8" :sm="24">
-						<a-form-item label="关键词搜索">
-							<a-input placeholder="请输入要查询的关键词" />
-						</a-form-item>
-					</a-col>
-					<a-col :md="(!advanced && 8) || 24" :sm="24">
-						<span
-							class="table-page-search-submitButtons"
-							:style="
-							(advanced && { float: 'right', overflow: 'hidden' }) || {}
-							"
-						>
-							<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-							<a-button
-								style="margin-left: 8px"
-								@click="() => (queryParam = {})"
-								>重置</a-button>
-								<a @click="toggleAdvanced" style="margin-left: 8px">
-									{{ advanced ? "收起" : "展开" }}
-									<a-icon :type="advanced ? 'up' : 'down'" />
-								</a>
-						</span>
-					</a-col>
-				</a-row>
-			</a-form>
-		</div>
+		
 		<s-table
 			ref="table"
 			rowKey="key"
@@ -134,7 +106,8 @@ export default {
         },
       ],
       queryParam:{
-        policeId:undefined
+        policeId:undefined,
+        search:undefined
       },
       loadCredData: (params) => {
         let param = Object.assign(params,this.queryParam)
@@ -178,6 +151,10 @@ export default {
     
     toggleAdvanced() {
       this.advanced = !this.advanced;
+    },
+    resetParam(){
+      this.queryParam.search = undefined
+      this.$refs.table.refresh()
     },
   },
   filters: {

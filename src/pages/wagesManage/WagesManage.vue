@@ -71,7 +71,7 @@
                 >
                 <a-button
                   style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
+                  @click="reset"
                   >重置</a-button
                 >
                 <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -370,6 +370,18 @@ export default {
       });
   },
   methods: {
+    //重置
+    reset(){
+      this.queryParam = {
+        month: moment(
+          new Date(new Date().setMonth(new Date().getMonth() - 1))
+        ).format("YYYY-MM"),
+        organizationId: "",
+        search: "",
+        state: "",
+      }
+      this.$refs.table.refresh(true)
+    },
     disabledDate(current) {
       return (
         current &&

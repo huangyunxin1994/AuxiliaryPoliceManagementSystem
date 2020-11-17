@@ -36,9 +36,7 @@
     </a-card>
     <a-card :bordered="false">
       <div class="position-and-level-title" :style="{ 'border-color': theme.color }">专业技术辅警资格信息</div>
-      <div class="table-operator" style="margin-bottom: 24px">
-        <a-button type="primary" icon="upload"  style="margin-right: 10px" @click="exportToExcel">导出</a-button>
-      </div>
+      
       <s-table
         ref="table"
         rowKey="key"

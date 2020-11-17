@@ -2,40 +2,12 @@
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
 		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">加班记录 </div>
-		<div class="table-page-search-wrapper">
-			<a-form layout="inline">
-				<a-row :gutter="48">
-					<a-col :md="8" :sm="24">
-						<a-form-item label="关键词搜索">
-							<a-input placeholder="请输入要查询的关键词" />
-						</a-form-item>
-					</a-col>
-					<a-col :md="(!advanced && 8) || 24" :sm="24">
-						<span
-							class="table-page-search-submitButtons"
-							:style="
-							(advanced && { float: 'right', overflow: 'hidden' }) || {}
-							"
-						>
-							<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-							<a-button
-								style="margin-left: 8px"
-								@click="() => (queryParam = {})"
-								>重置</a-button>
-								<a @click="toggleAdvanced" style="margin-left: 8px">
-									{{ advanced ? "收起" : "展开" }}
-									<a-icon :type="advanced ? 'up' : 'down'" />
-								</a>
-						</span>
-					</a-col>
-				</a-row>
-			</a-form>
-		</div>
+		
         <div class="table-operator" style="margin-bottom: 24px">
             <a-button v-if="loginType==1" type="primary" icon="clock-circle"   style="margin-right: 10px" @click="overtime">申请加班</a-button>
         </div>
 		<s-table
-			ref="table"
+			ref="overtimeTable"
 			rowKey="key"
 			:columns="credColumns"
 			:data="loadCredData"
@@ -55,43 +27,12 @@
     </a-card>
     <a-card :bordered="false">
       <div class="position-and-level-title" :style="{ 'border-color': theme.color }">请假记录</div>
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="关键词搜索">
-                <a-input placeholder="请输入要查询的关键词" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="
-                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
-                "
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)"
-                  >查询</a-button
-                >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
-                  >重置</a-button
-                >
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? "收起" : "展开" }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
+      
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button v-if="loginType==1" type="primary" icon="clock-circle"   style="margin-right: 10px" @click="vacate">申请请假</a-button>
       </div>
       <s-table
-        ref="table"
+        ref="vacateTable"
         rowKey="key"
         :columns="dutyColumns"
         :data="dutyData"
@@ -199,11 +140,13 @@ export default {
       ],
       overTimeParam:{
         userId:undefined,
-        type:1
+        type:1,
+        name:undefined,
       },
       leaveParam:{
         userId:undefined,
-        type:2
+        type:2,
+        name:undefined,
       },
       loadCredData: (params) => {
         let param = Object.assign(params,this.overTimeParam)
@@ -450,6 +393,9 @@ export default {
           })
         },
       };
+      let callback = () => {
+        this.$refs.overtimeTable.refresh(true)
+      };
       let option = {
         title: "加班申请",
         width: 500,
@@ -457,7 +403,7 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.modal(param, option, fromModel);
+      this.modal(param, option, fromModel,callback);
     },
     // 请假
     vacate(){
@@ -478,6 +424,9 @@ export default {
           })
         },
       };
+      let callback = () => {
+        this.$refs.vacateTable.refresh(true)
+      };
       let option = {
         title: "请假申请",
         width: 500,
@@ -485,14 +434,16 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.modal(param, option, fromModel);
+      this.modal(param, option, fromModel,callback);
     },
     // 弹窗
-    modal(obj, option, model) {
+    modal(obj, option, model,callback) {
       const defaultProps = {
         on: {
           ok() {
             // console.log('ok 回调')
+            // _this.$refs.table.refresh(true)
+            callback()
           },
           cancel() {
             // e.handleDestroy()
@@ -516,6 +467,16 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+    //重置
+    resetParam(data){
+      if(data == 'overtimeTable'){
+        this.overTimeParam.name = undefined
+        this.$refs.overtimeTable.refresh()
+      }else{
+        this.leaveParam.name = undefined
+        this.$refs.vacateTable.refresh()
+      }
+    }
   },
   filters: {
     statusFilter(status) {

@@ -15,7 +15,8 @@
                   style="width: 100%" 
                   ref="selectTree" 
                   :value="queryParam.organizationId" 
-                  @handleTreeChange="handleTreeChange"></select-tree>
+                  @handleTreeChange="handleTreeChange"
+                ></select-tree>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -139,7 +140,7 @@ const formTitle = [
   {
     label: "总学时(小时)",
     name: "classHour",
-    type: "input",
+    type: "number",
     placeholder: "请输入总学时"
   },
   {

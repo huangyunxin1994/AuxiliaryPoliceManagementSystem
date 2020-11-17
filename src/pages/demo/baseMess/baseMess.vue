@@ -58,7 +58,7 @@
                       <a-select default-value=""  v-model="queryParam.education">
                         <a-select-option value=""> 全部 </a-select-option>
                         <a-select-option value="研究生"> 研究生 </a-select-option>
-                        <a-select-option value="本科"> 本科 </a-select-option>
+                        <a-select-option value="本科"> 本科生 </a-select-option>
                         <a-select-option value="大专"> 大专 </a-select-option>
                       </a-select>
                     </a-form-item>
