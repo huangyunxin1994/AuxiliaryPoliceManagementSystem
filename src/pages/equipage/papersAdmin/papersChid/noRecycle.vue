@@ -101,7 +101,7 @@
       >
         <template slot="action" slot-scope="equState">
           <!-- {{equState}} -->
-          <a-badge :status="equState==1 ? 'processing' : (equState==2 ? 'success' : 'error')" :text="equState | statusFilter" />
+          <a-badge :status="equState == 1 ? 'processing' : ( equState == 2 ? 'success' : (equState == 3 ? 'error' : ''))" :text="equState | statusFilter" />
         </template>
       </s-table>
     </a-card>

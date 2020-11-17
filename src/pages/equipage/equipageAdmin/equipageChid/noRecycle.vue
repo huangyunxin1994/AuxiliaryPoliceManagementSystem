@@ -117,7 +117,7 @@
           <!-- {{equState}} -->
           <a-badge
             :status="
-              equState == 1 ? 'processing' : equState == 2 ? 'success' : 'error'
+              equState == 1 ? 'processing' : ( equState == 2 ? 'success' : (equState == 3 ? 'error' : ''))
             "
             :text="equState | statusFilter"
           />
