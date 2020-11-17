@@ -254,7 +254,7 @@ export default {
     };
   },
   created() {
-    this.queryParam.oid = this.user.organizationId;
+    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || "";
   },
   methods: {
     disabledDate(current) {

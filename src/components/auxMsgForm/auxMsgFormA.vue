@@ -945,7 +945,7 @@ export default {
     },
   },
   created() {
-    this.form.organizationId=this.user.organizationId
+    this.form.organizationId=this.user.isSystem !==1 && this.user.organizationId || ""
     this.queryPa.id = this.policeId || "";
     this.form.organizationName= this.user.organizationName
     this.$api.auxiliaryPoliceService
@@ -962,7 +962,7 @@ export default {
     //     });
     //   });
     this.$api.rankPostService
-      .getPostList({ organizationId: this.user.organizationId,state:1 })
+      .getPostList({ organizationId: this.user.isSystem !==1 && this.user.organizationId || "",state:1 })
       .then((res) => {
         this.baseMessTitle.find((i) => {
           if (i.title === "postId")
@@ -970,7 +970,7 @@ export default {
         });
       });
     this.$api.rankPostService
-      .getRankList({ organizationId: this.user.organizationId })
+      .getRankList({ organizationId: this.user.isSystem !==1 && this.user.organizationId || "" })
       .then((res) => {
         this.baseMessTitle.find((i) => {
           if (i.title === "rankId")

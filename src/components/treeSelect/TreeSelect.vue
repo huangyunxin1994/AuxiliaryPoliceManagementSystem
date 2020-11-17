@@ -41,6 +41,10 @@ export default {
     value:[String,Number],
     keyName:String,
     labelName:String,
+    defaultFun:{
+      type: Boolean,
+      default: true,
+    },
     allowClear: {
       type: Boolean,
       default: true,
@@ -75,16 +79,17 @@ export default {
     };
   },
   mounted() {
-    const oid = this.user.isSystem !==1 && this.user.organizationId || ""
-    this.$api.organizationService.getOrganization({organizationId:oid}).then((res)=>{
-        let tree = res.data.data.data
-        tree.forEach(item => {
-            item.scopedSlots = { title: "custom" }
+    if(this.defaultFun){
+       const oid = this.user.isSystem !==1 && this.user.organizationId || ""
+        this.$api.organizationService.getOrganization({organizationId:oid}).then((res)=>{
+            let tree = res.data.data.data
+            tree.forEach(item => {
+                item.scopedSlots = { title: "custom" }
+            })
+            this.tree = filterArray(res.data.data.data)
+            // this.$emit("getTreeData",this.filterTree)
         })
-        this.tree = filterArray(res.data.data.data)
-        // this.$emit("getTreeData",this.filterTree)
-    })
-    
+    }
   },
   watch:{
     value(){

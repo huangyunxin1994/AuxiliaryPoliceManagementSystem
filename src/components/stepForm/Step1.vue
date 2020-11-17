@@ -178,7 +178,7 @@ export default {
     };
   },
   created(){
-      this.queryParams.oid = this.user.organizationId
+      this.queryParams.oid = this.user.isSystem !==1 && this.user.organizationId || ""
   },
         
   methods: {

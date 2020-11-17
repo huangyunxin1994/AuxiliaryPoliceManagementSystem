@@ -207,7 +207,7 @@
 			oid:''
           },
           loadScheduleData: (params) => {
-			this.queryParam.oid = this.user.organizationId
+			this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
             let param = Object.assign(params,this.queryParam)
             return this.$api.personAdminService.getRankList(param).then((res)=>{
               res.data.data.list.map((i,k)=>{
@@ -495,7 +495,7 @@
         this.$refs.table.refresh(true);
       }
 			let option = {
-				title: '岗位调动',
+				title: '岗位组织调动',
 				width: 500,
 				centered: true,
 				maskClosable: false,

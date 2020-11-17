@@ -233,7 +233,7 @@ export default {
         oid: "",
       },
       loadScheduleData: (params) => {
-        this.queryParam.oid = this.user.organizationId;
+        this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || "";
         let param = Object.assign(params, this.queryParam);
         return this.$api.personAdminService
           .getProfessionData(param)

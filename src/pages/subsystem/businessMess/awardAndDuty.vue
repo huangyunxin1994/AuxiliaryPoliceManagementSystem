@@ -2,35 +2,6 @@
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
 		<div class="position-and-level-title" :style="{ 'border-color': theme.color }">奖励信息</div>
-		<div class="table-page-search-wrapper">
-			<a-form layout="inline">
-				<a-row :gutter="48">
-					<a-col :md="8" :sm="24">
-						<a-form-item label="关键词搜索">
-							<a-input placeholder="请输入要查询的关键词" />
-						</a-form-item>
-					</a-col>
-					<a-col :md="(!advanced && 8) || 24" :sm="24">
-						<span
-							class="table-page-search-submitButtons"
-							:style="
-							(advanced && { float: 'right', overflow: 'hidden' }) || {}
-							"
-						>
-							<a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-							<a-button
-								style="margin-left: 8px"
-								@click="() => (queryParam = {})"
-								>重置</a-button>
-								<a @click="toggleAdvanced" style="margin-left: 8px">
-									{{ advanced ? "收起" : "展开" }}
-									<a-icon :type="advanced ? 'up' : 'down'" />
-								</a>
-						</span>
-					</a-col>
-				</a-row>
-			</a-form>
-		</div>
 		<s-table
 			ref="table"
 			rowKey="key"
@@ -43,38 +14,6 @@
     </a-card>
     <a-card :bordered="false">
       <div class="position-and-level-title" :style="{ 'border-color': theme.color }">责任追究信息</div>
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="关键词搜索">
-                <a-input placeholder="请输入要查询的关键词" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="
-                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
-                "
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)"
-                  >查询</a-button
-                >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="() => (queryParam = {})"
-                  >重置</a-button
-                >
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? "收起" : "展开" }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
       <s-table
         ref="table"
         rowKey="key"
@@ -126,8 +65,8 @@ export default {
         },
         {
           title: "奖励批准机关",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "approvalAuthority",
+          key: "approvalAuthority",
           ellipsis: true,
           width: 150
         },
@@ -177,22 +116,22 @@ export default {
         },
         {
           title: "原因",
-          dataIndex: "name",
-          key: "name",
+          dataIndex: "reason",
+          key: "reason",
           ellipsis: true,
           width: 200,
         },
         {
           title: "批准日期",
-          dataIndex: "num",
-          key: "num",
+          dataIndex: "approvalDate",
+          key: "approvalDate",
           ellipsis: true,
           width: 100
         },
         {
           title: "批准单位",
-          dataIndex: "organizationName",
-          key: "organizationName",
+          dataIndex: "approvalAuthority",
+          key: "approvalAuthority",
           ellipsis: true,
           width: 150
         }

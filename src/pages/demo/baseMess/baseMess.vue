@@ -290,7 +290,7 @@ export default {
         organizationId:''
       },
       loadScheduleData: (params) => {
-        this.queryParam.oid = this.user.organizationId;
+        this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || "";
         let param = Object.assign(params, this.queryParam);
         return this.$api.auxiliaryPoliceService.getAuxiliaryPoliceData(param).then((res) => {
           res.data.data.list.map((i, k) => {
@@ -358,7 +358,7 @@ export default {
     // 获取职级列表
     getRankList(){
       let para = {
-        oid:this.user.organizationId,
+        oid:this.user.isSystem !==1 && this.user.organizationId || "",
         state:1
       }
       this.$api.rankPostService.getRankList(para).then((res)=>{

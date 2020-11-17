@@ -149,7 +149,7 @@ export default {
     };
   },
   created(){
-    this.queryParam.oid = this.user.organizationId
+    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
   },
   mounted(){
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL
@@ -164,7 +164,7 @@ export default {
       let formProps = {
         record:{
           publisher:this.user.name,
-          organizationId:this.user.organizationId,
+          organizationId:this.user.isSystem !==1 && this.user.organizationId || "",
           publisherId:this.user.id,
         },
         formTitle: formTitle,

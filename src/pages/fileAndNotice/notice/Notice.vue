@@ -199,7 +199,7 @@ export default {
     };
   },
   created(){
-    this.queryParam.oid = this.user.organizationId
+    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
   },
   mounted(){
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL
@@ -214,7 +214,7 @@ export default {
       let formProps = {
         record:{
           publisher:this.user.name,
-          organizationId:this.user.organizationId,
+          organizationId:this.user.isSystem !==1 && this.user.organizationId || "",
           publisherId:this.user.id,
         },
         formTitle: formTitle,
@@ -235,24 +235,6 @@ export default {
         okText: "提交",
       };
       this.openModal(TaskForm, formProps, modalProps);
-    },
-    del(row) {
-      this.$confirm({
-        title: "警告",
-        content: `真的要删除 ${row.name} 吗?`,
-        okText: "删除",
-        okType: "danger",
-        centered: true,
-        cancelText: "取消",
-        onOk() {
-          // 在这里调用删除接口
-          return new Promise((resolve, reject) => {
-            setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-          }).catch(() => console.log("Oops errors!"));
-        },
-        onCancel() {
-        },
-      });
     },
     /**
      * 表单弹窗

@@ -319,8 +319,6 @@ export default {
   },
   methods: {
     disabledDate(current) {
-      const obj = this.formTitle.find(i=>i.type==='rangePicker')
-      console.log(obj)
       return (
         current &&
         current <

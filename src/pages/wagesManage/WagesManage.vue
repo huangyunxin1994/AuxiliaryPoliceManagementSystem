@@ -42,10 +42,22 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <tree-select
-                  :value="queryParam.organ"
-                  @handleTreeChange="handleTreeChange"
-                ></tree-select>
+                <a-tree-select
+                v-model="queryParam.organ"
+                :treeData="treeSelect"
+                style="width: 100%"
+                :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                placeholder="请选择组织"
+                allow-clear
+                :replaceFields="{
+                  children: 'children',
+                  title: 'name',
+                  key: 'organizationId',
+                  value: 'organizationId',
+                }"
+                tree-default-expand-all
+              >
+              </a-tree-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -167,12 +179,11 @@
                 :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
                 placeholder="请选择组织"
                 allow-clear
-                multiple
                 :replaceFields="{
                   children: 'children',
                   title: 'name',
-                  key: 'id',
-                  value: 'id',
+                  key: 'organizationId',
+                  value: 'organizationId',
                 }"
                 tree-default-expand-all
               >
@@ -320,7 +331,7 @@ export default {
         state: "",
       },
       loadScheduleData: (params) => {
-        this.queryParam.oid = this.user.organizationId;
+        this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || "";
         let param = Object.assign(params, this.queryParam);
         return this.$api.salaryService.getSalary(param).then((res) => {
            res.data.data.list.map((i, k) => {
@@ -358,16 +369,7 @@ export default {
     };
   },
   mounted() {
-    const oid = this.user.isSystem !== 1 && this.user.organizationId || "";
-    this.$api.organizationService
-      .getOrganization({ organizationId: oid })
-      .then((res) => {
-        const data = JSON.parse(JSON.stringify(res.data.data.data));
-        this.tree = Object.assign([], res.data.data.data);
-        this.treeData = filterArray(data);
-        this.searchDisabledTree();
-        // this.$emit("getTreeData",this.filterTree)
-      });
+    this.getOrganForSalary()
   },
   methods: {
     //重置
@@ -381,6 +383,19 @@ export default {
         state: "",
       }
       this.$refs.table.refresh(true)
+    
+    },
+    getOrganForSalary(){
+      const oid = this.user.isSystem !== 1 && this.user.organizationId || "";
+      this.$api.organizationService
+        .getOrganForSalary({ month: this.queryParam.month, oid: oid })
+        .then((res) => {
+          const data = JSON.parse(JSON.stringify(res.data.data.list));
+          this.tree = Object.assign([], res.data.data.list);
+          this.treeData = filterArray(data);
+          this.searchDisabledTree();
+          // this.$emit("getTreeData",this.filterTree)
+        });
     },
     disabledDate(current) {
       return (
@@ -415,6 +430,7 @@ export default {
     //打开关闭日期选择器
     handleChange() {
       this.$refs.table.refresh(true);
+      this.getOrganForSalary()
       this.searchDisabledTree();
     },
     handleOpen(state) {
@@ -480,7 +496,7 @@ export default {
           _this.$api.salaryService
             .getSynchro({
               month: _this.queryParam.month,
-              organizationId: _this.user.organizationId,
+              organizationId: _this.user.isSystem !== 1 && _this.user.organizationId || "",
             })
             .then((res) => {
               if (res.data.code === 0) {
@@ -593,31 +609,32 @@ export default {
     searchDisabledTree() {
       this.$api.salaryService
         .getSalaryfileter({
-          id: this.user.organizationId,
+          id: this.user.isSystem !==1 && this.user.organizationName || "",
           month: this.queryParam.month,
         })
         .then((res) => {
           this.disableTree = res.data.data.list;
-          this.treeSelect = JSON.parse(JSON.stringify(this.tree));
-          this.treeSelect = this.treeFilter(this.treeSelect);
+          // this.treeSelect = JSON.parse(JSON.stringify(this.tree));
+          // console.log( this.treeSelect )
+          this.treeSelect = this.treeFilter(this.tree);
         });
     },
     treeFilter(data) {
       data.forEach((item) => {
         delete item.children;
         this.disableTree.forEach((i) => {
-          if (i === item.id) {
+          if (i === item.organizationId) {
             item.disabled = true;
           }
         });
       });
       var map = {};
       data.forEach(function (item) {
-        map[item.id] = item;
+        map[item.organizationId] = item;
       });
       var val = [];
       data.forEach(function (item) {
-        var parent = map[item.parentId] || map[item.code];
+        var parent = map[item.parentId];
         if (parent) {
           (parent.children || (parent.children = [])).push(item);
         } else {

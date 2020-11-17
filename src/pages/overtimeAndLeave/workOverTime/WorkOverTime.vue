@@ -404,7 +404,7 @@ export default {
   created() {
     this.addRecord.approval = this.user.name;
     this.addRecord.approvalId = this.user.id;
-    this.queryParam.oid = this.user.organizationId;
+    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || "";
   },
   methods: {
     handleAdd() {

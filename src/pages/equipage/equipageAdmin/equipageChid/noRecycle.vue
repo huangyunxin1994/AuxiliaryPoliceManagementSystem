@@ -41,7 +41,7 @@
             </template>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="状态">
+                <a-form-item label="状态选择">
                   <a-select default-value="" v-model="queryParam.state" @change="handleChange">
                     <a-select-option value=""> 全部 </a-select-option>
                     <a-select-option value="1">正常</a-select-option>
@@ -244,7 +244,7 @@ export default {
       loadScheduleData: (params) => {
         this.queryParam.recycler = this.user.name
         this.queryParam.recyclerId = this.user.id
-        this.queryParam.oid = this.user.organizationId
+        this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
         let param = Object.assign(params, this.queryParam);
         return this.$api.certEquipService.getCertEqup(param).then((res) => {
           res.data.data.list.map((i, k) => {
@@ -296,10 +296,7 @@ export default {
       issuedBy: this.user.name,
       issuedById: this.user.id,
     };
-    this.queryParam.oid = this.user.organizationId;
-  },
-  mounted(){
-    console.log(this.$children[1].$options.propsData.formTitle)
+    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
   },
   methods: {
     

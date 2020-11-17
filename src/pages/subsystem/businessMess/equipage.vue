@@ -36,7 +36,7 @@
           slot="state"
           slot-scope="state">
           <a-badge
-            :status="state == '1' ? 'processing' : 'error'"
+            :status="state == '1' ? 'processing' : ( state == '2' ? 'success' : ( state == '3' ? 'error' : 'error'))"
             :text="state | statusFilter"
           />
         </template>

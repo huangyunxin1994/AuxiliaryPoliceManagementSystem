@@ -225,7 +225,7 @@ export default {
       loadScheduleData: (params) => {
         this.queryParam.recycler = this.user.name
         this.queryParam.recyclerId = this.user.id
-        this.queryParam.oid = this.user.organizationId
+        this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
         let param = Object.assign(params, this.queryParam);
         return this.$api.certEquipService.getCertEqup(param).then((res) => {
           res.data.data.list.map((i, k) => {
@@ -276,7 +276,7 @@ export default {
       issuedBy:this.user.name,
       issuedById:this.user.id
     }
-    this.queryParam.oid = this.user.organizationId
+    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
   },
   methods: {
     // 配发日期

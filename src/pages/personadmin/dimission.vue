@@ -172,7 +172,7 @@
 			oid:''
           },
           loadScheduleData: (params) => {
-			this.queryParam.oid = this.user.organizationId
+			this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
             let param = Object.assign(params,this.queryParam)
             return this.$api.personAdminService.getDimissionList(param).then((res)=>{
               res.data.data.list.map((i,k)=>{

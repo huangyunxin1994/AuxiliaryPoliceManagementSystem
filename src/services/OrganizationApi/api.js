@@ -17,6 +17,7 @@ module.exports = {
   PUTRESET:`${BASE_URL}/organization/reset`,//重置密码
   DELETEUSER:`${BASE_URL}/organization/user`,//删除用户
   PUTPASSWORD:`${BASE_URL}/organization/user/s`,//修改密码
+  GETFORSALARY:`${BASE_URL}/organization/fromSalary`//从预生产工资条中读取组织
  
   
 }

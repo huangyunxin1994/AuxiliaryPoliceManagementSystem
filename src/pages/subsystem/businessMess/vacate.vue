@@ -383,8 +383,8 @@ export default {
           number:this.user.number,
           policeName:this.user.name,
           userId:this.user.id,
-          organizationId:this.user.organizationId,
-          organizationName:this.user.organizationName,
+          organizationId:this.user.isSystem !==1 && this.user.organizationId || "",
+          organizationName:this.user.isSystem !==1 && this.user.organizationName || "",
         },
         rules: this.overtimeRules,
         submitFun:(params) => {
@@ -415,8 +415,8 @@ export default {
           number:this.user.number,
           policeName:this.user.name,
           userId:this.user.id,
-          organizationId:this.user.organizationId,
-          organizationName:this.user.organizationName,
+          organizationId:this.user.isSystem !==1 && this.user.organizationId || "",
+          organizationName:this.user.isSystem !==1 && this.user.organizationName || "",
         },
         submitFun:(params) => {
           return this.$api.overTimeService.postByAux(params).then((res)=>{

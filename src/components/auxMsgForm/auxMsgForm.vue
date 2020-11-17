@@ -949,7 +949,7 @@ export default {
         this.form = Object.assign({}, this.form, res.data.data.list[0]);
       });
     this.$api.organizationService
-      .getOrganization({ organizationId: this.user.organizationId })
+      .getOrganization({ organizationId: this.user.isSystem !==1 && this.user.organizationId || "" })
       .then((res) => {
         this.baseMessTitle.find((i) => {
           if (i.title === "organizationId")
@@ -957,7 +957,7 @@ export default {
         });
       });
     this.$api.rankPostService
-      .getPostList({ organizationId: this.user.organizationId,state:1 })
+      .getPostList({ organizationId: this.user.isSystem !==1 && this.user.organizationId || "",state:1 })
       .then((res) => {
         this.baseMessTitle.find((i) => {
           if (i.title === "postId")
@@ -965,7 +965,7 @@ export default {
         });
       });
     this.$api.rankPostService
-      .getRankList({ organizationId: this.user.organizationId })
+      .getRankList({ organizationId: this.user.isSystem !==1 && this.user.organizationId || "" })
       .then((res) => {
         this.baseMessTitle.find((i) => {
           if (i.title === "rankId")

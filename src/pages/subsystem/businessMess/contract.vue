@@ -7,30 +7,23 @@
       >
         工资查询
       </div>
-      <a-form-model
-        :model="form"
-        :label-col="labelCol"
-        :wrapper-col="wrapperCol"
-        class="baseForm"
-      >
-        <a-row>
-          <a-col :md="24" :lg="12" :xl="12" :xxl="6">
-            <a-form-model-item
-              label="请选择查询月份"
-              :labelCol="{ xs: { span: 24 }, sm: { span: 8 } }"
-              :wrapperCol="{ xs: { span: 24 }, sm: { span: 16 } }"
-            >
-              <a-month-picker
+      <div class="table-page-search-wrapper">
+			<a-form layout="inline">
+				<a-row :gutter="48">
+					<a-col :md="8" :sm="24">
+						<a-form-item label="月份选择">
+							<a-month-picker
                 v-model="salaryParam.month"
                 :disabled-date="disabledDate"
                 placeholder="请选择月份"
                 @change="changeMonth"
                 valueFormat="YYYY-MM"
               />
-            </a-form-model-item>
-          </a-col>
-        </a-row>
-      </a-form-model>
+						</a-form-item>
+					</a-col>
+				</a-row>
+			</a-form>
+		</div>
       <s-table
         ref="wageTable"
         rowKey="key"

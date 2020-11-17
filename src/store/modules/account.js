@@ -73,7 +73,6 @@ export default {
       if (!state.autoLogin) {
         try {
           const autoLogin = localStorage.getItem(process.env.VUE_APP_AUTO_LOGIN)
-          console.log(autoLogin)
           state.autoLogin = JSON.parse(autoLogin)
         } catch (e) {
           console.error(e)

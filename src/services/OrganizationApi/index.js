@@ -1,4 +1,4 @@
-import {GETORGAN, POSTORGAN, PUTORGAN, DELETEORGAN, GETROLE, GETUSER, POSTUSER, PUTUSER, PUTRESET, DELETEUSER, PUTPASSWORD} from './api'
+import {GETORGAN, POSTORGAN, PUTORGAN, DELETEORGAN, GETROLE, GETUSER, POSTUSER, PUTUSER, PUTRESET, DELETEUSER, PUTPASSWORD, GETFORSALARY} from './api'
 import {request, METHOD} from '@/utils/request'
 import Qs from 'qs'
 const organizationService = {
@@ -106,6 +106,14 @@ const organizationService = {
      */
     async putPassword(params){
         return request(PUTPASSWORD, METHOD.PUT, Qs.stringify(params))
+    },
+    /**
+     * 从预生产工资条中读取组织
+     * @param params 
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    async getOrganForSalary(params){
+        return request(GETFORSALARY, METHOD.GET, params)
     },
 }
 

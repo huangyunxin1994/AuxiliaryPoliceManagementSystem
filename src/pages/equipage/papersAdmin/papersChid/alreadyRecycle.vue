@@ -154,7 +154,7 @@ export default {
           loadScheduleData:  (parameter) => {
               this.queryParam.recycler = this.user.name
               this.queryParam.recyclerId = this.user.id
-              this.queryParam.oid = this.user.organizationId
+              this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
               const requestParameters = Object.assign({}, parameter, this.queryParam);
               return this.$api.certEquipService
                 .getCertEqup(requestParameters)
@@ -174,7 +174,7 @@ export default {
         }
     },
     created(){
-    this.queryParam.oid = this.user.organizationId
+    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
   },
     methods:{
         // 配发日期

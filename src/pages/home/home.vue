@@ -265,7 +265,7 @@ export default {
     async getUserDbList(){
       let _this = this
       let query = {
-        oid:this.user.organizationId,
+        oid:this.user.isSystem !==1 && this.user.organizationId || "",
         id:this.user.id
       }
       const requestParameters = Object.assign({}, query);
@@ -331,7 +331,7 @@ export default {
     async getAfficheList(){
       let  _this = this
       let query = {
-        oid:this.user.organizationId,
+        oid:this.user.isSystem !==1 && this.user.organizationId || "",
         type:2
       }
       const requestParameters = Object.assign({}, query);
@@ -349,7 +349,7 @@ export default {
     },
     async getFile(){
       let query = {
-        oid:this.user.organizationId,
+        oid:this.user.isSystem !==1 && this.user.organizationId || "",
         type:2
       }
       const requestParameters = Object.assign({}, query);

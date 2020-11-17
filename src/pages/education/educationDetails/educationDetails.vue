@@ -245,7 +245,6 @@ export default {
         search:''
       },
       loadCredData: (params) => {
-        // this.queryParam.oid = this.user.organizationId
         this.queryParam.id = this.param.id
         let param = Object.assign(params,this.queryParam)
         return this.$api.trainService.getEducationDetails(param).then((res)=>{
