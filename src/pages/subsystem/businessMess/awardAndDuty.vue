@@ -79,8 +79,8 @@ export default {
         },
         {
           title: "荣誉称号授予单位",
-          dataIndex: "approvalAuthority",
-          key: "approvalAuthority",
+          dataIndex: "company",
+          key: "company",
           ellipsis: true,
           width: 150
         },
@@ -130,8 +130,8 @@ export default {
         },
         {
           title: "批准单位",
-          dataIndex: "approvalAuthority",
-          key: "approvalAuthority",
+          dataIndex: "company",
+          key: "company",
           ellipsis: true,
           width: 150
         }

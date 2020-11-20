@@ -56,7 +56,15 @@ const data = [
     title: "Ant Design Title 4",
   },
 ];
-
+const routerObj = {
+  1:"/contract/contract",//合同
+  4:"/wagesManage/wagesManage",//工资
+  6:"/cardequip/papersAdmin",//证件
+  7:"/cardequip/equipageAdmin",//装备
+  10:"/workandleave/workovertime",//加班
+  11:"/workandleave/askforleave",//请假
+  14:"/contract/contract"//合同
+}
 export default {
   props: {
     //图标
@@ -78,6 +86,7 @@ export default {
   },
   data() {
     return {
+      routerObj,
       visible:false,
       loading: true,
       data,
@@ -102,62 +111,13 @@ export default {
         this.text2 =  arr.join('<br>');
     },
     handleClick(item) {
-      
       if(item.type == 2){
         //待办
-        if(item.state == 1){//合同
-          this.$router.push({
-            path:"/contract/contract"
+        console.log(this.routerObj[item.state])
+        this.$router.push({
+            path:this.routerObj[item.state]
           });
-        }else if(item.state == 2){//职级
-          this.$router.push({
-            path:"/personAdmin/rank"
-          });
-        }else if(item.state == 3){//岗位
-          this.$router.push({
-            path:"/personAdmin/post"
-          });
-        }else if(item.state == 4){//工资
-          this.$router.push({
-            path:"/wagesManage/wagesManage"
-          });
-        }else if(item.state == 5){//培训
-          this.$router.push({
-            path:"/education/education"
-          });
-        }else if(item.state == 6){//证件
-          this.$router.push({
-            path:"/cardequip/papersAdmin"
-          });
-        }else if(item.state == 7){//装备
-          this.$router.push({
-            path:"/cardequip/equipageAdmin"
-          });
-        }else if(item.state == 8){//奖励
-          this.$router.push({
-            path:"/awardduty/award"
-          });
-        }else if(item.state == 9){//责任追究
-          this.$router.push({
-            path:"/awardduty/duty"
-          });
-        }else if(item.state == 10){//加班
-          this.$router.push({
-            path:"/workandleave/workovertime"
-          });
-        }else if(item.state == 11){//请假
-          this.$router.push({
-            path:"/workandleave/askforleave"
-          });
-        }else if(item.state == 12){//组织
-          this.$router.push({
-            path:"/setting/organ"
-          });
-        }else if(item.state == 13){//专业技术资格
-          this.$router.push({
-            path:"/personAdmin/profession"
-          });
-        }
+       
       }else if(item.type == 1){//通知
         const _this = this;
         this.$confirm({

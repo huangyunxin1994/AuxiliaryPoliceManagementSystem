@@ -190,7 +190,7 @@
             <template slot="status" slot-scope="status">
               <a-badge :status="status" :text="status | statusFilter" />
             </template>
-            <span slot="action" slot-scope="text, record">
+            <span slot="action" slot-scope="text, record" v-if="policeId">
               <a @click="editRecord(record, 'table1')">编辑</a>
               <a-divider type="vertical" />
               <a @click="del(record, 'table1')">删除</a>
@@ -224,7 +224,11 @@
             <template slot="status" slot-scope="status">
               <a-badge :status="status" :text="status | statusFilter" />
             </template>
-            <span slot="workaction" slot-scope="text, record">
+            
+             <span slot="orderly" slot-scope="orderly">
+              {{ orderly | orderlyFilter}}
+            </span>
+            <span slot="workaction" slot-scope="text, record" v-if="policeId">
               <a @click="editRecord(record, 'table2')">编辑</a>
               <a-divider type="vertical" />
               <a @click="del(record, 'table2')">删除</a>
@@ -258,6 +262,9 @@
             <template slot="status" slot-scope="status">
               <a-badge :status="status" :text="status | statusFilter" />
             </template>
+             <span slot="sex" slot-scope="sex">
+              {{ sex | sexFilter}}
+            </span>
             <span slot="familyaction" slot-scope="text, record" v-if="policeId">
               <a @click="editRecord(record, 'table3')">编辑</a>
               <a-divider type="vertical" />
@@ -338,10 +345,10 @@ const studyColumns = [
     width:150,
   },
   {
-    title: "操作",
+    title: "",
     scopedSlots: { customRender: "action" },
     width:150,
-  },
+  }
 ];
 
 const workColumns = [
@@ -378,6 +385,7 @@ const workColumns = [
   {
     title: "是否公务员",
     dataIndex: "orderly",
+    scopedSlots: { customRender: "orderly" },
     key: "orderly",
     width:80,
   },
@@ -395,10 +403,10 @@ const workColumns = [
     width:150,
   },
   {
-    title: "操作",
+    title: "",
     scopedSlots: { customRender: "workaction" },
     width:150,
-  },
+  }
 ];
 
 const familyColumns = [
@@ -417,6 +425,7 @@ const familyColumns = [
   {
     title: "性别",
     dataIndex: "sex",
+    scopedSlots: { customRender: "sex" },
     key: "sex",
     width:100,
   },
@@ -439,10 +448,10 @@ const familyColumns = [
     width:100,
   },
   {
-    title: "操作",
+    title: "",
     scopedSlots: { customRender: "familyaction" },
     width:150,
-  },
+  }
 ];
 
 const fromTitle = {
@@ -1253,6 +1262,14 @@ export default {
     this.getBaseRules();
     this.getAllTableTitle();
   },
+  filters:{
+    sexFilter(val){
+      return val===1 ? '男' : '女'
+    },
+    orderlyFilter(val){
+      return val===1 ? '是' : '否'
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

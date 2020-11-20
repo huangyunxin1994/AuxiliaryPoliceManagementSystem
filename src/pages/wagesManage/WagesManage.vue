@@ -43,21 +43,21 @@
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
                 <a-tree-select
-                v-model="queryParam.organ"
-                :treeData="treeSelect"
-                style="width: 100%"
-                :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                placeholder="请选择组织"
-                allow-clear
-                :replaceFields="{
-                  children: 'children',
-                  title: 'name',
-                  key: 'organizationId',
-                  value: 'organizationId',
-                }"
-                tree-default-expand-all
-              >
-              </a-tree-select>
+                  v-model="queryParam.organ"
+                  :treeData="treeSelect"
+                  style="width: 100%"
+                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                  placeholder="请选择组织"
+                  allow-clear
+                  :replaceFields="{
+                    children: 'children',
+                    title: 'name',
+                    key: 'organizationId',
+                    value: 'organizationId',
+                  }"
+                  tree-default-expand-all
+                >
+                </a-tree-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -81,9 +81,7 @@
                 <a-button type="primary" @click="$refs.table.refresh(true)"
                   >查询</a-button
                 >
-                <a-button
-                  style="margin-left: 8px"
-                  @click="reset"
+                <a-button style="margin-left: 8px" @click="reset"
                   >重置</a-button
                 >
                 <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -258,8 +256,10 @@ export default {
         callback();
       }
     };
-    
+
     return {
+      state: undefined,
+      firstCreateTime: undefined,
       form: {
         organizationId: [],
         fileList: [],
@@ -267,7 +267,9 @@ export default {
       loading: false,
       fileList: [],
       rules: {
-        organizationId:[{ required: true, validator: validateOrgan, trigger: "change" }],
+        organizationId: [
+          { required: true, validator: validateOrgan, trigger: "change" },
+        ],
         file: [{ required: true, validator: validateFile, trigger: "change" }],
       },
       tree: [],
@@ -331,36 +333,36 @@ export default {
         state: "",
       },
       loadScheduleData: (params) => {
-        this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || "";
+        this.queryParam.oid =
+          (this.user.isSystem !== 1 && this.user.organizationId) || "";
         let param = Object.assign(params, this.queryParam);
         return this.$api.salaryService.getSalary(param).then((res) => {
-           res.data.data.list.map((i, k) => {
-              i.key = k + 1;
-           })
+          res.data.data.list.map((i, k) => {
+            i.key = k + 1;
+          });
           if (res.data.data.list.length > 0) {
-            if(res.data.data.list[0].salaryContent){
+            if (res.data.data.list[0].salaryContent) {
               const salaryTitle = Object.assign(
-              {},
-              JSON.parse(res.data.data.list[0].salaryContent)
-            );
-            this.scheduleColumns.map(
-              (j) => salaryTitle[j.title] && delete salaryTitle[j.title]
-            );
-            res.data.data.list.map((i) => {
-              const salaryVal = JSON.parse(i.salaryContent);
-              i = Object.assign(i, salaryVal);
-            });
-            Object.keys(salaryTitle)
-              .reverse()
-              .map((i) => {
-                let params = {};
-                params.title = i;
-                params.dataIndex = i;
-                params.key = i;
-                this.scheduleColumns.splice(4, 0, params);
+                {},
+                JSON.parse(res.data.data.list[0].salaryContent)
+              );
+              this.scheduleColumns.map(
+                (j) => salaryTitle[j.title] && delete salaryTitle[j.title]
+              );
+              res.data.data.list.map((i) => {
+                const salaryVal = JSON.parse(i.salaryContent);
+                i = Object.assign(i, salaryVal);
               });
+              Object.keys(salaryTitle)
+                .reverse()
+                .map((i) => {
+                  let params = {};
+                  params.title = i;
+                  params.dataIndex = i;
+                  params.key = i;
+                  this.scheduleColumns.splice(4, 0, params);
+                });
             }
-            
           }
 
           return res.data;
@@ -369,11 +371,15 @@ export default {
     };
   },
   mounted() {
-    this.getOrganForSalary()
+    this.$api.salaryService.validateSalary().then((res) => {
+      this.state = res.data.data.type;
+      this.firstCreateTime = res.data.data.time;
+    });
+    this.getOrganForSalary();
   },
   methods: {
     //重置
-    reset(){
+    reset() {
       this.queryParam = {
         month: moment(
           new Date(new Date().setMonth(new Date().getMonth() - 1))
@@ -381,12 +387,11 @@ export default {
         organizationId: "",
         search: "",
         state: "",
-      }
-      this.$refs.table.refresh(true)
-    
+      };
+      this.$refs.table.refresh(true);
     },
-    getOrganForSalary(){
-      const oid = this.user.isSystem !== 1 && this.user.organizationId || "";
+    getOrganForSalary() {
+      const oid = (this.user.isSystem !== 1 && this.user.organizationId) || "";
       this.$api.organizationService
         .getOrganForSalary({ month: this.queryParam.month, oid: oid })
         .then((res) => {
@@ -398,15 +403,22 @@ export default {
         });
     },
     disabledDate(current) {
+      if(!this.firstCreateTime){
+        return true
+      }
       return (
         current &&
-        current >
+        (current >
           moment(
             new Date(new Date().setMonth(new Date().getMonth() - 1))
-          ).endOf("month")
+          ).endOf("month") ||
+          current < moment(new Date(this.firstCreateTime)).startOf("month"))
       );
     },
     getBadgeData(value) {
+      if(!this.firstCreateTime){
+         return null;
+      }
       let result = moment(value).format("YYYY-MM");
       let params = this.recordMonth.find((i) => i.recordMonth === result);
       if (params) {
@@ -414,9 +426,10 @@ export default {
       } else {
         if (
           value >
-          moment(
-            new Date(new Date().setMonth(new Date().getMonth() - 1))
-          ).endOf("month")
+            moment(
+              new Date(new Date().setMonth(new Date().getMonth() - 1))
+            ).endOf("month") ||
+          value < moment(new Date(this.firstCreateTime)).startOf("month")
         ) {
           return null;
         }
@@ -430,7 +443,7 @@ export default {
     //打开关闭日期选择器
     handleChange() {
       this.$refs.table.refresh(true);
-      this.getOrganForSalary()
+      this.getOrganForSalary();
       this.searchDisabledTree();
     },
     handleOpen(state) {
@@ -444,6 +457,7 @@ export default {
           };
           this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
             this.recordMonth = Object.assign([], res.data.data.list);
+            console.log(this.recordMonth);
           });
           const dateDom = document.querySelector(".ant-calendar-ym-select");
           dateDom.addEventListener("DOMCharacterDataModified", () => {
@@ -455,13 +469,13 @@ export default {
             };
             this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
               this.recordMonth = Object.assign([], res.data.data.list);
+              console.log(this.recordMonth);
             });
           });
         }, 0);
       }
     },
-    handlePanelChange() {
-    },
+    handlePanelChange() {},
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
@@ -470,20 +484,24 @@ export default {
       this.queryParam.organizationId = obj.val;
     },
     downloadExcel() {
-      this.$api.salaryService
-        .getFormwork({ month: this.queryParam.month })
-        .then((res) => {
-          if (!res.data.code) {
-            window.location.href = `${process.env.VUE_APP_API_BASE_URL}/salary/formwork?month=${this.queryParam.month}`;
-          } else {
-            this.$message.error(res.data.msg);
-          }
-        });
+      if (!this.state || this.state === 2) {
+        this.$message.warning("当前未创建工资模板，暂不可进行工资相关的操作");
+        return;
+      }
+      window.location.href = `${process.env.VUE_APP_API_BASE_URL}/salary/formwork?month=${this.queryParam.month}`;
     },
     uploadExcel() {
+      if (!this.state || this.state === 2) {
+        this.$message.warning("当前未创建工资模板，暂不可进行工资相关的操作");
+        return;
+      }
       this.visible = true;
     },
     synchroExcel() {
+      if (!this.state || this.state === 2) {
+        this.$message.warning("当前未创建工资模板，暂不可进行工资相关的操作");
+        return;
+      }
       const _this = this;
       this.$confirm({
         title: "提示",
@@ -496,7 +514,8 @@ export default {
           _this.$api.salaryService
             .getSynchro({
               month: _this.queryParam.month,
-              organizationId: _this.user.isSystem !== 1 && _this.user.organizationId || "",
+              organizationId:
+                (_this.user.isSystem !== 1 && _this.user.organizationId) || "",
             })
             .then((res) => {
               if (res.data.code === 0) {
@@ -511,6 +530,10 @@ export default {
       });
     },
     handleOk() {
+      if (!this.state || this.state === 2) {
+        this.$message.warning("当前未创建工资模板，暂不可进行工资相关的操作");
+        return;
+      }
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.loading = true;
@@ -521,7 +544,7 @@ export default {
             this.form = {
               organizationId: [],
               fileList: [],
-            }
+            };
             if (res.data.code === 0) {
               if (res.data.data.result === 0) {
                 this.$message.success(res.data.msg);
@@ -534,7 +557,7 @@ export default {
                 });
               } else if (res.data.data.result === 2) {
                 this.$error({
-                   width: 500,
+                  width: 500,
                   title: "含有所属组织不存在的警员编号",
                   content: (
                     <div>
@@ -568,7 +591,7 @@ export default {
                 });
               } else if (res.data.data.result === 4) {
                 this.$error({
-                   width: 500,
+                  width: 500,
                   title: "含有重复警员编号",
                   content: (
                     <div>
@@ -588,7 +611,7 @@ export default {
               this.form = {
                 organizationId: [],
                 fileList: [],
-              }
+              };
               this.$message.error(res.data.msg);
             }
           });
@@ -609,7 +632,7 @@ export default {
     searchDisabledTree() {
       this.$api.salaryService
         .getSalaryfileter({
-          id: this.user.isSystem !==1 && this.user.organizationName || "",
+          id: (this.user.isSystem !== 1 && this.user.organizationName) || "",
           month: this.queryParam.month,
         })
         .then((res) => {

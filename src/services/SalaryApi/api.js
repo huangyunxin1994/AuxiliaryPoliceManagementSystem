@@ -18,4 +18,6 @@ module.exports = {
   GETFORMWORK:`${BASE_URL}/salary/formwork`,//查看工资模板
   GETSYNCHRO:`${BASE_URL}/salary/synchro`,//同步工资条
   GETBYAUX:`${BASE_URL}/salary/personal`,//根据id查询工资条
+  GETSALARYSTATE:`${BASE_URL}/salary/mb`,//判断是否创建模板（1：是，2：否）
+  
 }

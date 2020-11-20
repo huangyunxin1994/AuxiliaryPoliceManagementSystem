@@ -272,58 +272,14 @@ export default {
        _this.$api.messageService
         .getDbList(requestParameters)
         .then((res) => {
-          let gzList = res.data.data.gzList //工资
-          let htList = res.data.data.htList //合同
-          let jbList = res.data.data.jbList //加班
-          let qjList = res.data.data.qjList //请假
-          let zbList = res.data.data.zbList //装备
-          let zjList = res.data.data.zjList //证件
-          let arr = []
-          // if(gzList.length > 0){
-          //   gzList[0].content = gzList[0].content + "(" + gzList.length + ")"
-          // }
-          // gzList.forEach((item)=>{
-          //   arr.push(item)
-          // })
-          if(gzList.length > 0){
-            gzList[0].content = gzList[0].content + "(" + gzList.length + ")"
-            arr.push(gzList[0])
-          }
-          // htList.forEach((item)=>{
-          //   arr.push(item)
-          // })
-          if(htList.length > 0){
-            htList[0].content = htList[0].content + "(" + htList.length + ")"
-            arr.push(htList[0])
-          }
-          // jbList.forEach((item)=>{
-          //   arr.push(item)
-          // })
-          if(jbList.length > 0){
-            jbList[0].content = jbList[0].content + "(" + jbList.length + ")"
-            arr.push(jbList[0])
-          }
-          // qjList.forEach((item)=>{
-          //   arr.push(item)
-          // })
-          if(qjList.length > 0){
-            qjList[0].content = qjList[0].content + "(" + qjList.length + ")"
-            arr.push(qjList[0])
-          }
-          // zbList.forEach((item)=>{
-          //   arr.push(item)
-          // })
-          if(zbList.length > 0){
-            zbList[0].content = zbList[0].content + "(" + zbList.length + ")"
-            arr.push(zbList[0])
-          }
-          // zjList.forEach((item)=>{
-          //   arr.push(item)
-          // })
-          if(zjList.length > 0){
-            zjList[0].content = zjList[0].content + "(" + zjList.length + ")"
-            arr.push(zjList[0])
-          }
+           let arr = []
+          res.data.data.list.map(i=>{
+            if(i.count>0){
+              i.content += "(" + i.count + ")"
+              i.type = 2
+              arr.push(i)
+            }
+          })
           this.businessList = arr
         });
     },

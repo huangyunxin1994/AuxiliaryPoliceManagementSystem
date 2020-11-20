@@ -15,7 +15,7 @@
         slot="state"
         slot-scope="state">
         <a-badge
-          :status="state == '1' ? 'processing' : 'error'"
+          :status="state == '1' ? 'processing' : ( state == '2' ? 'success' : ( state == '3' ? 'error' : 'error'))"
           :text="state | statusFilter"
         />
       </template>
@@ -130,14 +130,14 @@ export default {
           dataIndex: "allotmentDate",
           key: "allotmentDate",
           ellipsis: true,
-          width: 200,
+          width: 100,
         },
         {
           title: "有效日期",
           dataIndex: "termValidity",
           key: "termValidity",
           ellipsis: true,
-          width: 100
+          width: 150
         },
         {
           title: "状态",

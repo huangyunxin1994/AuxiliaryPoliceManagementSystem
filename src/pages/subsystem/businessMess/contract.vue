@@ -8,22 +8,22 @@
         工资查询
       </div>
       <div class="table-page-search-wrapper">
-			<a-form layout="inline">
-				<a-row :gutter="48">
-					<a-col :md="8" :sm="24">
-						<a-form-item label="月份选择">
-							<a-month-picker
-                v-model="salaryParam.month"
-                :disabled-date="disabledDate"
-                placeholder="请选择月份"
-                @change="changeMonth"
-                valueFormat="YYYY-MM"
-              />
-						</a-form-item>
-					</a-col>
-				</a-row>
-			</a-form>
-		</div>
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="月份选择">
+                <a-month-picker
+                  v-model="salaryParam.month"
+                  :disabled-date="disabledDate"
+                  placeholder="请选择月份"
+                  @change="changeMonth"
+                  valueFormat="YYYY-MM"
+                />
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
       <s-table
         ref="wageTable"
         rowKey="key"
@@ -51,7 +51,13 @@
         showPagination="auto"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">查看</a>
+          <a
+            name="file"
+            :download="record.name"
+            @click="downContract(record.id)"
+            :disabled="!record.electronicContract"
+            >查看</a
+          >
         </span>
       </s-table>
     </a-card>
@@ -100,8 +106,8 @@ export default {
       wageData: (params) => {
         let param = Object.assign(params, this.salaryParam);
         return this.$api.salaryService.getSalaryByAux(param).then((res) => {
-          res.data.data.currentPage=1
-          res.data.data.count=1
+          res.data.data.currentPage = 1;
+          res.data.data.count = 1;
           if (res.data.data.list.length > 0) {
             const salaryTitle = Object.assign(
               {},
@@ -204,11 +210,13 @@ export default {
       },
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
+      BASE_URL:"",
     };
   },
   created() {
     this.queryParam.id = this.policeId || this.user.id;
     this.salaryParam.number = this.policeNumber || this.user.number;
+    this.BASE_URL = process.env.VUE_APP_API_BASE_URL
   },
   methods: {
     disabledDate(current) {
@@ -229,15 +237,9 @@ export default {
     openModal(form, formProps, modalProps) {
       const defaultModalProps = {
         on: {
-          ok() {
-            
-          },
-          cancel() {
-            
-          },
-          close() {
-            
-          },
+          ok() {},
+          cancel() {},
+          close() {},
         },
       };
       formProps = Object.assign(formProps, defaultModalProps);
@@ -251,16 +253,23 @@ export default {
     },
 
     // 开始时间和结束时间
-    onChange() {
-    },
+    onChange() {},
 
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
-    handleEdit() {
-    },
+    handleEdit() {},
     changeMonth() {
       this.$refs.wageTable.refresh(true);
+    },
+    downContract(id) {
+      this.$api.contractService.downNotice({ contractId: id }).then((res) => {
+        if (!res.data.code) {
+          window.location.href = `${this.BASE_URL}/contract/downloadFile?contractId=${id}`;
+        } else {
+          this.$message.error(res.data.msg);
+        }
+      });
     },
   },
   filters: {

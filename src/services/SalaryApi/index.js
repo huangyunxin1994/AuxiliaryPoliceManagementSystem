@@ -1,4 +1,4 @@
-import {GETSALARY,POSTSALARY,GETSALARYFILETER,GETFORMWORK,GETSYNCHRO,GETBYAUX} from './api'
+import {GETSALARY,POSTSALARY,GETSALARYFILETER,GETFORMWORK,GETSYNCHRO,GETBYAUX,GETSALARYSTATE} from './api'
 import {request, METHOD} from '@/utils/request'
 
 // import Qs from 'qs'
@@ -64,6 +64,15 @@ const salaryService = {
     getSalaryByAux(params){
         return request(GETBYAUX, METHOD.GET, params)
     },
+    /**
+     * 判断是否创建模板（1：是，2：否）
+     * @param params 查询条件
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    validateSalary(params){
+        return request(GETSALARYSTATE, METHOD.GET, params)
+    },
+    
 }
 
 

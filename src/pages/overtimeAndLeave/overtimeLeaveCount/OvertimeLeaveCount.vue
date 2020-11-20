@@ -231,8 +231,8 @@ export default {
         },
         {
           title: "请假合计(小时)",
-          dataIndex: "",
-          key: "",
+          dataIndex: "total",
+          key: "total",
           width: 150,
         },
       ],
@@ -247,14 +247,29 @@ export default {
         return this.$api.overTimeService
           .statistics(requestParameters)
           .then((res) => {
-            res.data.data.list.map((i, k) => (i.key = k + 1));
+            res.data.data.list.map((i, k) => {
+              i.key = k + 1;
+              i.total =
+                i.One +
+                i.Two +
+                i.Three +
+                i.Four +
+                i.Five +
+                i.Six +
+                i.Seven +
+                i.Eight +
+                i.Nine +
+                i.Ten +
+                i.Eleven;
+            });
             return res.data;
           });
       },
     };
   },
   created() {
-    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || "";
+    this.queryParam.oid =
+      (this.user.isSystem !== 1 && this.user.organizationId) || "";
   },
   methods: {
     disabledDate(current) {
@@ -296,12 +311,9 @@ export default {
     openModal(form, formProps, modalProps) {
       const defaultModalProps = {
         on: {
-          ok() {
-          },
-          cancel() {
-          },
-          close() {
-          },
+          ok() {},
+          cancel() {},
+          close() {},
         },
       };
       formProps = Object.assign(formProps, defaultModalProps);
@@ -338,11 +350,25 @@ export default {
       requestParameters = Object.assign({}, requestParameters, this.queryParam);
       this.$api.overTimeService.statistics(requestParameters).then((res) => {
         if (res.data.data.list.length > 0) {
-          res.data.data.list.map((i, k) => (i.key = k + 1));
+          res.data.data.list.map((i, k) => {
+            i.key = k + 1;
+            i.total =
+              i.One +
+              i.Two +
+              i.Three +
+              i.Four +
+              i.Five +
+              i.Six +
+              i.Seven +
+              i.Eight +
+              i.Nine +
+              i.Ten +
+              i.Eleven;
+          });
           const ReqDetailList = res.data.data.list;
           const columns = this.scheduleColumns; // 表头数据
           const option = {};
-          option.fileName = "excel";
+          option.fileName = `${this.time1}加班请假统计表`;
           option.datas = [
             {
               sheetData: ReqDetailList.map((item) => {
