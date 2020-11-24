@@ -43,8 +43,8 @@
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
                 <a-tree-select
-                  v-model="queryParam.organ"
-                  :treeData="treeSelect"
+                  v-model="queryParam.organizationId"
+                  :treeData="treeData"
                   style="width: 100%"
                   :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
                   placeholder="请选择组织"
@@ -65,8 +65,9 @@
                 <a-form-item label="工资状态">
                   <a-select v-model="queryParam.state" style="width: 100%">
                     <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option value="1"> 已发放 </a-select-option>
-                    <a-select-option value="2"> 未发放 </a-select-option>
+                    <a-select-option value="1"> 已同步 </a-select-option>
+                    <a-select-option value="2"> 未同步 </a-select-option>
+                    <a-select-option value="3"> 未上传 </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -97,13 +98,15 @@
         <a-button type="primary" icon="download" @click="downloadExcel"
           >查看工资表模板</a-button
         >
-        <a-button
-          type="primary"
-          icon="upload"
-          style="margin-left: 8px"
-          @click="uploadExcel"
-          >上传工资表</a-button
-        >
+        <a-badge :dot="getBadgeDataForBtn()">
+          <a-button
+            type="primary"
+            icon="upload"
+            style="margin-left: 8px"
+            @click="uploadExcel"
+            >上传工资表</a-button
+          >
+        </a-badge>
         <a-button
           type="primary"
           icon="sync"
@@ -125,7 +128,15 @@
         </template>
         <template slot="state" slot-scope="state">
           <a-badge
-            :status="state == '1' ? 'success' : 'error'"
+            :status="
+              state == 1
+                ? 'success'
+                : state == 2
+                ? 'warning'
+                : state == 3
+                ? 'error'
+                : ''
+            "
             :text="state | statusFilter"
           />
         </template>
@@ -216,16 +227,16 @@ import moment from "moment";
 import STable from "@/components/Table_/";
 import treeSelect from "@/components/treeSelect/TreeSelect";
 function filterArray(data) {
-  data.forEach(function (item) {
+  data.forEach((item) => {
     delete item.children;
   });
   var map = {};
   data.forEach(function (item) {
-    map[item.id] = item;
+    map[item.organizationId] = item;
   });
   var val = [];
   data.forEach(function (item) {
-    var parent = map[item.parentId] || map[item.code];
+    var parent = map[item.parentId];
     if (parent) {
       (parent.children || (parent.children = [])).push(item);
     } else {
@@ -342,16 +353,17 @@ export default {
             i.key = k + 1;
           });
           if (res.data.data.list.length > 0) {
-            if (res.data.data.list[0].salaryContent) {
+            const result = res.data.data.list.find(i=>i.salaryContent)
+            if (result) {
               const salaryTitle = Object.assign(
                 {},
-                JSON.parse(res.data.data.list[0].salaryContent)
+                JSON.parse(result.salaryContent)
               );
               this.scheduleColumns.map(
                 (j) => salaryTitle[j.title] && delete salaryTitle[j.title]
               );
               res.data.data.list.map((i) => {
-                const salaryVal = JSON.parse(i.salaryContent);
+                const salaryVal = i.salaryContent&&JSON.parse(i.salaryContent)||{};
                 i = Object.assign(i, salaryVal);
               });
               Object.keys(salaryTitle)
@@ -372,10 +384,13 @@ export default {
     };
   },
   mounted() {
-    this.$api.salaryService.validateSalary().then((res) => {
-      this.state = res.data.data.type;
-      this.firstCreateTime = res.data.data.time;
-    });
+    this.$api.salaryService
+      .validateSalary({ month: this.queryParam.month })
+      .then((res) => {
+        this.state = res.data.data.type;
+        this.firstCreateTime = res.data.data.time;
+      });
+    this.getSalaryRecord();
     this.getOrganForSalary();
   },
   methods: {
@@ -391,6 +406,16 @@ export default {
       };
       this.$refs.table.refresh(true);
     },
+    getSalaryRecord() {
+      const year = this.queryParam.month.substring(0, 4);
+      const param = {
+        year: year,
+        organizationId: this.user.organizationId,
+      };
+      this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
+        this.recordMonth = Object.assign([], res.data.data.list);
+      });
+    },
     getOrganForSalary() {
       const oid = (this.user.isSystem !== 1 && this.user.organizationId) || "";
       this.$api.organizationService
@@ -404,8 +429,8 @@ export default {
         });
     },
     disabledDate(current) {
-      if(!this.firstCreateTime){
-        return true
+      if (!this.firstCreateTime) {
+        return true;
       }
       return (
         current &&
@@ -417,8 +442,8 @@ export default {
       );
     },
     getBadgeData(value) {
-      if(!this.firstCreateTime){
-         return null;
+      if (!this.firstCreateTime) {
+        return null;
       }
       let result = moment(value).format("YYYY-MM");
       let params = this.recordMonth.find((i) => i.recordMonth === result);
@@ -437,6 +462,28 @@ export default {
         return <a-icon type="info-circle" style="color:#f50" />;
       }
     },
+    getBadgeDataForBtn() {
+      if (!this.firstCreateTime) {
+        return null;
+      }
+      let result = moment(this.queryParam.month).format("YYYY-MM");
+      let params = this.recordMonth.find((i) => i.recordMonth === result);
+      if (params) {
+        return false;
+      } else {
+        if (
+          moment(this.queryParam.month) >
+            moment(
+              new Date(new Date().setMonth(new Date().getMonth() - 1))
+            ).endOf("month") ||
+          moment(this.queryParam.month) <
+            moment(new Date(this.firstCreateTime)).startOf("month")
+        ) {
+          return false;
+        }
+        return true;
+      }
+    },
     getMonthData(value) {
       return moment(value).format("M月");
     },
@@ -450,28 +497,9 @@ export default {
     handleOpen(state) {
       if (state) {
         setTimeout(() => {
-          const year = document
-            .querySelector(".ant-calendar-year-select")
-            .innerText.replace("年", "");
-          const param = {
-            year: year,
-          };
-          this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
-            this.recordMonth = Object.assign([], res.data.data.list);
-            console.log(this.recordMonth);
-          });
           const dateDom = document.querySelector(".ant-calendar-ym-select");
           dateDom.addEventListener("DOMCharacterDataModified", () => {
-            const year = document
-              .querySelector(".ant-calendar-year-select")
-              .innerText.replace("年", "");
-            const param = {
-              year: year,
-            };
-            this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
-              this.recordMonth = Object.assign([], res.data.data.list);
-              console.log(this.recordMonth);
-            });
+            this.getSalaryRecord();
           });
         }, 0);
       }
@@ -496,6 +524,7 @@ export default {
         this.$message.warning("暂不可进行工资相关的操作");
         return;
       }
+      this.searchDisabledTree();
       this.visible = true;
     },
     synchroExcel() {
@@ -535,6 +564,7 @@ export default {
         this.$message.warning("当前未创建工资模板，暂不可进行工资相关的操作");
         return;
       }
+
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.loading = true;
@@ -542,13 +572,40 @@ export default {
           this.$api.salaryService.postSalary(this.form).then((res) => {
             this.loading = false;
             this.visible = false;
-            this.form = {
-              organizationId: [],
-              fileList: [],
-            };
+            // this.form = {
+            //   organizationId: [],
+            //   fileList: [],
+            // };
             if (res.data.code === 0) {
               if (res.data.data.result === 0) {
+                const uploadTree = this.tree.filter(
+                  (item) =>
+                    !this.disableTree.some((ele) => ele === item.organizationId)
+                );
+                console.log(uploadTree);
+                const result =
+                  uploadTree.length === this.form.organizationId.length &&
+                  uploadTree.every((a) =>
+                    this.form.organizationId.some((b) => a.organizationId === b)
+                  ) &&
+                  this.form.organizationId.every((_b) =>
+                    uploadTree.some((_a) => _a.organizationId === _b)
+                  );
+                console.log(result);
+                if (result) {
+                  this.$api.salaryRecordService
+                    .postSalaryRecord({
+                      recordMonth: this.queryParam.month,
+                      organizationId: this.user.organizationId,
+                    })
+                    .then(() => {
+                      this.getSalaryRecord();
+                    });
+                } else {
+                  this.getSalaryRecord();
+                }
                 this.$message.success(res.data.msg);
+
                 this.$refs.table.refresh(true);
               } else if (res.data.data.result === 1) {
                 this.$error({
@@ -622,10 +679,11 @@ export default {
       });
     },
     handleCancel() {
-      this.form= {
+      this.form = {
         organizationId: [],
         fileList: [],
-      }
+      };
+      this.loading = false;
       this.visible = false;
     },
     // 上传文件
@@ -637,14 +695,15 @@ export default {
     searchDisabledTree() {
       this.$api.salaryService
         .getSalaryfileter({
-          id: (this.user.isSystem !== 1 && this.user.organizationName) || "",
+          id: (this.user.isSystem !== 1 && this.user.organizationId) || "",
           month: this.queryParam.month,
         })
         .then((res) => {
           this.disableTree = res.data.data.list;
-          // this.treeSelect = JSON.parse(JSON.stringify(this.tree));
-          // console.log( this.treeSelect )
-          this.treeSelect = this.treeFilter(this.tree);
+          const tree = JSON.parse(JSON.stringify(this.tree));
+          this.treeSelect = this.treeFilter(tree);
+          console.log(this.disableTree);
+          console.log(this.tree);
         });
     },
     treeFilter(data) {
@@ -677,6 +736,7 @@ export default {
       const statusMap = {
         1: "已同步",
         2: "未同步",
+        3: "未上传",
       };
       return statusMap[status];
     },
@@ -709,5 +769,9 @@ export default {
 /deep/ .ant-modal-confirm-content {
   margin-top: 38px;
   margin-left: 0;
+}
+/deep/ .ant-badge-dot {
+  width: 10px;
+  height: 10px;
 }
 </style>

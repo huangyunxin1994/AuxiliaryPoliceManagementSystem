@@ -165,7 +165,8 @@ export default {
       let  _this = this
       let query = {
         oid:this.user.isSystem !==1 && this.user.organizationId || "",
-        type:2
+        type:2,
+        expire:1
       }
       const requestParameters = Object.assign({}, query);
       _this.$api.documentAnnouncementService
