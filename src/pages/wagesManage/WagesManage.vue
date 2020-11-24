@@ -138,6 +138,7 @@
       v-model="visible"
       title="上传工资表"
       on-ok="handleOk"
+      @cancel="handleCancel"
       centered
       destroyOnClose
     >
@@ -173,10 +174,10 @@
                 v-model="form['organizationId']"
                 :treeData="treeSelect"
                 style="width: 100%"
-                :value="value"
                 :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
                 placeholder="请选择组织"
                 allow-clear
+                multiple
                 :replaceFields="{
                   children: 'children',
                   title: 'name',
@@ -485,21 +486,21 @@ export default {
     },
     downloadExcel() {
       if (!this.state || this.state === 2) {
-        this.$message.warning("当前未创建工资模板，暂不可进行工资相关的操作");
+        this.$message.warning("暂不可进行工资相关的操作");
         return;
       }
       window.location.href = `${process.env.VUE_APP_API_BASE_URL}/salary/formwork?month=${this.queryParam.month}`;
     },
     uploadExcel() {
       if (!this.state || this.state === 2) {
-        this.$message.warning("当前未创建工资模板，暂不可进行工资相关的操作");
+        this.$message.warning("暂不可进行工资相关的操作");
         return;
       }
       this.visible = true;
     },
     synchroExcel() {
       if (!this.state || this.state === 2) {
-        this.$message.warning("当前未创建工资模板，暂不可进行工资相关的操作");
+        this.$message.warning("暂不可进行工资相关的操作");
         return;
       }
       const _this = this;
@@ -621,6 +622,10 @@ export default {
       });
     },
     handleCancel() {
+      this.form= {
+        organizationId: [],
+        fileList: [],
+      }
       this.visible = false;
     },
     // 上传文件

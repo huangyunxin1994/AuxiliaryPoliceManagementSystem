@@ -3,8 +3,11 @@
     <a-card :bordered="false">
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
-        <a-button style="margin-left: 8px" icon="cloud-upload" @click="publish"
-        :disabled="disabled"
+        <a-button
+          style="margin-left: 8px"
+          icon="cloud-upload"
+          @click="publish"
+          :disabled="disabled"
           >发布</a-button
         >
         <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -23,7 +26,6 @@
         rowKey="key"
         :columns="scheduleColumns"
         :data="loadScheduleData"
-        :rowSelection="rowSelection"
         :scroll="{ y: 600, x: 800 }"
         showPagination="auto"
       >
@@ -31,9 +33,16 @@
           <a-badge :status="status" :text="status | statusFilter" />
         </template>
         <span slot="action" slot-scope="text, record">
-          <a type="line" @click="handleEdit(record)" :disabled="record.isSystem==1">编辑</a>
+          <a
+            type="line"
+            @click="handleEdit(record)"
+            :disabled="record.isSystem == 1"
+            >编辑</a
+          >
           <a-divider type="vertical" />
-          <a type="line" @click="del(record)" :disabled="record.isSystem==1">删除</a>
+          <a type="line" @click="del(record)" :disabled="record.isSystem == 1"
+            >删除</a
+          >
         </span>
       </s-table>
     </a-card>
@@ -68,7 +77,8 @@ export default {
   },
   data() {
     return {
-      disabled:false,
+      state: undefined,
+      disabled: false,
       scheduleColumns: [
         {
           title: "序号",
@@ -95,20 +105,26 @@ export default {
           width: 150,
         },
       ],
-      queryParam:{},
+      queryParam: {},
       loadScheduleData: (parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
-        return this.$api.wageItemsService.getWageItems(requestParameters)
-          .then(res => {
-            if(res.data.data.list.length <=2) this.disabled=true
-            else this.disabled=false
-            res.data.data.list.map((i,k)=>i.key=k+1)
-            return res.data
-          })
+        const requestParameters = Object.assign({}, parameter, this.queryParam);
+        return this.$api.wageItemsService
+          .getWageItems(requestParameters)
+          .then((res) => {
+            if (res.data.data.list.length <= 2) this.disabled = true;
+            else this.disabled = false;
+            res.data.data.list.map((i, k) => (i.key = k + 1));
+            return res.data;
+          });
       },
       selectedRowKeys: [],
       selectedRows: [],
     };
+  },
+  mounted() {
+    this.$api.salaryService.validateSalary().then((res) => {
+      this.state = res.data.data.type;
+    });
   },
   methods: {
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -121,10 +137,11 @@ export default {
         rules: wageRules,
 
         submitFun: (requestParameters) => {
-          return this.$api.wageItemsService.postWageItems(requestParameters)
-          .then(res => {
-            return res.data
-          })
+          return this.$api.wageItemsService
+            .postWageItems(requestParameters)
+            .then((res) => {
+              return res.data;
+            });
         },
       };
       let modalProps = {
@@ -142,10 +159,11 @@ export default {
         formTitle: wageTitle,
         rules: wageRules,
         submitFun: (requestParameters) => {
-          return this.$api.wageItemsService.putWageItems(requestParameters)
-          .then(res => {
-            return res.data
-          })
+          return this.$api.wageItemsService
+            .putWageItems(requestParameters)
+            .then((res) => {
+              return res.data;
+            });
         },
       };
       let modalProps = {
@@ -164,18 +182,14 @@ export default {
      * @param modalProps 弹窗配置项 Object
      */
     openModal(form, formProps, modalProps) {
-      const _this = this
+      const _this = this;
       const defaultModalProps = {
         on: {
           ok() {
-            _this.$refs.table.refresh(true)
+            _this.$refs.table.refresh(true);
           },
-          cancel() {
-            
-          },
-          close() {
-            
-          },
+          cancel() {},
+          close() {},
         },
       };
       formProps = Object.assign(formProps, defaultModalProps);
@@ -188,36 +202,43 @@ export default {
       );
     },
     publish() {
-      const _this = this
-      let content = []
-      _this.$refs.table.localDataSource.map(i => content.push(i.itemName))
+      const _this = this;
+      let content = [];
+      _this.$refs.table.localDataSource.map((i) => content.push(i.itemName));
       this.$confirm({
         title: "提示",
-        content: `更改内容将于下月1号生效，确定发布吗？`,
+        content: `更改内容将于下个月1号生效，确定发布吗？`,
         okText: "确认",
         okType: "primary",
         centered: true,
         cancelText: "取消",
         onOk() {
-           _this.$api.wageItemsService.releaseWageItems({content:content})
-          .then(res => {
-            if(res.data.code === 0){
-              _this.$message.success(res.data.msg)
-               _this.$refs.table.refresh()
-            }else{
-               _this.$message.error(res.data.msg)
-            }
-          }).catch(err=>{
-             _this.$message.error(err.data.msg)
-          })
+          _this.$api.wageItemsService
+            .releaseWageItems({ content: content })
+            .then((res) => {
+              if (res.data.code === 0) {
+                let content;
+                if (!_this.state || _this.state === 2)
+                  content = "工资模板创建成功，模板将于下一个自然月生效";
+                else content = "工资模板修改成功，模板将于下一个自然月生效";
+                _this.$success({
+                  title: "发布成功",
+                  content: content,
+                });
+                _this.$refs.table.refresh();
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
         },
-        onCancel() {
-         
-        },
+        onCancel() {},
       });
     },
     del(row) {
-      const _this = this
+      const _this = this;
       this.$confirm({
         title: "警告",
         content: `真的要删除 ${row.itemName} 工资项吗?`,
@@ -226,23 +247,22 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          
           // 在这里调用删除接口
-          _this.$api.wageItemsService.deleteWageItems({id:row.id})
-          .then(res => {
-            if(res.data.code === 0){
-              _this.$message.success(res.data.msg)
-               _this.$refs.table.refresh()
-            }else{
-               _this.$message.error(res.data.msg)
-            }
-          }).catch(err=>{
-             _this.$message.error(err.data.msg)
-          })
+          _this.$api.wageItemsService
+            .deleteWageItems({ id: row.id })
+            .then((res) => {
+              if (res.data.code === 0) {
+                _this.$message.success(res.data.msg);
+                _this.$refs.table.refresh();
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
         },
-        onCancel() {
-          
-        },
+        onCancel() {},
       });
     },
   },
@@ -257,12 +277,12 @@ export default {
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
-    rowSelection() {
-      return {
-        selectedRowKeys: this.selectedRowKeys,
-        onChange: this.onSelectChange,
-      };
-    },
+    // rowSelection() {
+    //   return {
+    //     selectedRowKeys: this.selectedRowKeys,
+    //     onChange: this.onSelectChange,
+    //   };
+    // },
   },
 };
 </script>
