@@ -146,10 +146,10 @@ const stepTitle = [{ title: "选择人员" }, { title: "填写装备信息" }];
 const rules = {
   type: [{ required: true, message: "请选择装备", trigger: "change" }],
   allotmentDate: [
-    { required: true, message: "请选择合同起始日期", trigger: "change" },
+    { required: true, message: "请选择配发日期", trigger: "change" },
   ],
   termValidity: [
-    { required: true, message: "请选择合同有效期限", trigger: "change" },
+    { required: true, message: "请选择有效期限", trigger: "change" },
   ],
 };
 export default {

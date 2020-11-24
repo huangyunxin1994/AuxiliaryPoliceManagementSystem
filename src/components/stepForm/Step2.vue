@@ -40,7 +40,7 @@
                           (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
                         "
                         type="date"
-                        :placeholder="item.placeholder"
+                        :placeholder="item.placeholder1"
                         style="width: 100%"
                       />
                     </a-form-model-item>
@@ -74,7 +74,7 @@
                           (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
                         "
                         type="date"
-                        :placeholder="item.placeholder"
+                        :placeholder="item.placeholder2"
                         style="width: 100%"
                       />
                     </a-form-model-item>
@@ -319,6 +319,8 @@ export default {
   },
   methods: {
     disabledDate(current) {
+      const obj = this.formTitle.find(i=>i.type==='rangePicker')
+      console.log(obj)
       return (
         current &&
         current <
@@ -330,9 +332,9 @@ export default {
     disabledDateStart(current) {
       const obj = this.formTitle.find(i=>i.type==='rangePicker')
       if(current&&this.form[obj.name2]){
-        return  current < moment(new Date()).endOf("day") || current > moment(new Date(this.form[obj.name2])).endOf("day")
+        return  current < moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf("day") || current > moment(new Date(this.form[obj.name2])).endOf("day")
       }else if(current){
-        return current < moment(new Date()).endOf("day")
+        return current < moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf("day")
       }else{
         return false
       }

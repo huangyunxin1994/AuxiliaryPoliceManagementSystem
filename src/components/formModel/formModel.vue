@@ -379,11 +379,11 @@ export default {
       const obj = this.formTitle.find((i) => i.type === "rangePicker");
       if (current && this.form[obj.name2]) {
         return (
-          current < moment(new Date()).endOf("day") ||
+          current < moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf("day") ||
           current > moment(new Date(this.form[obj.name2])).endOf("day")
         );
       } else if (current) {
-        return current < moment(new Date()).endOf("day");
+        return current < moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf("day")
       } else {
         return false;
       }

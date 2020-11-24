@@ -138,7 +138,7 @@
               width: 150
             },
             {
-              title: '离职离职原因',
+              title: '离职原因',
               dataIndex: 'reason',
               key: 'reason',
               width: 200
