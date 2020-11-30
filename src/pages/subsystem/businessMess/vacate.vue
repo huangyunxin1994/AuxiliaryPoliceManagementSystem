@@ -90,7 +90,7 @@ export default {
           dataIndex: "startTime",
           key: "startTime",
           ellipsis: true,
-          width: 100,
+          width: 150,
         },
         {
           title: "结束时间  ",
@@ -119,7 +119,7 @@ export default {
           ellipsis: true
         },
         {
-          title: "状态",
+          title: "审批状态",
           dataIndex: "approvalResults",
           key: "approvalResults",
           ellipsis: true,
@@ -169,7 +169,7 @@ export default {
           dataIndex: "startTime",
           key: "startTime",
           ellipsis: true,
-          width: 100,
+          width: 150,
         },
         {
           title: "结束时间  ",
@@ -189,7 +189,7 @@ export default {
           dataIndex: "state",
           key: "state",
           scopedSlots: { customRender: "state" },
-          width: 100,
+          width: 150,
         },
         {
           title: "请假原因",
@@ -202,7 +202,6 @@ export default {
           dataIndex: "approvalResults",
           key: "approvalResults",
           scopedSlots: { customRender: "approvalResults" },
-          width: 120
         },
         {
           title: "审批人",

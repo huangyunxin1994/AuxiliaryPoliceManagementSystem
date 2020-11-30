@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import formStep from "@/components/stepForm/StepForm";
@@ -238,6 +238,9 @@ export default {
       selectedRows: [],
     };
   },
+  created(){
+    this.queryParam.organizationId=this.user.isSystem !==1 && this.user.organizationId || ""
+  },
   methods: {
     handleAdd() {
       this.$refs.modal.visible = true;
@@ -344,7 +347,7 @@ export default {
     refreshTable() {
     this.queryParam= {
         search: "",
-        organizationId: "",
+        organizationId: this.user.isSystem !==1 && this.user.organizationId || "",
       }
       this.$refs.table.refresh(true);
     },
@@ -374,6 +377,7 @@ export default {
   },
   computed: {
     ...mapState("setting", ["pageMinHeight"]),
+    ...mapGetters("account", ['user']),
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,

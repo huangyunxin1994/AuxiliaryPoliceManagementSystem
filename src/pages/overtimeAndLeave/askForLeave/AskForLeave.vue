@@ -117,7 +117,10 @@
           />
         </template>
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">审批</a>
+          <a @click="handleCheck(record)" v-if="record.approvalResults===0">审批</a>
+          <a @click="handleEdit(record)"  v-else :disabled="record.approvalUpdate===1||record.approvalResults===2">修改</a>
+          <a-divider type="vertical" v-if="record.approvalUpdate!==1&&record.approvalResults!==2"/>
+          <a @click="handelDel(record)" v-if="record.approvalUpdate!==1&&record.approvalResults!==2">撤销</a>
         </span>
       </s-table>
     </a-card>
@@ -249,20 +252,125 @@ const formCheckTitle = [
   },
   {
     label: "请假类型",
-    name: "type",
+    name: "state",
     type: "text",
-    filter: {
-      1: "事假",
-      2: "病假",
-      3: "调休",
-      4: "年假",
-      5: "婚假",
-      6: "产假",
-      7: "陪产假",
-      8: "哺乳假",
-      9: "丧假",
-    },
     smCol: { span: 12 },
+    filter: {
+        1: "年假 ",
+        2: "产假 ",
+        3: "陪产假",
+        4: "婚假",
+        5: "例假",
+        6: "丧假",
+        7: "哺乳假",
+        8: "事假",
+        9: "调休",
+        10: "病假",
+        11: "其他",
+      }
+  },
+  {
+    label: "请假原因",
+    name: "reason",
+    type: "text",
+  },
+  {
+    label: "是否通过",
+    name: "approvalResults",
+    type: "radio",
+    select: [
+      { name: "是", value: 1 },
+      { name: "否", value: 2 },
+    ],
+  },
+  {
+    label: "审批备注",
+    name: "approvalRemake",
+    type: "textarea",
+  },
+  {
+    name: "approval",
+  },
+  {
+    name: "approvalId",
+  },
+];
+const formEditTitle = [
+  {
+    label: "姓名",
+    name: "policeName",
+    type: "text",
+    smCol: { span: 12 },
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 14 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 10 },
+    },
+  },
+
+  {
+    label: "警员编号",
+    name: "number",
+    type: "text",
+    smCol: { span: 12 },
+  },
+  {
+    label: "开始时间",
+    name: "startTime",
+    type: "text",
+    smCol: { span: 12 },
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 14 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 10 },
+    },
+  },
+  {
+    label: "结束时间",
+    name: "endTime",
+    type: "picker",
+    showTime: { format: 'HH:mm' },
+    valueFormat:'YYYY-MM-DD HH:mm',
+    smCol: { span: 12 },
+  },
+  {
+    label: "时长(小时)",
+    name: "duration",
+    type: "number",
+    smCol: { span: 12 },
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 14 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 10 },
+    },
+  },
+  {
+    label: "请假类型",
+    name: "state",
+    type: "text",
+    smCol: { span: 12 },
+    filter: {
+        1: "年假 ",
+        2: "产假 ",
+        3: "陪产假",
+        4: "婚假",
+        5: "例假",
+        6: "丧假",
+        7: "哺乳假",
+        8: "事假",
+        9: "调休",
+        10: "病假",
+        11: "其他",
+      }
   },
   {
     label: "请假原因",
@@ -300,6 +408,17 @@ const rules = {
     { required: true, message: "请选择请假结束时间", trigger: "change" },
   ],
   reason: [{ required: true, message: "请输入请假原因", trigger: "blur" }],
+  duration:[{ required: true, message: "请输入请假时长", trigger: "blur" }],
+};
+const checkRules = {
+  endTime: [
+    { required: true, message: "请选择请假结束时间", trigger: "change" },
+  ],
+  approvalRemake: [{ required: true, message: "请输入审批备注", trigger: "blur" }],
+  duration:[{ required: true, message: "请输入请假时长", trigger: "blur" }],
+  approvalResults:[
+    { required: true, message: "请选择是否通过", trigger: "change" },
+  ],
 };
 export default {
   name: "AskForLeave",
@@ -411,7 +530,7 @@ export default {
           table: "操作",
           dataIndex: "action",
           scopedSlots: { customRender: "action" },
-          width: 100,
+          width: 120,
         },
       ],
       //查询参数
@@ -446,15 +565,41 @@ export default {
       this.$refs.modal.visible = true;
     },
     //请假审批
-    handleEdit(record) {
+    handleCheck(record) {
       record.approval = this.user.name;
       record.approvalId = this.user.id;
       let formProps = {
         record: record,
         formTitle: formCheckTitle,
+        rules:checkRules,
         submitFun: (parameter) => {
           return this.$api.overTimeService
             .putOverTimeLeave(parameter)
+            .then((res) => {
+              return res.data;
+            });
+        },
+      };
+      let modalProps = {
+        title: "审批",
+        width: 700,
+        centered: true,
+        maskClosable: false,
+        okText: "提交",
+      };
+      this.openModal(TaskForm, formProps, modalProps);
+    },
+    //请假修改
+    handleEdit(record) {
+      record.approval = this.user.name;
+      record.approvalId = this.user.id;
+      let formProps = {
+        record: record,
+        formTitle: formEditTitle,
+        rules:checkRules,
+        submitFun: (parameter) => {
+          return this.$api.overTimeService
+            .putLeave(parameter)
             .then((res) => {
               return res.data;
             });
@@ -468,6 +613,34 @@ export default {
         okText: "提交",
       };
       this.openModal(TaskForm, formProps, modalProps);
+    },
+    //删除树节点
+    handelDel(params) {
+     const _this = this
+      this.$confirm({
+        title: "警告",
+        content: `真的要撤销请假吗?`,
+        okText: "撤销",
+        okType: "danger",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          _this.$api.overTimeService
+            .deleteLeave({id :params.id})
+            .then((res) => {
+              if (res.data.code == 0) {
+                _this.$message.success(res.data.msg);
+                _this.$refs.table.refresh(true);
+              } else {
+                _this.$message.error(res.data.msg);
+              }
+            })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
+        },
+        onCancel() {},
+      });
     },
     handleChange() {
     },
@@ -517,7 +690,7 @@ export default {
       this.queryParam.approvalResults = "";
       this.queryParam.state = "";
       this.$refs.table.refresh(true);
-    },
+    }
   },
   filters: {
     typeFilter(type) {

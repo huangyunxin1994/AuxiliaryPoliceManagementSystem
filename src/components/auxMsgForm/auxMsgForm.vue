@@ -113,7 +113,7 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="major.qualification" :disabled="!policeId" />
+                  <a-input v-model="major.qualification" disabled />
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
@@ -126,7 +126,7 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="major.approvalUnit" :disabled="!policeId" />
+                  <a-input v-model="major.approvalUnit" disabled />
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
@@ -139,14 +139,7 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-date-picker
-                    :disabled="!policeId"
-                    v-model="major.acquireDate"
-                    value-format="YYYY-MM-DD"
-                    type="date"
-                    placeholder="请选择时间"
-                    style="width: 100%"
-                  />
+                  <a-input v-model="major.acquireDate" disabled />
                 </a-form-model-item>
               </a-col>
             </a-row>
@@ -769,7 +762,7 @@ export default {
       major:{ 
         qualification:"",
         approvalUnit:"",
-        acquire_date:""
+        acquireDate:""
       },
       baseMessTitle: [
         {
@@ -956,30 +949,19 @@ export default {
       .getAuxiliaryPoliceData({ policeId: this.policeId || this.user.id || "undefined" })
       .then((res) => {
         this.form = Object.assign({}, this.form, res.data.data.list[0]);
-      });
-    this.$api.organizationService
-      .getOrganization({ organizationId: this.user.isSystem !==1 && this.user.organizationId || "" })
-      .then((res) => {
-        this.baseMessTitle.find((i) => {
-          if (i.title === "organizationId")
-            i.select = Object.assign([], res.data.data.data);
-        });
-      });
-    this.$api.rankPostService
-      .getPostList({ organizationId: this.user.isSystem !==1 && this.user.organizationId || "",state:1 })
-      .then((res) => {
-        this.baseMessTitle.find((i) => {
-          if (i.title === "postId")
-            i.select = Object.assign([], res.data.data.list);
-        });
-      });
-    this.$api.rankPostService
-      .getRankList({ organizationId: this.user.isSystem !==1 && this.user.organizationId || "" })
-      .then((res) => {
-        this.baseMessTitle.find((i) => {
-          if (i.title === "rankId")
-            i.select = Object.assign([], res.data.data.list);
-        });
+        console.log(this.form)
+        if(this.form.isMajor===1){
+          this.$api.personAdminService.getPersonProfession({ userId: this.policeId || this.user.id || "undefined" })
+          .then(res => {
+            this.major={ 
+              qualification:res.data.data.list[0].qualification,
+              approvalUnit:res.data.data.list[0].approvalUnit,
+              acquireDate:res.data.data.list[0].acquireDate
+            }
+          })
+          
+        }
+        
       });
   },
   methods: {

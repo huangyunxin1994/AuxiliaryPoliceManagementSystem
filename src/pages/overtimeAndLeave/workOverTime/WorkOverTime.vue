@@ -91,7 +91,7 @@
         <template slot="approvalResults" slot-scope="approvalResults">
           <a-badge
             :status="
-              approvalResults == '0'
+              approvalResults == 0
                 ? 'processing'
                 : approvalResults == 1
                 ? 'success'
@@ -101,7 +101,7 @@
           />
         </template>
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)">审批</a>
+          <a @click="handleEdit(record)" :disabled="record.approvalUpdate===1">审批</a>
         </span>
       </s-table>
     </a-card>
@@ -266,6 +266,7 @@ const rules = {
     { required: true, message: "请选择加班结束时间", trigger: "change" },
   ],
   reason: [{ required: true, message: "请输入加班原因", trigger: "blur" }],
+  duration:[{ required: true, message: "请输入加班时长", trigger: "blur" }],
 };
 export default {
   name: "AskForLeave",
@@ -413,6 +414,7 @@ export default {
     handleEdit(record) {
       record.approval = this.user.name;
       record.approvalId = this.user.id;
+      record.holiday = this.statusFilter(record.holiday)
       let formProps = {
         record: record,
         formTitle: formCheckTitle,
@@ -482,6 +484,13 @@ export default {
       this.queryParam.name = "";
       this.queryParam.approvalResults = "";
       this.$refs.table.refresh(true);
+    },
+    statusFilter(status) {
+      const statusMap = {
+        1: "是",
+        2: "否",
+      };
+      return statusMap[status];
     },
   },
   filters: {

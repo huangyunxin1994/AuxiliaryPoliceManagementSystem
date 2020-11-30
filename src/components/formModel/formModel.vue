@@ -77,7 +77,7 @@
             :prop="item.name"
             :ref="item.refName"
           >
-            <span v-if="item.type == 'text'">{{ form[item.name] }}</span>
+            <span v-if="item.type == 'text'">{{ item.filter && item.filter[form[item.name]] || form[item.name] }}</span>
             <!-- 输入框  -->
             <a-input
               v-model="form[item.name]"

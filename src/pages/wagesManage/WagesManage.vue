@@ -353,7 +353,7 @@ export default {
             i.key = k + 1;
           });
           if (res.data.data.list.length > 0) {
-            const result = res.data.data.list.find(i=>i.salaryContent)
+            const result = res.data.data.list.find((i) => i.salaryContent);
             if (result) {
               const salaryTitle = Object.assign(
                 {},
@@ -363,7 +363,8 @@ export default {
                 (j) => salaryTitle[j.title] && delete salaryTitle[j.title]
               );
               res.data.data.list.map((i) => {
-                const salaryVal = i.salaryContent&&JSON.parse(i.salaryContent)||{};
+                const salaryVal =
+                  (i.salaryContent && JSON.parse(i.salaryContent)) || {};
                 i = Object.assign(i, salaryVal);
               });
               Object.keys(salaryTitle)
@@ -447,6 +448,7 @@ export default {
       }
       let result = moment(value).format("YYYY-MM");
       let params = this.recordMonth.find((i) => i.recordMonth === result);
+      console.log(params);
       if (params) {
         return <a-icon type="check-circle" style="color:#87d068" />;
       } else {
@@ -578,32 +580,57 @@ export default {
             // };
             if (res.data.code === 0) {
               if (res.data.data.result === 0) {
-                const uploadTree = this.tree.filter(
-                  (item) =>
-                    !this.disableTree.some((ele) => ele === item.organizationId)
-                );
-                console.log(uploadTree);
-                const result =
-                  uploadTree.length === this.form.organizationId.length &&
-                  uploadTree.every((a) =>
-                    this.form.organizationId.some((b) => a.organizationId === b)
-                  ) &&
-                  this.form.organizationId.every((_b) =>
-                    uploadTree.some((_a) => _a.organizationId === _b)
-                  );
-                console.log(result);
-                if (result) {
-                  this.$api.salaryRecordService
-                    .postSalaryRecord({
-                      recordMonth: this.queryParam.month,
-                      organizationId: this.user.organizationId,
-                    })
-                    .then(() => {
-                      this.getSalaryRecord();
-                    });
-                } else {
-                  this.getSalaryRecord();
-                }
+                // const uploadTree = this.tree.filter(
+                //   (item) =>
+                //     !this.disableTree.some((ele) => ele === item.organizationId)
+                // );
+                // console.log(uploadTree);
+                // const result =
+                //   uploadTree.length === this.form.organizationId.length &&
+                //   uploadTree.every((a) =>
+                //     this.form.organizationId.some((b) => a.organizationId === b)
+                //   ) &&
+                //   this.form.organizationId.every((_b) =>
+                //     uploadTree.some((_a) => _a.organizationId === _b)
+                //   );
+                // console.log(result);
+                // if (result) {
+                //   this.$api.organizationService
+                //     .getOrganization({
+                //       organizationId:
+                //         (this.user.isSystem !== 1 &&
+                //           this.user.organizationId) ||
+                //         "",
+                //     })
+                //     .then((res) => {
+                //       if (res.data.code === 0) {
+                //         let arr = [];
+                //         res.data.data.data.map((i) => {
+                //           const param = {
+                //             recordMonth: this.queryParam.month,
+                //             organizationId: i.id,
+                //           };
+                //           arr.push(param);
+                //         });
+                //         this.$api.salaryRecordService
+                //           .postSalaryRecord(arr)
+                //           .then((res) => {
+                //             if(res.data.code === 0){
+                //               this.getSalaryRecord();
+                //             }else{
+                //               this.$message.error(res.data.msg)
+                //               this.getSalaryRecord();
+                //             }
+                //           });
+                //       }else{
+                //         this.$message.error(res.data.msg)
+                //         this.getSalaryRecord();
+                //       }
+                //     });
+                // } else {
+                //   this.getSalaryRecord();
+                // }
+                this.getSalaryRecord();
                 this.$message.success(res.data.msg);
 
                 this.$refs.table.refresh(true);

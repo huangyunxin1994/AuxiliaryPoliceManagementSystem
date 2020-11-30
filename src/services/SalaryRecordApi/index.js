@@ -1,7 +1,7 @@
 import {GETSALARYRECORD, POSTSALARYRECORD} from './api'
 import {request, METHOD} from '@/utils/request'
 
-import Qs from 'qs'
+// import Qs from 'qs'
 
 const salaryRecordService = {
     /**
@@ -18,7 +18,7 @@ const salaryRecordService = {
      * @returns {Promise<AxiosResponse<T>>}
      */
     postSalaryRecord(params) {
-        return request(POSTSALARYRECORD, METHOD.POST, Qs.stringify(params))
+        return request(POSTSALARYRECORD, METHOD.POST, params)
     },
 
     

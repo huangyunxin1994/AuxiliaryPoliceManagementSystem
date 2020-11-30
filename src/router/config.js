@@ -139,7 +139,7 @@ const options = {
             },
             {
               path: 'post',
-              name: '岗位管理',
+              name: '岗位与组织管理',
               meta: {
                 authority: {
                   role: 'rsgl'

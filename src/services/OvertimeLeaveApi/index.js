@@ -1,4 +1,4 @@
-import {GETDATA,PUTDATA,POSTBYAUX,POSTBYUSER,STATISTICS} from './api'
+import {GETDATA,PUTDATA,POSTBYAUX,POSTBYUSER,STATISTICS,DELETEDATA,PUTBYAUX} from './api'
 import {request, METHOD} from '@/utils/request'
 import Qs from "qs"
 
@@ -28,6 +28,14 @@ const overTimeService = {
         return request(POSTBYAUX, METHOD.POST, Qs.stringify(params))
     },
     /**
+     * 辅警申请请假或者加班
+     * @param params 
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    putLeave(params) {
+        return request(PUTBYAUX, METHOD.PUT, Qs.stringify(params))
+    },
+    /**
      * 管理员新增辅警请假或加班申请
      * @param params 
      * @returns {Promise<AxiosResponse<T>>}
@@ -55,6 +63,15 @@ const overTimeService = {
      */
     statistics(params) {
         return request(STATISTICS, METHOD.GET, params)
+    },
+    /**
+     * 删除请假
+     * @param params 
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    deleteLeave(params) {
+        const DELETEQUERY = DELETEDATA+params.id
+        return request(DELETEQUERY, METHOD.DELETE)
     },
 }
 

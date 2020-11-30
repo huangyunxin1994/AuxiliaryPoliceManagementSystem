@@ -80,7 +80,7 @@
               <a-badge :status="status" :text="status | statusFilter" />
             </template>
             <span slot="action" slot-scope="text, record">
-              <a @click="handleEdit(record)">编辑</a>
+              <a @click="handleEdit(record)">新增个人记录</a>
             </span>
           </s-table>
         </a-col>
@@ -169,63 +169,6 @@ export default {
           width: 100,
         },
       ],
-      diaColumns: [
-        {
-          title: "序号",
-          dataIndex: "key",
-          key: "key",
-          width: 60,
-        },
-        {
-          title: "职级",
-          dataIndex: "rank",
-          key: "rank",
-          width: 80,
-        },
-        {
-          title: "变动类型",
-          dataIndex: "status",
-          key: "status",
-          width: 100,
-          scopedSlots: { customRender: "status" },
-        },
-        {
-          title: "生效时间",
-          dataIndex: "date",
-          key: "date",
-          width: 100,
-        },
-        {
-          title: "变动原因",
-          dataIndex: "cause",
-          key: "cause",
-          width: 150,
-        },
-        {
-          title: "审批人",
-          dataIndex: "principal",
-          key: "principal",
-          width: 100,
-        },
-      ],
-      diaData: [
-        {
-          key: "1",
-          rank: "阿斯顿发",
-          status: "processing",
-          date: "2020-05-02",
-          cause: "作风优良",
-          principal: "张三",
-        },
-        {
-          key: "2",
-          rank: "阿斯顿发",
-          status: "error",
-          date: "2020-05-02",
-          cause: "贪污腐败",
-          principal: "张三",
-        },
-      ],
       queryParam: {
         name: "",
         time: "",
@@ -246,54 +189,6 @@ export default {
       },
       selectedRowKeys: [],
       selectedRows: [],
-      extension: [
-        {
-          label: "姓名",
-          name: "name",
-          type: "input",
-          refName: "name",
-          placeholder: "请输入姓名",
-          disabled: true,
-        },
-        {
-          label: "变动前职级",
-          name: "beforeRank",
-          type: "input",
-          refName: "beforeRank",
-          placeholder: "请输入变动前职级",
-          disabled: true,
-        },
-        {
-          label: "变动后职级",
-          name: "rank",
-          type: "select",
-          refName: "rank",
-          placeholder: "请选择变动后职级",
-        },
-        {
-          label: "变动原因",
-          name: "cause",
-          type: "input",
-          refName: "cause",
-          placeholder: "请输入变动原因",
-        },
-        {
-          label: "生效日期",
-          name: "date",
-          type: "picker",
-          refName: "date",
-          placeholder: "请选择变动原因",
-        },
-      ],
-      changeRankRules: {
-        rank: [
-          { required: true, message: "请选择变动后职级", trigger: "change" },
-        ],
-        cause: [{ required: true, message: "请输入变动原因", trigger: "blur" }],
-        date: [
-          { required: true, message: "请选择生效日期", trigger: "change" },
-        ],
-      },
       formTitle: [
         {
           label: "专业技术任职资格称号",

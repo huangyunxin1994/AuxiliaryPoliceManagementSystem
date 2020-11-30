@@ -100,7 +100,7 @@
             :scroll="{ y: 600, x: 800 }"
             :showPagination="true"
           >
-            <template slot="status" slot-scope="isExpire">
+            <template slot="isExpire" slot-scope="isExpire">
               <!-- <a-badge :status="isExpire" :text="isExpire | statusFilter" /> -->
               <a-badge
                 :status="isExpire == 1 ? 'warning' : ( isExpire == 2 ? 'processing' : ( isExpire == 3 ? 'error' : ''))"
@@ -261,7 +261,7 @@ export default {
           dataIndex: "isExpire",
           key: "isExpire",
           width: 120,
-          scopedSlots: { customRender: "status" },
+          scopedSlots: { customRender: "isExpire" },
         },
         {
           title: "操作",

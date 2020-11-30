@@ -78,10 +78,10 @@ export default {
       tree: []
     };
   },
-  async mounted() {
+  mounted() {
     if(this.defaultFun){
-       const oid = this.user.isSystem !==1 && this.user.organizationId || ""
-       await this.$api.organizationService.getOrganization({organizationId:oid}).then((res)=>{
+        const oid = this.user.isSystem !==1 && this.user.organizationId || ""
+        this.$api.organizationService.getOrganization({organizationId:oid}).then((res)=>{
             let tree = res.data.data.data
             tree.forEach(item => {
                 item.scopedSlots = { title: "custom" }
