@@ -243,21 +243,35 @@ export default {
         labelCol: { span: 4 },
         wrapperCol: { span: 14 },
         overtimeModel: [
+          // {
+          //   label: "开始时间",
+          //   name: "startTime",
+          //   type: "picker",
+          //   placeholder: "请选择开始时间",
+          //   valueFormat:'YYYY-MM-DD HH:mm',
+          //   showTime:{ format: 'HH:mm' }
+          // },
+          // {
+          //   label: "结束时间",
+          //   name: "endTime",
+          //   type: "picker",
+          //   placeholder: "请选择结束时间",
+          //   valueFormat:'YYYY-MM-DD HH:mm',
+          //   showTime:{ format: 'HH:mm' }
+          // },
           {
-            label: "开始时间",
-            name: "startTime",
-            type: "picker",
-            placeholder: "请选择开始时间",
+            type: "rangePicker",
+            disabledDate:true,
             valueFormat:'YYYY-MM-DD HH:mm',
-            showTime:{ format: 'HH:mm' }
-          },
-          {
-            label: "结束时间",
-            name: "endTime",
-            type: "picker",
-            placeholder: "请选择结束时间",
-            valueFormat:'YYYY-MM-DD HH:mm',
-            showTime:{ format: 'HH:mm' }
+            showTime:{ format: 'HH:mm' },
+            label1: "开始时间",
+            name1: "startTime",
+            refName1: "startTime",
+            placeholder1: "请选择开始时间",
+            label2: "结束时间",
+            name2: "endTime",
+            refName2: "endTime",
+            placeholder2: "请选择结束时间",
           },
           {
             label: "时长(小时)",

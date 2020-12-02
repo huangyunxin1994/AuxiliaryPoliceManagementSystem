@@ -74,21 +74,20 @@
         </a-form>
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
-        <span class="table-page-search-submitButtons">
-          <a-button type="primary" icon="plus" @click="newEqu"
+          <a-button type="primary" icon="plus" @click="newEqu" style="margin-right: 10px"
             >新增发放</a-button
           >
-        </span>
-        <a-dropdown v-if="selectedRowKeys.length > 0">
+          <a-button type="primary" icon="reload" @click="handleClick" :disabled="selectedRowKeys.length == 0"
+            >证件回收</a-button
+          >
+        <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay" @click="handleClick">
             <a-menu-item key="1"><a-icon type="reload" />证件回收</a-menu-item>
-            <!-- lock | unlock -->
-            <!-- <a-menu-item key="2"><a-icon type="delete" />删除</a-menu-item> -->
           </a-menu>
           <a-button style="margin-left: 8px">
             批量操作 <a-icon type="down" />
           </a-button>
-        </a-dropdown>
+        </a-dropdown> -->
       </div>
       <s-table
         ref="table"
@@ -214,7 +213,7 @@ export default {
         describes: "",
         allotmentDate: "",
         termValidity: "",
-        state:1,
+        state:"",
         type: 1,
         certificatesEquipmentHistory: "",
         cqName:'',//证件或装备类型
@@ -382,7 +381,7 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        1: "已发放",
+        1: "未到期",
         2: "已回收",
         3: "逾期未回收",
       };

@@ -86,9 +86,8 @@
               @click="extensionCon"
               style="margin-left: 8px"
               :disabled="selectedRows.length == 0"
-              v-if="selectedRowKeys.length > 0"
               icon="form"
-              >续约合同</a-button
+              >续约合同</a-button 
             >
           </div>
           <s-table

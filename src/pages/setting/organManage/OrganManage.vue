@@ -87,17 +87,20 @@
             </div>
           </a-row>
           <div class="table-operator" style="margin-bottom: 24px">
-            <a-button type="primary" icon="plus" @click="handleAdd"
+            <a-button type="primary" icon="plus" @click="handleAdd" style="margin-right: 10px"
               >新建</a-button
             >
-            <a-dropdown v-if="selectedRowKeys.length > 0">
+            <a-button type="primary" icon="delete" @click="handleDel" :disabled="selectedRowKeys.length == 0"
+              >删除</a-button
+            >
+            <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
               <a-menu slot="overlay" @click="handleDel">
                 <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
               </a-menu>
               <a-button style="margin-left: 8px">
                 批量操作 <a-icon type="down" />
               </a-button>
-            </a-dropdown>
+            </a-dropdown> -->
           </div>
           <s-table
             ref="table"

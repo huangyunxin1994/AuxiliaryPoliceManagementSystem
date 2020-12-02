@@ -31,7 +31,7 @@
             </template>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="回收日期">
+                <a-form-item label="有效日期">
                   <a-date-picker @change="onChange" style="width: 100%" />
                 </a-form-item>
               </a-col>
@@ -188,7 +188,7 @@ export default {
     handleChange(date, dateString) {
       this.queryParam.allotmentDate = dateString;
     },
-    // 回收日期
+    // 有效日期
     onChange(date, dateString) {
       this.queryParam.termValidity = dateString;
     },

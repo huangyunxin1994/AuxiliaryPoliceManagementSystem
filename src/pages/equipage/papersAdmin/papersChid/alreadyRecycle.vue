@@ -23,7 +23,7 @@
                 </template>
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
-                    <a-form-item label="回收日期">
+                    <a-form-item label="有效日期">
                       <a-date-picker @change="validity" style="width: 100%"/>
                     </a-form-item>
                   </a-col>
@@ -189,7 +189,7 @@ export default {
         allotmentDate(date, dateString) {
           this.queryParam.allotmentDate = dateString
         },
-        //到期日期
+        //有效日期
         validity(date, dateString) {
           this.queryParam.termValidity = dateString
         },

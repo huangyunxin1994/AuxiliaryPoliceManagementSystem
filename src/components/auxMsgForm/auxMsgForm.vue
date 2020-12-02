@@ -276,6 +276,7 @@ import excelBtn from "@/components/importExcel/importExcel";
 import fromModel from "@/components/formModel/formModel";
 import StandardTable from "@/components/Table_/";
 import { validatePhone } from "@/config/default/rules";
+import {daysDistance} from '@/utils/dateTime'
 const studyColumns = [
   {
     title: "毕业院校",
@@ -949,7 +950,8 @@ export default {
       .getAuxiliaryPoliceData({ policeId: this.policeId || this.user.id || "undefined" })
       .then((res) => {
         this.form = Object.assign({}, this.form, res.data.data.list[0]);
-        console.log(this.form)
+        let now = new Date()
+        this.form.seniority = daysDistance(now,this.form.entryTime,'year')
         if(this.form.isMajor===1){
           this.$api.personAdminService.getPersonProfession({ userId: this.policeId || this.user.id || "undefined" })
           .then(res => {

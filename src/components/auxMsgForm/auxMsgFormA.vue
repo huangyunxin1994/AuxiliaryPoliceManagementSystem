@@ -277,6 +277,7 @@ import fromModel from "@/components/formModel/formModel";
 import StandardTable from "@/components/Table_/";
 import treeSelect from "@/components/treeSelect/TreeSelect"
 import { validateIdNo, validatePhone } from "@/config/default/rules";
+import {daysDistance} from '@/utils/dateTime'
 const studyColumns = [
   {
     title: "毕业院校",
@@ -1212,6 +1213,8 @@ export default {
         UUserCard.substring(12, 14);
       // 获取性别
       let sex = "";
+
+      
       if (parseInt(UUserCard.substr(16, 1)) % 2 == 1) {
         //男
         sex = 1;
@@ -1242,10 +1245,13 @@ export default {
     },
     //获取入职时间，计算工龄
     getDate(date, dateString) {
-      let year = this.compareDate(dateString);
-      year = Math.ceil(year * 10) / 10;
-      //   this.form.seniority = year;
-      console.log(year);
+      // let year = this.compareDate(dateString);
+      // year = Math.ceil(year * 10) / 10;
+      
+      let now = new Date()
+      
+      console.log(daysDistance(now,dateString,'year'))
+      this.form.seniority = daysDistance(now,dateString,'year')
     },
     compareDate(date) {
       var d1 = new Date(date);

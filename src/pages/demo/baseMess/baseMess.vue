@@ -149,6 +149,7 @@ import { mapState, mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import AntTree from "@/components/tree_/Tree";
 import fromModel from "@/components/formModel/formModel";
+import {daysDistance} from '@/utils/dateTime'
 export default {
   name: "OrganManage",
   components: {
@@ -196,13 +197,13 @@ export default {
           width: 100,
         },
         {
-          title: "工龄",
+          title: "工龄(年)",
           dataIndex: "seniority",
           key: "seniority",
           width: 80,
         },
         {
-          title: "年龄",
+          title: "年龄(岁)",
           dataIndex: "age",
           key: "age",
           width: 80,
@@ -295,6 +296,8 @@ export default {
         return this.$api.auxiliaryPoliceService.getAuxiliaryPoliceData(param).then((res) => {
           res.data.data.list.map((i, k) => {
             i.key = k + 1;
+            let now = new Date()
+            i.seniority = daysDistance(now,i.entryTime,'year')
           });
           return res.data;
         });
