@@ -14,6 +14,13 @@
                 <tree-select :value="queryParam.organizationId" @handleTreeChange="handleTreeChange"></tree-select>
               </a-form-item>
             </a-col>
+            <template v-if="advanced">
+              <a-col :md="8" :sm="24">
+                <a-form-item label="批准日期" v-model="queryParam.approvalDate">
+                  <a-date-picker @change="validity" style="width: 100%"/>
+                </a-form-item>
+              </a-col>
+            </template>
             <a-col :md="(!advanced && 8) || 24" :sm="24">
               <span
                 class="table-page-search-submitButtons"
@@ -110,10 +117,10 @@ const formTitle = [
 const stepTitle = [{ title: "选择人员" }, { title: "填写责任信息" }];
 const rules = {
   reason: [{ required: true, message: "请输入原因", trigger: "blur" }],
-  startTime: [
+  approvalAuthority: [
     { required: true, message: "请输入批准机关", trigger: "blur" },
   ],
-  duration: [{ required: true, message: "请选择批准日期", trigger: "change" }],
+  approvalDate: [{ required: true, message: "请选择批准日期", trigger: "change" }],
 };
 export default {
   name: "AskForLeave",
@@ -134,7 +141,7 @@ export default {
         });
       },
       // 高级搜索 展开/关闭
-      advanced: false,
+      advanced: true,
       value: null,
       replaceFields: {
         children: "children",
@@ -209,7 +216,7 @@ export default {
     };
   },
   created(){
-    this.queryParam.organizationId=this.user.isSystem !==1 && this.user.organizationId || ""
+    this.queryParam.oid=this.user.isSystem !==1 && this.user.organizationId || ""
   },
   methods: {
     handleAdd() {
@@ -258,9 +265,14 @@ export default {
     refreshTable() {
     this.queryParam= {
         name: "",
-        organizationId: this.user.isSystem !==1 && this.user.organizationId || "",
+        organizationId:"",
+        oid: this.user.isSystem !==1 && this.user.organizationId || "",
       }
       this.$refs.table.refresh(true);
+    },
+    //授予日期
+    validity(date, dateString) {
+      this.queryParam.approvalDate = dateString
     },
   },
   filters: {

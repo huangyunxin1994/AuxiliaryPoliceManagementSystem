@@ -7,8 +7,6 @@
             v-model="queryParam.month"
             :valueFormat="monthFormat"
             :disabled-date="disabledDate"
-            @openChange="handleOpen"
-            :panelChange="handlePanelChange"
             @change="handleChange"
           >
             <h2 style="" :style="{ color: theme.color }">
@@ -21,9 +19,9 @@
             </h2>
             <template slot="monthCellContentRender" slot-scope="date">
               <div v-if="getMonthData(date)" style="width: 100%; height: 100%">
-                <a-badge :offset="[24, 0]" :count="getBadgeData(date)">
+                <!-- <a-badge :offset="[24, 0]" :count="getBadgeData(date)"> -->
                   {{ getMonthData(date) }}
-                </a-badge>
+                <!-- </a-badge> -->
               </div>
             </template>
           </a-month-picker>
@@ -288,10 +286,10 @@ export default {
       treeSelect: [],
       disableTree: [],
       treeData: [],
-      recordMonth: [],
+      // recordMonth: [],
       visible: false,
       salaryTitle: {},
-      advanced: false,
+      advanced: true,
       showFormat: "YYYY年MM月",
       monthFormat: "YYYY-MM",
       // 高级搜索 展开/关闭
@@ -384,14 +382,13 @@ export default {
       },
     };
   },
-  mounted() {
+  created() {
     this.$api.salaryService
       .validateSalary({ month: this.queryParam.month })
       .then((res) => {
         this.state = res.data.data.type;
         this.firstCreateTime = res.data.data.time;
       });
-    this.getSalaryRecord();
     this.getOrganForSalary();
   },
   methods: {
@@ -407,16 +404,17 @@ export default {
       };
       this.$refs.table.refresh(true);
     },
-    getSalaryRecord() {
-      const year = this.queryParam.month.substring(0, 4);
-      const param = {
-        year: year,
-        organizationId: this.user.organizationId,
-      };
-      this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
-        this.recordMonth = Object.assign([], res.data.data.list);
-      });
-    },
+    // getSalaryRecord() {
+    //   const year = this.queryParam.month.substring(0, 4);
+    //   const param = {
+    //     year: year,
+    //     organizationId: this.user.organizationId,
+    //   };
+    //   this.$api.salaryRecordService.getSalaryRecord(param).then((res) => {
+    //     this.recordMonth = Object.assign([], res.data.data.list);
+    //   });
+    // },
+    //获得预生成的组织与待上传工资人员
     getOrganForSalary() {
       const oid = (this.user.isSystem !== 1 && this.user.organizationId) || "";
       this.$api.organizationService
@@ -429,6 +427,7 @@ export default {
           // this.$emit("getTreeData",this.filterTree)
         });
     },
+    //日期面板禁用操作
     disabledDate(current) {
       if (!this.firstCreateTime) {
         return true;
@@ -442,35 +441,46 @@ export default {
           current < moment(new Date(this.firstCreateTime)).startOf("month"))
       );
     },
-    getBadgeData(value) {
-      if (!this.firstCreateTime) {
-        return null;
-      }
-      let result = moment(value).format("YYYY-MM");
-      let params = this.recordMonth.find((i) => i.recordMonth === result);
-      console.log(params);
-      if (params) {
-        return <a-icon type="check-circle" style="color:#87d068" />;
-      } else {
-        if (
-          value >
-            moment(
-              new Date(new Date().setMonth(new Date().getMonth() - 1))
-            ).endOf("month") ||
-          value < moment(new Date(this.firstCreateTime)).startOf("month")
-        ) {
-          return null;
-        }
-        return <a-icon type="info-circle" style="color:#f50" />;
-      }
-    },
+    /**
+     * 打开日期面板加载是否上传完成标识
+     * */ 
+    // getBadgeData(value) {
+    //   if (!this.firstCreateTime) {
+    //     return null;
+    //   }
+    //   let result = moment(value).format("YYYY-MM");
+    //   let params = this.recordMonth.find((i) => i.recordMonth === result);
+    //   console.log(params);
+    //   if (params) {
+    //     return <a-icon type="check-circle" style="color:#87d068" />;
+    //   } else {
+    //     if (
+    //       value >
+    //         moment(
+    //           new Date(new Date().setMonth(new Date().getMonth() - 1))
+    //         ).endOf("month") ||
+    //       value < moment(new Date(this.firstCreateTime)).startOf("month")
+    //     ) {
+    //       return null;
+    //     }
+    //     return <a-icon type="info-circle" style="color:#f50" />;
+    //   }
+    // },
+    //验证是否上传完成工资表，若没有按钮添加红点
     getBadgeDataForBtn() {
       if (!this.firstCreateTime) {
-        return null;
+        return false;
       }
-      let result = moment(this.queryParam.month).format("YYYY-MM");
-      let params = this.recordMonth.find((i) => i.recordMonth === result);
-      if (params) {
+      // let result = moment(this.queryParam.month).format("YYYY-MM");
+      const result =
+                  this.disableTree.length === this.tree.length &&
+                  this.disableTree.every((a) =>
+                    this.tree.some((b) => a === b.organizationId)
+                  ) &&
+                  this.tree.every((_b) =>
+                    this.disableTree.some((_a) => _a === _b.organizationId)
+                  );
+      if (result) {
         return false;
       } else {
         if (
@@ -486,6 +496,7 @@ export default {
         return true;
       }
     },
+    //转换日期格式
     getMonthData(value) {
       return moment(value).format("M月");
     },
@@ -496,17 +507,16 @@ export default {
       this.getOrganForSalary();
       this.searchDisabledTree();
     },
-    handleOpen(state) {
-      if (state) {
-        setTimeout(() => {
-          const dateDom = document.querySelector(".ant-calendar-ym-select");
-          dateDom.addEventListener("DOMCharacterDataModified", () => {
-            this.getSalaryRecord();
-          });
-        }, 0);
-      }
-    },
-    handlePanelChange() {},
+    // handleOpen(state) {
+    //   if (state) {
+    //     setTimeout(() => {
+    //       const dateDom = document.querySelector(".ant-calendar-ym-select");
+    //       dateDom.addEventListener("DOMCharacterDataModified", () => {
+    //         this.getSalaryRecord();
+    //       });
+    //     }, 0);
+    //   }
+    // },
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
@@ -514,6 +524,7 @@ export default {
     handleTreeChange(obj) {
       this.queryParam.organizationId = obj.val;
     },
+    //下载工资表操作
     downloadExcel() {
       if (!this.state || this.state === 2) {
         this.$message.warning("暂不可进行工资相关的操作");
@@ -521,6 +532,7 @@ export default {
       }
       window.location.href = `${process.env.VUE_APP_API_BASE_URL}/salary/formwork?month=${this.queryParam.month}`;
     },
+    //上传工资表操作
     uploadExcel() {
       if (!this.state || this.state === 2) {
         this.$message.warning("暂不可进行工资相关的操作");
@@ -529,6 +541,7 @@ export default {
       this.searchDisabledTree();
       this.visible = true;
     },
+    //同步工资表操作
     synchroExcel() {
       if (!this.state || this.state === 2) {
         this.$message.warning("暂不可进行工资相关的操作");
@@ -561,6 +574,7 @@ export default {
         onCancel() {},
       });
     },
+    //上传工资表确认操作
     handleOk() {
       if (!this.state || this.state === 2) {
         this.$message.warning("当前未创建工资模板，暂不可进行工资相关的操作");
@@ -574,10 +588,10 @@ export default {
           this.$api.salaryService.postSalary(this.form).then((res) => {
             this.loading = false;
             this.visible = false;
-            // this.form = {
-            //   organizationId: [],
-            //   fileList: [],
-            // };
+            this.form = {
+              organizationId: [],
+              fileList: [],
+            };
             if (res.data.code === 0) {
               if (res.data.data.result === 0) {
                 // const uploadTree = this.tree.filter(
@@ -630,7 +644,7 @@ export default {
                 // } else {
                 //   this.getSalaryRecord();
                 // }
-                this.getSalaryRecord();
+                this.searchDisabledTree();
                 this.$message.success(res.data.msg);
 
                 this.$refs.table.refresh(true);
@@ -705,6 +719,7 @@ export default {
         }
       });
     },
+    //取消上传工资表操作
     handleCancel() {
       this.form = {
         organizationId: [],
@@ -713,7 +728,7 @@ export default {
       this.loading = false;
       this.visible = false;
     },
-    // 上传文件
+    // 上传文件前钩子函数
     beforeUpload(file) {
       this.form.fileList = [...this.fileList, file];
       return false;
@@ -729,10 +744,9 @@ export default {
           this.disableTree = res.data.data.list;
           const tree = JSON.parse(JSON.stringify(this.tree));
           this.treeSelect = this.treeFilter(tree);
-          console.log(this.disableTree);
-          console.log(this.tree);
         });
     },
+    //数据转换树数据，并且禁用符合条件数据
     treeFilter(data) {
       data.forEach((item) => {
         delete item.children;

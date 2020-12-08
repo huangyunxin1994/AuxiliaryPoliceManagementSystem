@@ -28,7 +28,7 @@ export default {
   name: 'HeaderAvatar',
   computed: {
     ...mapState("setting", ['theme']),
-    ...mapGetters('account', ['user']),
+    ...mapGetters('account', ['user','loginType']),
   },
   methods: {
     changPass(){
@@ -59,7 +59,7 @@ export default {
         okText: "提交",
       };
       let fn;
-      if(this.user.isSystem===1){
+      if(this.loginType===2){
         fn = (parameter) => {
           return this.$api.organizationService
             .putPassword(parameter)

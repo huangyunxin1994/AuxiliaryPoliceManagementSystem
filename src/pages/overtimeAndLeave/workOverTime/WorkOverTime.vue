@@ -101,7 +101,7 @@
           />
         </template>
         <span slot="action" slot-scope="text, record">
-          <a @click="handleEdit(record)" :disabled="record.approvalUpdate===1">审批</a>
+          <a @click="handleEdit(record)" :disabled="record.approvalUpdate===1">{{record.approvalResults===0 ? '审批' : '修改'}}</a>
         </span>
       </s-table>
     </a-card>
@@ -126,20 +126,21 @@ import TaskForm from "@/components/formModel/formModel";
 import treeSelect from "@/components/treeSelect/TreeSelect";
 const formTitle = [
   {
-    label: "开始时间",
-    name: "startTime",
-    type: "picker",
-    valueFormat:'YYYY-MM-DD HH:mm',
-    placeholder: "请选择加班开始时间",
-    showTime:{ format: 'HH:mm' }
-  },
-  {
-    label: "结束时间",
-    name: "endTime",
-    type: "picker",
-    showTime: { format: 'HH:mm' },
-    valueFormat:'YYYY-MM-DD HH:mm',
-    placeholder: "请选择加班结束时间",
+    label1: "开始时间",
+    name1: "startTime",
+    type: "rangePicker",
+    valueFormat1:'YYYY-MM-DD HH:mm',
+    placeholder1: "请选择加班开始时间",
+    disabledDate:true,
+    fomate:'minutes',
+    funOpt:2,
+    showTime1:{ format: 'HH:mm' },
+    label2: "结束时间",
+    name2: "endTime",
+    showTime2: { format: 'HH:mm' },
+    valueFormat2:'YYYY-MM-DD HH:mm',
+    disabledDate2:true,
+    placeholder2: "请选择加班结束时间",
   },
   {
     label: "时长(小时)",
@@ -288,7 +289,7 @@ export default {
         });
       },
       // 高级搜索 展开/关闭
-      advanced: false,
+      advanced: true,
       value: null,
       replaceFields: {
         children: "children",
@@ -326,15 +327,13 @@ export default {
           title: "开始时间",
           dataIndex: "startTime",
           key: "startTime",
-          width: 150,
-          ellipsis: true,
+          width: 180,
         },
         {
           title: "结束时间",
           dataIndex: "endTime",
           key: "endTime",
-          width: 150,
-          ellipsis: true,
+          width: 180,
         },
         {
           title: "时长(小时)",

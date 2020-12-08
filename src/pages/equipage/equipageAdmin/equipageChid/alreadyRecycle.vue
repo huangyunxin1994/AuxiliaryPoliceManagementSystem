@@ -5,7 +5,7 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="关键词搜索">
+              <a-form-item label="模糊查询">
                 <a-input
                   v-model="queryParam.describes"
                   placeholder="请输入要查询的关键词"
@@ -89,7 +89,7 @@ export default {
       openKeys: ["key-01"],
       loading: false,
       value: null,
-      advanced: false,
+      advanced: true,
       scheduleColumns: [
         {
           title: "序号",

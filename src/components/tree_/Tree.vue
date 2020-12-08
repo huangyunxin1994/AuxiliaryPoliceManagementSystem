@@ -101,8 +101,8 @@ export default {
             dataSource:[]
         };
     },
-    mounted(){
-        this.loadTree()
+    async mounted(){
+       await this.loadTree()
         
     },
     methods: {

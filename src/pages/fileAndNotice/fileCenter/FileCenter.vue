@@ -11,6 +11,11 @@
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
+              <a-form-item label="组织选择">
+                <select-tree ref="selectTree" :value="queryParam.organizationId" style="width: 100%" @handleTreeChange="handleTreeChange"></select-tree>
+              </a-form-item>
+            </a-col>
+              <a-col :md="8" :sm="24">
                 <span class="table-page-search-submitButtons">
                   <a-button type="primary" @click="$refs.table.refresh(true)"
                     >查询</a-button
@@ -62,6 +67,7 @@
 import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
+import selectTree from "@/components/treeSelect/TreeSelect";
 const formTitle = [
   {
     label: "上传文件",
@@ -83,6 +89,9 @@ const formTitle = [
     name:"organizationId"
   },
   {
+    name:"organizationName"
+  },
+  {
     name:"publisherId"
   }
 ];
@@ -95,6 +104,7 @@ export default {
   components: {
     STable,
     TaskForm,
+    selectTree
   },
   data() {
     return {
@@ -120,6 +130,13 @@ export default {
           ellipsis: true,
         },
         {
+          title: "所属组织",
+          dataIndex: "organizationName",
+          key: "organizationName",
+          ellipsis: true,
+          width: 150,
+        },
+        {
           title: "发布者",
           dataIndex: "publisher",
           key: "publisher",
@@ -134,6 +151,7 @@ export default {
       ],
       queryParam:{
         name:"",
+        organizationId:"",
         oid:""
       },
       loadData: (parameter) => {
@@ -166,6 +184,7 @@ export default {
         record:{
           publisher:this.user.name,
           organizationId:this.user.isSystem !==1 && this.user.organizationId || "",
+          organizationName:this.user.isSystem !==1 && this.user.organizationName || "",
           publisherId:this.user.id,
         },
         formTitle: formTitle,
@@ -219,7 +238,8 @@ export default {
     },
     reloadData(){
       this.queryParam={
-        name:""
+        name:"",
+        oid : this.user.isSystem !==1 && this.user.organizationId || ""
       }
       this.$refs.table.refresh(true)
     },
@@ -255,7 +275,11 @@ export default {
         },
         onCancel() {},
       });
-    }
+    },
+    //树选择回调
+    handleTreeChange(obj){
+      this.queryParam.organizationId = obj.val
+    },
     
   },
   filters: {

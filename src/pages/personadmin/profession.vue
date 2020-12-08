@@ -19,7 +19,7 @@
             <a-form layout="inline">
               <a-row :gutter="48">
                 <a-col :md="8" :sm="24">
-                  <a-form-item label="关键词搜索">
+                  <a-form-item label="模糊查询">
                     <a-input
                       placeholder="请输入要查询的关键词"
                       v-model="queryParam.name"
@@ -28,7 +28,7 @@
                 </a-col>
                 <a-col :md="8" :sm="24">
                   <a-form-item label="获得日期">
-                    <a-date-picker @change="onChange" />
+                    <a-date-picker @change="onChange" style="width:100%" />
                   </a-form-item>
                 </a-col>
                 <a-col :md="(!advanced && 8) || 24" :sm="24">
@@ -118,7 +118,7 @@ export default {
       openKeys: ["key-01"],
       loading: false,
       // 高级搜索 展开/关闭
-      advanced: false,
+      advanced: true,
       scheduleColumns: [
         {
           title: "序号",

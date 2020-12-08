@@ -19,7 +19,7 @@
             <a-form layout="inline">
               <a-row :gutter="48">
                 <a-col :md="8" :sm="24">
-                  <a-form-item label="关键词搜索">
+                  <a-form-item label="模糊查询">
                     <a-input
                       placeholder="请输入要查询的关键词"
                       v-model="queryParam.search"
@@ -149,11 +149,17 @@ const formTitle = [
     disabled: true,
   },
   {
-    label: "合同起始日期",
-    name: "startDate",
-    type: "picker",
-    refName: "startDate",
-    placeholder: "请选择工作起始日期",
+    label1: "合同起始日期",
+    name1: "startDate",
+    type: "rangePicker",
+    valueFormat1:'YYYY-MM-DD',
+    placeholder1: "请选择合同起始日期",
+    disabledDate:true,
+    label2: "试用结束日期",
+    name2: "probation",
+    valueFormat2:'YYYY-MM-DD',
+    disabledDate2:true,
+    placeholder2: "请选择试用结束日期",
   },
   {
     label: "合同期限(月)",
@@ -161,13 +167,6 @@ const formTitle = [
     type: "number",
     refName: "contractPeriod",
     placeholder: "请输入合同期限",
-  },
-  {
-    label: "试用结束日期",
-    name: "probation",
-    type: "picker",
-    refName: "probation",
-    placeholder: "请选择试用结束日期",
   },
   {
     label: "合同附件",
@@ -214,7 +213,7 @@ export default {
       },
       // 高级搜索 展开/关闭
       isSignUp:undefined,
-      advanced: false,
+      advanced: true,
       openKeys: ["key-01"],
       tree: [],
       loading: false,

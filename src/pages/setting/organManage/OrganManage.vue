@@ -191,7 +191,7 @@ export default {
   },
   data() {
     return {
-      advanced: false,
+      advanced: true,
       tableTitle: [],
       roleList:[],
       postList:[],
@@ -361,8 +361,25 @@ export default {
       const code = params.code;
       const parentId = params.parentId || "";
       let obj = { id, name, code, parentId };
+      let organTitle = []
       if(parentId == ""){
         organTitle = [
+          { label: "组织名称", name: "name", type: "input" }
+        ]
+      }else{
+        organTitle = [
+          {
+            label: "上级组织",
+            name: "parentId",
+            type: "treeSelect",
+            disabled:true,
+            replaceFields: {
+              children: "children",
+              title: "name",
+              key: "id",
+              value: "id",
+            },
+          },
           { label: "组织名称", name: "name", type: "input" }
         ]
       }

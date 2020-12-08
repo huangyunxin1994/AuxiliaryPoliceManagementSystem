@@ -5,7 +5,7 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="关键词搜索">
+              <a-form-item label="模糊查询">
                 <a-input placeholder="请输入要查询的关键词" v-model="queryParam.search"/>
               </a-form-item>
             </a-col>
@@ -23,7 +23,7 @@
               <a-col :md="8" :sm="24">
                 <a-form-item label="状态">
                   <a-select default-value="" @change="handleChange" v-model="queryParam.state">
-                    <a-select-option value=""> 全部： </a-select-option>
+                    <a-select-option value=""> 全部 </a-select-option>
                     <a-select-option value="1"> 未结束 </a-select-option>
                     <a-select-option value="2"> 已结束 </a-select-option>
                   </a-select>
@@ -126,16 +126,17 @@ const formTitle = [
     placeholder: "请输入培训名称"
   },
   {
-    label: "培训起始时间",
-    name: "startTime",
-    type: "picker",
-    placeholder: "请选择培训起始时间"
-  },
-  {
-    label: "培训结束时间",
-    name: "endTime",
-    type: "picker",
-    placeholder: "请选择培训结束时间",
+    label1: "培训起始时间",
+    name1: "startTime",
+    type: "rangePicker",
+    valueFormat1:'YYYY-MM-DD',
+    placeholder1: "请选择培训起始时间",
+    disabledDate:true,
+    label2: "培训结束时间",
+    name2: "endTime",
+    valueFormat2:'YYYY-MM-DD',
+    disabledDate2:true,
+    placeholder2: "请选择培训结束时间",
   },
   {
     label: "总学时(小时)",
@@ -168,6 +169,7 @@ const rules = {
     { required: true, message: "请选择培训结束日期", trigger: "change" },
   ],
   learningStyle: [{ required: true, message: "请选择培训方式", trigger: "change" }],
+  classHour: [{ required: true, message: "请输入培训总学时", trigger: "blur"},],
 };
 export default {
   name: "AskForLeave",
@@ -180,7 +182,7 @@ export default {
   data() {
     return {
         // 高级搜索 展开/关闭
-        advanced: false,
+        advanced: true,
         replaceFields:{
             children:'children',
             title:'title',

@@ -352,7 +352,7 @@ export default {
           { required: true, message: "请选择生效日期", trigger: "change" },
         ],
       },
-      advanced: false,
+      advanced: true,
       rankMess:[],//职级选择列表
       postList:[],//岗位选择列表
     };

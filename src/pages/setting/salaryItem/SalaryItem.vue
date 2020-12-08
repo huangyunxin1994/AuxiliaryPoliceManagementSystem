@@ -241,7 +241,7 @@ export default {
       const _this = this;
       this.$confirm({
         title: "警告",
-        content: `真的要删除 ${row.itemName} 工资项吗?`,
+        content: `真的要删除 [ ${row.itemName} ] 工资项吗?`,
         okText: "删除",
         okType: "danger",
         centered: true,

@@ -260,17 +260,20 @@ export default {
           //   showTime:{ format: 'HH:mm' }
           // },
           {
-            type: "rangePicker",
-            disabledDate:true,
-            valueFormat:'YYYY-MM-DD HH:mm',
-            showTime:{ format: 'HH:mm' },
             label1: "开始时间",
             name1: "startTime",
-            refName1: "startTime",
+            type: "rangePicker",
+            valueFormat1:'YYYY-MM-DD HH:mm',
             placeholder1: "请选择开始时间",
+            disabledDate:true,
+            fomate:'minutes',
+            funOpt:2,
+            showTime1:{ format: 'HH:mm' },
             label2: "结束时间",
             name2: "endTime",
-            refName2: "endTime",
+            showTime2: { format: 'HH:mm' },
+            valueFormat2:'YYYY-MM-DD HH:mm',
+            disabledDate2:true,
             placeholder2: "请选择结束时间",
           },
           {
@@ -303,12 +306,12 @@ export default {
             { required: true, message: "请选择结束时间", trigger: "change"},
           ],
           duration: [
-            { required: true, message: "请输入请假时长", trigger: "blur"},
+            { required: true, message: "请输入加班时长", trigger: "blur"},
           ],
           statutoryHoliday: [
             { required: true, message: "请选择法定假日", trigger: "change"},
           ],
-          cause: [
+          reason: [
             { required: true, message: "请输入加班原因", trigger: "blur"},
           ]
         },
@@ -332,22 +335,39 @@ export default {
               { value: 11, name: "其他" }
             ],
           },
-          {
-            label: "开始时间",
-            name: "startTime",
-            type: "picker",
-            placeholder: "请选择开始时间",
-            valueFormat:'YYYY-MM-DD HH:mm',
-            showTime:{ format: 'HH:mm' }
+          // {
+          //   label: "开始时间",
+          //   name: "startTime",
+          //   type: "picker",
+          //   placeholder: "请选择开始时间",
+          //   valueFormat:'YYYY-MM-DD HH:mm',
+          //   showTime:{ format: 'HH:mm' }
             
-          },
+          // },
+          // {
+          //   label: "结束时间",
+          //   name: "endTime",
+          //   type: "picker",
+          //   placeholder: "请选择结束时间",
+          //   valueFormat:'YYYY-MM-DD HH:mm',
+          //   showTime:{ format: 'HH:mm' }
+          // },
           {
-            label: "结束时间",
-            name: "endTime",
-            type: "picker",
-            placeholder: "请选择结束时间",
-            valueFormat:'YYYY-MM-DD HH:mm',
-            showTime:{ format: 'HH:mm' }
+            label1: "开始时间",
+            name1: "startTime",
+            type: "rangePicker",
+            valueFormat1:'YYYY-MM-DD HH:mm',
+            placeholder1: "请选择开始时间",
+            disabledDate:true,
+            fomate:'minutes',
+            funOpt:2,
+            showTime1:{ format: 'HH:mm' },
+            label2: "结束时间",
+            name2: "endTime",
+            showTime2: { format: 'HH:mm' },
+            valueFormat2:'YYYY-MM-DD HH:mm',
+            disabledDate2:true,
+            placeholder2: "请选择结束时间",
           },
            {
             label: "时长(小时)",
@@ -373,10 +393,13 @@ export default {
             { required: true, message: "请选择结束时间", trigger: "change"},
           ],
           reason: [
-            { required: true, message: "请输入加班原因", trigger: "blur"},
+            { required: true, message: "请输入请假原因", trigger: "blur"},
           ],
           holiday: [
             { required: true, message: "请选择是否法定假日", trigger: "change"},
+          ],
+          duration: [
+            { required: true, message: "请输入请假时长", trigger: "blur"},
           ],
         }
     };

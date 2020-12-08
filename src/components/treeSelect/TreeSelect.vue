@@ -11,6 +11,7 @@
     :tree-checkable="checkable"
     placeholder="请选择组织"
     tree-default-expand-all
+    :disabled="disabled"
     @change="change"
   >
   </a-tree-select>
@@ -39,6 +40,7 @@ function filterArray(data) {
 export default {
   props: {
     value:[String,Number],
+    disabled:Boolean,
     keyName:String,
     labelName:String,
     defaultFun:{

@@ -28,6 +28,7 @@
                     <a-form-model-item label="培训时间" :labelCol="{xs:{span: 24},sm:{span: 8}}" :wrapperCol="{xs:{span: 24},sm:{span: 16}}" prop="time">
                         <a-range-picker 
                           disabled 
+                          valueFormat="YYYY-MM-DD"
                           :value="[this.form.startTime,this.form.endTime]"
                           @change="onChange" />
                     </a-form-model-item>
@@ -63,7 +64,7 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="关键词搜索">
+              <a-form-item label="模糊查询">
                 <a-input placeholder="请输入要查询的关键词" v-model="queryParam.search"/>
               </a-form-item>
             </a-col>
@@ -80,7 +81,7 @@
               <a-col :md="8" :sm="24">
                 <a-form-item label="结果">
                   <a-select default-value="" v-model="queryParam.state">
-                    <a-select-option value=""> 全部： </a-select-option>
+                    <a-select-option value=""> 全部 </a-select-option>
                     <a-select-option value="1"> 优秀 </a-select-option>
                     <a-select-option value="2"> 良好 </a-select-option>
                     <a-select-option value="3"> 不及格 </a-select-option>
@@ -125,9 +126,9 @@
         showPagination="auto"
       >
         <template slot="state" slot-scope="state">  
-          <span  v-if="state != ''">
+          <span  v-if="state">
             <a-badge
-              :status="state == '1' ? 'success' : state == '2' ? 'processing' : state == '3' ? 'error' : ''"
+              :status="state == '1' ? 'success' :( state == '2' ? 'processing' :( state == '3' ? 'error' : ''))"
               :text="state | statusFilter(state)"
             />
           </span>
@@ -203,6 +204,12 @@ export default {
           title: "姓名",
           dataIndex: "policeName",
           key: "policeName",
+          ellipsis: true,
+        },
+        {
+          title: "警员编号",
+          dataIndex: "number",
+          key: "number",
           ellipsis: true,
         },
         {

@@ -149,6 +149,17 @@ const options = {
               component: () => import('@/pages/personadmin/post'),
             },
             {
+              path: 'profession',
+              name: '专业技术辅警资格管理',
+              meta: {
+                authority: {
+                  role: 'rsgl'
+                },
+                keepAlive:false
+              },
+              component: () => import('@/pages/personadmin/profession'),
+            },
+            {
               path: 'dimission',
               name: '离职管理',
               meta: {
@@ -159,17 +170,6 @@ const options = {
               },
               component: () => import('@/pages/personadmin/dimission'),
             },
-            {
-              path: 'profession',
-              name: '专业技术辅警资格管理',
-              meta: {
-                authority: {
-                  role: 'rsgl'
-                },
-                keepAlive:false
-              },
-              component: () => import('@/pages/personadmin/profession'),
-            }
           ]
         },
         {

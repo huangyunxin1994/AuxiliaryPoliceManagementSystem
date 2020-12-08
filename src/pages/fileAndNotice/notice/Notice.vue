@@ -19,18 +19,34 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
-                <span class="table-page-search-submitButtons">
-                  <a-button type="primary" @click="$refs.table.refresh(true)"
-                    >查询</a-button
-                  >
-                  <a-button
-                    style="margin-left: 8px"
-                    @click="reloadData"
-                    >重置</a-button
-                  >
-                </span>
-              </a-col>
+              <template v-if="advanced">
+               <a-col :md="8" :sm="24">
+              <a-form-item label="组织选择">
+                <select-tree ref="selectTree" :value="queryParam.organizationId" style="width: 100%" @handleTreeChange="handleTreeChange"></select-tree>
+              </a-form-item>
+            </a-col>
+            </template>
+            <a-col :md="(!advanced && 8) || 24" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="
+                  (advanced && { float: 'right', overflow: 'hidden' }) || {}
+                "
+              >
+                <a-button type="primary" @click="$refs.table.refresh(true)"
+                  >查询</a-button
+                >
+                <a-button
+                  style="margin-left: 8px"
+                  @click="reloadData"
+                  >重置</a-button
+                >
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? "收起" : "展开" }}
+                  <a-icon :type="advanced ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
             </a-row>
           </a-form>
         </div>
@@ -80,6 +96,7 @@
 import { mapState, mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
+import selectTree from "@/components/treeSelect/TreeSelect";
 import moment from "moment";
 const formTitle = [
   {
@@ -123,20 +140,26 @@ const formTitle = [
     name:"organizationId"
   },
   {
+    name:"organizationName"
+  },
+  {
     name:"publisherId"
   }
 ];
 const rules = {
   title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+  expireDate: [{ required: true, message: "请选择到期时间", trigger: "change" }],
   content: [{ required: true, message: "请输入公告内容", trigger: "blur" }],
 };
 export default {
   name: "OrganManage",
   components: {
     STable,
+    selectTree
   },
   data() {
     return {
+      advanced:true,
       BASE_URL:"",
       scheduleColumns: [
         {
@@ -150,6 +173,13 @@ export default {
           dataIndex: "title",
           key: "title",
           width: 200,
+          ellipsis: true,
+        },
+        {
+          title: "所属组织",
+          dataIndex: "organizationName",
+          key: "organizationName",
+          width: 150,
           ellipsis: true,
         },
         {
@@ -198,7 +228,9 @@ export default {
       ],
       queryParam:{
         name:"",
-        expire:""
+        expire:"",
+        organizationId:"",
+        oid:""
       },
       loadScheduleData: (parameter) => {
         const requestParameters = Object.assign({}, parameter, this.queryParam);
@@ -230,6 +262,7 @@ export default {
         record:{
           publisher:this.user.name,
           organizationId:this.user.isSystem !==1 && this.user.organizationId || "",
+          organizationName:this.user.isSystem !==1 && this.user.organizationName || "",
           publisherId:this.user.id,
         },
         formTitle: formTitle,
@@ -282,7 +315,8 @@ export default {
     reloadData(){
       this.queryParam={
         name:"",
-        expire:""
+        expire:"",
+        oid : this.user.isSystem !==1 && this.user.organizationId || ""
       },
       this.$refs.table.refresh(true)
     },
@@ -314,7 +348,14 @@ export default {
         },
         onCancel() {},
       });
-    }
+    },
+    //树选择回调
+    handleTreeChange(obj){
+      this.queryParam.organizationId = obj.val
+    },
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
+    },
   },
   filters: {
     statusFilter(status) {

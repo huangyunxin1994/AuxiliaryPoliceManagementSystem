@@ -19,8 +19,8 @@
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="授予日期">
-                  <a-range-picker style="width: 100%" />
+                <a-form-item label="授予日期" v-model="queryParam.approvalDate">
+                  <a-date-picker @change="validity" style="width: 100%"/>
                 </a-form-item>
               </a-col>
             </template>
@@ -104,7 +104,7 @@ const formTitle = [
   },
   {
     label: "荣誉称号名称",
-    name: "endTime",
+    name: "title",
     type: "input",
     placeholder: "请输入荣誉称号名称",
   },
@@ -129,7 +129,9 @@ const formTitle = [
 ];
 const stepTitle = [{ title: "选择人员" }, { title: "填写奖励信息" }];
 const rules = {
-  reason: [{ required: true, message: "请输入奖励原因", trigger: "change" }],
+  reason: [{ required: true, message: "请输入奖励原因", trigger: "blur" }],
+  approvalAuthority: [{ required: true, message: "请输入奖励批准机关", trigger: "blur" }],
+  title:[{ required: true, message: "请输入荣誉称号名称", trigger: "blur" }],
   approvalDate: [
     { required: true, message: "请选择奖励授予日期", trigger: "change" },
   ],
@@ -153,7 +155,7 @@ export default {
         });
       },
       // 高级搜索 展开/关闭
-      advanced: false,
+      advanced: true,
       value: null,
       replaceFields: {
         children: "children",
@@ -186,6 +188,12 @@ export default {
           key: "organizationName",
           width: 150,
           ellipsis: true,
+        },
+        {
+           title: "荣誉称号名称",
+            dataIndex: "title",
+            key: "title",
+            width: 150,
         },
         {
           title: "奖励说明",
@@ -223,6 +231,7 @@ export default {
       queryParam: {
         search: "",
         organizationId: "",
+        oid:""
       },
       loadScheduleData: (parameter) => {
         const requestParameters = Object.assign({}, parameter, this.queryParam);
@@ -240,7 +249,7 @@ export default {
     };
   },
   created(){
-    this.queryParam.organizationId=this.user.isSystem !==1 && this.user.organizationId || ""
+    this.queryParam.oid=this.user.isSystem !==1 && this.user.organizationId || ""
   },
   methods: {
     handleAdd() {
@@ -348,9 +357,14 @@ export default {
     refreshTable() {
     this.queryParam= {
         search: "",
-        organizationId: this.user.isSystem !==1 && this.user.organizationId || "",
+        organizationId:"",
+        oid: this.user.isSystem !==1 && this.user.organizationId || "",
       }
       this.$refs.table.refresh(true);
+    },
+    //授予日期
+    validity(date, dateString) {
+      this.queryParam.approvalDate = dateString
     },
   },
   filters: {

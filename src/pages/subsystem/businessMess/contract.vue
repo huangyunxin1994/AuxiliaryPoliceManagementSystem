@@ -82,7 +82,7 @@ export default {
   data() {
     return {
       value: null,
-      advanced: false,
+      advanced: true,
       replaceFields: {
         children: "children",
         title: "title",

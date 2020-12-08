@@ -164,20 +164,21 @@ const formTitle = [
     ],
   },
   {
-    label: "开始时间",
-    name: "startTime",
-    type: "picker",
-    valueFormat:'YYYY-MM-DD HH:mm',
-    placeholder: "请选择请假开始时间",
-    showTime:{ format: 'HH:mm' }
-  },
-  {
-    label: "结束时间",
-    name: "endTime",
-    type: "picker",
-    showTime: { format: 'HH:mm' },
-    valueFormat:'YYYY-MM-DD HH:mm',
-    placeholder: "请选择请假结束时间",
+    label1: "开始时间",
+    name1: "startTime",
+    type: "rangePicker",
+    valueFormat1:'YYYY-MM-DD HH:mm',
+    placeholder1: "请选择请假开始时间",
+    disabledDate:true,
+    fomate:'minutes',
+    funOpt:2,
+    showTime1:{ format: 'HH:mm' },
+    label2: "结束时间",
+    name2: "endTime",
+    showTime2: { format: 'HH:mm' },
+    valueFormat2:'YYYY-MM-DD HH:mm',
+    disabledDate2:true,
+    placeholder2: "请选择请假结束时间",
   },
   {
     label: "时长(小时)",
@@ -400,7 +401,7 @@ const formEditTitle = [
 ];
 const stepTitle = [{ title: "选择人员" }, { title: "填写请假信息" }];
 const rules = {
-  type: [{ required: true, message: "请选择请假类型", trigger: "change" }],
+  state: [{ required: true, message: "请选择请假类型", trigger: "change" }],
   startTime: [
     { required: true, message: "请选择请假开始时间", trigger: "change" },
   ],
@@ -440,7 +441,7 @@ export default {
       },
       addRecord:{type:2,approvalResults:1},
       // 高级搜索 展开/关闭
-      advanced: false,
+      advanced: true,
       value: null,
       replaceFields: {
         children: "children",
@@ -478,15 +479,13 @@ export default {
           title: "开始时间",
           dataIndex: "startTime",
           key: "startTime",
-          width: 150,
-          ellipsis: true,
+          width: 180,
         },
         {
           title: "结束时间",
           dataIndex: "endTime",
           key: "endTime",
-          width: 150,
-          ellipsis: true,
+          width: 180,
         },
         {
           title: "时长(小时)",

@@ -18,7 +18,7 @@
 						<a-form layout="inline">
 							<a-row :gutter="48">
 								<a-col :md="8" :sm="24">
-									<a-form-item label="关键词搜索">
+									<a-form-item label="模糊查询">
 										<a-input placeholder="请输入要查询的关键词" v-model="queryParam.name" />
 									</a-form-item>
 								</a-col>
@@ -110,6 +110,7 @@
     import AntTree from '@/components/tree_/Tree'
     import fromModel from '@/components/formModel/formModel'
     import diaHisRank from '@/components/diaPersonnel/history'
+    import moment from 'moment'
     export default {
     name: 'OrganManage',
     components:{
@@ -122,7 +123,7 @@
           openKeys: ['key-01'],
           loading:false,
           // 高级搜索 展开/关闭
-          advanced: false,
+          advanced: true,
           scheduleColumns: [
             {
               title: '序号',
@@ -259,7 +260,15 @@
                 {label:'变动前职级',name:'beforeRank',type:'text',refName:'beforeRank',placeholder:'请输入变动前职级',disabled:true},
                 {label:'变动后职级',name:'currentRank',type:'select',refName:'rank',placeholder:'请选择变动后职级'},
                 {label:'变动原因',name:'reason',type:'input',refName:'cause',placeholder:'请输入变动原因'},
-                {label:'生效日期',name:'effectiveDate',type:'picker',refName:'date',placeholder:'请选择生效时间',disabledDate:true}
+                {label:'生效日期',name:'effectiveDate',type:'picker',refName:'date',placeholder:'请选择生效时间',disabledDate:true,disabledDateFun: function(current) {
+                  return (
+                    current &&
+                    current <
+                      moment(new Date()).startOf(
+                        "day"
+                      )
+                  );
+                },}
           ],
           changeRankRules:{
             currentRank:[{ required: true, message: '请选择变动后职级', trigger: 'change'}],

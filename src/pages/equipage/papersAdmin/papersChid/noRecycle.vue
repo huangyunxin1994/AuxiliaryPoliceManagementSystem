@@ -5,7 +5,7 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="关键词搜索">
+              <a-form-item label="模糊查询">
                 <a-input v-model="queryParam.describes" placeholder="请输入要查询的关键词" />
               </a-form-item>
             </a-col>
@@ -31,10 +31,10 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="状态选择">
-                  <a-select default-value="" @change="handleChange" v-model="queryParam.state">
-                    <a-select-option value=""> 全部 </a-select-option>
-                    <a-select-option value="1">已发放</a-select-option>
-                    <a-select-option value="3">逾期未回收</a-select-option>
+                  <a-select default-value="4" @change="handleChange" v-model="queryParam.state">
+                    <a-select-option :value="4"> 全部 </a-select-option>
+                    <a-select-option :value="1">未到期</a-select-option>
+                    <a-select-option :value="3">逾期未回收</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -125,7 +125,7 @@ import selectTree from "@/components/treeSelect/TreeSelect";
 
 const stepTitle = [{ title: "选择人员" }, { title: "填写证件信息" }];
 const rules = {
-  type: [{ required: true, message: "请选择证件", trigger: "change" }],
+  cqId: [{ required: true, message: "请选择证件类型", trigger: "change" }],
   allotmentDate: [
     { required: true, message: "请选择配发日期", trigger: "change" },
   ],
@@ -151,6 +151,7 @@ export default {
           return res.data;
         });
       },
+      certList:[],
       openKeys: ["key-01"],
       loading: false,
       value: null,
@@ -213,7 +214,7 @@ export default {
         describes: "",
         allotmentDate: "",
         termValidity: "",
-        state:"",
+        state:4,
         type: 1,
         certificatesEquipmentHistory: "",
         cqName:'',//证件或装备类型
@@ -241,7 +242,7 @@ export default {
       },
       selectedRowKeys: [],
       selectedRows: [],
-      advanced: false,
+      advanced: true,
     };
   },
   created() {
@@ -263,6 +264,7 @@ export default {
           type: "rangePicker",
           disabledDate:true,
           refName1: "allotmentDate",
+          funOpt:1,
           placeholder1: "请选择配发日期",
           label2: "有效期限",
           name2: "termValidity",
@@ -367,7 +369,7 @@ export default {
         describes: "",
         allotmentDate: "",
         termValidity: "",
-        state:1,
+        state:4,
         type: 1,
         certificatesEquipmentHistory: "",
         cqName:'',//证件或装备类型

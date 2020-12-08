@@ -26,18 +26,19 @@
                         :locale="locale"
                         v-model="form[item.name1]"
                         :disabled="item.disabled"
+
                         :disabled-date="
-                          item.disabledDate &&disabledDateStart ||
+                          item.disabledDate && (item.funOpt === 1 ? disabledDateStart : item.funOpt === 2 ? disabledDateSStart : disabledDateOStart)||
                           function () {
                             return false;
                           }
                         "
-                        :show-time="(item.showTime && item.showTime) || false"
+                        :show-time="(item.showTime1 && item.showTime1) || false"
                         :format="
-                          (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
+                          (item.valueFormat1 && item.valueFormat1) || 'YYYY-MM-DD'
                         "
                         :valueFormat="
-                          (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
+                          (item.valueFormat1 && item.valueFormat1) || 'YYYY-MM-DD'
                         "
                         type="date"
                         :placeholder="item.placeholder1"
@@ -61,17 +62,17 @@
                         v-model="form[item.name2]"
                         :disabled="item.disabled"
                         :disabled-date="
-                          item.disabledDate &&disabledDateEnd ||
+                          item.disabledDate &&(item.funOpt === 1 ? disabledDateEnd : item.funOpt === 2 ? disabledDateSEnd : disabledDateOEnd) ||
                           function () {
                             return false;
                           }
                         "
-                        :show-time="(item.showTime && item.showTime) || false"
+                        :show-time="(item.showTime2 && item.showTime2) || false"
                         :format="
-                          (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
+                          (item.valueFormat2 && item.valueFormat2) || 'YYYY-MM-DD'
                         "
                         :valueFormat="
-                          (item.valueFormat && item.valueFormat) || 'YYYY-MM-DD'
+                          (item.valueFormat2 && item.valueFormat2) || 'YYYY-MM-DD'
                         "
                         type="date"
                         :placeholder="item.placeholder2"
@@ -322,19 +323,71 @@ export default {
       return (
         current &&
         current <
-          moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf(
+          moment(new Date()).endOf(
             "day"
           )
       );
     },
+    disabledDateOStart(current) {
+      const obj = this.formTitle.find(i=>i.type==='rangePicker')
+      if(current&&this.form[obj.name2]){
+        return current> moment(this.form[obj.name2]);
+      }else{
+        return false
+      }
+    },
+    disabledDateOEnd(current) {
+       const obj = this.formTitle.find(i=>i.type==='rangePicker')
+      if(current&&this.form[obj.name1]){
+        return moment(this.form[obj.name1])> current;
+      }else{
+        return false
+      }
+    },
+    disabledDateSStart(current) {
+      const obj = this.formTitle.find(i=>i.type==='rangePicker')
+      if(current&&this.form[obj.name2]){
+        const date = new Date(this.form[obj.name2])
+        if(current > moment(this.form[obj.name2]).endOf("minutes"))
+          return true
+        else if(current <  moment(new Date(new Date(date).getFullYear(),new Date(date).getMonth()-1,new Date(new Date(date).getFullYear(),new Date(date).getMonth(),0).getDate())).endOf("day"))
+          return true 
+        else
+          return false
+       
+      }else{
+        return false
+      }
+    },
+    disabledDateSEnd(current) {
+       const obj = this.formTitle.find(i=>i.type==='rangePicker')
+      if(current&&this.form[obj.name1]){
+        return moment(this.form[obj.name1])> current || current >
+          moment(new Date(new Date(this.form[obj.name1]).getFullYear(),new Date(this.form[obj.name1]).getMonth()+1,1))
+      }else{
+        return false
+      }
+    },
+    // disabledDateOStart(current) {
+    //   const obj = this.formTitle.find(i=>i.type==='rangePicker')
+    //   if(current&&this.form[obj.name2]){
+    //     return current > moment(new Date(this.form[obj.name2])).endOf("day")
+    //   }else{
+    //     return false
+    //   }
+    // },
+    // disabledDateOEnd(current) {
+    //    const obj = this.formTitle.find(i=>i.type==='rangePicker')
+    //   if(current&&this.form[obj.name1]){
+    //     return current < moment(new Date(this.form[obj.name1])).endOf("day")
+    //   }else{
+    //     return false
+    //   }
+    // },
     disabledDateStart(current) {
       const obj = this.formTitle.find(i=>i.type==='rangePicker')
       if(current&&this.form[obj.name2]){
-        // return  current < moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf("day") || current > moment(new Date(this.form[obj.name2])).endOf("day")
-        return false
-      }else if(current){
-        // return current < moment(new Date(new Date().setDate(new Date().getDate() - 1))).endOf("day")
-        return false
+        return current > moment(new Date(this.form[obj.name2])).startOf("day")
       }else{
         return false
       }
@@ -342,14 +395,12 @@ export default {
     disabledDateEnd(current) {
        const obj = this.formTitle.find(i=>i.type==='rangePicker')
       if(current&&this.form[obj.name1]){
-        if( moment(new Date()).endOf("day") >= moment(new Date(this.form[obj.name1])).endOf("day") ){
-           return current < moment(new Date()).endOf("day")  
-        }else{
+        
+          if(moment(new Date(this.form[obj.name1])).endOf("day")>moment(new Date()).endOf("day"))
            return current < moment(new Date(this.form[obj.name1])).endOf("day")
-        }
+          else
+           return current < moment(new Date()).endOf("day")
        
-      }else if(current){
-        return current < moment(new Date()).endOf("day")
       }else{
         return false
       }

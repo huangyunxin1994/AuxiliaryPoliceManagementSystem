@@ -22,6 +22,7 @@ const documentAnnouncementService = {
         formData.append("publisher", params.publisher||"" );
         formData.append("publisherId", params.publisherId||"" );
         formData.append("organizationId", params.organizationId||"" );
+        formData.append("organizationName", params.organizationName||"" );
         return request(POSTDOC, METHOD.POST, formData)
     },
     /**
@@ -77,6 +78,7 @@ const documentAnnouncementService = {
         formData.append("publisherId", params.publisherId||"" );
         formData.append("expireDate", params.expireDate||"" );
         formData.append("organizationId", params.organizationId||"" );
+        formData.append("organizationName", params.organizationName||"" );
         return request(POSTNOC, METHOD.POST, formData)
     },
     /**

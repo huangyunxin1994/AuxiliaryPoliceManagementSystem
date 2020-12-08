@@ -5,7 +5,7 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="关键词搜索">
+              <a-form-item label="模糊查询">
                 <a-input
                   placeholder="请输入要查询的关键词"
                   v-model="queryParam.name"
@@ -15,7 +15,7 @@
             <a-col :md="8" :sm="24">
               <a-form-item label="装备证件是否回收">
                 <a-select default-value="" v-model="queryParam.state">
-                  <a-select-option value=""> 全部： </a-select-option>
+                  <a-select-option value=""> 全部</a-select-option>
                   <a-select-option value="1"> 已回收 </a-select-option>
                   <a-select-option value="2"> 未回收 </a-select-option>
                 </a-select>
@@ -24,7 +24,7 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="离职生效时间">
-                  <a-date-picker @change="onChange" />
+                  <a-date-picker @change="onChange" style="width:100%" />
                 </a-form-item>
               </a-col>
             </template>
@@ -102,7 +102,7 @@ import { mapState, mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 // import newDimission from '@/components/diaPersonnel/newDimissionStep/StepForm'
 import formStep from "@/components/stepForm/StepForm";
-
+import moment from 'moment'
 export default {
   name: "OrganManage",
   components: {
@@ -200,7 +200,7 @@ export default {
       selectedRowKeys: [],
       selectedRows: [],
       // 高级搜索 展开/关闭
-      advanced: false,
+      advanced: true,
       formTitle: [
         {
           label: "姓名",
@@ -212,6 +212,15 @@ export default {
           label: "离职生效日期",
           name: "effectiveDate",
           disabledDate: true,
+          disabledDateFun: function(current) {
+                  return (
+                    current &&
+                    current <
+                      moment(new Date()).startOf(
+                        "day"
+                      )
+                  );
+                },
           type: "picker",
           placeholder: "请选择离职生效日期",
         },
