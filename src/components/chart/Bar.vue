@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-chart
-      height="284"
+      :height="height"
       :data="data"
       :scale="scale"
       :forceFit="true"
@@ -17,6 +17,10 @@
 export default {
   name: 'Bar',
   props: {
+    height:{
+      type: Number,
+      default: 284
+    },
     title: {
       type: String,
       default: ''

@@ -17,6 +17,7 @@
           <div class="row">
             <div v-if="this.$slots.content" class="content">
               <div v-if="avatar" class="avatar"><a-avatar :src="avatar" :size="72" /></div>
+              <div  v-else class="avatar"><a-avatar :size="72" shape="circle" icon="user" :style="{backgroundColor:theme.color}"/></div>
               <slot name="content"></slot>
             </div>
             <div v-if="this.$slots.extra" class="extra"><slot name="extra"></slot></div>
@@ -50,7 +51,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('setting', ['layout', 'showPageTitle', 'pageWidth'])
+    ...mapState('setting', ['layout', 'showPageTitle', 'pageWidth','theme'])
   }
 }
 </script>

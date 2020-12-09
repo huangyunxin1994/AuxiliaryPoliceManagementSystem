@@ -80,7 +80,6 @@ const organizationService = {
             user:params,
             role:role!==false&&role||[]
         }
-
         return request(PUTUSER, METHOD.PUT, obj)
     },
     /**

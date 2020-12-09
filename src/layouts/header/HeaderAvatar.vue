@@ -6,8 +6,13 @@
       <span class="name">{{user.name}}</span>
     </div>
     <a-menu :class="['avatar-menu']" slot="overlay">
-      <a-menu-item @click="changPass">
+      <a-menu-item @click="changUser">
         <a-icon type="user" />
+        <span>修改资料</span>
+      </a-menu-item>
+       <a-menu-divider />
+      <a-menu-item @click="changPass">
+        <a-icon type="lock" />
         <span>修改密码</span>
       </a-menu-item>
       <a-menu-divider />
@@ -106,6 +111,81 @@ export default {
         rules: {
           oldPass: [{ required: true,validator: validateOldPass, trigger: "blur" }],
           password: [{ required: true, validator: validateNewPass, trigger: "blur" }]
+        },
+        submitFun: fn,
+        on: {
+          ok() {
+            //console.log("ok 回调");
+            _this.$api.userService.logout()
+             _this.$router.push('/login')
+          },
+          cancel() {
+            //console.log("cancel 回调");
+          },
+          close() {
+            //console.log("modal close 回调");
+          },
+        },
+      };
+      this.$dialog(
+        TaskForm,
+        // component props
+        defaultModalProps,
+        // modal props
+        modalProps
+      );
+    },
+    changUser(){
+      const _this=this
+      let modalProps = {
+        title: "修改资料",
+        width: 700,
+        centered: true,
+        maskClosable: false,
+        okText: "提交",
+      };
+      let fn;
+      if(this.loginType===2){
+        fn = (parameter) => {
+          return this.$api.organizationService
+            .putPassword(parameter)
+            .then((res) => {
+              if(res.data.code === 0)
+              res.data.msg = '修改资料成功，请重新登录'
+              return res.data;
+            });
+        }
+      }else{
+        fn = (parameter) => {
+          return this.$api.auxiliaryPoliceService
+            .putAuxiliaryPolice(parameter)
+            .then((res) => {
+              if(res.data.code === 0)
+              res.data.msg = '修改资料成功，请重新登录'
+              return res.data;
+            });
+        }
+      }
+      const defaultModalProps = {
+        record: {
+          id:this.user.id,
+          name:this.user.name,
+          phone:this.user.phone,
+        },
+        formTitle: [{
+          label: "姓名",
+          name: "name",
+          type: "input",
+          placeholder: "请输入姓名",
+        },{
+          label: "手机号",
+          name: "phone",
+          type: "input",
+          placeholder: "请输入手机号",
+        },],
+        rules: {
+          name: [{ required: true,message:'请输入姓名' , trigger: "blur" }],
+          phone: [{ required: true,message:'请输入手机号' , trigger: "blur" }],
         },
         submitFun: fn,
         on: {

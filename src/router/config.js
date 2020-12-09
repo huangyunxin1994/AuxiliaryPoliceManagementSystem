@@ -404,7 +404,7 @@ const options = {
           children: [
             {
               path: 'organ',
-              name: '组织管理',
+              name: '组织与用户管理',
               meta: {
                 authority: {
                   role: 'xtgl'

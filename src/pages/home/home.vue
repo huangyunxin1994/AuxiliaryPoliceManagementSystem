@@ -1,37 +1,42 @@
 <template>
-  <div class="" >
+ <page-layout :avatar="user.avatar" :style="{'min-height':pageMinHeight}">
+    <div slot="headerContent">
+      <div class="title">{{timeFix}}，{{user.name}}</div>
+      <div>{{user.number&&user.number||'未设置辅警编号'}} | {{user.organizationName&&user.organizationName||'未设置组织'}} | {{user.postName&&user.postName||'未设置岗位'}} | {{user.phone&&user.phone||'未设置联系方式'}}  </div>
+    </div>
+    <template>
     <a-row :gutter="24">
-      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
+      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }" v-if="roles.some(i=>i.id === 'rsgl')">
         <div style="background:#578EBE" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('personAdmin/rank')">
           <a-icon type="audit" />
           <span>职级评定</span>
         </div>
       </a-col>
-      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
+      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }" v-if="roles.some(i=>i.id === 'rsgl')">
         <div style="background:#F29503" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('personAdmin/post')">
           <a-icon type="file-sync" />
-          <span>岗位调动</span>
+          <span>岗位组织调动</span>
         </div>
       </a-col>
-      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
+      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }" v-if="roles.some(i=>i.id === 'gzgl')">
         <div style="background:#44B6AE" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('wagesManage/wagesManage')">
           <a-icon type="pay-circle" />
           <span>工资管理</span>
         </div>
       </a-col>
-      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
+      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }" v-if="roles.some(i=>i.id === 'htgl')">
         <div style="background:#8775A7" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('contract/contract')">
           <a-icon type="file-search" />
           <span>合同管理</span>
         </div>
       </a-col>
-      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
+      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }"  v-if="roles.some(i=>i.id === 'jbqj')">
         <div style="background:#4F5C65" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('workandleave/workovertime')">
           <a-icon type="calculator" />
           <span>加班管理</span>
         </div>
       </a-col>
-      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }">
+      <a-col :sm="12" :md="8" :lg="8" :xl="6" :xxl="4" :style="{ marginBottom: '24px' }" v-if="roles.some(i=>i.id === 'jbqj')">
         <div style="background:#14AAE4" class="antd-pro-pages-home-quickCard" :showfooter="false" @click="handleRoute('workandleave/askforleave')">
           <a-icon type="hourglass" />
           <span>请假管理</span>
@@ -45,7 +50,7 @@
                     <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">辅警人员变化统计</div>
                     <div class="ant-table-wrapper">
                         <!-- <mini-smooth-area :style="{ height: '100%' }" :dataSource="searchUserData" :scale="searchUserScale" /> -->
-                        <bar :data="barData" :scale="searchUserScale"/>
+                        <bar :data="barData" :height="180" :scale="searchUserScale"/>
                     </div>
                 </a-card>
             </a-col>
@@ -54,7 +59,7 @@
             <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false">
                 <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">业务处理情况</div>
                 <div class="ant-table-wrapper">
-                    <v-chart :force-fit="true" :height="284" :data="pieData" :scale="pieScale" :padding="['auto', 'auto', '40', '50']">
+                    <v-chart :force-fit="true" :height="180" :data="pieData" :scale="pieScale" :padding="['auto', 'auto', '40', '50']">
                         <v-tooltip :showTitle="false" dataKey="item*percent" />
                         <v-axis />
                         <!-- position="right" :offsetX="-140" -->
@@ -102,7 +107,8 @@
         </a-row>
     </div>
     
-  </div>
+    </template>
+ </page-layout>
 </template>
 
 <script>
@@ -204,17 +210,21 @@ import {mapState,mapGetters} from 'vuex'
 import bar from '@/components/chart/Bar'
 import list from '@/components/list/List'
 import fileList from '@/components/list/fileList'
+import PageLayout from '@/layouts/PageLayout'
+import {timeFix} from '@/utils/utils'
 export default {
   name: 'Analysis',
   components:{
       bar,
       list,
-      fileList
+      fileList,
+      PageLayout
   },
   data () {
     return {
       visible:false,
        loading: true,
+       timeFix: timeFix(),
       rankList,
 
       // 搜索用户数
@@ -323,6 +333,7 @@ export default {
     }
   },
   created() {
+    console.log(this.roles)
     setTimeout(() => this.loading = !this.loading, 1000)
   },
   async mounted(){
@@ -333,7 +344,7 @@ export default {
   },
   computed: {
       ...mapState('setting', ['theme','isMobile','pageMinHeight']),
-      ...mapGetters("account",["user"]),// 获取登录者信息
+      ...mapGetters("account",["user",'roles']),// 获取登录者信息
     }
 }
 </script>
@@ -381,7 +392,7 @@ export default {
   }
 
   .antd-pro-pages-home-salesCard {
-      height: 400px;
+      height: 300px;
       margin-bottom: 24px;
     /deep/ .ant-card-head {
       position: relative;
