@@ -1,4 +1,4 @@
-import {POSTDATA,PUTDATA,DELETERDATA,POSTSETTING,PUTSETTING,GETEQUPDATA,GETCREDDATA,GETCOMMDATA} from './api'
+import {POSTDATA,PUTDATA,DELETERDATA,POSTSETTING,PUTSETTING,GETEQUPDATA,GETCREDDATA,GETCOMMDATA,GETSALARYTIME,POSTSALARYTIME} from './api'
 import {request, METHOD} from '@/utils/request'
 import Qs from 'qs'
 const otherItemsService = {
@@ -66,6 +66,22 @@ const otherItemsService = {
      */
     async getCommDataList(param) {
         return request(GETCOMMDATA, METHOD.GET, param)
+    },
+    /**
+     * 获取工资表生成时间配置
+     * @param params 查询参数
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    async getSalaryTime(param) {
+        return request(GETSALARYTIME, METHOD.GET, param)
+    },
+    /**
+     * 添加工资表生成时间
+     * @param params 查询参数
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    async postSalaryTime(param) {
+        return request(POSTSALARYTIME, METHOD.POST, Qs.stringify(param))
     },
 }
 

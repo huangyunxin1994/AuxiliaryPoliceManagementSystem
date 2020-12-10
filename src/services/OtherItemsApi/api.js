@@ -15,5 +15,6 @@ module.exports = {
   GETEQUPDATA:`${BASE_URL}/Other/items/list`,//获取装备配置列表
   GETCREDDATA:`${BASE_URL}/Other/items/list/certificateList`,//获取证件配置列表
   GETCOMMDATA:`${BASE_URL}/Other/items/list/commutingList`,//获取上下班配置列表
-  
+  GETSALARYTIME:`${BASE_URL}/Other/items/list/salaryList`,//获取工资表生成时间配置
+  POSTSALARYTIME:`${BASE_URL}/Other/items/salary`,//添加工资表生成时间
 }

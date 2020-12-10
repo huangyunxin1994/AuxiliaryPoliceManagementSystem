@@ -5,10 +5,24 @@
         class="position-and-level-title"
         :style="{ 'border-color': theme.color }"
       >
-        上下班时间配置
+        <!-- 上下班时间配置 -->
+        工资表生成时间配置
       </div>
       <a-row :gutter="24">
-        <a-col :lg="10" :md="10" :xs="10">
+        <a-col :span="24">
+          <span style="width: 100px">工资表生成时间：每月 </span>
+          <a-select default-value="" v-model="salaryTime" style="width: 100px">
+            <a-select-option v-for="i in 28" :key="i" :value="i" >
+              {{i}}
+            </a-select-option>
+          </a-select>
+          <span> 日 </span>
+          <a-button type="primary" icon="save" @click="handleSave"
+          v-show="showSaveBtn"
+            >保存</a-button
+          >
+        </a-col>
+        <!-- <a-col :lg="10" :md="10" :xs="10">
           <span style="width: 100px">上午上班时间：</span>
           <a-time-picker
             v-model="commData.morningUppertime"
@@ -51,12 +65,7 @@
         </a-col>
         <a-col :lg="4" :md="4" :xs="4" style="margin-bottom: 24px">
           <a-checkbox :checked="commData.state == 2 ||commData.state == 3" @change="changeCommAfter"> 启用 </a-checkbox>
-        </a-col>
-        <a-col :span="24" style="margin-bottom: 24px">
-          <a-button type="primary" icon="save" @click="handleSave"
-            >保存配置</a-button
-          >
-        </a-col>
+        </a-col> -->
       </a-row>
 
       <a-row :gutter="24">
@@ -71,23 +80,12 @@
             <a-button type="primary" icon="plus" @click="handleCredAdd"
               >新建</a-button
             >
-            <a-dropdown v-if="selectedCredRowKeys.length > 0">
-              <a-menu slot="overlay">
-                <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-                <!-- lock | unlock -->
-                <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-              </a-menu>
-              <a-button style="margin-left: 8px">
-                批量操作 <a-icon type="down" />
-              </a-button>
-            </a-dropdown>
           </div>
           <s-table
             ref="credtable"
             :rowKey="(record)=>record.id"
             :columns="credColumns"
             :data="loadCredData"
-            :rowSelection="rowCredSelection"
             :scroll="{ y: 600, x: 650 }"
             showPagination="auto"
           >
@@ -112,23 +110,21 @@
             <a-button type="primary" icon="plus" @click="handleEqupAdd"
               >新建</a-button
             >
-            <a-dropdown v-if="selectedEqupRowKeys.length > 0">
+            <!-- <a-dropdown v-if="selectedEqupRowKeys.length > 0">
               <a-menu slot="overlay">
                 <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-                <!-- lock | unlock -->
                 <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
               </a-menu>
               <a-button style="margin-left: 8px">
                 批量操作 <a-icon type="down" />
               </a-button>
-            </a-dropdown>
+            </a-dropdown> -->
           </div>
           <s-table
             ref="equptable"
             :rowKey="(record)=>record.id"
             :columns="equpColumns"
             :data="loadEqupData"
-            :rowSelection="rowEqupSelection"
             :scroll="{ y: 600, x: 650 }"
             showPagination="auto"
           >
@@ -194,6 +190,9 @@ export default {
   },
   data() {
     return {
+      salaryTime:undefined,
+      saveSalaryTime:undefined,
+      showSaveBtn:false,
       commData:{
         morningUppertime:"",
         morningLowertime:"",
@@ -273,18 +272,20 @@ export default {
             return res.data
           })
       },
-      selectedCredRowKeys: [],
-      selectedCredRows: [],
-      selectedEqupRowKeys: [],
-      selectedEqupRows: [],
+      // selectedCredRowKeys: [],
+      // selectedCredRows: [],
+      // selectedEqupRowKeys: [],
+      // selectedEqupRows: [],
       levelList: [],
     };
   },
   created(){
-    this.$api.otherItemsService.getCommDataList()
+    this.$api.otherItemsService.getSalaryTime()
     .then(res => {
-      if(res.data.data.list.length>0)
-      this.commData = res.data.data.list[0]
+      if(res.data.data.configure){
+        this.saveSalaryTime = res.data.data.configure
+        this.salaryTime = res.data.data.configure
+      }
     })
   },
   methods: {
@@ -295,37 +296,28 @@ export default {
       const _this = this
       this.$confirm({
         title: "提示",
-        content: `确定保存配置吗？`,
+        content: `确定保存吗？`,
         okText: "确认",
         okType: "primary",
         centered: true,
         cancelText: "取消",
         onOk() {
           // 在这里调用删除接口
-          if(! _this.commData.id){
-            _this.$api.otherItemsService.postCommuting(_this.commData)
+            _this.$api.otherItemsService.postSalaryTime({date:_this.salaryTime})
             .then(res => {
               if(res.data.code == 0){
-                _this.$message.success(res.data.msg);
+                _this.$success({
+                  title: "保存成功",
+                  content: `工资表生成时间将于下个月开始生效`,
+                });
+                _this.saveSalaryTime = _this.salaryTime
+                _this.showSaveBtn = false
               }else{
                 _this.$message.error(res.data.msg);
               }
             }).catch(err=>{
               _this.$message.error(err.data.msg);
             })
-          }else{
-            _this.$api.otherItemsService.putCommuting(_this.commData)
-            .then(res => {
-              if(res.data.code == 0){
-                _this.$message.success(res.data.msg);
-              }else{
-                _this.$message.error(res.data.msg);
-              }
-            }).catch(err=>{
-              _this.$message.error(err.data.msg);
-            })
-          }
-         
         },
         onCancel() {
         },
@@ -587,20 +579,28 @@ export default {
       return statusMap[status];
     },
   },
+  watch:{
+    salaryTime(newVal){
+      if(newVal !== this.saveSalaryTime)
+        this.showSaveBtn = true
+      else
+        this.showSaveBtn = false
+    }
+  },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
-    rowCredSelection() {
-      return {
-        selectedRowKeys: this.selectedCredRowKeys,
-        onChange: this.onCredSelectChange,
-      };
-    },
-    rowEqupSelection() {
-      return {
-        selectedRowKeys: this.selectedEqupRowKeys,
-        onChange: this.onEqupSelectChange,
-      };
-    },
+    // rowCredSelection() {
+    //   return {
+    //     selectedRowKeys: this.selectedCredRowKeys,
+    //     onChange: this.onCredSelectChange,
+    //   };
+    // },
+    // rowEqupSelection() {
+    //   return {
+    //     selectedRowKeys: this.selectedEqupRowKeys,
+    //     onChange: this.onEqupSelectChange,
+    //   };
+    // },
   },
 };
 </script>
@@ -617,7 +617,7 @@ export default {
   font-weight: 500;
   font-size: 16px;
   text-indent: 10px;
-  margin-bottom: 24px;
+  margin: 24px 0;
 }
 /deep/ .ant-card-head {
   background-color: #fafafa;

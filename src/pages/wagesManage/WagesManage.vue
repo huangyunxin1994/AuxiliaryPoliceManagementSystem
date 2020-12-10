@@ -40,7 +40,17 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <a-tree-select
+                <a-select
+                v-model="queryParam['organizationId']"
+                style="width: 100%"
+                placeholder="请选择组织"
+                allowClear
+              >
+                <a-select-option v-for="i in treeData" :key="i.organizationId" :value="i.organizationId" >
+                  {{ i.name }}
+                </a-select-option>
+              </a-select>
+                <!-- <a-tree-select
                   v-model="queryParam.organizationId"
                   :treeData="treeData"
                   style="width: 100%"
@@ -55,7 +65,7 @@
                   }"
                   tree-default-expand-all
                 >
-                </a-tree-select>
+                </a-tree-select> -->
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -112,6 +122,11 @@
           @click="synchroExcel"
           >同步工资表</a-button
         >
+        <div style="margin-top: 24px">
+          <strong v-if="salaryTime">注：工资表于每月{{salaryTime}}日生成</strong>
+          <strong v-else>注：暂未配置工资表生成时间</strong>
+        </div>
+        
       </div>
       <s-table
         ref="table"
@@ -178,8 +193,19 @@
         <a-row>
           <a-col :xs="24" :sm="24">
             <a-form-model-item label="组织选择" prop="organizationId">
+              <a-select
+                mode="multiple"
+                v-model="form['organizationId']"
+                :default-value="[]"
+                style="width: 100%"
+                placeholder="请选择组织"
+              >
+                <a-select-option v-for="i in treeSelect" :key="i.organizationId" :value="i.organizationId" :disabled="i.disabled">
+                  {{ i.name }}
+                </a-select-option>
+              </a-select>
               <!-- 树选择 -->
-              <a-tree-select
+              <!-- <a-tree-select
                 v-model="form['organizationId']"
                 :treeData="treeSelect"
                 style="width: 100%"
@@ -195,7 +221,7 @@
                 }"
                 tree-default-expand-all
               >
-              </a-tree-select>
+              </a-tree-select> -->
             </a-form-model-item>
           </a-col>
         </a-row>
@@ -224,25 +250,25 @@ import { mapState, mapGetters } from "vuex";
 import moment from "moment";
 import STable from "@/components/Table_/";
 import treeSelect from "@/components/treeSelect/TreeSelect";
-function filterArray(data) {
-  data.forEach((item) => {
-    delete item.children;
-  });
-  var map = {};
-  data.forEach(function (item) {
-    map[item.organizationId] = item;
-  });
-  var val = [];
-  data.forEach(function (item) {
-    var parent = map[item.parentId];
-    if (parent) {
-      (parent.children || (parent.children = [])).push(item);
-    } else {
-      val.push(item);
-    }
-  });
-  return val;
-}
+// function filterArray(data) {
+//   data.forEach((item) => {
+//     delete item.children;
+//   });
+//   var map = {};
+//   data.forEach(function (item) {
+//     map[item.organizationId] = item;
+//   });
+//   var val = [];
+//   data.forEach(function (item) {
+//     var parent = map[item.parentId];
+//     if (parent) {
+//       (parent.children || (parent.children = [])).push(item);
+//     } else {
+//       val.push(item);
+//     }
+//   });
+//   return val;
+// }
 export default {
   name: "WagesManage",
   components: {
@@ -268,6 +294,7 @@ export default {
     };
 
     return {
+      salaryTime:undefined,
       state: undefined,
       firstCreateTime: undefined,
       form: {
@@ -389,6 +416,12 @@ export default {
         this.state = res.data.data.type;
         this.firstCreateTime = res.data.data.time;
       });
+    this.$api.otherItemsService.getSalaryTime()
+    .then(res => {
+      if(res.data.data.configure){
+        this.salaryTime = res.data.data.configure
+      }
+    })
     this.getOrganForSalary();
   },
   methods: {
@@ -420,9 +453,9 @@ export default {
       this.$api.organizationService
         .getOrganForSalary({ month: this.queryParam.month, oid: oid })
         .then((res) => {
-          const data = JSON.parse(JSON.stringify(res.data.data.list));
+          this.treeData = JSON.parse(JSON.stringify(res.data.data.list));
           this.tree = Object.assign([], res.data.data.list);
-          this.treeData = filterArray(data);
+          // this.treeData = filterArray(data);
           this.searchDisabledTree();
           // this.$emit("getTreeData",this.filterTree)
         });
@@ -743,11 +776,13 @@ export default {
         .then((res) => {
           this.disableTree = res.data.data.list;
           const tree = JSON.parse(JSON.stringify(this.tree));
+          // const tree = JSON.parse(JSON.stringify(this.tree));
           this.treeSelect = this.treeFilter(tree);
         });
     },
     //数据转换树数据，并且禁用符合条件数据
     treeFilter(data) {
+      console.log(this.disableTree)
       data.forEach((item) => {
         delete item.children;
         this.disableTree.forEach((i) => {
@@ -756,20 +791,21 @@ export default {
           }
         });
       });
-      var map = {};
-      data.forEach(function (item) {
-        map[item.organizationId] = item;
-      });
-      var val = [];
-      data.forEach(function (item) {
-        var parent = map[item.parentId];
-        if (parent) {
-          (parent.children || (parent.children = [])).push(item);
-        } else {
-          val.push(item);
-        }
-      });
-      return val;
+      console.log(data)
+      // var map = {};
+      // data.forEach(function (item) {
+      //   map[item.organizationId] = item;
+      // });
+      // var val = [];
+      // data.forEach(function (item) {
+      //   var parent = map[item.parentId];
+      //   if (parent) {
+      //     (parent.children || (parent.children = [])).push(item);
+      //   } else {
+      //     val.push(item);
+      //   }
+      // });
+      return data;
     },
   },
   filters: {
