@@ -28,7 +28,7 @@
                 </a-col>
                 <a-col :md="8" :sm="24">
                   <a-form-item label="合同终止日期">
-                    <a-date-picker @change="onChange" style="width: 100%" />
+                    <a-date-picker @change="onChange" style="width: 100%" :value-format="dateFormat" v-model="queryParam.time"/>
                   </a-form-item>
                 </a-col>
                 <template v-if="advanced">
@@ -198,6 +198,7 @@ export default {
   },
   data() {
     return {
+      dateFormat: 'YYYY-MM-DD',
       formTitle,
       rules,
       stepTitle,

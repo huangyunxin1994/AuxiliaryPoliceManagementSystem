@@ -17,14 +17,14 @@
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="配发日期">
-                      <a-date-picker @change="allotmentDate" style="width: 100%"/>
+                      <a-date-picker @change="allotmentDate" style="width: 100%" :value-format="dateFormat" v-model="queryParam.allotmentDate" />
                     </a-form-item>
                   </a-col>
                 </template>
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="有效日期">
-                      <a-date-picker @change="validity" style="width: 100%"/>
+                      <a-date-picker @change="validity" style="width: 100%" :value-format="dateFormat" v-model="queryParam.termValidity" />
                     </a-form-item>
                   </a-col>
                 </template>
@@ -204,6 +204,7 @@ export default {
       this.queryParam.organizationId=""
       this.queryParam.describes=""
       this.queryParam.allotmentDate=""
+      this.queryParam.termValidity=""
       this.$refs.table.refresh(true)
     }
     },

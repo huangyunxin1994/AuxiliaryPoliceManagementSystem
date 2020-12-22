@@ -28,7 +28,7 @@
                 </a-col>
                 <a-col :md="8" :sm="24">
                   <a-form-item label="获得日期">
-                    <a-date-picker @change="onChange" style="width:100%" />
+                    <a-date-picker @change="onChange" style="width:100%" :value-format="dateFormat" v-model="queryParam.time"/>
                   </a-form-item>
                 </a-col>
                 <a-col :md="(!advanced && 8) || 24" :sm="24">
@@ -115,6 +115,7 @@ export default {
   },
   data() {
     return {
+      dateFormat: 'YYYY-MM-DD',
       openKeys: ["key-01"],
       loading: false,
       // 高级搜索 展开/关闭

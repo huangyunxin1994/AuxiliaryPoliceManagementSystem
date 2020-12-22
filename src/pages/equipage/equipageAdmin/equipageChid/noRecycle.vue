@@ -24,8 +24,8 @@
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="配发日期" v-model="queryParam.allotmentDate">
-                  <a-date-picker @change="allotmentDate"  style="width: 100%" />
+                <a-form-item label="配发日期" >
+                  <a-date-picker @change="allotmentDate"  style="width: 100%" :value-format="dateFormat" v-model="queryParam.allotmentDate"/>
                 </a-form-item>
               </a-col>
             </template>
@@ -34,8 +34,8 @@
                 <!-- <a-form-item label="到期日期" v-model="queryParam.termValidity">
                   <a-date-picker @change="onChange"  style="width: 100%" />
                 </a-form-item> -->
-                <a-form-item label="到期日期" v-model="queryParam.termValidity">
-                  <a-date-picker @change="validity" style="width: 100%"/>
+                <a-form-item label="到期日期" >
+                  <a-date-picker @change="validity" style="width: 100%" :value-format="dateFormat" v-model="queryParam.termValidity"/>
                 </a-form-item>
               </a-col>
             </template>
@@ -162,6 +162,7 @@ export default {
   },
   data() {
     return {
+      dateFormat: 'YYYY-MM-DD',
       formTitle: [],
       rules,
       record: {},

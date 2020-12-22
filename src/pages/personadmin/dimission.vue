@@ -24,7 +24,7 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="离职生效时间">
-                  <a-date-picker @change="onChange" style="width:100%" />
+                  <a-date-picker @change="onChange" style="width:100%" :value-format="dateFormat" v-model="queryParam.time"/>
                 </a-form-item>
               </a-col>
             </template>
@@ -111,6 +111,7 @@ export default {
   },
   data() {
     return {
+      dateFormat: 'YYYY-MM-DD',
       openKeys: ["key-01"],
       loading: false,
       scheduleColumns: [

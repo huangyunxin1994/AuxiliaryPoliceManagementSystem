@@ -14,13 +14,15 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <tree-select :value="queryParam.organizationId" @handleTreeChange="handleTreeChange"></tree-select>
+                <tree-select 
+                  :value="queryParam.organizationId" 
+                  @handleTreeChange="handleTreeChange"></tree-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="授予日期" v-model="queryParam.approvalDate">
-                  <a-date-picker @change="validity" style="width: 100%"/>
+                <a-form-item label="授予日期">
+                  <a-date-picker @change="validity" style="width: 100%" :value-format="dateFormat" v-model="queryParam.approvalDate"/>
                 </a-form-item>
               </a-col>
             </template>
@@ -146,6 +148,7 @@ export default {
   },
   data() {
     return {
+      dateFormat: 'YYYY-MM-DD',
       formTitle,
       rules,
       stepTitle,

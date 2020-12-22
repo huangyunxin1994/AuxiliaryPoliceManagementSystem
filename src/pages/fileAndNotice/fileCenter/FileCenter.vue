@@ -239,6 +239,7 @@ export default {
     reloadData(){
       this.queryParam={
         name:"",
+        organizationId:'',
         oid : this.user.isSystem !==1 && this.user.organizationId || ""
       }
       this.$refs.table.refresh(true)

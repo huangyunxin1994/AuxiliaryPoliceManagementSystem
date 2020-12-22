@@ -13,7 +13,6 @@
               <a-form-item label="组织选择">
                 <select-tree 
                   style="width: 100%" 
-                  ref="selectTree" 
                   :value="queryParam.organizationId" 
                   @handleTreeChange="handleTreeChange"
                 ></select-tree>
@@ -349,7 +348,12 @@ export default {
       });
     },
     reset(){
-      this.queryParam = {}
+      this.queryParam = {
+        search:'',
+        learningStyle:'',
+        organizationId:'',// 当前页面下的筛选框组织
+        state:'',
+      }
       this.$refs.table.refresh(true)
     }
   },

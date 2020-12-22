@@ -17,14 +17,14 @@
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="配发日期">
-                  <a-date-picker @change="allotmentDate" style="width: 100%" />
+                  <a-date-picker @change="allotmentDate" style="width: 100%" :value-format="dateFormat" v-model="queryParam.allotmentDate"/>
                 </a-form-item>
               </a-col>
             </template>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="到期日期">
-                  <a-date-picker @change="validity" style="width: 100%" />
+                  <a-date-picker @change="validity" style="width: 100%"  :value-format="dateFormat" v-model="queryParam.termValidity"/>
                 </a-form-item>
               </a-col>
             </template>
@@ -122,6 +122,7 @@ import { mapGetters, mapState } from "vuex";
 import STable from "@/components/Table_/";
 import formStep from "@/components/stepForm/StepForm";
 import selectTree from "@/components/treeSelect/TreeSelect";
+// import moment from 'moment'
 
 const stepTitle = [{ title: "选择人员" }, { title: "填写证件信息" }];
 const rules = {
@@ -141,6 +142,7 @@ export default {
   },
   data() {
     return {
+      dateFormat: 'YYYY-MM-DD',
       formTitle:[],
       rules,
       record:{},
@@ -287,7 +289,7 @@ export default {
       this.queryParam.allotmentDate = dateString
     },
     //到期日期
-    validity(date, dateString) {
+    validity(date,dateString) {
       this.queryParam.termValidity = dateString
     },
     onChange() {},
