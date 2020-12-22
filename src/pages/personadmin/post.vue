@@ -285,7 +285,7 @@
             this.extension.forEach((item)=>{
               if(item.name == 'currentRank'){
                 item.select = this.postList.filter(i=>i.state===1)
-                item.select.map(i=> delete i.id)
+                // item.select.map(i=> delete i.id)
               }
             })
             this.extensionPost.forEach((item)=>{

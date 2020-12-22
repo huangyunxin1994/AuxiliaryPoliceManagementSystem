@@ -150,6 +150,9 @@
     <a-card :bordered="true">
       <div class="othoderMess">
         <div class="importSwrap">
+          <a-button type="primary" style="margin-right:10px" icon="vertical-align-bottom" @click="downloadExcel" v-if="policeId">
+            模板下载
+          </a-button>
           <excel-btn
             :tableTitle="allTableTitle"
             @getTableData="getTableData"
@@ -306,12 +309,14 @@ const studyColumns = [
     title: "入学日期",
     dataIndex: "startDate",
     key: "startDate",
+    type:"date",
     width:150,
   },
   {
     title: "毕业日期",
     dataIndex: "endDate",
     key: "endDate",
+    type:"date",
     width:150,
   },
   {
@@ -336,6 +341,7 @@ const studyColumns = [
     title: "学位授予日期",
     dataIndex: "academicTime",
     key: "academicTime",
+    type:"date",
     width:150,
   },
   {
@@ -350,12 +356,14 @@ const workColumns = [
     title: "工作起始日期",
     dataIndex: "startDate",
     key: "startDate",
+    type:"date",
     width:100,
   },
   {
     title: "工作结束日期",
     dataIndex: "endData",
     key: "endData",
+    type:"date",
     width:100,
   },
   {
@@ -433,6 +441,7 @@ const familyColumns = [
     title: "出生日期",
     dataIndex: "birthday",
     key: "birthday",
+    type:"date",
     width:100,
   },
   {
@@ -478,7 +487,7 @@ const fromTitle = {
     {
       label: "学制",
       name: "schoolSystem",
-      type: "input",
+      type: "select",
       refName: "schoolSystem",
       placeholder: "请选择学制",
       select: [
@@ -517,9 +526,12 @@ const fromTitle = {
       refName: "education",
       placeholder: "请选择学历",
       select: [
-        { name: "大专" },
-        { name: "本科生" },
-        { name: "研究生" },
+        { name: '小学' },
+          { name: "初中" },
+          { name: "高中" },
+          { name: "大专" },
+          { name: "大学本科" },
+          { name: "研究生" }
       ],
     },
     {
@@ -635,28 +647,11 @@ const fromTitle = {
       ],
     },
     {
-      label: "性别",
-      name: "sex",
-      type: "radio",
-      refName: "sex",
-      select: [
-        { name: "男", value: 1 },
-        { name: "女", value: 2 },
-      ],
-    },
-    {
       label: "成员身份证",
       name: "idCard",
       type: "input",
       refName: "idCard",
       placeholder: "请输入成员身份证",
-    },
-    {
-      label: "出生日期",
-      name: "birthday",
-      type: "picker",
-      refName: "birthday",
-      placeholder: "请选择入出生日期",
     },
     {
       label: "民族",
@@ -704,8 +699,7 @@ const rules = {
     ],
     post: [
       { required: true, message: "请输入从事或担任的工作", trigger: "blur" },
-    ],
-    remarks: [{ required: true, message: "请输入备注", trigger: "blur" }],
+    ]
   },
   table3: {
     familyName: [
@@ -826,10 +820,12 @@ export default {
           label: "学历",
           type: "select",
           placeholder: "请选择学历",
-          disabled: true,
           select: [
+            { name: '小学' },
+            { name: "初中" },
+            { name: "高中" },
             { name: "大专" },
-            { name: "本科生" },
+            { name: "大学本科" },
             { name: "研究生" },
           ],
         }, //
@@ -845,7 +841,6 @@ export default {
           label: "身高(cm)",
           type: "input",
           placeholder: "请输入身高",
-          disabled: true,
         },
         {
           title: "entryTime",
@@ -859,11 +854,10 @@ export default {
           label: "政治面貌",
           type: "select",
           placeholder: "请选择政治面貌",
-          disabled: true,
           select: [
-            { name: "团员" },
-            { name: "党员" },
-            { name: "民主人士" },
+            { name: "中共党员" },
+            { name: "中共预备党员" },
+            { name: "共青团员 " },
             { name: "群众" },
           ],
         }, //
@@ -1085,13 +1079,39 @@ export default {
     // 获取到Excel表格数据
     getTableData(tdata) {
       tdata.map((item) => {
-        item.map((j, k) => {
-          j.key = k;
+        item.map((j) => {
+          delete j.undefined
+          j.policeId = this.queryPa.id;
         });
       });
-      this.$refs.table.changeDataForImport(tdata[0]);
-      this.$refs.worktable.changeDataForImport(tdata[1]);
-      this.$refs.familytable.changeDataForImport(tdata[2]);
+      tdata[1].map(i=>{
+        i.orderly = i.orderly === '是' ? 1 : 2
+      })
+      tdata[2].map(i=>{
+        const mes = this.IdCard(i.idCard)
+        i.sex = mes.sex
+        i.birthday = mes.birth
+      })
+      const param = {
+        education: tdata[0],
+        work: tdata[1],
+        family: tdata[2],
+      };
+      const formData = new FormData();
+        formData.append("requestBody ", JSON.stringify(param) )
+        this.$api.auxiliaryPoliceService.postAuxiliaryFormData(formData ).then(res=>{
+          if(res.data.code === 0){
+            this.$message.success(res.data.msg)
+            this.$refs.table.refresh(true);
+            this.$refs.worktable.refresh(true);
+            this.$refs.familytable.refresh(true);
+          }else{
+            this.$message.error(res.data.msg)
+          }
+        })
+      // this.$refs.table.changeDataForImport(tdata[0]);
+      // this.$refs.worktable.changeDataForImport(tdata[1]);
+      // this.$refs.familytable.changeDataForImport(tdata[2]);
     },
     // 点击删除
     del(key,index) {
@@ -1188,6 +1208,9 @@ export default {
         };
       } else {
         param.submitFun = (params) => {
+          const mess = this.IdCard(params.idCard)
+          params.birthday = mess.birth;
+          params.sex = mess.sex;
           return this.$api.familyService.postFamily(params).then((res) => {
             return res.data;
           });
@@ -1240,7 +1263,51 @@ export default {
         const param = item.select.find(i=>i.id === this.form[item.title])
         this.form[item.titleName] = param.name
       }
-    }
+    },
+    IdCard(UUserCard) {
+      // 获取生日
+      let birth =
+        UUserCard.substring(6, 10) +
+        "-" +
+        UUserCard.substring(10, 12) +
+        "-" +
+        UUserCard.substring(12, 14);
+      // 获取性别
+      let sex = "";
+
+      
+      if (parseInt(UUserCard.substr(16, 1)) % 2 == 1) {
+        //男
+        sex = 1;
+        // return "男";
+      } else {
+        //女
+        sex = 2;
+        // return "女";
+      }
+      // 获取年龄
+      var myDate = new Date();
+      var month = myDate.getMonth() + 1;
+      var day = myDate.getDate();
+      var age = myDate.getFullYear() - UUserCard.substring(6, 10) - 1;
+      if (
+        UUserCard.substring(10, 12) < month ||
+        (UUserCard.substring(10, 12) == month &&
+          UUserCard.substring(12, 14) <= day)
+      ) {
+        age++;
+      }
+      let obj = {
+        birth: birth,
+        sex: sex,
+        age: age,
+      };
+      return obj;
+    },
+    //下载批量导入模板操作
+    downloadExcel() {
+      window.location.href = `${process.env.VUE_APP_API_BASE_URL}/img/辅警个人表单.xlsx`;
+    },
   },
   mounted() {
     this.getBaseRules();

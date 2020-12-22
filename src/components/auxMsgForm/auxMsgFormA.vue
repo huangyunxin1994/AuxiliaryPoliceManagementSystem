@@ -116,6 +116,7 @@
             <a-row :gutter="24" v-if="form.isMajor== 1">
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
+                  prop="major.qualification"
                   label="专业技术职业资格"
                   :labelCol="{
                     sm: { span: 24 },
@@ -124,11 +125,12 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="major.qualification"/>
+                  <a-input v-model="form.major.qualification"/>
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
+                prop="major.approvalUnit"
                   label="资格审批单位"
                   :labelCol="{
                     sm: { span: 24 },
@@ -137,11 +139,12 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="major.approvalUnit" />
+                  <a-input v-model="form.major.approvalUnit" />
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
+                prop="major.acquireDate"
                   label="获得资格日期"
                   :labelCol="{
                     sm: { span: 24 },
@@ -151,7 +154,7 @@
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
                   <a-date-picker
-                    v-model="major.acquireDate"
+                    v-model="form.major.acquireDate"
                     value-format="YYYY-MM-DD"
                     type="date"
                     placeholder="请选择时间"
@@ -167,6 +170,9 @@
     <a-card :bordered="true">
       <div class="othoderMess">
         <div class="importSwrap">
+          <a-button type="primary" style="margin-right:10px" icon="vertical-align-bottom" @click="downloadExcel">
+            模板下载
+          </a-button>
           <excel-btn
             :tableTitle="allTableTitle"
             @getTableData="getTableData"
@@ -255,6 +261,9 @@
             <template slot="status" slot-scope="status">
               <a-badge :status="status" :text="status | statusFilter" />
             </template>
+            <template slot="sex" slot-scope="sex">
+              <span>{{sex | statusSex}}</span>
+            </template>
             <span slot="familyaction" slot-scope="text, record">
               <a @click="editRecord(record, 'table3')">编辑</a>
               <a-divider type="vertical" />
@@ -307,12 +316,14 @@ const studyColumns = [
     title: "入学日期",
     dataIndex: "startDate",
     key: "startDate",
+    type:"date",
     width:150,
   },
   {
     title: "毕业日期",
     dataIndex: "endDate",
     key: "endDate",
+    type:"date",
     width:150,
   },
   {
@@ -337,6 +348,7 @@ const studyColumns = [
     title: "学位授予日期",
     dataIndex: "academicTime",
     key: "academicTime",
+    type:"date",
     width:150,
   },
   {
@@ -351,12 +363,14 @@ const workColumns = [
     title: "工作起始日期",
     dataIndex: "startDate",
     key: "startDate",
+    type:"date",
     width:100,
   },
   {
     title: "工作结束日期",
     dataIndex: "endData",
     key: "endData",
+    type:"date",
     width:100,
   },
   {
@@ -421,6 +435,7 @@ const familyColumns = [
     dataIndex: "sex",
     key: "sex",
     width:80,
+    scopedSlots: { customRender: "sex" },
   },
   {
     title: "成员身份证",
@@ -432,6 +447,7 @@ const familyColumns = [
     title: "出生日期",
     dataIndex: "birthday",
     key: "birthday",
+    type:"date",
     width:100,
   },
   {
@@ -477,9 +493,9 @@ const fromTitle = {
     {
       label: "学制",
       name: "schoolSystem",
-      type: "input",
+      type: "select",
       refName: "schoolSystem",
-      placeholder: "请输入学制",
+      placeholder: "请选择学制",
       select: [
         { name: "2年制" },
         { name: "3年制" },
@@ -516,9 +532,12 @@ const fromTitle = {
       refName: "education",
       placeholder: "请选择学历",
       select: [
-        { name: "大专" },
-        { name: "本科生" },
-        { name: "研究生" },
+        { name: '小学' },
+          { name: "初中" },
+          { name: "高中" },
+          { name: "大专" },
+          { name: "大学本科" },
+          { name: "研究生" }
       ],
     },
     {
@@ -628,28 +647,11 @@ const fromTitle = {
       ],
     },
     {
-      label: "性别",
-      name: "sex",
-      type: "radio",
-      refName: "sex",
-      select: [
-        { name: "男", value: 1 },
-        { name: "女", value: 2 },
-      ],
-    },
-    {
       label: "成员身份证",
       name: "idCard",
       type: "input",
       refName: "idCard",
       placeholder: "请输入成员身份证",
-    },
-    {
-      label: "出生日期",
-      name: "birthday",
-      type: "picker",
-      refName: "birthday",
-      placeholder: "请选择入出生日期",
     },
     {
       label: "民族",
@@ -698,7 +700,6 @@ const rules = {
     post: [
       { required: true, message: "请输入从事或担任的工作", trigger: "blur" },
     ],
-    remarks: [{ required: true, message: "请输入备注", trigger: "blur" }],
   },
   table3: {
     familyName: [
@@ -758,13 +759,14 @@ export default {
         birthday: "",
         sex: "",
         age: "",
-        isMajor:2
-      },
-       major:{ 
+        isMajor:2,
+        major:{ 
         qualification:"",//资格
         approvalUnit:"",//单位
         acquire_date:"",//时间
       },
+      },
+       
       baseMessTitle: [
         {
           title: "number",
@@ -831,8 +833,11 @@ export default {
           type: "select",
           placeholder: "请选择学历",
           select: [
+            { name: '小学' },
+            { name: "初中" },
+            { name: "高中" },
             { name: "大专" },
-            { name: "本科生" },
+            { name: "本科" },
             { name: "研究生" },
           ],
         }, //
@@ -862,9 +867,9 @@ export default {
           type: "select",
           placeholder: "请选择政治面貌",
           select: [
-            { name: "团员" },
-            { name: "党员" },
-            { name: "民主人士" },
+            { name: "中共党员" },
+            { name: "中共预备党员" },
+            { name: "共青团员 " },
             { name: "群众" },
           ],
         }, //
@@ -1017,6 +1022,15 @@ export default {
             { required: true, message: "请选择日期", trigger: "change" },
           ];
         }
+        myrules['major.qualification'] = [
+           { required: true, message: "请输入必填项", trigger: "blur" }
+        ],
+        myrules['major.approvalUnit'] = [
+           { required: true, message: "请输入必填项", trigger: "blur" }
+        ],
+        myrules['major.acquireDate'] = [
+          { required: true, message: "请选择日期", trigger: "change" },
+        ]
       });
       this.baseRules = myrules;
     },
@@ -1078,6 +1092,11 @@ export default {
           j.key = k;
         });
       });
+      tdata[2].map(i=>{
+        const mes = this.IdCard(i.idCard)
+        i.sex = mes.sex
+        i.birthday = mes.birth
+      })
       this.$refs.table1.changeDataForImport(tdata[0]);
       this.$refs.table2.changeDataForImport(tdata[1]);
       this.$refs.table3.changeDataForImport(tdata[2]);
@@ -1113,7 +1132,11 @@ export default {
       this.$refs.studyData.visible = true
     },
     handleOk(form){
+      const mess = this.IdCard(form.idCard)
+      form.birthday = mess.birth;
+      form.sex = mess.sex;
       if(!form.key){
+
         let arr =[]
       arr.push(form)
       this.$refs[this.tableName].changeDataForImport(arr);
@@ -1269,11 +1292,24 @@ export default {
         option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
       );
     },
+    //下载批量导入模板操作
+    downloadExcel() {
+      window.location.href = `${process.env.VUE_APP_API_BASE_URL}/img/辅警个人表单.xlsx`;
+    },
   },
   mounted() {
     this.getBaseRules();
     this.getAllTableTitle();
   },
+  filters:{
+    statusSex(sex){
+      const statusSex = {
+        1:'男',
+        2:'女'
+      }
+      return statusSex[sex]
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

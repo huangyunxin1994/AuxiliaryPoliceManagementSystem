@@ -1,4 +1,4 @@
-import {GETLIST,GETDBLIST,POSTNOTICE,GETPOLICELIST,DELETENOTICE} from './api'
+import {GETLIST,GETDBLIST,POSTNOTICE,GETPOLICELIST,DELETENOTICE,GETSTATISDATA,GETDISTRIBUTE} from './api'
 // DELETEMESS,GETPOLICELIST,GETDBLIST,POSTNOTICE,
 import {request, METHOD} from '@/utils/request'
 // import Qs from 'qs'
@@ -48,6 +48,22 @@ const messageService = {
     async deleteMess(params){
         const DELETENOT =DELETENOTICE+params.id
         return request(DELETENOT, METHOD.DELETE)
+    },
+    /**
+     * 获取首页当前管理员前8周的组织人数统计
+     * @param params 查询条件
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    async getOrganStatis(params){
+        return request(GETSTATISDATA, METHOD.GET, params)
+    },
+    /**
+     * 获取首页当前管理员下一级组织人数统计
+     * @param params 查询条件
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    async getDistribute(params){
+        return request(GETDISTRIBUTE, METHOD.GET, params)
     },
     
 }

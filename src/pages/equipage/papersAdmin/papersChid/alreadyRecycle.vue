@@ -83,7 +83,7 @@ export default {
           openKeys: ['key-01'],
           loading:false,
           value:null,
-          advanced:false,
+          advanced:true,
           scheduleColumns: [
             {
           title: "序号",
@@ -202,7 +202,8 @@ export default {
     },
     reloadData(){
       this.queryParam.organizationId=""
-     this.queryParam.describes=""
+      this.queryParam.describes=""
+      this.queryParam.allotmentDate=""
       this.$refs.table.refresh(true)
     }
     },

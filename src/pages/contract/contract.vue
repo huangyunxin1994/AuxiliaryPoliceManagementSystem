@@ -255,7 +255,7 @@ export default {
           width: 120,
         },
         {
-          title: "是否即将到期",
+          title: "是否需要续约",
           dataIndex: "isExpire",
           key: "isExpire",
           width: 120,
@@ -583,9 +583,8 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        1: "即将到期",
-        2: "未到期",
-        3: "已过期"
+        1: "需续约",
+        2: "无需续约"
       };
       return statusMap[status];
     },

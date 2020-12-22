@@ -5,7 +5,7 @@
       :data="data"
       :scale="scale"
       :forceFit="true"
-      :padding="['auto', 'auto', '40', '50']">
+      :padding="['auto', 'auto', 'auto', '20']">
       <v-tooltip />
       <v-axis />
       <v-bar position="x*y"/>

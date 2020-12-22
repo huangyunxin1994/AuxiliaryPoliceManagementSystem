@@ -1,5 +1,4 @@
 <template>
-  <div class="swrap">
     <a-upload
         name="file"
         :multiple="true"
@@ -7,9 +6,8 @@
         :before-upload="beforeUpload"
         :show-upload-list="false"
       >
-      <a-button type="primary" icon="vertical-align-bottom">{{btnName}}</a-button>
+      <a-button type="primary" icon="upload">{{btnName}}</a-button>
     </a-upload>
-  </div>
 </template>
 
 <script>
@@ -86,8 +84,11 @@
                     data.map(v => {
                         let obj = {}
                         // obj[this.tableTitle.name] = v[this.tableTitle.title]
-                        _this.tableTitle[i].map(item=>{
-                          obj[item.dataIndex] = v[item.title]
+                        _this.tableTitle[i]&&_this.tableTitle[i].map(item=>{
+                          if(item.type&&item.type==='date')
+                            obj[item.dataIndex] = v[item.title]&&_this.formatDate(v[item.title],'-')||""
+                          else
+                            obj[item.dataIndex] = v[item.title]&&v[item.title]+""||""
                         })
                         arr.push(obj)
                     });
@@ -105,6 +106,17 @@
           } else {
               reader.readAsBinaryString(f);
           }
+      },
+      formatDate(serial, format) {
+        var utc_days = Math.floor(serial - 25569);
+        var utc_value = utc_days * 86400;
+        var date_info = new Date(utc_value * 1000);
+
+        // var daytime = new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds);
+        var returnDate = date_info.getFullYear();
+        returnDate += format + (date_info.getMonth() < 9 ? '0' + (date_info.getMonth() + 1) : (date_info.getMonth() + 1));
+        returnDate += format + (date_info.getDate() < 10 ? '0' + date_info.getDate() : date_info.getDate());
+        return returnDate;
       }
     }
   }

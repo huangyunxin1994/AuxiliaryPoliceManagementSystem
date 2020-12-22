@@ -101,21 +101,24 @@ export default {
             dataSource:[]
         };
     },
-    async mounted(){
+    async created(){
        await this.loadTree()
         
     },
     methods: {
-        loadTree(){
+      async loadTree(){
             const oid = this.user.isSystem !== 1 && this.user.organizationId ||""
-            this.$api.organizationService.getOrganization({organizationId:oid}).then((res)=>{
+            await this.$api.organizationService.getOrganization({organizationId:oid}).then((res)=>{
             let tree = res.data.data.data
             tree.forEach(item => {
                 item.scopedSlots = { title: "custom" }
             })
+            console.log(res.data.data.data)
             this.dataSource = this.filterArray(res.data.data.data)
             
             this.initData(this.dataSource)
+            this.dataList.map(i=>this.expandedKeys.push(i.key))
+            
                 // this.$emit("getTreeData",this.filterTree)
             })
         },
@@ -185,10 +188,15 @@ export default {
             const value = e.target.value;
             const expandedKeys = this.dataList
                 .map(item => {
-                if (value&&item.title.indexOf(value) > -1) {
-                    return this.getParentKey(item.key, this.dataSource);
-                }
-                return null;
+                    if(value){
+                        if (value&&item.title.indexOf(value) > -1) {
+                            return this.getParentKey(item.key, this.dataSource);
+                        }
+                        return null;
+                    }else{
+                        return item.key
+                    }
+                
                 })
                 .filter((item, i, self) => item && self.indexOf(item) === i);
             Object.assign(this, {
@@ -225,7 +233,7 @@ export default {
   }
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 
   .custom-tree {
       border-right: 1px solid @border-color-split;
@@ -234,7 +242,7 @@ export default {
           display: flex;
           justify-content: space-between;
           text-align: center;
-        /deep/ .btnPosition {
+        .btnPosition {
             
             font-size: 14px;
             z-index: 1;
@@ -243,7 +251,7 @@ export default {
             justify-content: space-between;
             
         }
-        /deep/ .btn {
+        .btn {
             display: none;
             color:@text-color
         }
@@ -251,10 +259,10 @@ export default {
         
     }
     /deep/ .ant-tree-node-selected{
-         /deep/ .btn {
+        .btn {
             display: inline-block;
         }
-        /deep/ .btnReload{
+        .btnReload{
              margin-left: 10px;
         }
     }

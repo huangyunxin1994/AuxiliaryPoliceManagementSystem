@@ -38,7 +38,7 @@
                       </a-select>
                     </a-form-item>
                   </a-col>
-                  <template v-if="advanced">
+                  <!-- <template v-if="advanced">
                     <a-col :md="8" :sm="24">
                       <a-form-item label="岗位选择">
                         <a-select  v-model="queryParam.postId" style="width: 100%">
@@ -59,7 +59,7 @@
                         </a-select>
                       </a-form-item>
                     </a-col>
-                  </template>
+                  </template> -->
                   <a-col :md="(!advanced && 8) || 24" :sm="24">
                     <span
                       class="table-page-search-submitButtons"
@@ -194,7 +194,6 @@ export default {
       advanced: true,
       tableTitle: [],
       roleList:[],
-      postList:[],
       replaceFields: {
         children: "children",
         title: "name",
@@ -513,8 +512,6 @@ export default {
         })
         list.splice(list.findIndex(i=>i.code==='xtgl'),1)
         this.roleList = Object.assign([],list)
-        this.$api.rankPostService.getPostList().then(res=>{
-          this.postList = Object.assign([],res.data.data.list)
           this.tableTitle = [
           {
             label: "账号",
@@ -552,9 +549,8 @@ export default {
 
           {
             label: "岗位",
-            name: "postId",
-            type: "select",
-            select:this.postList.filter(i=>i.state === 1)
+            name: "postName",
+            type: "input",
           },
           {
             label: "联系电话",
@@ -571,7 +567,6 @@ export default {
             ],
           },
         ];
-        })
         
       });
     },

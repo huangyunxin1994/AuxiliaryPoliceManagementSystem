@@ -16,5 +16,9 @@ module.exports = {
   GETDATA:`${BASE_URL}/auxiliary-police/`,//获取辅警列表信息
   POSTDATA:`${BASE_URL}/auxiliary-police/`,//添加辅警
   PUTDATA:`${BASE_URL}/auxiliary-police/`,//修改辅警
-  POSTHEAD:`${BASE_URL}/auxiliary-police/head` //修改头像
+  POSTHEAD:`${BASE_URL}/auxiliary-police/head`, //修改头像
+  POSTAUXDATA:`${BASE_URL}/auxiliary-police/auxiliaryPolice`, //批量导入辅警资料
+  GETAUXDATA:`${BASE_URL}/auxiliary-police/auxiliaryPolice`, //获取所有辅警的编号
+  POSTAUXFORMDATA:`${BASE_URL}/auxiliary-police/auxiliaryPoliceInformation`, //批量导入辅警资料
+  
 }

@@ -45,7 +45,9 @@
     </a-row>
     <div class="antd-pro-pages-home-twoColLayout" :class="!isMobile && 'desktop'">
         <a-row :gutter="24">
-            <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24" >
+          <a-col :xl="18" :lg="24" :md="24" :sm="24" :xs="24" >
+            <a-row :gutter="24">
+              <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24" >
                 <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false" >
                     <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">辅警人员变化统计</div>
                     <div class="ant-table-wrapper">
@@ -54,18 +56,18 @@
                     </div>
                 </a-card>
             </a-col>
-        
             <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24">
             <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false">
-                <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">业务处理情况</div>
+                <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">辅警人员分布</div>
                 <div class="ant-table-wrapper">
-                    <v-chart :force-fit="true" :height="180" :data="pieData" :scale="pieScale" :padding="['auto', 'auto', '40', '50']">
-                        <v-tooltip :showTitle="false" dataKey="item*percent" />
+                    <span class="antd-pro-pages-home-salesCard-tips">总人数：{{totalNum+'人'}}</span>
+                    <v-chart :force-fit="true" :height="180" :data="pieData" :scale="pieScale" :padding="['auto', '50', 'auto', '50']">
+                        <v-tooltip :showTitle="true" title="count" dataKey="item" />
                         <v-axis />
                         <!-- position="right" :offsetX="-140" -->
-                        <v-legend dataKey="item"/>
-                        <v-pie position="percent" :offsetX="-140" color="item" :vStyle="pieStyle" />
-                        <v-coord type="theta" :radius="0.75" :innerRadius="0.6" />
+                        <!-- <v-legend dataKey="item"/> -->
+                        <v-pie position="percent" :offsetX="-140" color="item*count*percent" :vStyle="pieStyle" />
+                        <v-coord type="theta" :radius="1"  />
                     </v-chart>
                 </div>
             </a-card>
@@ -78,17 +80,8 @@
                     </div>
                 </a-card>
             </a-col>
-        </a-row>
-        <a-row :gutter="24">
-            <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24">
-                <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false">
-                    <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">通知</div>
-                    <div class="ant-table-wrapper">
-                        <list :iconColor="theme.color" icon="sound" :list="noticeList" :user="user" @refresh="refresh"/>
-                    </div>
-                </a-card>
-            </a-col>
-            <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24">
+            
+            <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
                 <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false">
                     <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">公告</div>
                     <div class="ant-table-wrapper">
@@ -96,7 +89,7 @@
                     </div>
                 </a-card>
             </a-col>
-             <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24">
+             <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
                 <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false">
                     <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">文档中心</div>
                     <div class="ant-table-wrapper">
@@ -104,7 +97,27 @@
                     </div>
                 </a-card>
             </a-col>
+            </a-row>
+          </a-col>
+          <!-- <a-col :xl="8" :lg="24" :md="24" :sm="24" :xs="24" > -->
+            <a-col :xl="6" :lg="24" :md="24" :sm="24" :xs="24">
+                <a-card class="antd-pro-pages-home-salesCard" :loading="loading" :bordered="false" style="height:624px">
+                    <div class="antd-pro-pages-home-salesCard-title" slot="title" :style="{'border-color':theme.color}">通知</div>
+                    <div class="ant-table-wrapper">
+                        <list :iconColor="theme.color" icon="sound" :list="noticeList" :user="user" @refresh="refresh"/>
+                    </div>
+                </a-card>
+            </a-col>
+          <!-- </a-col> -->
+            
+            
+            
+            
+            
         </a-row>
+        <!-- <a-row :gutter="24">
+          
+        </a-row> -->
     </div>
     
     </template>
@@ -112,100 +125,26 @@
 </template>
 
 <script>
-import moment from 'moment'
-const barData = []
-const barData2 = []
-for (let i = 0; i < 12; i += 1) {
-  barData.push({
-    x: `${i + 1}月`,
-    y: Math.floor(Math.random() * 1000) + 200
-  })
-  barData2.push({
-    x: `${i + 1}月`,
-    y: Math.floor(Math.random() * 1000) + 200
-  })
-}
-
-const rankList = []
-for (let i = 0; i < 7; i++) {
-  rankList.push({
-    name: '白鹭岛 ' + (i + 1) + ' 号店',
-    total: 1234.56 - i * 100
-  })
-}
-
-const searchUserData = []
-for (let i = 0; i < 7; i++) {
-  searchUserData.push({
-    x: moment().add(i, 'days').format('YYYY-MM-DD'),
-    y: Math.ceil(Math.random() * 10)
-  })
-}
-const searchUserScale = [
-  {
-    dataKey: 'x',
-    alias: '时间'
-  },
-  {
-    dataKey: 'y',
-    alias: '用户数',
-    min: 0
-  }]
-
-const searchTableColumns = [
-  {
-    dataIndex: 'index',
-    title: '排名',
-    width: 90
-  },
-  {
-    dataIndex: 'keyword',
-    title: '搜索关键词'
-  },
-  {
-    dataIndex: 'count',
-    title: '用户数'
-  },
-  {
-    dataIndex: 'range',
-    title: '周涨幅',
-    align: 'right',
-    sorter: (a, b) => a.range - b.range,
-    scopedSlots: { customRender: 'range' }
-  }
-]
-const searchData = []
-for (let i = 0; i < 50; i += 1) {
-  searchData.push({
-    index: i + 1,
-    keyword: `搜索关键词-${i}`,
-    count: Math.floor(Math.random() * 1000),
-    range: Math.floor(Math.random() * 100),
-    status: Math.floor((Math.random() * 10) % 2)
-  })
-}
-
 const DataSet = require('@antv/data-set')
 
-const sourceData = [
-  { item: '已处理', count: 32.2 },
-  { item: '未处理', count: 21 },
-]
 
 const pieScale = [{
   dataKey: 'percent',
   min: 0,
   formatter: '.0%'
 }]
+const searchUserScale = [
+  {
+    dataKey: 'x',
+    alias: '周'
+  },
+  {
+    dataKey: 'y',
+    alias: '人数',
+    min: 0
+  }]
 
-const dv = new DataSet.View().source(sourceData)
-dv.transform({
-  type: 'percent',
-  field: 'count',
-  dimension: 'item',
-  as: 'percent'
-})
-const pieData = dv.rows
+
 import {mapState,mapGetters} from 'vuex'
 import bar from '@/components/chart/Bar'
 import list from '@/components/list/List'
@@ -225,21 +164,12 @@ export default {
       visible:false,
        loading: true,
        timeFix: timeFix(),
-      rankList,
-
-      // 搜索用户数
-      searchUserData,
-      searchUserScale,
-      searchTableColumns,
-      searchData,
-
-      barData,
-      barData2,
-
+      barData:[],
       //
+      searchUserScale,
       pieScale,
-      pieData,
-      sourceData,
+      pieData:undefined,
+      sourceData:[],
       pieStyle: {
         stroke: '#fff',
         lineWidth: 1
@@ -247,7 +177,8 @@ export default {
       businessList:[],//待办
       noticeList:[],//通知
       afficheList:[],//公告
-      fileList:[]
+      fileList:[],
+      totalNum:0//分布图表总人数
     }
   },
   methods:{
@@ -261,7 +192,9 @@ export default {
     async getUserMessList(){
       let _this = this
       let query = {
-        id:this.user.id
+        id:this.user.id,
+        currentPage:1,
+        pageSize:999999
       }
       const requestParameters = Object.assign({}, query);
        _this.$api.messageService
@@ -330,6 +263,45 @@ export default {
             // return res.data;
             this.fileList = res.data.data.list
           });
+    },
+    async getStatisData(){
+      this.$api.messageService
+        .getOrganStatis({organizationId:this.user.organizationId })
+        .then((res) => {
+          const list = res.data.data.list
+          for(let i=0;i<list.length;i++){
+            console.log()
+            this.barData.push({
+                x: list[i].createTime.substring(5,10),
+                y: list[i].num
+              })
+          }
+        });
+    },
+    async getDistribute(){
+      this.$api.messageService
+        .getDistribute({organizationId:this.user.organizationId })
+        .then((res) => {
+          console.log(res)
+          const list = res.data.data.list
+          for(let i=0;i<list.length;i++){
+            this.sourceData.push({
+              item:list[i].organizationName,
+              count:list[i].num
+            })
+            this.totalNum += list[i].num
+          }
+          const dv = new DataSet.View().source(this.sourceData)
+            dv.transform({
+              type: 'percent',
+              field: 'count',
+              dimension: 'item',
+              as: 'percent'
+            })
+            console.log(dv)
+            dv.rows.map(i=>i.count=i.count+'人')
+            this.pieData = dv.rows
+        });
     }
   },
   created() {
@@ -337,6 +309,8 @@ export default {
     setTimeout(() => this.loading = !this.loading, 1000)
   },
   async mounted(){
+    await this.getStatisData()
+    await this.getDistribute()
     await this.getUserMessList()
     await this.getUserDbList()
     await this.getAfficheList()
@@ -413,6 +387,16 @@ export default {
         font-weight: 500;
         font-size: 16px;
         text-indent: 10px;
+    }
+    /deep/ .ant-table-wrapper{
+      position: relative;
+      .antd-pro-pages-home-salesCard-tips{
+        position: absolute;
+        top:0;
+        left: 0;
+        color: @title-color;
+        font-weight: 500;
+      }
     }
   }
 

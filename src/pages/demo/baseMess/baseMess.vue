@@ -57,9 +57,12 @@
                     <a-form-item label="学历选择">
                       <a-select default-value=""  v-model="queryParam.education">
                         <a-select-option value=""> 全部 </a-select-option>
-                        <a-select-option value="研究生"> 研究生 </a-select-option>
-                        <a-select-option value="本科"> 本科生 </a-select-option>
+                        <a-select-option value="小学"> 小学 </a-select-option>
+                        <a-select-option value="初中"> 初中 </a-select-option>
+                        <a-select-option value="高中"> 高中 </a-select-option>
                         <a-select-option value="大专"> 大专 </a-select-option>
+                        <a-select-option value="本科"> 本科 </a-select-option>
+                        <a-select-option value="研究生"> 研究生 </a-select-option>
                       </a-select>
                     </a-form-item>
                   </a-col>
@@ -95,10 +98,7 @@
             </a-form>
           </div>
           <div class="table-operator" style="margin-bottom: 24px">
-            <a-button
-              type="primary"
-              icon="vertical-align-bottom"
-              style="margin-right: 10px"
+            <a-button type="primary" icon="upload" @click="visible=true"  style="margin-right: 10px"
               >批量导入</a-button
             >
             <a-button type="primary" icon="plus" @click="addPerson"
@@ -141,6 +141,40 @@
         </a-col>
       </a-row>
     </a-card>
+    <import-form ref="importForm" :data='importData' :importParam="importParam"></import-form>
+    <a-modal
+      v-model="visible"
+      title="批量导入"
+      :destroyOnClose="true"
+      :afterClose="close"
+      :width="400"
+      :footer="null"
+      :mask-closable="false"
+      centered 
+    >
+    <a-form-model ref="modalForm" :model="importParam" :rules="rules" :label-col="{span:6}"
+    :wrapper-col="{span:18}">
+            <a-form-model-item label="组织选择" prop="organizationId">
+                <tree-select
+                  :value="importParam.organizationId"
+                  @handleTreeChange="handleTreeChange"
+                ></tree-select>
+              </a-form-model-item>      
+          </a-form-model>
+          <div class="modalButton" >
+            <a-button
+            icon="vertical-align-bottom"
+              style="margin-right: 10px"
+              type="primary"
+               @click="downloadExcel"
+            >
+              模板下载
+            </a-button>
+            <import-excel  :tableTitle="tableTitle" btnName="批量导入" @getTableData="getTableData"></import-excel>
+          </div>
+          
+    </a-modal>
+        
   </div>
 </template>
 
@@ -150,14 +184,72 @@ import STable from "@/components/Table_/";
 import AntTree from "@/components/tree_/Tree";
 import fromModel from "@/components/formModel/formModel";
 import {daysDistance} from '@/utils/dateTime'
+import importExcel from '@/components/importExcel/importExcel'
+import importForm from '@/components/importForm/importForm'
+import treeSelect from "@/components/treeSelect/TreeSelect";
 export default {
   name: "OrganManage",
   components: {
     STable,
     AntTree,
+    importExcel,
+    importForm,
+    treeSelect
   },
   data() {
     return {
+      visible:false,
+      importData:[],
+      tableTitle:[
+        [
+          {title: "姓名",dataIndex: "name",key: "name"},
+          {title: "辅警编号",dataIndex: "number",key: "number"},
+          {title: "身份证号",dataIndex: "idCard",key: "idCard"},
+          {title: "所属岗位",dataIndex: "postName",key: "postName"},
+          {title: "所属职级",dataIndex: "rankName",key: "rankName"},
+          {title: "民族",dataIndex: "nation",key: "nation"},
+          {title: "学历",dataIndex: "education",key: "education"},
+          {title: "籍贯",dataIndex: "nativePlace",key: "nativePlace"},
+          {title: "身高（cm）",dataIndex: "height",key: "height"},
+          {title: "入职日期",dataIndex: "entryTime",key: "entryTime",type:'date'},
+          {title: "政治面貌",dataIndex: "politicalStatus",key: "politicalStatus"},
+          {title: "手机号码",dataIndex: "phone",key: "phone"},
+        ],
+        [
+          {title: "姓名",dataIndex: "name",key: "name"},
+          {title: "辅警编号",dataIndex: "number",key: "number"},
+          {title: "毕业院校",dataIndex: "school",key: "school"},
+          {title: "所在院系",dataIndex: "courtyard",key: "courtyard"},
+          {title: "学习形式",dataIndex: "learningForm",key: "learningForm"},
+          {title: "学制",dataIndex: "schoolSystem",key: "schoolSystem"},
+          {title: "入学日期",dataIndex: "startDate",key: "startDate",type:'date'},
+          {title: "毕业日期",dataIndex: "endDate",key: "endDate",type:'date'},
+          {title: "所学专业",dataIndex: "major",key: "major"},
+          {title: "学历",dataIndex: "education",key: "education"},
+          {title: "学位",dataIndex: "academic",key: "academic"},
+          {title: "学位授予日期",dataIndex: "academicTime",key: "academicTime",type:'date'},
+        ],
+        [
+          {title: "姓名",dataIndex: "name",key: "name"},
+          {title: "辅警编号",dataIndex: "number",key: "number"},
+          {title: "工作起始日期",dataIndex: "startTime",key: "startDate",type:'date'},
+          {title: "工作结束日期",dataIndex: "endTime",key: "endData",type:'date'},
+          {title: "所在单位",dataIndex: "company",key: "company"},
+          {title: "单位类型",dataIndex: "unitType",key: "unitType"},
+          {title: "职务级别",dataIndex: "jobLevel",key: "jobLevel"},
+          {title: "是否公务员",dataIndex: "orderly",key: "orderly"},
+          {title: "从事或担任工作",dataIndex: "post",key: "post"},
+          {title: "备注",dataIndex: "remarks",key: "remarks"}
+        ],
+        [
+          {title: "姓名",dataIndex: "name",key: "name"},
+          {title: "辅警编号",dataIndex: "number",key: "number"},
+          {title: "成员姓名",dataIndex: "familyName",key: "familyName"},
+          {title: "与本人关系",dataIndex: "relationship",key: "relationship"},
+          {title: "成员身份证",dataIndex: "idCard",key: "idCard"},
+          {title: "民族",dataIndex: "nation",key: "nation"}
+        ]
+      ],
       scheduleColumns: [
         {
           title: "序号",
@@ -196,14 +288,14 @@ export default {
           key: "rankName",
           width: 100,
         },
+        // {
+        //   title: "工龄(年)",
+        //   dataIndex: "seniority",
+        //   key: "seniority",
+        //   width: 80,
+        // },
         {
-          title: "工龄(年)",
-          dataIndex: "seniority",
-          key: "seniority",
-          width: 80,
-        },
-        {
-          title: "年龄(岁)",
+          title: "年龄",
           dataIndex: "age",
           key: "age",
           width: 80,
@@ -290,6 +382,10 @@ export default {
         isMajor:'',
         organizationId:''
       },
+      importParam:{
+        organizationId:"",
+        organizationName:""
+      },
       loadScheduleData: (params) => {
         this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || "";
         let param = Object.assign(params, this.queryParam);
@@ -352,6 +448,11 @@ export default {
           { required: true, message: "请选择生效日期", trigger: "change" },
         ],
       },
+      rules:{
+        organizationId:[
+          { required: true, message: "请选择组织", trigger: "change" },
+        ]
+      },
       advanced: true,
       rankMess:[],//职级选择列表
       postList:[],//岗位选择列表
@@ -367,12 +468,15 @@ export default {
       this.$api.rankPostService.getRankList(para).then((res)=>{
         let rank = res.data.data.list
         this.rankMess = rank
+        this.$refs.importForm.rankList = rank
+
       })
     },
     // 获取岗位列表
     getPostList(){
       this.$api.rankPostService.getPostList().then(res=>{
           this.postList = Object.assign([],res.data.data.list)
+          this.$refs.importForm.postList = Object.assign([],res.data.data.list)
       })
     },
     handleEdit(record) {
@@ -509,10 +613,45 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+    //下载工资表操作
+    downloadExcel() {
+      window.location.href = `${process.env.VUE_APP_API_BASE_URL}/img/批量导入模板.xlsx`;
+    },
+    //导入方法回调
+    getTableData(params){
+      this.importData = params
+      this.$refs.modalForm.validate(valid => {
+        if (valid) {
+          this.visible=false
+          this.$nextTick(()=>{
+            this.$refs.importForm.handleShow()
+          })
+        } else {
+          return false;
+        }
+      });
+      
+    },
+    //树选择回调
+    handleTreeChange(obj) {
+      console.log(obj)
+      this.importParam.organizationId = obj.val;
+      this.importParam.organizationName = obj.label
+    },
+    close(){
+      this.importParam={
+        organizationId:this.user.organizationId,
+        organizationName:this.user.organizationName
+      }
+    }
   },
-  mounted () {
+  created () {
       this.getRankList()
       this.getPostList()
+      this.importParam={
+        organizationId:this.user.organizationId,
+        organizationName:this.user.organizationName
+      }
   },
   filters: {
     statusFilter(status) {
@@ -552,4 +691,8 @@ export default {
 
 <style scoped lang="less">
 @import "../index";
+.modalButton{
+  display: flex;
+  justify-content: space-around;
+}
 </style>

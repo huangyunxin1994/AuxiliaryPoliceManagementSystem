@@ -22,5 +22,8 @@ module.exports = {
   GETLIST:`${BASE_URL}/Msg/user/list`,//获取管理员个人消息通知列表
   POSTNOTICE:`${BASE_URL}/Msg/user/notice`,//管理员通知删除
   DELETENOTICE:`${BASE_URL}/Msg/auxiliaryPolice/`,//辅警通知删除
+  GETSTATISDATA:`${BASE_URL}/Msg/organizationStatistics`,//获取首页当前管理员前8周的组织人数统计
+  GETDISTRIBUTE:`${BASE_URL}/Msg/organizationStatistics/all`//获取首页当前管理员下一级组织人数统计
+  
   
 }

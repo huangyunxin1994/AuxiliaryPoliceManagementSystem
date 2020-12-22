@@ -1,4 +1,4 @@
-import {GETDATA,POSTDATA,PUTDATA,POSTHEAD} from './api'
+import {GETDATA,POSTDATA,PUTDATA,POSTHEAD,POSTAUXDATA,GETAUXDATA,POSTAUXFORMDATA} from './api'
 import {request, METHOD} from '@/utils/request'
 import Qs from 'qs'
 const auxiliaryPoliceService = {
@@ -35,6 +35,31 @@ const auxiliaryPoliceService = {
     postAuxiliaryHead(params){
         return request(POSTHEAD, METHOD.POST, params)
     },
+    /**
+     * 获取所有辅警的编号
+     * @param params 
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    getAuxiliaryNum(params){
+        return request(GETAUXDATA, METHOD.GET, params)
+    },
+    /**
+     * 批量导入辅警资料
+     * @param params 
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    postAuxiliaryData(params){
+        return request(POSTAUXDATA, METHOD.POST, params)
+    },
+    /**
+     * 批量导入辅警个人表单资料
+     * @param params 
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    postAuxiliaryFormData(params){
+        return request(POSTAUXFORMDATA, METHOD.POST, params)
+    },
+    
 }
 
 

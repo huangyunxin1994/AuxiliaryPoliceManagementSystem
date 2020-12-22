@@ -202,6 +202,7 @@ export default {
     reloadData() {
       this.queryParam.organizationId = "";
       this.queryParam.describes = "";
+      this.queryParam.allotmentDate=""
       this.$refs.table.refresh(true);
     },
   },

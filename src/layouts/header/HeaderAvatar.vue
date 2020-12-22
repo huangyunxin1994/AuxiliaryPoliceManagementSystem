@@ -28,7 +28,7 @@
 import {mapState, mapGetters} from 'vuex'
 // import {userApi} from '@/services/api'
 import TaskForm from "@/components/formModel/formModel";
-
+import { validatePhone } from "@/config/default/rules";
 export default {
   name: 'HeaderAvatar',
   computed: {
@@ -185,7 +185,10 @@ export default {
         },],
         rules: {
           name: [{ required: true,message:'请输入姓名' , trigger: "blur" }],
-          phone: [{ required: true,message:'请输入手机号' , trigger: "blur" }],
+          phone: [{ required: true,message:'请输入手机号' , trigger: "blur" },
+          { required: true, validator: validatePhone, trigger: "change" }
+
+          ],
         },
         submitFun: fn,
         on: {
