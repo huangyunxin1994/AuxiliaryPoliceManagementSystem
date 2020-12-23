@@ -38,15 +38,15 @@
                       </a-select>
                     </a-form-item>
                   </a-col>
-                  <!-- <template v-if="advanced">
-                    <a-col :md="8" :sm="24">
+                  <template v-if="advanced">
+                    <!-- <a-col :md="8" :sm="24">
                       <a-form-item label="岗位选择">
                         <a-select  v-model="queryParam.postId" style="width: 100%">
                           <a-select-option value=""> 全部 </a-select-option>
                           <a-select-option :value="item.id" v-for="item in postList" :key="item.id"> {{item.name}} </a-select-option>
                         </a-select>
                       </a-form-item>
-                    </a-col>
+                    </a-col> -->
                     <a-col :md="8" :sm="24">
                       <a-form-item label="启用状态">
                         <a-select
@@ -59,7 +59,7 @@
                         </a-select>
                       </a-form-item>
                     </a-col>
-                  </template> -->
+                  </template>
                   <a-col :md="(!advanced && 8) || 24" :sm="24">
                     <span
                       class="table-page-search-submitButtons"

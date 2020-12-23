@@ -190,6 +190,7 @@
           sm: { span: 13 },
         }"
       >
+        <p style="color:#f5222d;margin-bottom:20px">注意：请确认文件内人员名单包含所选组织所有人员，否则文件将上传失败。</p>
         <a-row>
           <a-col :xs="24" :sm="24">
             <a-form-model-item label="组织选择" prop="organizationId">

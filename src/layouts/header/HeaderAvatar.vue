@@ -145,7 +145,19 @@ export default {
         okText: "提交",
       };
       let fn;
+      let formTitle = []
       if(this.loginType===2){
+        formTitle = [{
+          label: "姓名",
+          name: "name",
+          type: "input",
+          placeholder: "请输入姓名",
+        },{
+          label: "手机号",
+          name: "phone",
+          type: "input",
+          placeholder: "请输入手机号",
+        }]
         fn = (parameter) => {
           return this.$api.organizationService
             .putPassword(parameter)
@@ -156,6 +168,12 @@ export default {
             });
         }
       }else{
+        formTitle = [{
+          label: "手机号",
+          name: "phone",
+          type: "input",
+          placeholder: "请输入手机号",
+        }]
         fn = (parameter) => {
           return this.$api.auxiliaryPoliceService
             .putAuxiliaryPolice(parameter)
@@ -172,17 +190,7 @@ export default {
           name:this.user.name,
           phone:this.user.phone,
         },
-        formTitle: [{
-          label: "姓名",
-          name: "name",
-          type: "input",
-          placeholder: "请输入姓名",
-        },{
-          label: "手机号",
-          name: "phone",
-          type: "input",
-          placeholder: "请输入手机号",
-        },],
+        formTitle: formTitle,
         rules: {
           name: [{ required: true,message:'请输入姓名' , trigger: "blur" }],
           phone: [{ required: true,message:'请输入手机号' , trigger: "blur" },

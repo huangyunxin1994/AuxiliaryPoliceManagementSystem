@@ -248,17 +248,6 @@ const options = {
           component: BlankView,
           children: [
             {
-              path: 'equipageAdmin',
-              name: '装备管理',
-              meta: {
-                authority: {
-                  role: 'zzzb'
-                },
-                keepAlive:false
-              },
-              component: () => import('@/pages/equipage/equipageAdmin/equipageAdmin'),
-            },
-            {
               path: 'papersAdmin',
               name: '证件管理',
               meta: {
@@ -268,6 +257,17 @@ const options = {
                 keepAlive:false
               },
               component: () => import('@/pages/equipage/papersAdmin/papersAdmin'),
+            },
+            {
+              path: 'equipageAdmin',
+              name: '装备管理',
+              meta: {
+                authority: {
+                  role: 'zzzb'
+                },
+                keepAlive:false
+              },
+              component: () => import('@/pages/equipage/equipageAdmin/equipageAdmin'),
             }
           ]
         },
@@ -437,7 +437,7 @@ const options = {
             },
             {
               path: 'otherDeploy',
-              name: '其他配置项',
+              name: '证件与装备类型配置',
               meta: {
                 authority: {
                   role: 'xtgl'

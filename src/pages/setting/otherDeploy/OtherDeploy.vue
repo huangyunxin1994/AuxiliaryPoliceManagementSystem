@@ -1,11 +1,11 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
-      <div
+      <!--<div
         class="position-and-level-title"
         :style="{ 'border-color': theme.color }"
       >
-        <!-- 上下班时间配置 -->
+        上下班时间配置
         工资表生成时间配置
       </div>
       <a-row :gutter="24">
@@ -22,7 +22,7 @@
             >保存</a-button
           >
         </a-col>
-        <!-- <a-col :lg="10" :md="10" :xs="10">
+         <a-col :lg="10" :md="10" :xs="10">
           <span style="width: 100px">上午上班时间：</span>
           <a-time-picker
             v-model="commData.morningUppertime"
@@ -65,17 +65,17 @@
         </a-col>
         <a-col :lg="4" :md="4" :xs="4" style="margin-bottom: 24px">
           <a-checkbox :checked="commData.state == 2 ||commData.state == 3" @change="changeCommAfter"> 启用 </a-checkbox>
-        </a-col> -->
-      </a-row>
+        </a-col> 
+      </a-row>-->
 
       <a-row :gutter="24">
         <a-col :md="12" :xs="24">
-          <div
+          <!-- <div
             class="position-and-level-title"
             :style="{ 'border-color': theme.color }"
           >
             证件类型配置
-          </div>
+          </div> -->
           <div class="table-operator" style="margin-bottom: 24px">
             <a-button type="primary" icon="plus" @click="handleCredAdd"
               >新建</a-button
@@ -100,12 +100,12 @@
           </s-table>
         </a-col>
         <a-col :md="12" :xs="24">
-          <div
+          <!-- <div
             class="position-and-level-title"
             :style="{ 'border-color': theme.color }"
           >
             装备类型配置
-          </div>
+          </div> -->
           <div class="table-operator" style="margin-bottom: 24px">
             <a-button type="primary" icon="plus" @click="handleEqupAdd"
               >新建</a-button

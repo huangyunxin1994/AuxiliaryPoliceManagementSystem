@@ -23,16 +23,28 @@
               </a-form-item>
             </a-col>
             <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="配发日期">
-                  <a-date-picker @change="handleChange" style="width: 100%" />
-                </a-form-item>
-              </a-col>
-            </template>
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="配发日期">
+                      <a-date-picker @change="allotmentDate" style="width: 100%" :value-format="dateFormat" v-model="queryParam.allotmentDate" />
+                    </a-form-item>
+                  </a-col>
+                </template>
+                <template v-if="advanced">
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="有效日期">
+                      <a-date-picker @change="validity" style="width: 100%" :value-format="dateFormat" v-model="queryParam.termValidity" />
+                    </a-form-item>
+                  </a-col>
+                </template>
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
-                <a-form-item label="有效日期">
-                  <a-date-picker @change="onChange" style="width: 100%" />
+                <a-form-item label="装备类型">
+                  <a-select default-value="" v-model="queryParam.cqName">
+                    <a-select-option value=""> 全部 </a-select-option>
+                    <a-select-option v-for="(item,index) in eqName" :key="index" :value="item.name"> {{item.name}} </a-select-option>
+                    <!-- <a-select-option value="1">正常</a-select-option>
+                    <a-select-option value="2">逾期未回收</a-select-option> -->
+                  </a-select>
                 </a-form-item>
               </a-col>
             </template>
@@ -86,10 +98,12 @@ export default {
   },
   data() {
     return {
+      dateFormat: 'YYYY-MM-DD',
       openKeys: ["key-01"],
       loading: false,
       value: null,
       advanced: true,
+      eqName:[],
       scheduleColumns: [
         {
           title: "序号",
@@ -150,11 +164,14 @@ export default {
       queryParam: {
         organizationId: "",
         describes: "",
+        allotmentDate: "",
+        termValidity: "",
         type: 2,
         state: 2,
         oid: "",
         recycler: "", //回收人
         recyclerId: "", //回收人id
+        cqName:''
       },
       loadScheduleData: (parameter) => {
         this.queryParam.recycler = this.user.name;
@@ -180,18 +197,14 @@ export default {
     };
   },
   created() {
+    //获取装备类型
+    this.$api.certEquipService.getCertEqupType({ type: 2 }).then((res) => {
+        this.eqName = res.data.data.list
+    });
     this.queryParam.oid =
       (this.user.isSystem !== 1 && this.user.organizationId) || "";
   },
   methods: {
-    // 配发日期
-    handleChange(date, dateString) {
-      this.queryParam.allotmentDate = dateString;
-    },
-    // 有效日期
-    onChange(date, dateString) {
-      this.queryParam.termValidity = dateString;
-    },
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
@@ -203,6 +216,8 @@ export default {
       this.queryParam.organizationId = "";
       this.queryParam.describes = "";
       this.queryParam.allotmentDate=""
+      this.queryParam.termValidity=""
+      this.queryParam.cqName = ""
       this.$refs.table.refresh(true);
     },
   },

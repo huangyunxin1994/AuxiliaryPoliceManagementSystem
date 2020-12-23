@@ -24,7 +24,7 @@
                 <a-dropdown :trigger="['click']" v-if="allowEdit">
                     <a class="btn" @click="e => e.stopPropagation()"><a-icon type="ellipsis" /></a>
                     <a-menu slot="overlay">
-                        <a-menu-item key="1" @click="edit">编辑</a-menu-item>
+                        <a-menu-item key="1" @click="edit" v-if="user.isSystem !== 1">编辑</a-menu-item>
                         <a-menu-item key="2" @click="add">新增</a-menu-item>
                         <a-menu-item key="3" @click="remove" v-if="item.id!='1'">删除</a-menu-item>
                     </a-menu>

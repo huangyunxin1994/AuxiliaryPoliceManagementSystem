@@ -28,6 +28,16 @@
                     </a-form-item>
                   </a-col>
                 </template>
+                <template v-if="advanced">
+                  <a-col :md="8" :sm="24">
+                    <a-form-item label="证件类型">
+                      <a-select default-value="" v-model="queryParam.cqName">
+                        <a-select-option value=""> 全部 </a-select-option>
+                        <a-select-option :value="item.name" v-for="item in certList" :key="item.id">{{item.name}}</a-select-option>
+                      </a-select>
+                    </a-form-item>
+                  </a-col>
+                </template>
                 <a-col :md="(!advanced && 8) || 24" :sm="24">
                   <span
                     class="table-page-search-submitButtons"
@@ -80,6 +90,8 @@ export default {
     },
     data(){
         return{
+          dateFormat: 'YYYY-MM-DD',
+          certList:[],
           openKeys: ['key-01'],
           loading:false,
           value:null,
@@ -150,6 +162,7 @@ export default {
             oid:"",
             recycler:'',//回收人
             recyclerId:'',//回收人id
+            cqName:''
           },
           loadScheduleData:  (parameter) => {
               this.queryParam.recycler = this.user.name
@@ -174,6 +187,9 @@ export default {
         }
     },
     created(){
+       this.$api.certEquipService.getCertEqupType({ type: 1 }).then((res) => {
+        this.certList = res.data.data.list   
+      })
     this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
   },
     methods:{
@@ -205,6 +221,7 @@ export default {
       this.queryParam.describes=""
       this.queryParam.allotmentDate=""
       this.queryParam.termValidity=""
+      this.queryParam.cqName=""
       this.$refs.table.refresh(true)
     }
     },

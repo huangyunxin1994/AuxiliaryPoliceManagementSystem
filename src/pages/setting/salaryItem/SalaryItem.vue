@@ -1,6 +1,35 @@
 <template>
   <div class="new-page" :style="`min-height: ${pageMinHeight}px`">
     <a-card :bordered="false">
+      <div
+        class="position-and-level-title"
+        :style="{ 'border-color': theme.color }"
+      >
+        <!-- 上下班时间配置 -->
+        工资表生成时间配置
+      </div>
+      <a-row :gutter="24">
+        <a-col :span="24">
+          <span style="width: 100px">工资表生成时间：每月 </span>
+          <a-select default-value="" v-model="salaryTime" style="width: 100px">
+            <a-select-option v-for="i in 28" :key="i" :value="i" >
+              {{i}}
+            </a-select-option>
+          </a-select>
+          <span> 日 </span>
+          <a-button type="primary" icon="save" @click="handleSave"
+          v-show="showSaveBtn"
+            >保存</a-button
+          >
+        </a-col>
+      </a-row>
+      <div
+        class="position-and-level-title"
+        :style="{ 'border-color': theme.color }"
+      >
+        <!-- 上下班时间配置 -->
+        工资项配置
+      </div>
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
         <a-button
@@ -77,6 +106,9 @@ export default {
   },
   data() {
     return {
+      salaryTime:undefined,
+      saveSalaryTime:undefined,
+      showSaveBtn:false,
       state: undefined,
       disabled: false,
       scheduleColumns: [
@@ -120,6 +152,15 @@ export default {
       selectedRowKeys: [],
       selectedRows: [],
     };
+  },
+  created(){
+    this.$api.otherItemsService.getSalaryTime()
+    .then(res => {
+      if(res.data.data.configure){
+        this.saveSalaryTime = res.data.data.configure
+        this.salaryTime = res.data.data.configure
+      }
+    })
   },
   mounted() {
     this.$api.salaryService.validateSalary().then((res) => {
@@ -265,6 +306,40 @@ export default {
         onCancel() {},
       });
     },
+    /**
+     * 保存上下班配置方法
+     */
+    handleSave() {
+      const _this = this
+      this.$confirm({
+        title: "提示",
+        content: `确定保存吗？`,
+        okText: "确认",
+        okType: "primary",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          // 在这里调用删除接口
+            _this.$api.otherItemsService.postSalaryTime({date:_this.salaryTime})
+            .then(res => {
+              if(res.data.code == 0){
+                _this.$success({
+                  title: "保存成功",
+                  content: `工资表生成时间将于下个月开始生效`,
+                });
+                _this.saveSalaryTime = _this.salaryTime
+                _this.showSaveBtn = false
+              }else{
+                _this.$message.error(res.data.msg);
+              }
+            }).catch(err=>{
+              _this.$message.error(err.data.msg);
+            })
+        },
+        onCancel() {
+        },
+      });
+    },
   },
   filters: {
     statusFilter(status) {
@@ -274,6 +349,14 @@ export default {
       };
       return statusMap[status];
     },
+  },
+  watch:{
+    salaryTime(newVal){
+      if(newVal !== this.saveSalaryTime)
+        this.showSaveBtn = true
+      else
+        this.showSaveBtn = false
+    }
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),
@@ -289,4 +372,16 @@ export default {
 
 <style scoped lang="less">
 @import "../index";
+.position-and-level-title {
+  border-style: solid;
+  border-width: 5px;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  color: @title-color;
+  font-weight: 500;
+  font-size: 16px;
+  text-indent: 10px;
+  margin: 24px 0;
+}
 </style>
