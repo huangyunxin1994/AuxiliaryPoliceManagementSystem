@@ -170,9 +170,15 @@ export default {
         const result = this.submitFun(params);
         result
           .then((res) => {
-            this.$message.success(res.msg);
-            this.$emit('refreshTable')
-            this.handleCancel();
+            if(res.code==0){
+              this.$message.success(res.msg);
+              this.$emit('refreshTable')
+              this.handleCancel();
+            }else{
+              this.$message.error(res.msg);
+              this.handleCancel();
+            }
+            
           })
           .catch(() => {
             this.loading = false;

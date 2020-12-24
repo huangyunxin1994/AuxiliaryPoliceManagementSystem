@@ -25,7 +25,7 @@
 								<a-col :md="8" :sm="24">
 									<a-form-item label="岗位">
 										<!-- <a-input placeholder="请输入岗位" v-model="queryParam.currentRank" /> -->
-                        <a-select  v-model="queryParam.currentRank" style="width: 100%">
+                    <a-select  v-model="queryParam.currentRank" style="width: 100%">
                           <a-select-option value=""> 全部 </a-select-option>
                           <a-select-option :value="item.name" v-for="item in postList" :key="item.name"> {{item.name}} </a-select-option>
                         </a-select>
@@ -33,8 +33,8 @@
 								</a-col>
 								<template v-if="advanced">
 									<a-col :md="8" :sm="24">
-										<a-form-item label="生效时间">
-											<a-date-picker @change="onChange" style="width: 100%" :value-format="dateFormat" v-model="queryParam.time"/>
+										<a-form-item label="生效时间" v-model="queryParam.time">
+											<a-date-picker @change="onChange" style="width: 100%"/>
 										</a-form-item>
 									</a-col>
 								</template>
@@ -105,7 +105,6 @@
     },
     data() {
       return {
-          dateFormat: 'YYYY-MM-DD',
           openKeys: ['key-01'],
           loading:false,
           postDisabled:false,
@@ -281,17 +280,24 @@
       },
       // 获取岗位列表
       getPostList(){
-        this.$api.rankPostService.getPostList().then(res=>{
+        let para = {
+          oid:this.user.isSystem !==1 && this.user.organizationId || "",
+          type:2
+        }
+        this.$api.otherItemsService.getPerPostRank(para).then(res=>{
             this.postList = Object.assign([],res.data.data.list)
+        })
+        this.$api.rankPostService.getPostList().then(res=>{
+            const postList = Object.assign([],res.data.data.list)
             this.extension.forEach((item)=>{
               if(item.name == 'currentRank'){
-                item.select = this.postList.filter(i=>i.state===1)
+                item.select = postList.filter(i=>i.state===1)
                 // item.select.map(i=> delete i.id)
               }
             })
             this.extensionPost.forEach((item)=>{
               if(item.name == 'currentRankId'){
-                item.select = this.postList.filter(i=>i.state===1)
+                item.select = postList.filter(i=>i.state===1)
               }
             })
         })

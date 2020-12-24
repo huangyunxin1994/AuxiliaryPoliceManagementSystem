@@ -187,7 +187,14 @@ const rules = {
     { required: true, message: "请输入合同期限", trigger: "blur" },
   ],
 };
-
+const validatePeriod = (rule, value, callback) => {
+      var regex = /^(([+]?\d*$)|(^[+]?\d+(\.\d+)?$))/;
+      if(regex.test(value)) {
+          callback();
+      } else {
+          callback(new Error('合同期限格式不正确'));
+      }
+};
 export default {
   name: "OrganManage",
   components: {
@@ -315,6 +322,7 @@ export default {
       ],
       extensionRules: {
         contractPeriod: [
+          { required: true, validator: validatePeriod, trigger: 'change' },
           { required: true, message: "请输入合同期限", trigger: "blur" },
         ],
       },

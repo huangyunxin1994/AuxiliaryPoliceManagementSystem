@@ -284,6 +284,13 @@
     methods:{
       
       getRankList(){
+        let param = {
+          oid:this.user.isSystem !==1 && this.user.organizationId || "",
+          type:1
+        }
+        this.$api.otherItemsService.getPerPostRank(param).then(res=>{
+            this.rankMess = Object.assign([],res.data.data.list)
+        })
         let para = {
           oid:this.user.isSystem !==1 && this.user.organizationId || ""
         }
@@ -299,7 +306,7 @@
                 arr.push(obj)
               })
               item.select = arr
-              this.rankMess = arr
+              // this.rankMess = arr
             }
           })
         })

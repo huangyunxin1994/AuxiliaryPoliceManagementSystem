@@ -193,6 +193,7 @@ export default {
       let _this = this
       let query = {
         id:this.user.id,
+        oid:this.user.organizationId,
         currentPage:1,
         pageSize:999999
       }

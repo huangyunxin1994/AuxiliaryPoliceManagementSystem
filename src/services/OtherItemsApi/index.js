@@ -1,4 +1,4 @@
-import {POSTDATA,PUTDATA,DELETERDATA,POSTSETTING,PUTSETTING,GETEQUPDATA,GETCREDDATA,GETCOMMDATA,GETSALARYTIME,POSTSALARYTIME} from './api'
+import {POSTDATA,PUTDATA,DELETERDATA,POSTSETTING,PUTSETTING,GETEQUPDATA,GETCREDDATA,GETCOMMDATA,GETSALARYTIME,POSTSALARYTIME,GETAUXPOSTRANK,GETPERPOSTRANK} from './api'
 import {request, METHOD} from '@/utils/request'
 import Qs from 'qs'
 const otherItemsService = {
@@ -83,6 +83,23 @@ const otherItemsService = {
     async postSalaryTime(param) {
         return request(POSTSALARYTIME, METHOD.POST, Qs.stringify(param))
     },
+    /**
+     * 获取辅警人员列表职级和岗位的类型
+     * @param params 查询参数
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    async getAuxPostRank(param) {
+        return request(GETAUXPOSTRANK, METHOD.GET, param)
+    },
+    /**
+     * 获取人事职级和岗位的类型
+     * @param params 查询参数
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    async getPerPostRank(param) {
+        return request(GETPERPOSTRANK, METHOD.GET, param)
+    },
+    
 }
 
 

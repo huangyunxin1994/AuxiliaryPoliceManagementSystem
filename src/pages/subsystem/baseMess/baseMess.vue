@@ -345,7 +345,7 @@ export default {
 				{title:'post',label:'所属岗位',type:'select',placeholder:'请选择所属岗位'},
 				{title:'rank',label:'所属职级',type:'select',placeholder:'请选择所属职级'},
 				{title:'nation',label:'民族',type:'input',placeholder:'请输入民族',disabled:false},//
-				{title:'education',label:'学历',type:'select',placeholder:'请选择学历',select:[{name:'专科'},{name:'本科'},{name:'硕士'},{name:'博士'},{name:'博士后'}]},//
+				{title:'education',label:'学历',type:'select',placeholder:'请选择学历',select:[{name:'专科'},{name:'大学本科'},{name:'硕士'},{name:'博士'},{name:'博士后'}]},//
 				{title:'nativePlace',label:'籍贯',type:'input',placeholder:'请输入籍贯',disabled:false},//
 				{title:'height',label:'身高(cm)',type:'input',placeholder:'请输入身高',disabled:false},
 				{title:'entryTime',label:'入职时间',type:'time',placeholder:'请选择入职时间'},//

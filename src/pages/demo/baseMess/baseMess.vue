@@ -25,9 +25,9 @@
                 </a-col>
                 <a-col :md="8" :sm="24">
                   <a-form-item label="岗位选择">
-                    <a-select  v-model="queryParam.postId" style="width: 100%">
+                    <a-select  v-model="queryParam.postName" style="width: 100%">
                           <a-select-option value=""> 全部 </a-select-option>
-                          <a-select-option :value="item.id" v-for="item in postList" :key="item.id"> {{item.name}} </a-select-option>
+                          <a-select-option :value="item.name" v-for="item in postList" :key="item.name"> {{item.name}} </a-select-option>
                         </a-select>
                   </a-form-item>
                 </a-col>
@@ -45,9 +45,9 @@
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="职级选择">
-                      <a-select default-value=""  v-model="queryParam.rankId">
+                      <a-select default-value=""  v-model="queryParam.rankName">
 												<a-select-option value=""> 全部 </a-select-option>
-                        <a-select-option v-for="(item,index) in rankMess" :key="index" :value="item.id"> {{item.name}} </a-select-option>
+                        <a-select-option v-for="(item,index) in rankMess" :key="index" :value="item.name"> {{item.name}} </a-select-option>
 											</a-select>
                     </a-form-item>
                   </a-col>
@@ -61,7 +61,7 @@
                         <a-select-option value="初中"> 初中 </a-select-option>
                         <a-select-option value="高中"> 高中 </a-select-option>
                         <a-select-option value="大专"> 大专 </a-select-option>
-                        <a-select-option value="本科"> 本科 </a-select-option>
+                        <a-select-option value="大学本科"> 大学本科 </a-select-option>
                         <a-select-option value="研究生"> 研究生 </a-select-option>
                       </a-select>
                     </a-form-item>
@@ -375,9 +375,9 @@ export default {
       diaData: [],
       queryParam: {
         search:'',
-        postId:'',
+        postName:'',
         oid:'',
-        rankId:'',
+        rankName:'',
         education:'',
         isMajor:'',
         organizationId:''
@@ -463,18 +463,21 @@ export default {
     getRankList(){
       let para = {
         oid:this.user.isSystem !==1 && this.user.organizationId || "",
-        state:1
+        type:1
       }
-      this.$api.rankPostService.getRankList(para).then((res)=>{
+      this.$api.otherItemsService.getAuxPostRank(para).then((res)=>{
         let rank = res.data.data.list
         this.rankMess = rank
         this.$refs.importForm.rankList = rank
-
       })
     },
     // 获取岗位列表
     getPostList(){
-      this.$api.rankPostService.getPostList().then(res=>{
+      let para = {
+        oid:this.user.isSystem !==1 && this.user.organizationId || "",
+        type:2
+      }
+      this.$api.otherItemsService.getAuxPostRank(para).then(res=>{
           this.postList = Object.assign([],res.data.data.list)
           this.$refs.importForm.postList = Object.assign([],res.data.data.list)
       })
@@ -526,9 +529,9 @@ export default {
 
     resetTable(){
       this.queryParam.search = ''
-      this.queryParam.postId = ''
+      this.queryParam.postName = ''
       this.queryParam.oid = ''
-      this.queryParam.rankId = ''
+      this.queryParam.rankName = ''
       this.queryParam.education = ''
       this.queryParam.isMajor = ''
       this.$refs.table.refresh(true)

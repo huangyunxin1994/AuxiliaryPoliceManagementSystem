@@ -837,7 +837,7 @@ export default {
             { name: "初中" },
             { name: "高中" },
             { name: "大专" },
-            { name: "本科" },
+            { name: "大学本科" },
             { name: "研究生" },
           ],
         }, //

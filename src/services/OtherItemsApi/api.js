@@ -17,4 +17,8 @@ module.exports = {
   GETCOMMDATA:`${BASE_URL}/Other/items/list/commutingList`,//获取上下班配置列表
   GETSALARYTIME:`${BASE_URL}/Other/items/list/salaryList`,//获取工资表生成时间配置
   POSTSALARYTIME:`${BASE_URL}/Other/items/salary`,//添加工资表生成时间
+  GETAUXPOSTRANK:`${BASE_URL}/Other/rankest/auxiliaryPoliceList`,//获取辅警人员列表职级和岗位的类型
+  GETPERPOSTRANK:`${BASE_URL}/Other/rankest/list`,//获取人事职级和岗位的类型
+  
+  
 }
