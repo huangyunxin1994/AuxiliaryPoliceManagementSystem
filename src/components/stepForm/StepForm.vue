@@ -3,7 +3,7 @@
     v-model="visible"
     :title="title"
     on-ok="handleOk"
-    :width="900"
+    :width="1100"
     @cancel="handleCancel"
     :maskClosable="false"
     :destroyOnClose="true"

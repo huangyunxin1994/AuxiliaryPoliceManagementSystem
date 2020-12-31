@@ -269,8 +269,10 @@ export default {
   },
   created() {
     //获取装备类型
-    this.$api.certEquipService.getCertEqupType({ type: 2 }).then((res) => {
+    this.$api.certEquipService.getCertEqupType({ type: 2, state : 1 }).then((res) => {
         this.eqName = res.data.data.list
+    });
+    this.$api.otherItemsService.getEqupDataList().then((res) => {
         this.formTitle = [
         {
           label: "装备类型",

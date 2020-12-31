@@ -176,6 +176,14 @@ const formTitle = [
   },
 ];
 const stepTitle = [{ title: "选择人员" }, { title: "填写合同信息" }];
+const validatePeriod = (rule, value, callback) => {
+      var regex = /^(([+]?\d*$)|(^[+]?\d+(\.\d+)?$))/;
+      if(regex.test(value)) {
+          callback();
+      } else {
+          callback(new Error('合同期限格式不正确'));
+      }
+};
 const rules = {
   name: [
     { required: false, message: "请输入名字", trigger: "blur", disabled: true },
@@ -185,15 +193,8 @@ const rules = {
   ],
   contractPeriod: [
     { required: true, message: "请输入合同期限", trigger: "blur" },
+    { required: true, validator: validatePeriod, trigger: 'change' },
   ],
-};
-const validatePeriod = (rule, value, callback) => {
-      var regex = /^(([+]?\d*$)|(^[+]?\d+(\.\d+)?$))/;
-      if(regex.test(value)) {
-          callback();
-      } else {
-          callback(new Error('合同期限格式不正确'));
-      }
 };
 export default {
   name: "OrganManage",

@@ -248,8 +248,10 @@ export default {
     };
   },
   created() {
-    this.$api.certEquipService.getCertEqupType({ type: 1 }).then((res) => {
-        this.certList = res.data.data.list   
+    this.$api.certEquipService.getCertEqupType({ type: 1, state : 1 }).then((res) => {
+        this.certList = res.data.data.list
+    })
+    this.$api.otherItemsService.getCredDataList().then((res) => {
         this.formTitle = [
         {
           label: "证件类型",

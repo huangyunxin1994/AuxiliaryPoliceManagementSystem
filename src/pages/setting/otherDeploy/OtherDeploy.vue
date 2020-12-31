@@ -70,12 +70,12 @@
 
       <a-row :gutter="24">
         <a-col :md="12" :xs="24">
-          <!-- <div
+          <div
             class="position-and-level-title"
             :style="{ 'border-color': theme.color }"
           >
             证件类型配置
-          </div> -->
+          </div>
           <div class="table-operator" style="margin-bottom: 24px">
             <a-button type="primary" icon="plus" @click="handleCredAdd"
               >新建</a-button
@@ -100,12 +100,12 @@
           </s-table>
         </a-col>
         <a-col :md="12" :xs="24">
-          <!-- <div
+          <div
             class="position-and-level-title"
             :style="{ 'border-color': theme.color }"
           >
             装备类型配置
-          </div> -->
+          </div>
           <div class="table-operator" style="margin-bottom: 24px">
             <a-button type="primary" icon="plus" @click="handleEqupAdd"
               >新建</a-button

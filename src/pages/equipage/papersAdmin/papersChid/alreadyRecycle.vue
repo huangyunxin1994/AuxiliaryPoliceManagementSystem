@@ -187,7 +187,7 @@ export default {
         }
     },
     created(){
-       this.$api.certEquipService.getCertEqupType({ type: 1 }).then((res) => {
+       this.$api.certEquipService.getCertEqupType({ type: 1, state : 2 }).then((res) => {
         this.certList = res.data.data.list   
       })
     this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""

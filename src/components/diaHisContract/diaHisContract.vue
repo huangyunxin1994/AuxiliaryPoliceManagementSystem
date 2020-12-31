@@ -158,6 +158,8 @@
                 this.$api.contractService.postFiles(param).then((res)=>{
                     if(res.data.code == 0){
                         this.$message.success('上传成功');
+                         this.$refs.table.refresh(false)
+
                     }else{
                         this.$message.error('上传失败，请重试');
                     }
@@ -173,6 +175,7 @@
                 this.$api.contractService.downNotice({contractId:id}).then(res=>{
                     if(!res.data.code){
                     window.location.href = `${this.BASE_URL}/contract/downloadFile?contractId=${id}`;
+                    // window.location.href = `http://192.168.1.111:8181/contract/downloadFile?contractId=${id}`;
                     }else{
                     this.$message.error(res.data.msg)
                     }

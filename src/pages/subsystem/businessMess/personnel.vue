@@ -21,7 +21,7 @@
 		</s-table>
     </a-card>
     <a-card :bordered="false">
-      <div class="position-and-level-title" :style="{ 'border-color': theme.color }">岗位变动</div>
+      <div class="position-and-level-title" :style="{ 'border-color': theme.color }">组织岗位变动</div>
       
       <s-table
         ref="table"

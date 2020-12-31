@@ -195,7 +195,7 @@ export default {
           label: "专业技术任职资格称号",
           name: "qualification",
           type: "input",
-          placeholder: "请输入所在单位",
+          placeholder: "请输入专业技术任职资格称号",
         },
         {
           label: "资格审批单位",
@@ -289,7 +289,9 @@ export default {
       this.$refs.modal.visible = true;
     },
     // 弹窗
+    
     modal(obj, option, model) {
+      let _this = this
       const defaultProps = {
         on: {
           ok() {
@@ -297,11 +299,12 @@ export default {
           },
           cancel() {
             // e.handleDestroy()
-            // console.log('cancel 回调')
+            _this.$refs.table.refresh(false);
           },
           close() {
             // e.handleDestroy()
             // console.log('modal close 回调')
+            
           },
         },
       };

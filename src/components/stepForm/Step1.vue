@@ -13,7 +13,7 @@
                 />
               </a-form-item>
             </a-col>
-            <a-col :md="16" :sm="24">
+            <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
                 <tree-select 
                   ref="treeSelect"
@@ -21,6 +21,11 @@
                   @handleTreeChange="handleTreeChange"
                 ></tree-select>
               </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+            <a-form-item label="入职日期">
+                       <a-date-picker style="width: 100%" value-format="YYYY-MM-DD" v-model="queryParams.time"/>
+                    </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24" style="margin-bottom:24px">
               <a-button type="primary" @click="$refs.table.refresh(true)"> 查询 </a-button>
@@ -35,7 +40,7 @@
                     :columns="leftColumns"
                     :data="leftColumnsData"
                     :rowSelection="rowSelection"
-                    :scroll="{ y: 300, x: 150 }"
+                    :scroll="{ y: 300, x: 400 }"
                     showPagination="auto"
                     size="small"
                 >
@@ -57,13 +62,13 @@
                     :columns="rightColumns" 
                     :data-source="rightColumnsData" 
                     size="small" 
-                     :scroll="{ y: 300, x: 150 }"
+                     :scroll="{ y: 300, x: 400 }"
                     :pagination="false"
                     :rowSelection="rowRightSelection">
                     <template slot="title" >
                          <a-row>
                              <a-col :span="12">
-                                 已选择选择人员
+                                 已选择人员
                              </a-col>
                              <a-col :span="12" style="text-align:right">
                                  <a-button type="primary" size="small" :disabled="selectedRightRows.length===0" @click="handleDel">移除</a-button>
@@ -89,19 +94,25 @@ const leftTableColumns = [
     title: "姓名",
     dataIndex: "name",
     key:"name",
-    width: 100,
+    width: 80,
   },
   {
     title: "辅警编号",
     dataIndex: "number",
     key:"number",
-    width: 100,
+    width: 80,
   },
   {
     title: "所属组织",
     dataIndex: "organizationName",
-     key:"organizationName",
-    width: 300,
+    key:"organizationName",
+    // width: 300,
+  },
+  {
+    title: "入职日期",
+    dataIndex: "entryTime",
+     key:"entryTime",
+    // width: 300,
   },
 ];
 const rightTableColumns = [
@@ -109,19 +120,24 @@ const rightTableColumns = [
     title: "姓名",
     dataIndex: "name",
     key:"name",
-    width: 100,
+    width: 80,
   },
   {
     title: "辅警编号",
     dataIndex: "number",
      key:"number",
-    width: 100,
+    width: 80,
   },
   {
     title: "所属组织",
     dataIndex: "organizationName",
-     key:"organizationName",
-    width: 300,
+    key:"organizationName",
+  },
+  {
+    title: "入职日期",
+    dataIndex: "entryTime",
+     key:"entryTime",
+    // width: 300,
   },
 ];
 

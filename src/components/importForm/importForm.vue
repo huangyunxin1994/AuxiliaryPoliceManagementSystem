@@ -204,8 +204,8 @@ export default {
   },
   methods: {
     handleShow() {
-      this.matchPrein.rankName = this.$parent.rankMess
-      this.matchPrein.postName = this.$parent.postList
+      this.matchPrein.rankName = this.$parent.rankNameList
+      this.matchPrein.postName = this.$parent.postNameList
       this.errList = [];
       this.visible = true;
       this.submitData = Object.assign([], this.data);
@@ -618,6 +618,7 @@ export default {
     },
     handleCancel() {
       this.visible = false;
+      this.$emit("reloadData")
     },
     close() {
       this.$nextTick(()=>{

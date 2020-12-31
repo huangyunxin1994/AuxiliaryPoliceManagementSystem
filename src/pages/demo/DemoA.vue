@@ -93,6 +93,7 @@
       <a-col :md="24" :lg="16" :xl="20">
         <aux-msg-form-a
           :policeId="policeId"
+          :organId="organId"
           :fileList="fileList"
         ></aux-msg-form-a>
       </a-col>
@@ -116,6 +117,7 @@ export default {
       tabIndex: 1,
       policeId: undefined,
       policeName: undefined,
+      organId:undefined,
       teams: [
         {
           avatar:
@@ -174,9 +176,7 @@ export default {
     ...mapState("setting", ["theme", "pageMinHeight"]),
   },
   created() {
-    Object.assign;
-    this.policeId = this.$route.query.id;
-    this.policeName = this.$route.query.name;
+    this.organId = this.$route.query.oId;
   },
   methods: {
     handleChange({ fileList }) {

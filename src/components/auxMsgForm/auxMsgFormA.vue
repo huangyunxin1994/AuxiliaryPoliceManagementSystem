@@ -727,6 +727,7 @@ export default {
   },
   props: {
     policeId: String,
+    organId : String,
     fileList: Array
   },
   data() {
@@ -951,7 +952,8 @@ export default {
     },
   },
   created() {
-    this.form.organizationId=this.user.isSystem !==1 && this.user.organizationId || ""
+    console.log(this.organId)
+    this.form.organizationId=this.organId || (this.user.isSystem !==1 && this.user.organizationId || "")
     this.queryPa.id = this.policeId || "";
     this.form.organizationName= this.user.organizationName
     this.$api.auxiliaryPoliceService
@@ -1268,12 +1270,7 @@ export default {
     },
     //获取入职时间，计算工龄
     getDate(date, dateString) {
-      // let year = this.compareDate(dateString);
-      // year = Math.ceil(year * 10) / 10;
-      
       let now = new Date()
-      
-      console.log(daysDistance(now,dateString,'year'))
       this.form.seniority = daysDistance(now,dateString,'year')
     },
     compareDate(date) {

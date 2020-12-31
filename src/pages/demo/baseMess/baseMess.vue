@@ -54,8 +54,8 @@
                 </template>
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
-                    <a-form-item label="学历选择">
-                      <a-select default-value=""  v-model="queryParam.education">
+                    <a-form-item label="入职日期">
+                      <!-- <a-select default-value=""  v-model="queryParam.education">
                         <a-select-option value=""> 全部 </a-select-option>
                         <a-select-option value="小学"> 小学 </a-select-option>
                         <a-select-option value="初中"> 初中 </a-select-option>
@@ -63,7 +63,8 @@
                         <a-select-option value="大专"> 大专 </a-select-option>
                         <a-select-option value="大学本科"> 大学本科 </a-select-option>
                         <a-select-option value="研究生"> 研究生 </a-select-option>
-                      </a-select>
+                      </a-select> -->
+                       <a-date-picker style="width: 100%" :value-format="dateFormat" v-model="queryParam.time"/>
                     </a-form-item>
                   </a-col>
                 </template>
@@ -141,7 +142,7 @@
         </a-col>
       </a-row>
     </a-card>
-    <import-form ref="importForm" :data='importData' :importParam="importParam"></import-form>
+    <import-form ref="importForm" :data='importData' :importParam="importParam" @reloadData="$refs.table.refresh(false)"></import-form>
     <a-modal
       v-model="visible"
       title="批量导入"
@@ -198,6 +199,7 @@ export default {
   },
   data() {
     return {
+      dateFormat:'YYYY-MM-DD',
       visible:false,
       importData:[],
       tableTitle:[
@@ -314,9 +316,9 @@ export default {
           width: 100,
         },
         {
-          title: "学历",
-          dataIndex: "education",
-          key: "education",
+          title: "入职日期",
+          dataIndex: "entryTime",
+          key: "entryTime",
           width: 100,
         },
         {
@@ -456,6 +458,8 @@ export default {
       advanced: true,
       rankMess:[],//职级选择列表
       postList:[],//岗位选择列表
+      postNameList:[],
+      rankNameList:[]
     };
   },
   methods: {
@@ -468,7 +472,6 @@ export default {
       this.$api.otherItemsService.getAuxPostRank(para).then((res)=>{
         let rank = res.data.data.list
         this.rankMess = rank
-        this.$refs.importForm.rankList = rank
       })
     },
     // 获取岗位列表
@@ -479,7 +482,6 @@ export default {
       }
       this.$api.otherItemsService.getAuxPostRank(para).then(res=>{
           this.postList = Object.assign([],res.data.data.list)
-          this.$refs.importForm.postList = Object.assign([],res.data.data.list)
       })
     },
     handleEdit(record) {
@@ -510,7 +512,13 @@ export default {
     
     loadTreeNode(data){
       this.queryParam.organizationId = data.id
+      console.log(data)
       this.$refs.table.refresh(true)
+      this.importParam={
+        organizationId:data.id||this.user.organizationId,
+        organizationName:data.name||this.user.organizationName
+      }
+      console.log(this.importParam)
     },
     //编辑树节点
     editTreeNode() {
@@ -610,7 +618,12 @@ export default {
     },
     // 新增人员
     addPerson() {
-      this.$router.push("/baseMessA");
+      this.$router.push({
+        path:"/baseMessA",
+        query:{
+          oId:this.queryParam.organizationId
+        }
+      });
     },
     // 展开收缩
     toggleAdvanced() {
@@ -651,6 +664,12 @@ export default {
   created () {
       this.getRankList()
       this.getPostList()
+      this.$api.rankPostService.getPostList().then(res=>{
+         this.postNameList = Object.assign([],res.data.data.list)
+      })
+      this.$api.rankPostService.getRankList().then(res=>{
+         this.rankNameList = Object.assign([],res.data.data.list)
+      })
       this.importParam={
         organizationId:this.user.organizationId,
         organizationName:this.user.organizationName

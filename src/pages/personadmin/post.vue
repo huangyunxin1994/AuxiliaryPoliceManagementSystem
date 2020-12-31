@@ -162,11 +162,12 @@
           ],
           diaColumns:[
                 {
-                    title: '序号',
-                    dataIndex: 'key',
-                    key: 'key',
-                    width: 60,
+                    title: '生效时间',
+                    dataIndex: 'effectiveDate',
+                    key: 'effectiveDate',
+                    width: 100,
                 },
+                
                 {
                     title: '所属组织',
                     dataIndex: 'organizationName',
@@ -179,12 +180,7 @@
                     key: 'currentRank',
                     width: 100
                 },
-                {
-                    title: '生效时间',
-                    dataIndex: 'effectiveDate',
-                    key: 'effectiveDate',
-                    width: 100,
-                },
+                
                 {
                     title: '调动原因',
                     dataIndex: 'reason',
@@ -292,7 +288,7 @@
             this.extension.forEach((item)=>{
               if(item.name == 'currentRank'){
                 item.select = postList.filter(i=>i.state===1)
-                // item.select.map(i=> delete i.id)
+                item.select.map(i=> delete i.id)
               }
             })
             this.extensionPost.forEach((item)=>{
@@ -308,7 +304,7 @@
             person:record
         }
         let option = {
-            title: '个人岗位历史',
+            title: '个人岗位/组织历史',
             width: 1000,
             centered: true,
             maskClosable: false,
@@ -471,53 +467,60 @@
       },
 		// 调动单个岗位
 		changeOnePost(e){
-      let policeArr = []
-      let obj = {
-        policeName:e.policeName,//名字
-        number:e.number,//警员编号
-        beforeRank:e.currentRank,//变动前职级
-        approvedBy:this.user.name,//审批人
-        approvedById:this.user.id,//审批人id
-        type:2,
-        userId:e.userId
-      }
-      policeArr.push(obj)
-			let param ={
-				formTitle:this.extension,
-				rules:this.changeRankRules,
-				record:{
+      this.$api.contractService.getdetails({id:e.userId}).then((res) => {
+        if(res.data.data.list.length===0){
+          this.$message.error('该辅警未创建合同，请创建合同后再操作!')
+          return
+        }
+        let policeArr = []
+        let obj = {
           policeName:e.policeName,//名字
-          policeArr:policeArr,
-          organizationId:e.organizationId,
-          organizationName:e.organizationName,
-          currentRank:e.currentRank,
-          beforeOrg:e.organizationName, 
-          beforeOrgId:e.organizationId,
-          beforePost:e.currentRank,
-        },
-        submitFun: (parameter) => {
-          // if(parameter.beforeOrgId == parameter.organizationId && parameter.beforePost == parameter.currentRank) {
-          //   this.$message.error("操作失败！存在辅警调动岗位或职级与原岗位或职级相同！不能提交!")
-          // }else{
-            return this.$api.personAdminService
-            .changeManyPost(parameter)
-            .then((res) => {
-               return res.data;
-            })
-          // }
-        },
-      }
-      let callback = () => {
-        this.$refs.table.refresh(true);
-      }
-			let option = {
-				title: '岗位组织调动',
-				width: 500,
-				centered: true,
-				maskClosable: false,
-				okText:"提交",
-			}
-			this.modal(param,option,fromModel,callback)
+          number:e.number,//警员编号
+          beforeRank:e.currentRank,//变动前职级
+          approvedBy:this.user.name,//审批人
+          approvedById:this.user.id,//审批人id
+          type:2,
+          userId:e.userId
+        }
+        policeArr.push(obj)
+        let param ={
+          formTitle:this.extension,
+          rules:this.changeRankRules,
+          record:{
+            policeName:e.policeName,//名字
+            policeArr:policeArr,
+            organizationId:e.organizationId,
+            organizationName:e.organizationName,
+            currentRank:e.currentRank,
+            beforeOrg:e.organizationName, 
+            beforeOrgId:e.organizationId,
+            beforePost:e.currentRank,
+          },
+          submitFun: (parameter) => {
+            // if(parameter.beforeOrgId == parameter.organizationId && parameter.beforePost == parameter.currentRank) {
+            //   this.$message.error("操作失败！存在辅警调动岗位或职级与原岗位或职级相同！不能提交!")
+            // }else{
+              return this.$api.personAdminService
+              .changeManyPost(parameter)
+              .then((res) => {
+                return res.data;
+              })
+            // }
+          },
+        }
+        let callback = () => {
+          this.$refs.table.refresh(true);
+        }
+        let option = {
+          title: '岗位组织调动',
+          width: 500,
+          centered: true,
+          maskClosable: false,
+          okText:"提交",
+        }
+        this.modal(param,option,fromModel,callback)
+        });
+      
 		},
       // 弹窗
       modal(obj,option,model,callback){

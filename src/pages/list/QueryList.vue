@@ -103,7 +103,7 @@
         <div slot="description" slot-scope="{text}">
           {{text}}
         </div>
-        <div slot="action" slot-scope="{text, record}">
+        <div slot="action" slot-scope="{record}">
           <a style="margin-right: 8px">
             <a-icon type="plus"/>新增
           </a>
