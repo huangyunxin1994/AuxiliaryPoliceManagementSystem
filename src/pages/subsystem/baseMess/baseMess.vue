@@ -23,6 +23,7 @@
                     <a-col v-for="(item,index) in baseMessTitle" :key="index" :md="24" :lg="12" :xl="12" :xxl="8" >
                     <a-form-model-item :label="item.label" :labelCol="{span: 7}" :wrapperCol="{span: 13}" :prop="item.title">
                       <a-input v-model="form[item.title]"  disabled/>
+                      <!-- <span>{{form[item.title]}}</span> -->
                     </a-form-model-item>
                     </a-col>
                   </a-row>

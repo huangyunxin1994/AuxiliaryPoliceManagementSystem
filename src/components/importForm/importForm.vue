@@ -167,7 +167,7 @@ export default {
         politicalStatus: [
           { name: "中共党员" },
           { name: "中共预备党员" },
-          { name: "共青团员 " },
+          { name: "共青团员" },
           { name: "群众" },
         ],
         learningForm:[

@@ -104,7 +104,7 @@
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="download" @click="downloadExcel"
-          >查看工资表模板</a-button
+          >查看当月工资表模板</a-button
         >
         <a-badge :dot="getBadgeDataForBtn()">
           <a-button
@@ -190,7 +190,7 @@
           sm: { span: 13 },
         }"
       >
-        <p style="color:#f5222d;margin-bottom:20px">注意：请确认文件内人员名单包含所选组织所有人员，否则文件将上传失败。</p>
+        
         <a-row>
           <a-col :xs="24" :sm="24">
             <a-form-model-item label="组织选择" prop="organizationId">
@@ -238,7 +238,9 @@
               >
                 <a-button type="primary">选择文件</a-button>
               </a-upload>
+               <div style="color:#f5222d;line-height:1.5">注意：请确认文件内人员名单包含所选组织所有人员，否则文件将上传失败。</div>
             </a-form-model-item>
+           
           </a-col>
         </a-row>
       </a-form-model>
@@ -371,29 +373,38 @@ export default {
         state: "",
       },
       loadScheduleData: (params) => {
-        this.queryParam.oid =
-          (this.user.isSystem !== 1 && this.user.organizationId) || "";
+        this.queryParam.oid = this.user.organizationId;
         let param = Object.assign(params, this.queryParam);
         return this.$api.salaryService.getSalary(param).then((res) => {
           res.data.data.list.map((i, k) => {
             i.key = k + 1;
           });
           if (res.data.data.list.length > 0) {
-            const result = res.data.data.list.find((i) => i.salaryContent);
+            const result = res.data.data.list.find((i) => i.title);
+            console.log(result)
             if (result) {
               const salaryTitle = Object.assign(
-                {},
-                JSON.parse(result.salaryContent)
+                [],
+                JSON.parse(result.title)
               );
+              console.log(salaryTitle)
+              console.log(this.scheduleColumns)
               this.scheduleColumns.map(
-                (j) => salaryTitle[j.title] && delete salaryTitle[j.title]
+                (j) =>{
+                  console.log(j.title)
+                  const index = salaryTitle.findIndex(i=>i === j.title)
+                  console.log(index)
+                  if(index>-1)
+                  salaryTitle.splice(index,1)
+                } 
               );
+              console.log(salaryTitle)
               res.data.data.list.map((i) => {
                 const salaryVal =
                   (i.salaryContent && JSON.parse(i.salaryContent)) || {};
                 i = Object.assign(i, salaryVal);
               });
-              Object.keys(salaryTitle)
+              salaryTitle
                 .reverse()
                 .map((i) => {
                   let params = {};
@@ -402,6 +413,39 @@ export default {
                   params.key = i;
                   this.scheduleColumns.splice(4, 0, params);
                 });
+            }else{
+               this.scheduleColumns= [
+                {
+                  title: "序号",
+                  dataIndex: "key",
+                  key: "key",
+                  width: 60,
+                },
+                {
+                  title: "姓名",
+                  dataIndex: "name",
+                  key: "name",
+                  width: 100,
+                },
+                {
+                  title: "警员编号",
+                  dataIndex: "number",
+                  key: "number",
+                  width: 100,
+                },
+                {
+                  title: "组织",
+                  dataIndex: "organizationName",
+                  key: "organizationName",
+                  ellipsis: true,
+                },
+                {
+                  title: "状态",
+                  dataIndex: "state",
+                  key: "state",
+                  scopedSlots: { customRender: "state" },
+                  width: 100,
+                }]
             }
           }
 
@@ -410,20 +454,20 @@ export default {
       },
     };
   },
-  created() {
-    this.$api.salaryService
+  async created() {
+   await this.$api.salaryService
       .validateSalary({ month: this.queryParam.month })
       .then((res) => {
         this.state = res.data.data.type;
         this.firstCreateTime = res.data.data.time;
       });
-    this.$api.otherItemsService.getSalaryTime()
+   await this.$api.otherItemsService.getSalaryTime()
     .then(res => {
       if(res.data.data.configure){
         this.salaryTime = res.data.data.configure
       }
     })
-    this.getOrganForSalary();
+    await this.getOrganForSalary();
   },
   methods: {
     //重置
@@ -449,9 +493,9 @@ export default {
     //   });
     // },
     //获得预生成的组织与待上传工资人员
-    getOrganForSalary() {
-      const oid = (this.user.isSystem !== 1 && this.user.organizationId) || "";
-      this.$api.organizationService
+    async getOrganForSalary() {
+      const oid = this.user.organizationId
+     await this.$api.organizationService
         .getOrganForSalary({ month: this.queryParam.month, oid: oid })
         .then((res) => {
           this.treeData = JSON.parse(JSON.stringify(res.data.data.list));
@@ -584,7 +628,7 @@ export default {
       const _this = this;
       this.$confirm({
         title: "提示",
-        content: `真的要同步 ${_this.queryParam.month} 月份工资表吗 吗?`,
+        content: `即将同步${_this.queryParam.month}月份所有已上传的工资记录，同步后的记录不可修改，是否确认同步？`,
         okText: "同步",
         okType: "primary",
         centered: true,
@@ -593,8 +637,7 @@ export default {
           _this.$api.salaryService
             .getSynchro({
               month: _this.queryParam.month,
-              organizationId:
-                (_this.user.isSystem !== 1 && _this.user.organizationId) || "",
+              organizationId: _this.user.organizationId,
             })
             .then((res) => {
               if (res.data.code === 0) {
@@ -645,10 +688,7 @@ export default {
                 // if (result) {
                 //   this.$api.organizationService
                 //     .getOrganization({
-                //       organizationId:
-                //         (this.user.isSystem !== 1 &&
-                //           this.user.organizationId) ||
-                //         "",
+                //       organizationId:this.user.organizationId
                 //     })
                 //     .then((res) => {
                 //       if (res.data.code === 0) {
@@ -686,7 +726,7 @@ export default {
                 this.$error({
                   title: "表字段不正确",
                   content:
-                    "当前上传工资表的字段与系统模板不必配，请查看模板，修改正确后重新上传。",
+                    "当前上传工资表的字段与系统模板不匹配，请查看模板，修改正确后重新上传。",
                 });
               } else if (res.data.data.result === 2) {
                 this.$error({
@@ -768,10 +808,10 @@ export default {
       return false;
     },
     //查询已上传工资条的组织
-    searchDisabledTree() {
-      this.$api.salaryService
+   async searchDisabledTree() {
+     await this.$api.salaryService
         .getSalaryfileter({
-          id: (this.user.isSystem !== 1 && this.user.organizationId) || "",
+          id: this.user.organizationId,
           month: this.queryParam.month,
         })
         .then((res) => {

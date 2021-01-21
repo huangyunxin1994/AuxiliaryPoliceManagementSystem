@@ -59,6 +59,7 @@
 import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import fromModel from "@/components/formModel/formModel";
+import moment from 'moment'
 export default {
   name: "OrganManage",
   components: {
@@ -267,11 +268,12 @@ export default {
             placeholder1: "请选择开始时间",
             disabledDate:true,
             fomate:'minutes',
+            showToday:false,
             funOpt:2,
-            showTime1:{ format: 'HH:mm' },
+            showTime1:{ format: 'HH:mm',minuteStep:10,defaultValue:moment(new Date().setMinutes(0)) },
             label2: "结束时间",
             name2: "endTime",
-            showTime2: { format: 'HH:mm' },
+            showTime2: { format: 'HH:mm',minuteStep:10,defaultValue:moment(new Date().setMinutes(0)) },
             valueFormat2:'YYYY-MM-DD HH:mm',
             disabledDate2:true,
             placeholder2: "请选择结束时间",
@@ -360,11 +362,12 @@ export default {
             placeholder1: "请选择开始时间",
             disabledDate:true,
             fomate:'minutes',
+            showToday:false,
             funOpt:2,
-            showTime1:{ format: 'HH:mm' },
+            showTime1:{ format: 'HH:mm',minuteStep:10,defaultValue:moment(new Date().setMinutes(0)) },
             label2: "结束时间",
             name2: "endTime",
-            showTime2: { format: 'HH:mm' },
+            showTime2: { format: 'HH:mm',minuteStep:10,defaultValue:moment(new Date().setMinutes(0)) },
             valueFormat2:'YYYY-MM-DD HH:mm',
             disabledDate2:true,
             placeholder2: "请选择结束时间",
@@ -419,8 +422,8 @@ export default {
           number:this.user.number,
           policeName:this.user.name,
           userId:this.user.id,
-          organizationId:this.user.isSystem !==1 && this.user.organizationId || "",
-          organizationName:this.user.isSystem !==1 && this.user.organizationName || "",
+          organizationId:this.user.organizationId,
+          organizationName:this.user.organizationName,
         },
         rules: this.overtimeRules,
         submitFun:(params) => {
@@ -451,8 +454,8 @@ export default {
           number:this.user.number,
           policeName:this.user.name,
           userId:this.user.id,
-          organizationId:this.user.isSystem !==1 && this.user.organizationId || "",
-          organizationName:this.user.isSystem !==1 && this.user.organizationName || "",
+          organizationId:this.user.organizationId,
+          organizationName:this.user.organizationName,
         },
         submitFun:(params) => {
           return this.$api.overTimeService.postByAux(params).then((res)=>{

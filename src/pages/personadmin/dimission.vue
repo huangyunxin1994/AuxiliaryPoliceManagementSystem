@@ -186,8 +186,7 @@ export default {
         oid: "",
       },
       loadScheduleData: (params) => {
-        this.queryParam.oid =
-          (this.user.isSystem !== 1 && this.user.organizationId) || "";
+        this.queryParam.oid = this.user.organizationId;
         let param = Object.assign(params, this.queryParam);
         return this.$api.personAdminService
           .getDimissionList(param)
@@ -204,10 +203,14 @@ export default {
       advanced: true,
       formTitle: [
         {
+          type: "title",
+          title: "注：离职将于当日生效，且不可修改"
+        },
+        {
           label: "姓名",
           name: "name",
           type: "text",
-          placeholder: "请输入所在单位",
+          placeholder: "请输入姓名",
         },
         {
           label: "离职生效日期",
@@ -224,6 +227,7 @@ export default {
                 },
           type: "picker",
           placeholder: "请选择离职生效日期",
+          notice:"注：离职将于当日24:00生效，且不可修改"
         },
         {
           label: "离职原因",

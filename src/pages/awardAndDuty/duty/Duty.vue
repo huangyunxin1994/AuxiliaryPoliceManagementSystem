@@ -47,7 +47,7 @@
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="plus" @click="handleAdd" style="margin-right: 10px">新建</a-button>
-        <a-button type="primary" icon="delete"  :disabled="selectedRowKeys.length == 0" @click="handleDel">删除</a-button>
+        <a-button type="danger" icon="delete"  :disabled="selectedRowKeys.length == 0" @click="handleDel">删除</a-button>
         <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay" @click="handleDel">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -217,7 +217,7 @@ export default {
     };
   },
   created(){
-    this.queryParam.oid=this.user.isSystem !==1 && this.user.organizationId || ""
+    this.queryParam.oid=this.user.organizationId
   },
   methods: {
     handleAdd() {
@@ -237,7 +237,7 @@ export default {
       const _this = this;
       this.$confirm({
         title: "警告",
-        content: `真的要删除吗?`,
+        content: `是否确认删除所选记录?`,
         okText: "删除",
         okType: "danger",
         centered: true,
@@ -267,7 +267,7 @@ export default {
     this.queryParam= {
         name: "",
         organizationId:"",
-        oid: this.user.isSystem !==1 && this.user.organizationId || "",
+        oid: this.user.organizationId,
       }
       this.$refs.table.refresh(true);
     },

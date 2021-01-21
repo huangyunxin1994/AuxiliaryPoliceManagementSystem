@@ -135,7 +135,7 @@ export default {
     },
     getFile(){
       let query = {
-        oid:this.user.isSystem !==1 && this.user.organizationId || "",
+        oid:this.user.organizationId,
         type:2
       }
       const requestParameters = Object.assign({}, query);
@@ -164,7 +164,7 @@ export default {
      async getAfficheList(){
       let  _this = this
       let query = {
-        oid:this.user.isSystem !==1 && this.user.organizationId || "",
+        oid:this.user.organizationId,
         type:2,
         expire:1
       }

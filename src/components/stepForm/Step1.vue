@@ -159,7 +159,8 @@ export default {
       leftColumns: leftTableColumns,
       queryParams:{
         search:"",
-        organizationId:''
+        organizationId:'',
+        quit:1//筛选还没生效的离职人员
       },
       leftColumnsData: params => {
         let param = Object.assign(params,this.queryParams)
@@ -194,7 +195,7 @@ export default {
     };
   },
   created(){
-      this.queryParams.oid = this.user.isSystem !==1 && this.user.organizationId || ""
+      this.queryParams.oid = this.user.organizationId
   },
         
   methods: {

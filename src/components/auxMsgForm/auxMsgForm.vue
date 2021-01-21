@@ -46,6 +46,8 @@
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                   :prop="item.title"
                 >
+                  <span v-if="item.type == 'text' && item.title == 'sex'">{{form[item.title] | sexFilter}}</span>
+                  <span v-if="item.type == 'text' && item.title !== 'sex'">{{form[item.title]}}</span>
                   <a-input
                     :disabled="!policeId || item.disabled"
                     v-model="form[item.title]"
@@ -95,10 +97,11 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-radio-group v-model="form['isMajor']" disabled>
+                  <!-- <a-radio-group v-model="form['isMajor']" disabled>
                     <a-radio :value="1"> 是 </a-radio>
                     <a-radio :value="2"> 否 </a-radio>
-                  </a-radio-group>
+                  </a-radio-group> -->
+                  <span>{{form['isMajor'] | orderlyFilter}}</span>
                 </a-form-model-item>
               </a-col>
             </a-row>
@@ -113,7 +116,8 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="major.qualification" disabled />
+                  <!-- <a-input v-model="major.qualification" disabled /> -->
+                  <span>{{major.qualification}}</span>
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
@@ -126,7 +130,8 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="major.approvalUnit" disabled />
+                  <!-- <a-input v-model="major.approvalUnit" disabled /> -->
+                  <span>{{major.approvalUnit}}</span>
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
@@ -139,7 +144,8 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="major.acquireDate" disabled />
+                  <!-- <a-input v-model="major.acquireDate" disabled /> -->
+                  <span>{{major.acquireDate}}</span>
                 </a-form-model-item>
               </a-col>
             </a-row>
@@ -357,14 +363,14 @@ const workColumns = [
     dataIndex: "startDate",
     key: "startDate",
     type:"date",
-    width:100,
+    width:120,
   },
   {
     title: "工作结束日期",
     dataIndex: "endData",
     key: "endData",
     type:"date",
-    width:100,
+    width:120,
   },
   {
     title: "所在单位",
@@ -389,7 +395,7 @@ const workColumns = [
     dataIndex: "orderly",
     scopedSlots: { customRender: "orderly" },
     key: "orderly",
-    width:80,
+    width:120,
   },
   {
     title: "从事或担任工作",
@@ -763,62 +769,62 @@ export default {
         {
           title: "number",
           label: "辅警编号",
-          type: "input",
+          type: "text",
           placeholder: "请输入辅警编号",
           disabled: true,
         }, //
         {
           title: "name",
           label: "姓名",
-          type: "input",
+          type: "text",
           placeholder: "请输入辅警姓名",
           disabled: true,
         }, //
         {
           title: "idCard",
           label: "身份证号",
-          type: "input",
+          type: "text",
           placeholder: "请输入身份证号",
           disabled: true,
         }, //
         {
           title: "phone",
           label: "手机号码",
-          type: "input",
+          type: !this.policeId ? 'text' : "input",
           placeholder: "请输入手机号码",
         }, //
         {
           title: "organizationName",
           label: "所属组织",
-          type: "input",
+          type: "text",
           placeholder: "请选择所属组织",
           disabled: true,
         },
         {
           title: "postName",
           label: "所属岗位",
-          type: "input",
+          type: "text",
           placeholder: "请选择所属岗位",
           disabled: true,
         },
         {
           title: "rankName",
           label: "所属职级",
-          type: "input",
+          type: "text",
           placeholder: "请选择所属职级",
           disabled: true,
         },
         {
           title: "nation",
           label: "民族",
-          type: "input",
+          type: "text",
           placeholder: "请输入民族",
           disabled: true,
         }, //
         {
           title: "education",
           label: "学历",
-          type: "select",
+          type: !this.policeId ? 'text' : "select",
           placeholder: "请选择学历",
           select: [
             { name: '小学' },
@@ -832,27 +838,27 @@ export default {
         {
           title: "nativePlace",
           label: "籍贯",
-          type: "input",
+          type: "text",
           placeholder: "请输入籍贯",
           disabled: true,
         }, //
         {
           title: "height",
           label: "身高(cm)",
-          type: "input",
+          type: !this.policeId ? 'text' : "input",
           placeholder: "请输入身高",
         },
         {
           title: "entryTime",
           label: "入职时间",
-          type: "time",
+          type: "text",
           placeholder: "请选择入职时间",
           disabled: true,
         }, //
         {
           title: "politicalStatus",
           label: "政治面貌",
-          type: "select",
+          type: !this.policeId ? 'text' : "select",
           placeholder: "请选择政治面貌",
           select: [
             { name: "中共党员" },
@@ -864,14 +870,14 @@ export default {
         {
           title: "birthday",
           label: "出生日期",
-          type: "input",
+          type: "text",
           placeholder: "请输入出生日期",
           disabled: true,
         }, //
         {
           title: "sex",
           label: "性别",
-          type: "select",
+          type: "text",
           placeholder: "请输入性别",
           disabled: true,
           select: [
@@ -882,14 +888,14 @@ export default {
         {
           title: "age",
           label: "年龄",
-          type: "input",
+          type: "text",
           placeholder: "请输入年龄",
           disabled: true,
         }, //
         {
           title: "seniority",
           label: "工龄(年)",
-          type: "input",
+          type: "text",
           placeholder: "请输入工龄",
           disabled: true,
         }, //  //
@@ -965,7 +971,7 @@ export default {
     getBaseRules() {
       let myrules = {};
       this.baseMessTitle.forEach((item) => {
-        if (item.title == "phone") {
+        if (item.title == "phone"&&this.policeId) {
           myrules[item.title] = [
             { required: true, message: "请输入必填项", trigger: "blur" },
             { validator: validatePhone, trigger: "blur" },
@@ -1118,7 +1124,7 @@ export default {
        const _this = this;
         this.$confirm({
         title: "警告",
-        content: `真的要删除这条记录吗?`,
+        content: `是否确认删除这条记录?`,
         okText: "删除",
         okType: "danger",
         centered: true,
@@ -1236,7 +1242,7 @@ export default {
         if (valid) {
           this.$confirm({
         title: "提醒",
-        content: `真的要保存吗?`,
+        content: `是否确认保存?`,
         okText: "保存",
         okType: "primary",
         centered: true,

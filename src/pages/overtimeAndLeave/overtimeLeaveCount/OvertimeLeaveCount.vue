@@ -40,10 +40,16 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <tree-select
-                  :value="queryParam.organizationId"
-                  @handleTreeChange="handleTreeChange"
-                ></tree-select>
+                <a-select
+                  v-model="queryParam['organizationId']"
+                  style="width: 100%"
+                  placeholder="请选择组织"
+                  allowClear
+                >
+                  <a-select-option v-for="i in treeData" :key="i.organizationId" :value="i.organizationId" >
+                    {{ i.organizationName }}
+                  </a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
@@ -113,6 +119,7 @@ export default {
   },
   data() {
     return {
+      treeData:[],
       time1: moment(new Date()).format("YYYY年MM月"),
       showFormat: "YYYY年MM月",
       monthFormat: "YYYY-MM",
@@ -267,9 +274,13 @@ export default {
       },
     };
   },
-  created() {
-    this.queryParam.oid =
-      (this.user.isSystem !== 1 && this.user.organizationId) || "";
+ async created() {
+    this.queryParam.oid =this.user.organizationId;
+    await this.$api.overTimeService
+      .getOverTimeLeaveOrgan({organizationId:this.user.organizationId,time:this.queryParam.time})
+      .then((res) => {
+             this.treeData=res.data.data.list
+      });
   },
   methods: {
     disabledDate(current) {
@@ -329,6 +340,11 @@ export default {
     handleChange(date) {
       this.time1 = moment(date).format("YYYY年MM月");
       this.$refs.table.refresh(true);
+      this.$api.overTimeService
+      .getOverTimeLeaveOrgan({organizationId:this.user.organizationId,time:this.queryParam.time})
+      .then((res) => {
+             this.treeData=res.data.data.list
+      });
     },
     //树选择回调
     handleTreeChange(obj) {

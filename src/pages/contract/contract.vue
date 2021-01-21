@@ -28,7 +28,7 @@
                 </a-col>
                 <a-col :md="8" :sm="24">
                   <a-form-item label="合同终止日期">
-                    <a-date-picker @change="onChange" style="width: 100%" :value-format="dateFormat" v-model="queryParam.time"/>
+                    <a-date-picker style="width: 100%" :value-format="dateFormat" v-model="queryParam.endTime"/>
                   </a-form-item>
                 </a-col>
                 <template v-if="advanced">
@@ -285,7 +285,7 @@ export default {
         oid: "",
       },
       loadScheduleData: (params) => {
-        this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || "";
+        this.queryParam.oid = this.user.organizationId;
         let param = Object.assign(params, this.queryParam);
         return this.$api.contractService.getContractData(param).then((res) => {
           res.data.data.list.map((i, k) => {
@@ -570,10 +570,6 @@ export default {
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
-    },
-    // 时间框选择
-    onChange(date, dateString) {
-      this.queryParam.endTime = dateString;
     },
     // 点击重置
     resetSearch() {

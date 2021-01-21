@@ -270,8 +270,7 @@ export default {
         oid: "",
       },
       loadScheduleData: (params) => {
-        this.queryParam.oid =
-          (this.user.isSystem !== 1 && this.user.organizationId) || "";
+        this.queryParam.oid = this.user.organizationId;
         let param = Object.assign(params, this.queryParam);
         return this.$api.personAdminService.getRankList(param).then((res) => {
           // console.log(res)
@@ -359,14 +358,14 @@ export default {
     },
     getRankList() {
       let param = {
-        oid: (this.user.isSystem !== 1 && this.user.organizationId) || "",
+        oid: this.user.organizationId,
         type: 1,
       };
       this.$api.otherItemsService.getPerPostRank(param).then((res) => {
         this.rankMess = Object.assign([], res.data.data.list);
       });
       let para = {
-        oid: (this.user.isSystem !== 1 && this.user.organizationId) || "",
+        oid: this.user.organizationId,
       };
       this.$api.rankPostService.getRankList(para).then((res) => {
         let rank = res.data.data.list;

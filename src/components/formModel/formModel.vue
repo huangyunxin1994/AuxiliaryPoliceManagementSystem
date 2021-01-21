@@ -9,6 +9,9 @@
   >
     <a-row>
       <div v-for="(item, index) in formTitle" :key="index">
+        <!-- <p v-if="item.type === 'title'" style="color:#f5222d;margin-bottom:20px;text-align:center">
+          {{item.title}}
+        </p> -->
         <div v-if="item.type === 'rangePicker'">
           <a-col :xs="item.xsCol || 24" :sm="item.smCol || 24">
             <a-form-model-item
@@ -22,6 +25,7 @@
                 :locale="locale"
                 v-model="form[item.name1]"
                 :disabled="item.disabled"
+                :showToday="item.showToday"
                 :disabled-date="
                  item.disabledDate &&(item.funOpt === 1 ? disabledDateStart : item.funOpt === 2 ? disabledDateSStart : disabledDateOStart) ||
                           function () {
@@ -37,6 +41,7 @@
                 :placeholder="item.placeholder"
                 style="width: 100%"
               />
+              <div style="color:#f5222d;line-height:1.5" v-if="item.notice">{{item.notice}}</div>
             </a-form-model-item>
           </a-col>
           <a-col :xs="item.xsCol || 24" :sm="item.smCol || 24">
@@ -51,6 +56,7 @@
                 :locale="locale"
                 v-model="form[item.name2]"
                 :disabled="item.disabled"
+                :showToday="item.showToday"
                 :disabled-date="
                   item.disabledDate &&(item.funOpt === 1 ? disabledDateEnd : item.funOpt === 2 ? disabledDateSEnd : disabledDateOEnd) ||
                           function () {
@@ -66,6 +72,7 @@
                 :placeholder="item.placeholder"
                 style="width: 100%"
               />
+              <div style="color:#f5222d;line-height:1.5" v-if="item.notice">{{item.notice}}</div>
             </a-form-model-item>
           </a-col>
         </div>
@@ -89,6 +96,7 @@
             <a-input-number
               v-model="form[item.name]"
               v-if="item.type == 'number'"
+              :min="0"
               :disabled="item.disabled"
               :placeholder="item.placeholder"
               style="width: 100%"
@@ -203,6 +211,7 @@
               name="file"
               :multiple="true"
               :default-file-list="form[item.name]"
+              :file-list="fileList"
               action=""
               :before-upload="beforeUpload"
               :remove="handleRemove"
@@ -213,6 +222,7 @@
                 >选择文件</a-button
               >
             </a-upload>
+            <div style="color:#f5222d;line-height:1.5" v-if="item.notice">{{item.notice}}</div>
           </a-form-model-item>
         </a-col>
       </div>
@@ -292,6 +302,7 @@ export default {
   created() {
     this.formRules = Object.assign({}, this.rules);
     this.formTitle.forEach((i) => {
+      console.log(i)
       this.dataSource.push(i.name);
       if (i.type === "upload" && i.required) {
         let validatePass2 = (rule, value, callback) => {
@@ -349,6 +360,21 @@ export default {
           { required: true, validator: validateCheckPass, trigger: "change" },
         ];
       }
+      if (i.type === "picker" && i.required) {
+        let validateEndTimes = (rule, value, callback) => {
+          console.log(value)
+          if (!value) {
+            callback(new Error("请选择结束日期"));
+          } else if (moment(this.form[i.compare]).isAfter(moment(value),'minute')) {
+            callback(new Error("结束时间不能小于开始时间"));
+          } else {
+            callback();
+          }
+        };
+        this.formRules[i.validate] = [
+          { required: true, validator: validateEndTimes, trigger: "change" },
+        ];
+      }
     });
     if (this.record) {
       this.form = Object.assign(
@@ -394,27 +420,37 @@ export default {
     },
     disabledDateSStart(current) {
       const obj = this.formTitle.find(i=>i.type==='rangePicker')
-      if(current&&this.form[obj.name2]){
-        const date = new Date(this.form[obj.name2])
-        if(current > moment(this.form[obj.name2]).endOf("minutes"))
-          return true
-        else if(current <  moment(new Date(new Date(date).getFullYear(),new Date(date).getMonth()-1,new Date(new Date(date).getFullYear(),new Date(date).getMonth(),0).getDate())).endOf("day"))
-          return true 
-        else
-          return false
-       
-      }else{
-        return false
+      const endValue = this.form[obj.name2];
+      const lastMonth  = moment()
+      lastMonth.set({'year': moment(endValue).get('year'),'month': moment(endValue).get('month')-1})
+      if (!current || !endValue) {
+        return false;
       }
+      if(current.isAfter(moment(endValue),'minute'))
+        current.set({'hour': moment(endValue).get('hour'), 'minute': moment(endValue).get('minute')});
+      if(current.isAfter(moment(endValue),'minute')){
+        return true
+        
+      }else if(current<lastMonth.endOf('month'))
+        return true 
+          
     },
     disabledDateSEnd(current) {
-       const obj = this.formTitle.find(i=>i.type==='rangePicker')
-      if(current&&this.form[obj.name1]){
-        return moment(this.form[obj.name1])> current || current >
-          moment(new Date(new Date(this.form[obj.name1]).getFullYear(),new Date(this.form[obj.name1]).getMonth()+1,1))
-      }else{
-        return false
+      const obj = this.formTitle.find(i=>i.type==='rangePicker')
+      const startValue = this.form[obj.name1];
+      const nextMonth = moment()
+      nextMonth.set({'year': moment(startValue).get('year'),'month': moment(startValue).get('month')+1})
+      if (!current || !startValue) {
+        return false;
       }
+      if(current.isBefore(moment(startValue),'minute'))
+        current.set({'hour': moment(startValue).get('hour'), 'minute': moment(startValue).get('minute')});
+      if(current.isBefore(moment(startValue),'minute')){
+         return true
+      }else if(current > nextMonth.startOf('month')){
+         return true
+      }else
+        return false
     },
     disabledDateStart(current) {
       const obj = this.formTitle.find((i) => i.type === "rangePicker");
@@ -436,12 +472,12 @@ export default {
           moment(new Date()).endOf("day") >=
           moment(new Date(this.form[obj.name1])).endOf("day")
         ) {
-          return current < moment(new Date()).endOf("day");
+          return current < moment(new Date()).startOf("day");
         } else {
-          return current < moment(new Date(this.form[obj.name1])).endOf("day");
+          return current < moment(new Date(this.form[obj.name1])).startOf("day");
         }
       } else if (current) {
-        return current < moment(new Date()).endOf("day");
+        return current < moment(new Date()).startOf("day");
       } else {
         return false;
       }
@@ -452,6 +488,7 @@ export default {
         this.form[item.labelName] = param.name;
       }
     },
+   
     change() {},
     onSubmit() {
       return new Promise((resolve) => {
@@ -513,8 +550,11 @@ export default {
     },
     // 上传文件
     beforeUpload(file) {
-      this.fileList = [...this.fileList, file];
-      this.form.fileList = [...this.fileList, file];
+      
+      this.fileList = [file];
+      this.form.fileList = [file];
+      this.fileList = this.fileList.slice(-1);
+      this.form.fileList = this.form.fileList.slice(-1);
       return false;
     },
     //树选择回调

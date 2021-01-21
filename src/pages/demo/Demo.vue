@@ -181,7 +181,7 @@ export default {
         {
           avatar:
             "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png",
-          name: "加班与请假统计",
+          name: "加班与请假记录",
           router: {
             name: "overtime",
           },

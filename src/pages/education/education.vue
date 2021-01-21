@@ -66,7 +66,7 @@
       </div>
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="plus" @click="newEducation" style="margin-right: 10px">新建培训</a-button>
-        <a-button type="primary" icon="delete"  :disabled="selectedRowKeys.length == 0" @click="handleDel">删除培训</a-button>
+        <a-button type="danger" icon="delete"  :disabled="selectedRowKeys.length == 0" @click="handleDel">删除培训</a-button>
         <!-- <a-button type="primary" icon="plus" @click="$router.push({path:'newEducation'})">新建培训</a-button> -->
         
         <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -153,7 +153,7 @@ const formTitle = [
     label: "内容说明",
     name: "learningContent",
     type: "textarea",
-    placeholder: "请输入总学时"
+    placeholder: "请输入培训说明"
   },
 ];
 const stepTitle = [{title:'选择人员'},{title:'填写培训内容'}]
@@ -267,7 +267,7 @@ export default {
         state:'',
       },
       loadScheduleData: (params) => {
-        this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
+        this.queryParam.oid =this.user.organizationId
         let param = Object.assign(params,this.queryParam)
         return this.$api.trainService.geteducationList(param).then((res)=>{
           res.data.data.list.map((i,k)=>{

@@ -128,7 +128,7 @@
     </a-card>
     <form-step
       ref="modal"
-      title="新增发放证件"
+      title="新增发放装备"
       :formTitle="formTitle"
       :record="record"
       :rules="rules"
@@ -247,7 +247,7 @@ export default {
       loadScheduleData: (params) => {
         this.queryParam.recycler = this.user.name
         this.queryParam.recyclerId = this.user.id
-        this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
+        this.queryParam.oid = this.user.organizationId
         let param = Object.assign(params, this.queryParam);
         return this.$api.certEquipService.getCertEqup(param).then((res) => {
           res.data.data.list.map((i, k) => {
@@ -302,7 +302,7 @@ export default {
       issuedBy: this.user.name,
       issuedById: this.user.id,
     };
-    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
+    this.queryParam.oid = this.user.organizationId
   },
   methods: {
     
@@ -344,7 +344,7 @@ export default {
       const _this = this;
       this.$confirm({
         title: "警告",
-        content: `真的要回收所选装备吗?`,
+        content: `是否确认回收所选装备?`,
         okText: "回收",
         okType: "danger",
         centered: true,

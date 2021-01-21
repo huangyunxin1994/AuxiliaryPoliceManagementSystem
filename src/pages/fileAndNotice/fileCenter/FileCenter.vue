@@ -33,7 +33,7 @@
       </a-row>
       <div class="table-operator" style="margin-bottom: 24px">
         <a-button type="primary" icon="plus" @click="handleAdd" style="margin-right: 10px">新建</a-button>
-        <a-button type="primary" icon="delete"  :disabled="selectedRowKeys.length == 0" @click="handleDel">删除</a-button>
+        <a-button type="danger" icon="delete"  :disabled="selectedRowKeys.length == 0" @click="handleDel">删除</a-button>
         <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
           <a-menu slot="overlay" @click="handleDel">
             <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
@@ -69,12 +69,17 @@ import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import selectTree from "@/components/treeSelect/TreeSelect";
 const formTitle = [
+  
   {
     label: "上传文件",
     name: "fileList",
     type: "upload",
     required:true,
-    placeholder: "请输入请假原因",
+    notice:'注：文档只允许上传一份'
+  },
+  {
+    type:'title',
+    
   },
   {
     label: "内容说明",
@@ -168,7 +173,7 @@ export default {
     };
   },
   created(){
-    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
+    this.queryParam.oid = this.user.organizationId
   },
   mounted(){
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL
@@ -183,8 +188,8 @@ export default {
       let formProps = {
         record:{
           publisher:this.user.name,
-          organizationId:this.user.isSystem !==1 && this.user.organizationId || "",
-          organizationName:this.user.isSystem !==1 && this.user.organizationName || "",
+          organizationId:this.user.organizationId,
+          organizationName:this.user.organizationName,
           publisherId:this.user.id,
         },
         formTitle: formTitle,
@@ -198,7 +203,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "新建",
+        title: "新建文档",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -240,7 +245,7 @@ export default {
       this.queryParam={
         name:"",
         organizationId:'',
-        oid : this.user.isSystem !==1 && this.user.organizationId || ""
+        oid : this.user.organizationId
       }
       this.$refs.table.refresh(true)
     },
@@ -252,7 +257,7 @@ export default {
       const _this = this;
       this.$confirm({
         title: "警告",
-        content: `真的要删除吗?`,
+        content: `是否确认删除所选文档？`,
         okText: "删除",
         okType: "danger",
         centered: true,

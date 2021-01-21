@@ -130,8 +130,8 @@ export default {
         },
         {
           title: "批准单位",
-          dataIndex: "company",
-          key: "company",
+          dataIndex: "approvalAuthority",
+          key: "approvalAuthority",
           ellipsis: true,
           width: 150
         }

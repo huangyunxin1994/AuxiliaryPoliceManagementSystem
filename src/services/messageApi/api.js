@@ -4,7 +4,7 @@ const API_PROXY_PREFIX={
   rzh:'/api/rzh',
   fwq:'/api/fwq'
 }
-const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX.lk
+const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL :  API_PROXY_PREFIX.fwq
 module.exports = {
   // GETORGAN:`${BASE_URL}/organization/`,//查询该组织所有下级及人数
   // POSTORGAN:`${BASE_URL}/organization/`,//添加组织

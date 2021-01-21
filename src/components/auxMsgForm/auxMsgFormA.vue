@@ -364,14 +364,14 @@ const workColumns = [
     dataIndex: "startDate",
     key: "startDate",
     type:"date",
-    width:100,
+    width:120,
   },
   {
     title: "工作结束日期",
     dataIndex: "endData",
     key: "endData",
     type:"date",
-    width:100,
+    width:120,
   },
   {
     title: "所在单位",
@@ -395,7 +395,7 @@ const workColumns = [
     title: "是否公务员",
     dataIndex: "orderly",
     key: "orderly",
-    width:80,
+    width:120,
   },
   {
     title: "从事或担任工作",
@@ -953,7 +953,7 @@ export default {
   },
   created() {
     console.log(this.organId)
-    this.form.organizationId=this.organId || (this.user.isSystem !==1 && this.user.organizationId || "")
+    this.form.organizationId=this.organId || this.user.organizationId
     this.queryPa.id = this.policeId || "";
     this.form.organizationName= this.user.organizationName
     this.$api.auxiliaryPoliceService
@@ -970,7 +970,7 @@ export default {
     //     });
     //   });
     this.$api.rankPostService
-      .getPostList({ organizationId: this.user.isSystem !==1 && this.user.organizationId || "",state:1 })
+      .getPostList({ organizationId: this.user.organizationId,state:1 })
       .then((res) => {
         this.baseMessTitle.find((i) => {
           if (i.title === "postId")
@@ -978,7 +978,7 @@ export default {
         });
       });
     this.$api.rankPostService
-      .getRankList({ organizationId: this.user.isSystem !==1 && this.user.organizationId || "" })
+      .getRankList({ organizationId: this.user.organizationId })
       .then((res) => {
         this.baseMessTitle.find((i) => {
           if (i.title === "rankId")
@@ -1108,7 +1108,7 @@ export default {
       const _this = this;
       this.$confirm({
         title: "警告",
-        content: `真的要删除这条记录吗?`,
+        content: `是否确认删除这条记录?`,
         okText: "删除",
         okType: "danger",
         centered: true,
@@ -1134,14 +1134,16 @@ export default {
       this.$refs.studyData.visible = true
     },
     handleOk(form){
-      const mess = this.IdCard(form.idCard)
-      form.birthday = mess.birth;
-      form.sex = mess.sex;
+      if(form.idCard){
+        const mess = this.IdCard(form.idCard)
+        form.birthday = mess.birth;
+        form.sex = mess.sex;
+      }
       if(!form.key){
 
         let arr =[]
-      arr.push(form)
-      this.$refs[this.tableName].changeDataForImport(arr);
+        arr.push(form)
+        this.$refs[this.tableName].changeDataForImport(arr);
       }else{
         this.$refs[this.tableName].localDataSource.splice(this.$refs[this.tableName].localDataSource.findIndex(i=>i.key === form.key),1,form)
       }
@@ -1154,7 +1156,7 @@ export default {
         if (valid) {
           this.$confirm({
             title: "提醒",
-            content: `真的要保存吗?`,
+            content: `是否确认保存?`,
             okText: "保存",
             okType: "primary",
             centered: true,
@@ -1204,7 +1206,7 @@ export default {
       const _this = this;
         this.$confirm({
         title: "警告",
-        content: `系统不会保存填写的内容，真的要返回吗?`,
+        content: `系统不会保存填写的内容，是否确认返回?`,
         okText: "确认",
         okType: "primary",
         centered: true,

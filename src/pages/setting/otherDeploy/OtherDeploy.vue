@@ -342,7 +342,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "新增",
+        title: "新增证件类型",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -368,7 +368,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "编辑",
+        title: "编辑证件类型",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -385,7 +385,7 @@ export default {
       const _this = this
       this.$confirm({
         title: "警告",
-        content: `真的要删除证件 [ ${param.name} ] 吗?`,
+        content: `是否确认删除证件类型 ${param.name} ?`,
         okText: "删除",
         okType: "danger",
         centered: true,
@@ -427,7 +427,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "新增",
+        title: "新建装备类型",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -453,7 +453,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "编辑",
+        title: "编辑装备类型",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -470,7 +470,7 @@ export default {
       const _this = this
       this.$confirm({
         title: "警告",
-        content: `真的要删除装备 [ ${param.name} ] 吗?`,
+        content: `是否确认删除装备类型 ${param.name} ?`,
         okText: "删除",
         okType: "danger",
         centered: true,

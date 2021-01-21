@@ -176,8 +176,7 @@ export default {
       loadScheduleData: (parameter) => {
         this.queryParam.recycler = this.user.name;
         this.queryParam.recyclerId = this.user.id;
-        this.queryParam.oid =
-          (this.user.isSystem !== 1 && this.user.organizationId) || "";
+        this.queryParam.oid = this.user.organizationId;
         const requestParameters = Object.assign({}, parameter, this.queryParam);
         return this.$api.certEquipService
           .getCertEqup(requestParameters)
@@ -201,8 +200,7 @@ export default {
     this.$api.certEquipService.getCertEqupType({ type: 2, state : 2}).then((res) => {
         this.eqName = res.data.data.list
     });
-    this.queryParam.oid =
-      (this.user.isSystem !== 1 && this.user.organizationId) || "";
+    this.queryParam.oid = this.user.organizationId;
   },
   methods: {
     toggleAdvanced() {

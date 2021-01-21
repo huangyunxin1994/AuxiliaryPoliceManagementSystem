@@ -227,7 +227,7 @@ export default {
       loadScheduleData: (params) => {
         this.queryParam.recycler = this.user.name
         this.queryParam.recyclerId = this.user.id
-        this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
+        this.queryParam.oid = this.user.organizationId
         let param = Object.assign(params, this.queryParam);
         return this.$api.certEquipService.getCertEqup(param).then((res) => {
           res.data.data.list.map((i, k) => {
@@ -281,7 +281,7 @@ export default {
       issuedBy:this.user.name,
       issuedById:this.user.id
     }
-    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
+    this.queryParam.oid = this.user.organizationId
   },
   methods: {
     // 配发日期
@@ -322,7 +322,7 @@ export default {
       const _this = this;
       this.$confirm({
         title: "警告",
-        content: `真的要回收所选证件吗?`,
+        content: `是否确认回收所选证件?`,
         okText: "回收",
         okType: "danger",
         centered: true,

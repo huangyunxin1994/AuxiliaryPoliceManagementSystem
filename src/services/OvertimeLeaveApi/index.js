@@ -1,4 +1,4 @@
-import {GETDATA,PUTDATA,POSTBYAUX,POSTBYUSER,STATISTICS,DELETEDATA,PUTBYAUX} from './api'
+import {GETDATA,PUTDATA,POSTBYAUX,POSTBYUSER,STATISTICS,DELETEDATA,PUTBYAUX,GETDATABYORGAN} from './api'
 import {request, METHOD} from '@/utils/request'
 import Qs from "qs"
 
@@ -10,6 +10,14 @@ const overTimeService = {
      */
     getOverTimeLeave(params) {
         return request(GETDATA, METHOD.GET, params)
+    },
+    /**
+     * 加班请假或统计组织查询列表
+     * @param params 
+     * @returns {Promise<AxiosResponse<T>>}
+     */
+    getOverTimeLeaveOrgan(params) {
+        return request(GETDATABYORGAN, METHOD.GET, params)
     },
     /**
      * 审批请假或加班

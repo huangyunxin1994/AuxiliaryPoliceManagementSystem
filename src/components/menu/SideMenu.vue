@@ -6,7 +6,7 @@
         <h1>{{systemName}}</h1>
       </router-link>
     </div>
-    <i-menu :theme="theme" :collapsed="collapsed" :options="menuData" @select="onSelect" class="menu"/>
+    <i-menu :theme="theme" :collapsed="collapsed" :options="menuData" @select="onSelect" class="menu" :openKeys="loginType === 1 ? ['/baseMess','/servicemess']: undefined"/>
   </a-layout-sider>
 </template>
 

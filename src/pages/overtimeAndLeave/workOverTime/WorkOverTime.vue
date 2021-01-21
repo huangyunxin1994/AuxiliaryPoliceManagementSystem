@@ -14,10 +14,16 @@
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="组织选择">
-                <tree-select
-                  :value="queryParam.organizationId"
-                  @handleTreeChange="handleTreeChange"
-                ></tree-select>
+                <a-select
+                  v-model="queryParam['organizationId']"
+                  style="width: 100%"
+                  placeholder="请选择组织"
+                  allowClear
+                >
+                  <a-select-option v-for="i in treeData" :key="i.organizationId" :value="i.organizationId" >
+                    {{ i.organizationName }}
+                  </a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
             <template v-if="advanced">
@@ -124,6 +130,7 @@ import STable from "@/components/Table_/";
 import formStep from "@/components/stepForm/StepForm";
 import TaskForm from "@/components/formModel/formModel";
 import treeSelect from "@/components/treeSelect/TreeSelect";
+import moment from 'moment'
 const formTitle = [
   {
     label1: "开始时间",
@@ -133,11 +140,12 @@ const formTitle = [
     placeholder1: "请选择加班开始时间",
     disabledDate:true,
     fomate:'minutes',
+    showToday:false,
     funOpt:2,
-    showTime1:{ format: 'HH:mm' },
+    showTime1:{ format: 'HH:mm',minuteStep:10,defaultValue:moment(new Date().setMinutes(0)) },
     label2: "结束时间",
     name2: "endTime",
-    showTime2: { format: 'HH:mm' },
+    showTime2: { format: 'HH:mm',minuteStep:10,defaultValue:moment(new Date().setMinutes(0)) },
     valueFormat2:'YYYY-MM-DD HH:mm',
     disabledDate2:true,
     placeholder2: "请选择加班结束时间",
@@ -268,7 +276,14 @@ const rules = {
   ],
   reason: [{ required: true, message: "请输入加班原因", trigger: "blur" }],
   duration:[{ required: true, message: "请输入加班时长", trigger: "blur" }],
+ 
 };
+const checkRules = {
+  approvalRemake: [{ required: true, message: "请输入审批备注", trigger: "blur" }],
+  approvalResults:[
+    { required: true, message: "请选择是否通过", trigger: "blur" },
+  ],
+}
 export default {
   name: "AskForLeave",
   components: {
@@ -282,6 +297,7 @@ export default {
       formTitle,
       rules,
       stepTitle,
+      treeData:[],
       addRecord:{type: 1,approvalResults:1,holiday:2},
       submitFun: (parameter) => {
         return this.$api.overTimeService.postByUser(parameter).then((res) => {
@@ -401,10 +417,15 @@ export default {
       selectedRows: [],
     };
   },
-  created() {
+ async created() {
     this.addRecord.approval = this.user.name;
     this.addRecord.approvalId = this.user.id;
-    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || "";
+    this.queryParam.oid = this.user.organizationId;
+    await this.$api.overTimeService
+      .getOverTimeLeaveOrgan({organizationId:this.user.organizationId,state:1})
+      .then((res) => {
+             this.treeData=res.data.data.list
+      });
   },
   methods: {
     handleAdd() {
@@ -414,9 +435,11 @@ export default {
       record.approval = this.user.name;
       record.approvalId = this.user.id;
       record.holiday = this.statusFilter(record.holiday)
+      record.approvalResults = 1
       let formProps = {
         record: record,
         formTitle: formCheckTitle,
+        rules:checkRules,
         submitFun: (parameter) => {
           return this.$api.overTimeService
             .putOverTimeLeave(parameter)
@@ -426,7 +449,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "编辑",
+        title: "编辑加班记录",
         width: 700,
         centered: true,
         maskClosable: false,

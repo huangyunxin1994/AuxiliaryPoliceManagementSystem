@@ -4,7 +4,7 @@ const API_PROXY_PREFIX={
   rzh:'/api/rzh',
   fwq:"/api/fwq"
 }
-const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX.lk
+const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL :  API_PROXY_PREFIX.fwq
 // const BASE_URL = process.env.VUE_APP_API_BASE_URL
 module.exports = {
   GETDATA:`${BASE_URL}/OvertimeLeave/OvertimeLeave`,//获取加班或请假的分页列表
@@ -14,4 +14,5 @@ module.exports = {
   POSTBYUSER:`${BASE_URL}/OvertimeLeave/OvertimeLeave/user`,//管理员新增辅警请假或加班申请
   STATISTICS:`${BASE_URL}/OvertimeLeave/OvertimeLeave/Statistics`,//获取加班或请假统计分页列表
   DELETEDATA:`${BASE_URL}/OvertimeLeave/OvertimeLeave/`,//删除请假
+  GETDATABYORGAN:`${BASE_URL}/OvertimeLeave/OvertimeLeave/organization`//加班请假或统计组织查询列表
 }

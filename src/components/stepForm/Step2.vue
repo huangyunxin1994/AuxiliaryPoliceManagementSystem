@@ -26,7 +26,7 @@
                         :locale="locale"
                         v-model="form[item.name1]"
                         :disabled="item.disabled"
-
+                        :showToday="item.showToday"
                         :disabled-date="
                           item.disabledDate && (item.funOpt === 1 ? disabledDateStart : item.funOpt === 2 ? disabledDateSStart : disabledDateOStart)||
                           function () {
@@ -44,6 +44,7 @@
                         :placeholder="item.placeholder1"
                         style="width: 100%"
                       />
+                      <div style="color:#f5222d;line-height:1.5" v-if="item.notice">{{item.notice}}</div>
                     </a-form-model-item>
                   </a-col>
                   <a-col
@@ -61,6 +62,7 @@
                         :locale="locale"
                         v-model="form[item.name2]"
                         :disabled="item.disabled"
+                        :showToday="item.showToday"
                         :disabled-date="
                           item.disabledDate &&(item.funOpt === 1 ? disabledDateEnd : item.funOpt === 2 ? disabledDateSEnd : disabledDateOEnd) ||
                           function () {
@@ -78,6 +80,7 @@
                         :placeholder="item.placeholder2"
                         style="width: 100%"
                       />
+                      <div style="color:#f5222d;line-height:1.5" v-if="item.notice">{{item.notice}}</div>
                     </a-form-model-item>
                   </a-col>
                 </div>
@@ -102,6 +105,7 @@
                     <!-- 数字输入框  -->
                     <a-input-number
                       v-model="form[item.name]"
+                      :min="0"
                       v-if="item.type == 'number'"
                       :disabled="item.disabled"
                       :placeholder="item.placeholder"
@@ -225,6 +229,7 @@
                       :file-list="fileList"
                       action=""
                       :before-upload="beforeUpload"
+                      :remove="handleRemove"
                       :show-upload-list="true"
                       v-else-if="item.type == 'upload'"
                     >
@@ -232,6 +237,7 @@
                         >选择文件</a-button
                       >
                     </a-upload>
+                    <div style="color:#f5222d;line-height:1.5" v-if="item.notice">{{item.notice}}</div>
                   </a-form-model-item>
                 </a-col>
               </div>
@@ -322,7 +328,7 @@ export default {
     disabledDate(current) {
       return (
         current &&
-        current <
+        current <=
           moment(new Date()).endOf(
             "day"
           )
@@ -346,27 +352,37 @@ export default {
     },
     disabledDateSStart(current) {
       const obj = this.formTitle.find(i=>i.type==='rangePicker')
-      if(current&&this.form[obj.name2]){
-        const date = new Date(this.form[obj.name2])
-        if(current > moment(this.form[obj.name2]).endOf("minutes"))
-          return true
-        else if(current <  moment(new Date(new Date(date).getFullYear(),new Date(date).getMonth()-1,new Date(new Date(date).getFullYear(),new Date(date).getMonth(),0).getDate())).endOf("day"))
-          return true 
-        else
-          return false
-       
-      }else{
-        return false
+      const endValue = this.form[obj.name2];
+      const lastMonth  = moment()
+      lastMonth.set({'year': moment(endValue).get('year'),'month': moment(endValue).get('month')-1})
+      if (!current || !endValue) {
+        return false;
       }
+      if(current.isAfter(moment(endValue),'minute'))
+        current.set({'hour': moment(endValue).get('hour'), 'minute': moment(endValue).get('minute')});
+      if(current.isAfter(moment(endValue),'minute')){
+        return true
+        
+      }else if(current<lastMonth.endOf('month'))
+        return true 
+          
     },
     disabledDateSEnd(current) {
-       const obj = this.formTitle.find(i=>i.type==='rangePicker')
-      if(current&&this.form[obj.name1]){
-        return moment(this.form[obj.name1])> current || current >
-          moment(new Date(new Date(this.form[obj.name1]).getFullYear(),new Date(this.form[obj.name1]).getMonth()+1,1))
-      }else{
-        return false
+      const obj = this.formTitle.find(i=>i.type==='rangePicker')
+      const startValue = this.form[obj.name1];
+      const nextMonth = moment()
+      nextMonth.set({'year': moment(startValue).get('year'),'month': moment(startValue).get('month')+1})
+      if (!current || !startValue) {
+        return false;
       }
+      if(current.isBefore(moment(startValue),'minute'))
+        current.set({'hour': moment(startValue).get('hour'), 'minute': moment(startValue).get('minute')});
+      if(current.isBefore(moment(startValue),'minute')){
+         return true
+      }else if(current > nextMonth.startOf('month')){
+         return true
+      }else
+        return false
     },
     // disabledDateOStart(current) {
     //   const obj = this.formTitle.find(i=>i.type==='rangePicker')
@@ -396,10 +412,10 @@ export default {
        const obj = this.formTitle.find(i=>i.type==='rangePicker')
       if(current&&this.form[obj.name1]){
         
-          if(moment(new Date(this.form[obj.name1])).endOf("day")>moment(new Date()).endOf("day"))
-           return current < moment(new Date(this.form[obj.name1])).endOf("day")
+          if(moment(new Date(this.form[obj.name1])).endOf("day") > moment(new Date()).endOf("day"))
+           return current < moment(new Date(this.form[obj.name1])).startOf("day")
           else
-           return current < moment(new Date()).endOf("day")
+           return current < moment(new Date()).startOf("day")
        
       }else{
         return false
@@ -447,7 +463,16 @@ export default {
       }
       this.fileList = [file];
       this.form.fileList = [...this.fileList];
+      this.fileList = this.fileList.slice(-1);
+      this.form.fileList = this.form.fileList.slice(-1);
       return false;
+    },
+    handleRemove(file) {
+      const index = this.fileList.indexOf(file);
+      const newFileList = this.fileList.slice();
+      newFileList.splice(index, 1);
+      this.fileList = newFileList;
+      this.form.fileList = newFileList;
     },
     filterOption(input, option) {
       return (

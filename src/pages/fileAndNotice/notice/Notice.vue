@@ -56,7 +56,7 @@
         @click="handleAdd"
           >新建</a-button
         >
-        <a-button type="primary" icon="delete" :disabled="selectedRowKeys.length == 0"
+        <a-button type="danger" icon="delete" :disabled="selectedRowKeys.length == 0"
         @click="handleDel"
           >删除</a-button
         >
@@ -114,7 +114,7 @@ const formTitle = [
       return (
         current &&
         current <
-          moment(new Date()).endOf(
+          moment(new Date()).startOf(
             "day"
           )
       );
@@ -246,7 +246,7 @@ export default {
     };
   },
   created(){
-    this.queryParam.oid = this.user.isSystem !==1 && this.user.organizationId || ""
+    this.queryParam.oid = this.user.organizationId
   },
   mounted(){
     this.BASE_URL = process.env.VUE_APP_API_BASE_URL
@@ -261,8 +261,8 @@ export default {
       let formProps = {
         record:{
           publisher:this.user.name,
-          organizationId:this.user.isSystem !==1 && this.user.organizationId || "",
-          organizationName:this.user.isSystem !==1 && this.user.organizationName || "",
+          organizationId:this.user.organizationId,
+          organizationName:this.user.organizationName,
           publisherId:this.user.id,
         },
         formTitle: formTitle,
@@ -276,7 +276,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "新建",
+        title: "新建公告",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -316,7 +316,7 @@ export default {
       this.queryParam={
         name:"",
         expire:"",
-        oid : this.user.isSystem !==1 && this.user.organizationId || ""
+        oid : this.user.organizationId
       },
       this.$refs.table.refresh(true)
     },
@@ -324,7 +324,7 @@ export default {
       const _this = this;
       this.$confirm({
         title: "警告",
-        content: `真的要删除吗?`,
+        content: `是否确认删除所选公告？`,
         okText: "删除",
         okType: "danger",
         centered: true,

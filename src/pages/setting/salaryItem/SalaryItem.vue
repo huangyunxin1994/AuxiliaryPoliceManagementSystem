@@ -12,13 +12,16 @@
         <a-col :span="24">
           <span style="width: 100px">工资表生成时间：每月 </span>
           <a-select default-value="" v-model="salaryTime" style="width: 100px">
-            <a-select-option v-for="i in 28" :key="i" :value="i" >
-              {{i}}
+            <a-select-option v-for="i in 28" :key="i" :value="i">
+              {{ i }}
             </a-select-option>
           </a-select>
           <span> 日 </span>
-          <a-button type="primary" icon="save" @click="handleSave"
-          v-show="showSaveBtn"
+          <a-button
+            type="primary"
+            icon="save"
+            @click="handleSave"
+            v-show="showSaveBtn"
             >保存</a-button
           >
         </a-col>
@@ -37,6 +40,7 @@
           icon="cloud-upload"
           @click="publish"
           :disabled="disabled"
+          type="danger"
           >发布</a-button
         >
         <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -56,21 +60,60 @@
         :columns="scheduleColumns"
         :data="loadScheduleData"
         :scroll="{ y: 600, x: 800 }"
-        showPagination="auto"
+        :showPagination="false"
       >
-        <template slot="status" slot-scope="status">
-          <a-badge :status="status" :text="status | statusFilter" />
+        <template
+          v-for="col in ['key', 'itemName', 'itemExplain']"
+          :slot="col"
+          slot-scope="text, record"
+        >
+          <div :key="col">
+            <div
+              v-if="
+                record.state === 'add' ||
+                record.state === 'delete' ||
+                record.state === 'update'
+              "
+              style="color: rgba(0, 0, 0, 0.25)"
+            >
+              {{ text }}
+            </div>
+            <template v-else>
+              {{ text }}
+            </template>
+          </div>
+        </template>
+        <template slot="state" slot-scope="state">
+          <a-badge
+            :status="
+              state == 'add' || state == 'delete' || state == 'update'
+                ? 'error'
+                : 'success'
+            "
+            :text="state | statusFilter"
+          />
         </template>
         <span slot="action" slot-scope="text, record">
           <a
             type="line"
             @click="handleEdit(record)"
-            :disabled="record.isSystem == 1"
+            :disabled="record.isSystem == 1 || record.state === 'delete'"
             >编辑</a
           >
           <a-divider type="vertical" />
-          <a type="line" @click="del(record)" :disabled="record.isSystem == 1"
+          <a
+            type="line"
+            @click="del(record)"
+            :disabled="record.isSystem == 1"
+            v-show="!record.state"
             >删除</a
+          >
+          <a
+            type="line"
+            @click="handelReCall(record)"
+            :disabled="record.isSystem == 1"
+            v-show="record.state"
+            >撤回</a
           >
         </span>
       </s-table>
@@ -82,6 +125,7 @@
 import { mapState } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
+import moment from "moment";
 const wageTitle = [
   {
     label: "工资项目名称",
@@ -106,29 +150,40 @@ export default {
   },
   data() {
     return {
-      salaryTime:undefined,
-      saveSalaryTime:undefined,
-      showSaveBtn:false,
+      salaryTime: undefined,
+      saveSalaryTime: undefined,
+      showSaveBtn: false,
       state: undefined,
-      disabled: false,
+      initData: [],
+      disabled: true,
       scheduleColumns: [
         {
           title: "序号",
           dataIndex: "key",
           key: "key",
           width: 60,
+          scopedSlots: { customRender: "key" },
         },
         {
           title: "名称",
           dataIndex: "itemName",
           key: "itemName",
           width: 200,
+          scopedSlots: { customRender: "itemName" },
         },
         {
           title: "说明",
           dataIndex: "itemExplain",
           key: "itemExplain",
           ellipsis: true,
+          scopedSlots: { customRender: "itemExplain" },
+        },
+        {
+          title: "状态",
+          dataIndex: "state",
+          key: "state",
+          ellipsis: true,
+          scopedSlots: { customRender: "state" },
         },
         {
           table: "操作",
@@ -137,15 +192,16 @@ export default {
           width: 150,
         },
       ],
-      queryParam: {},
+      queryParam: {
+        pageSize: 99999,
+      },
       loadScheduleData: (parameter) => {
         const requestParameters = Object.assign({}, parameter, this.queryParam);
         return this.$api.wageItemsService
           .getWageItems(requestParameters)
           .then((res) => {
-            if (res.data.data.list.length <= 2) this.disabled = true;
-            else this.disabled = false;
             res.data.data.list.map((i, k) => (i.key = k + 1));
+            this.initData = Object.assign([], res.data.data.list);
             return res.data;
           });
       },
@@ -153,19 +209,45 @@ export default {
       selectedRows: [],
     };
   },
-  created(){
-    this.$api.otherItemsService.getSalaryTime()
-    .then(res => {
-      if(res.data.data.configure){
-        this.saveSalaryTime = res.data.data.configure
-        this.salaryTime = res.data.data.configure
+  created() {
+    this.$api.otherItemsService.getSalaryTime().then((res) => {
+      if (res.data.data.configure) {
+        this.saveSalaryTime = res.data.data.configure;
+        this.salaryTime = res.data.data.configure;
       }
-    })
+    });
   },
   mounted() {
     this.$api.salaryService.validateSalary().then((res) => {
       this.state = res.data.data.type;
     });
+    let _this = this;
+    window.onbeforeunload = function (e) {
+      if (_this.$route.name == "工资项管理" && !_this.disabled) {
+        e = e || window.event;
+        // 兼容IE8和Firefox 4之前的版本
+        if (e) {
+          e.returnValue = "当前存在未发布的工资项，确定要离开？";
+        }
+        // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
+        return "当前存在未发布的工资项，确定要离开？";
+      } else {
+        window.onbeforeunload = null;
+      }
+    };
+  },
+  // 路由跳转确认
+  beforeRouteLeave(to, from, next) {
+    if (!this.disabled) {
+      const answer = window.confirm("当前存在未发布的工资项，确定要离开？");
+      if (answer) {
+        next();
+      } else {
+        next(false);
+      }
+    } else {
+      next();
+    }
   },
   methods: {
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -177,16 +259,36 @@ export default {
         formTitle: wageTitle,
         rules: wageRules,
 
+        // submitFun: (requestParameters) => {
+        //   return this.$api.wageItemsService
+        //     .postWageItems(requestParameters)
+        //     .then((res) => {
+        //       return res.data;
+        //     });
+        // },
         submitFun: (requestParameters) => {
+          requestParameters.createTime = moment(new Date()).format(
+            "YYYY-MM-DD HH:mm:ss"
+          );
+          requestParameters.compareData = Object.assign(
+            [],
+            this.$refs.table.localDataSource
+          );
           return this.$api.wageItemsService
             .postWageItems(requestParameters)
             .then((res) => {
+              if (res.data.code == 0) {
+                res.data.data.state = "add";
+                res.data.data.key = this.$refs.table.localDataSource.length + 1;
+                this.$refs.table.localDataSource.push(res.data.data);
+                this.disabled = false;
+              }
               return res.data;
             });
         },
       };
       let modalProps = {
-        title: "新增",
+        title: "新建工资项",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -200,15 +302,31 @@ export default {
         formTitle: wageTitle,
         rules: wageRules,
         submitFun: (requestParameters) => {
+          requestParameters.compareData = Object.assign(
+            [],
+            this.$refs.table.localDataSource
+          );
           return this.$api.wageItemsService
             .putWageItems(requestParameters)
             .then((res) => {
+              if (res.data.code == 0) {
+                if (!res.data.data.state) res.data.data.state = "update";
+                const index = this.$refs.table.localDataSource.findIndex(
+                  (i) => i.id === res.data.data.id
+                );
+                this.$refs.table.localDataSource.splice(
+                  index,
+                  1,
+                  res.data.data
+                );
+                this.disabled = false;
+              }
               return res.data;
             });
         },
       };
       let modalProps = {
-        title: "编辑",
+        title: "编辑工资项",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -223,11 +341,11 @@ export default {
      * @param modalProps 弹窗配置项 Object
      */
     openModal(form, formProps, modalProps) {
-      const _this = this;
+      // const _this = this;
       const defaultModalProps = {
         on: {
           ok() {
-            _this.$refs.table.refresh(true);
+            // _this.$refs.table.refresh(true);
           },
           cancel() {},
           close() {},
@@ -246,16 +364,23 @@ export default {
       const _this = this;
       let content = [];
       _this.$refs.table.localDataSource.map((i) => content.push(i.itemName));
+      let dataArr = Object.assign([], _this.$refs.table.localDataSource);
+      let submitData = dataArr.filter((i) => !i.isMust && i.state !== "delete");
+      submitData.map((i) => {
+        i.content = JSON.stringify(content);
+        delete i.state;
+      });
+      console.log(submitData);
       this.$confirm({
         title: "提示",
-        content: `更改内容将于下个月1号生效，确定发布吗？`,
+        content: `更改内容将于下月1日生效，是否确认发布？`,
         okText: "确认",
         okType: "primary",
         centered: true,
         cancelText: "取消",
         onOk() {
           _this.$api.wageItemsService
-            .releaseWageItems({ content: content })
+            .releaseWageItems(submitData)
             .then((res) => {
               if (res.data.code === 0) {
                 let content;
@@ -266,6 +391,7 @@ export default {
                   title: "发布成功",
                   content: content,
                 });
+                _this.disabled = true;
                 _this.$refs.table.refresh();
               } else {
                 _this.$message.error(res.data.msg);
@@ -282,26 +408,105 @@ export default {
       const _this = this;
       this.$confirm({
         title: "警告",
-        content: `真的要删除 [ ${row.itemName} ] 工资项吗?`,
+        content: `是否确认删除工资项 ${row.itemName} ?`,
         okText: "删除",
         okType: "danger",
         centered: true,
         cancelText: "取消",
         onOk() {
           // 在这里调用删除接口
-          _this.$api.wageItemsService
-            .deleteWageItems({ id: row.id })
-            .then((res) => {
-              if (res.data.code === 0) {
-                _this.$message.success(res.data.msg);
-                _this.$refs.table.refresh();
-              } else {
-                _this.$message.error(res.data.msg);
-              }
-            })
-            .catch((err) => {
-              _this.$message.error(err.data.msg);
-            });
+          // row.state='delete'
+          const index = _this.$refs.table.localDataSource.findIndex(
+            (i) => i.id === row.id
+          );
+          const rowData = _this.$refs.table.localDataSource.find(
+            (i) => i.id === row.id
+          );
+          rowData.state = "delete";
+          _this.$refs.table.localDataSource.splice(index, 1, rowData);
+          _this.$message.success("删除成功");
+          _this.disabled = false;
+
+          // _this.$api.wageItemsService
+          //   .deleteWageItems({ id: row.id })
+          //   .then((res) => {
+          //     if (res.data.code === 0) {
+          //       _this.$message.success(res.data.msg);
+          //       _this.$refs.table.refresh();
+          //     } else {
+          //       _this.$message.error(res.data.msg);
+          //     }
+          //   })
+          //   .catch((err) => {
+          //     _this.$message.error(err.data.msg);
+          //   });
+        },
+        onCancel() {},
+      });
+    },
+    //撤回方法
+    handelReCall(row) {
+      const _this = this;
+      this.$confirm({
+        title: "警告",
+        content: `是否确认撤回之前操作?`,
+        okText: "撤回",
+        okType: "primary",
+        centered: true,
+        cancelText: "取消",
+        onOk() {
+          if (row.state === "add") {
+            const index = _this.$refs.table.localDataSource.findIndex(
+              (i) => i.key === row.key
+            );
+            _this.$refs.table.localDataSource.splice(index, 1);
+          }
+          if (row.state === "delete") {
+            const filterArr = _this.$refs.table.localDataSource.filter(
+              (i) => i.itemName === row.itemName
+            );
+            if (filterArr.length > 1) {
+              _this.$message.error(
+                `工资项名称 [ ${row.itemName} ] 已存在，撤回失败`
+              );
+              return false;
+            }
+            const index = _this.$refs.table.localDataSource.findIndex(
+              (i) => i.id === row.id
+            );
+            const rowData = _this.$refs.table.localDataSource.find(
+              (i) => i.id === row.id
+            );
+            delete rowData.state;
+            _this.$refs.table.localDataSource.splice(index, 1, rowData);
+          }
+          if (row.state === "update") {
+            const init = _this.initData.find((i) => i.id === row.id);
+            const state = _this.$refs.table.localDataSource.some(
+              (i) =>
+                i.itemName === init.itemName &&
+                i.id !== init.id &&
+                i.state != "delete"
+            );
+            if (state) {
+              _this.$message.error(
+                `工资项名称 [ ${init.itemName} ] 已存在，撤回失败`
+              );
+              return false;
+            }
+            const index = _this.$refs.table.localDataSource.findIndex(
+              (i) => i.id === row.id
+            );
+            const rowData = _this.initData.find((i) => i.id === row.id);
+            console.log(rowData);
+            _this.$refs.table.localDataSource.splice(index, 1, rowData);
+          }
+          const state = _this.$refs.table.localDataSource.some((i) => i.state);
+          if (state) {
+            _this.disabled = false;
+          } else {
+            _this.disabled = true;
+          }
         },
         onCancel() {},
       });
@@ -310,53 +515,55 @@ export default {
      * 保存上下班配置方法
      */
     handleSave() {
-      const _this = this
+      const _this = this;
       this.$confirm({
         title: "提示",
-        content: `确定保存吗？`,
+        content: `工资表将于下月${this.salaryTime}日0点生成，确定保存吗？`,
         okText: "确认",
         okType: "primary",
         centered: true,
         cancelText: "取消",
         onOk() {
           // 在这里调用删除接口
-            _this.$api.otherItemsService.postSalaryTime({date:_this.salaryTime})
-            .then(res => {
-              if(res.data.code == 0){
+          _this.$api.otherItemsService
+            .postSalaryTime({ date: _this.salaryTime })
+            .then((res) => {
+              if (res.data.code == 0) {
+                console.log(res.data.code)
                 _this.$success({
                   title: "保存成功",
-                  content: `工资表生成时间将于下个月开始生效`,
+                  content: `工资表生成时间将于下个月${_this.salaryTime}日0点开始生效`,
                 });
-                _this.saveSalaryTime = _this.salaryTime
-                _this.showSaveBtn = false
-              }else{
+                _this.saveSalaryTime = _this.salaryTime;
+                _this.showSaveBtn = false;
+              } else {
                 _this.$message.error(res.data.msg);
               }
-            }).catch(err=>{
-              _this.$message.error(err.data.msg);
             })
+            .catch((err) => {
+              console.log(err)
+              _this.$message.error(err.data.msg);
+            });
         },
-        onCancel() {
-        },
+        onCancel() {},
       });
     },
   },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        processing: "启用",
-        error: "禁用",
+        add: "已新增，待发布",
+        delete: "已删除，待发布",
+        update: "已修改，待发布",
       };
-      return statusMap[status];
+      return statusMap[status] || "已发布";
     },
   },
-  watch:{
-    salaryTime(newVal){
-      if(newVal !== this.saveSalaryTime)
-        this.showSaveBtn = true
-      else
-        this.showSaveBtn = false
-    }
+  watch: {
+    salaryTime(newVal) {
+      if (newVal !== this.saveSalaryTime) this.showSaveBtn = true;
+      else this.showSaveBtn = false;
+    },
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),

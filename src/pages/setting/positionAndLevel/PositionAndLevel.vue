@@ -290,7 +290,7 @@ export default {
       let param = this.rankList[this.rankList.length - 1];
       this.$confirm({
         title: "警告",
-        content: `真的要删除职级 [ ${param.name} ] 吗?`,
+        content: `是否确认删除职级 ${param.name} ?`,
         okText: "删除",
         okType: "danger",
         centered: true,
@@ -377,7 +377,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "新增",
+        title: "新增岗位",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -398,7 +398,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "编辑",
+        title: "编辑岗位",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -411,7 +411,7 @@ export default {
       const _this = this;
       this.$confirm({
         title: "警告",
-        content: `真的要删除岗位 [ ${record.name} ] 吗?`,
+        content: `是否确认删除岗位 ${record.name} ?`,
         okText: "删除",
         okType: "danger",
         centered: true,

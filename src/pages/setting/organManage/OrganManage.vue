@@ -90,7 +90,7 @@
             <a-button type="primary" icon="plus" @click="handleAdd" style="margin-right: 10px"
               >新建</a-button
             >
-            <a-button type="primary" icon="delete" @click="handleDel" :disabled="selectedRowKeys.length == 0"
+            <a-button type="danger" icon="delete" @click="handleDel" :disabled="selectedRowKeys.length == 0"
               >删除</a-button
             >
             <!-- <a-dropdown v-if="selectedRowKeys.length > 0">
@@ -312,7 +312,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "新增",
+        title: "新建管理员用户",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -337,7 +337,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "编辑",
+        title: "编辑管理员用户",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -395,7 +395,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "编辑",
+        title: "编辑组织",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -423,7 +423,7 @@ export default {
         },
       };
       let modalProps = {
-        title: "新增",
+        title: "新建组织",
         width: 700,
         centered: true,
         maskClosable: false,
@@ -438,7 +438,7 @@ export default {
      const _this = this
       this.$confirm({
         title: "警告",
-        content: `真的要删除组织 [ ${params.name} ] 吗?`,
+        content: `是否确认删除组织 ${params.name} ?`,
         okText: "删除",
         okType: "danger",
         centered: true,
@@ -449,6 +449,7 @@ export default {
             .then((res) => {
               if (res.data.code == 0) {
                 _this.$message.success(res.data.msg);
+                _this.selectedRowKeys=[]
                 _this.$refs.tree.loadTree()
               } else {
                 _this.$message.error(res.data.msg);
@@ -575,7 +576,7 @@ export default {
       const _this = this
       this.$confirm({
         title: "警告",
-        content: `真的要重置管理员 [ ${row.name} ] 密码为123456吗?`,
+        content: `是否确认重置管理员 ${row.name} 密码为123456?`,
         okText: "重置",
         okType: "danger",
         centered: true,
@@ -600,7 +601,7 @@ export default {
        const _this = this
       this.$confirm({
         title: "警告",
-        content: `真的要删除所选用户吗?`,
+        content: `是否确认删除所选用户?`,
         okText: "删除",
         okType: "danger",
         centered: true,
@@ -609,6 +610,8 @@ export default {
           _this.$api.organizationService.deleteUser({list:_this.selectedRowKeys}).then(res=>{
             if(res.data.code ===0){
               _this.$message.success(res.data.msg)
+              _this.selectedRowKeys = []
+              _this.selectedRows = []
               _this.$refs.table.refresh()
             }else{
               _this.$message.error(res.data.msg)
