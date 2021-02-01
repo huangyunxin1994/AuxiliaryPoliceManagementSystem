@@ -93,7 +93,8 @@
               :placeholder="item.placeholder"
             />
             <!-- 数字输入框  -->
-            <a-input-number
+            <a-input
+              type="number"
               v-model="form[item.name]"
               v-if="item.type == 'number'"
               :min="0"
@@ -302,7 +303,6 @@ export default {
   created() {
     this.formRules = Object.assign({}, this.rules);
     this.formTitle.forEach((i) => {
-      console.log(i)
       this.dataSource.push(i.name);
       if (i.type === "upload" && i.required) {
         let validatePass2 = (rule, value, callback) => {
@@ -320,6 +320,8 @@ export default {
         let validateCheckPass = (rule, value, callback) => {
           if (!value) {
             callback(new Error("请再输入一次新密码"));
+          }else if(value.replace(/[^\x00-xff]/g,'xx').length>20){
+           callback(new Error('您输入的内容已超过长度限制'));
           } else if (value !== this.form.password) {
             callback(new Error("两次输入不一致"));
           } else {
@@ -362,7 +364,6 @@ export default {
       }
       if (i.type === "picker" && i.required) {
         let validateEndTimes = (rule, value, callback) => {
-          console.log(value)
           if (!value) {
             callback(new Error("请选择结束日期"));
           } else if (moment(this.form[i.compare]).isAfter(moment(value),'minute')) {

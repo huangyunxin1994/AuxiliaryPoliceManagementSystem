@@ -4,7 +4,9 @@
     <a-card :bordered="true">
       <div class="saveBtn">
         <a-button type="primary" @click="saveBtn" icon="save">保存</a-button>
-        <a-button @click="cancelBtn" style="margin-left:8px">取消并返回</a-button>
+        <a-button @click="cancelBtn" style="margin-left: 8px"
+          >取消并返回</a-button
+        >
       </div>
     </a-card>
     <a-card :bordered="true">
@@ -51,17 +53,20 @@
                     v-if="item.type == 'input' && item.title != 'idCard'"
                     :disabled="item.disabled"
                   />
-                  <a-input-number
+                  <a-input
+                    type="number"
                     v-model="form[item.title]"
                     v-else-if="item.type == 'number'"
                     :disabled="item.disabled"
-                     style="width: 100%"
+                    style="width: 100%"
                   />
-                  <tree-select  
-                    v-if="item.type == 'select' && item.title == 'organizationId'"
-                    style="width: 100%" 
-                    ref="selectTree" 
-                    :value="form.organizationId" 
+                  <tree-select
+                    v-if="
+                      item.type == 'select' && item.title == 'organizationId'
+                    "
+                    style="width: 100%"
+                    ref="selectTree"
+                    :value="form.organizationId"
                     labelName="organizationName"
                     @handleTreeChange="handleTreeChange"
                   ></tree-select>
@@ -78,7 +83,6 @@
                       v-for="(i, j) in item.select"
                       :key="j"
                       :value="i.id || i.name"
-                      
                     >
                       {{ i.name }}
                     </a-select-option>
@@ -106,14 +110,18 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-radio-group :default-value="2" v-model="form.isMajor" @change="changeRadio">
+                  <a-radio-group
+                    :default-value="2"
+                    v-model="form.isMajor"
+                    @change="changeRadio"
+                  >
                     <a-radio :value="1"> 是 </a-radio>
                     <a-radio :value="2"> 否 </a-radio>
                   </a-radio-group>
                 </a-form-model-item>
               </a-col>
             </a-row>
-            <a-row :gutter="24" v-if="form.isMajor== 1">
+            <a-row :gutter="24" v-if="form.isMajor == 1">
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
                   prop="major.qualification"
@@ -125,12 +133,12 @@
                   }"
                   :wrapperCol="{ sm: { span: 24 }, md: { span: 13 } }"
                 >
-                  <a-input v-model="form.major.qualification"/>
+                  <a-input v-model="form.major.qualification" />
                 </a-form-model-item>
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
-                prop="major.approvalUnit"
+                  prop="major.approvalUnit"
                   label="资格审批单位"
                   :labelCol="{
                     sm: { span: 24 },
@@ -144,7 +152,7 @@
               </a-col>
               <a-col :md="24" :lg="12" :xl="12" :xxl="6">
                 <a-form-model-item
-                prop="major.acquireDate"
+                  prop="major.acquireDate"
                   label="获得资格日期"
                   :labelCol="{
                     sm: { span: 24 },
@@ -170,7 +178,12 @@
     <a-card :bordered="true">
       <div class="othoderMess">
         <div class="importSwrap">
-          <a-button type="primary" style="margin-right:10px" icon="vertical-align-bottom" @click="downloadExcel">
+          <a-button
+            type="primary"
+            style="margin-right: 10px"
+            icon="vertical-align-bottom"
+            @click="downloadExcel"
+          >
             模板下载
           </a-button>
           <excel-btn
@@ -262,7 +275,7 @@
               <a-badge :status="status" :text="status | statusFilter" />
             </template>
             <template slot="sex" slot-scope="sex">
-              <span>{{sex | statusSex}}</span>
+              <span>{{ sex | statusSex }}</span>
             </template>
             <span slot="familyaction" slot-scope="text, record">
               <a @click="editRecord(record, 'table3')">编辑</a>
@@ -274,7 +287,14 @@
       </div>
     </a-card>
 
-    <dialog-data ref="studyData" :formTitle="fromTitle[tableName]" :rules="rules[tableName]" :record="record" :option="option" @handleOk="handleOk" ></dialog-data>
+    <dialog-data
+      ref="studyData"
+      :formTitle="fromTitle[tableName]"
+      :rules="rules[tableName]"
+      :record="record"
+      :option="option"
+      @handleOk="handleOk"
+    ></dialog-data>
   </div>
 </template>
 
@@ -284,77 +304,81 @@ import excelBtn from "@/components/importExcel/importExcel";
 import dialogData from "@/components/dialogPersonalData/dialogPersonalData";
 import fromModel from "@/components/formModel/formModel";
 import StandardTable from "@/components/Table_/";
-import treeSelect from "@/components/treeSelect/TreeSelect"
-import { validateIdNo, validatePhone } from "@/config/default/rules";
-import {daysDistance} from '@/utils/dateTime'
+import treeSelect from "@/components/treeSelect/TreeSelect";
+import {
+  validateIdNo,
+  validatePhone,
+  validateLength,
+} from "@/config/default/rules";
+import { daysDistance } from "@/utils/dateTime";
 const studyColumns = [
   {
     title: "毕业院校",
     dataIndex: "school",
     key: "school",
-    width:150,
+    width: 150,
   },
   {
     title: "所在院系",
     dataIndex: "courtyard",
     key: "courtyard",
-    width:150,
+    width: 150,
   },
   {
     title: "学习形式",
     dataIndex: "learningForm",
     key: "learningForm",
-    width:150,
+    width: 150,
   },
   {
     title: "学制",
     dataIndex: "schoolSystem",
     key: "schoolSystem",
-    width:100,
+    width: 100,
   },
   {
     title: "入学日期",
     dataIndex: "startDate",
     key: "startDate",
-    type:"date",
-    width:150,
+    type: "date",
+    width: 150,
   },
   {
     title: "毕业日期",
     dataIndex: "endDate",
     key: "endDate",
-    type:"date",
-    width:150,
+    type: "date",
+    width: 150,
   },
   {
     title: "所学专业",
     dataIndex: "major",
     key: "major",
-    width:150,
+    width: 150,
   },
   {
     title: "学历",
     dataIndex: "education",
     key: "education",
-    width:150,
+    width: 150,
   },
   {
     title: "学位",
     dataIndex: "academic",
     key: "academic",
-    width:100,
+    width: 100,
   },
   {
     title: "学位授予日期",
     dataIndex: "academicTime",
     key: "academicTime",
-    type:"date",
-    width:150,
+    type: "date",
+    width: 150,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
-    width:150,
+    width: 150,
   },
 ];
 
@@ -363,57 +387,57 @@ const workColumns = [
     title: "工作起始日期",
     dataIndex: "startDate",
     key: "startDate",
-    type:"date",
-    width:120,
+    type: "date",
+    width: 120,
   },
   {
     title: "工作结束日期",
     dataIndex: "endData",
     key: "endData",
-    type:"date",
-    width:120,
+    type: "date",
+    width: 120,
   },
   {
     title: "所在单位",
     dataIndex: "company",
     key: "company",
-    width:150,
+    width: 150,
   },
   {
     title: "单位类型",
     dataIndex: "unitType",
     key: "unitType",
-    width:100,
+    width: 100,
   },
   {
     title: "职务级别",
     dataIndex: "jobLevel",
     key: "jobLevel",
-    width:100,
+    width: 100,
   },
   {
     title: "是否公务员",
     dataIndex: "orderly",
     key: "orderly",
-    width:120,
+    width: 120,
   },
   {
     title: "从事或担任工作",
     dataIndex: "post",
     key: "post",
-    width:150,
+    width: 150,
   },
   {
     title: "备注",
     dataIndex: "remarks",
     scopedSlots: { customRender: "description" },
     key: "remarks",
-    width:150,
+    width: 150,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "workaction" },
-    width:150,
+    width: 150,
   },
 ];
 
@@ -422,44 +446,44 @@ const familyColumns = [
     title: "成员姓名",
     dataIndex: "familyName",
     key: "familyName",
-    width:100,
+    width: 100,
   },
   {
     title: "与本人关系",
     dataIndex: "relationship",
     key: "relationship",
-    width:100,
+    width: 100,
   },
   {
     title: "性别",
     dataIndex: "sex",
     key: "sex",
-    width:80,
+    width: 80,
     scopedSlots: { customRender: "sex" },
   },
   {
     title: "成员身份证",
     dataIndex: "idCard",
     key: "idCard",
-    width:150,
+    width: 150,
   },
   {
     title: "出生日期",
     dataIndex: "birthday",
     key: "birthday",
-    type:"date",
-    width:100,
+    type: "date",
+    width: 100,
   },
   {
     title: "民族",
     dataIndex: "nation",
     key: "nation",
-    width:80,
+    width: 80,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "familyaction" },
-    width:150,
+    width: 150,
   },
 ];
 
@@ -485,10 +509,7 @@ const fromTitle = {
       type: "select",
       refName: "learningForm",
       placeholder: "请输入学习形式",
-      select: [
-        { name: "全日制" },
-        { name: "在职教育" },
-      ],
+      select: [{ name: "全日制" }, { name: "在职教育" }],
     },
     {
       label: "学制",
@@ -532,12 +553,12 @@ const fromTitle = {
       refName: "education",
       placeholder: "请选择学历",
       select: [
-        { name: '小学' },
-          { name: "初中" },
-          { name: "高中" },
-          { name: "大专" },
-          { name: "大学本科" },
-          { name: "研究生" }
+        { name: "小学" },
+        { name: "初中" },
+        { name: "高中" },
+        { name: "大专" },
+        { name: "大学本科" },
+        { name: "研究生" },
       ],
     },
     {
@@ -546,7 +567,7 @@ const fromTitle = {
       props: "name",
       type: "input",
       refName: "academic",
-      placeholder: "请输入学位"
+      placeholder: "请输入学位",
     },
     {
       label: "学位授予日期",
@@ -665,8 +686,14 @@ const fromTitle = {
 
 const rules = {
   table1: {
-    school: [{ required: true, message: "请输入学院姓名", trigger: "blur" }],
-    courtyard: [{ required: false, message: "请输入所在院系", trigger: "blur" }],
+    school: [
+      { required: true, message: "请输入学院名称", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
+    courtyard: [
+      { required: false, message: "请输入所在院系", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
     learningForm: [
       { required: false, message: "请输入学习形式", trigger: "blur" },
     ],
@@ -677,9 +704,15 @@ const rules = {
       { required: true, message: "请选择入学时间", trigger: "change" },
     ],
     endDate: [{ required: true, message: "请选择毕业时间", trigger: "change" }],
-    major: [{ required: false, message: "请输入专业", trigger: "blur" }],
+    major: [
+      { required: false, message: "请输入专业", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
     education: [{ required: false, message: "请选择学历", trigger: "change" }],
-    academic: [{ required: false, message: "请选择学位", trigger: "change" }],
+    academic: [
+      { required: true, message: "请输入学位", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
     academicTime: [
       { required: false, message: "请选择学位授予日期", trigger: "change" },
     ],
@@ -691,19 +724,31 @@ const rules = {
     endData: [
       { required: true, message: "请选择工作结束日期", trigger: "change" },
     ],
-    company: [{ required: true, message: "请输入所在单位", trigger: "blur" }],
-    unitType: [{ required: true, message: "请输入单位类型", trigger: "blur" }],
-    jobLevel: [{ required: true, message: "请输入职务级别", trigger: "blur" }],
+    company: [
+      { required: true, message: "请输入所在单位", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
+    unitType: [
+      { required: true, message: "请输入单位类型", trigger: "change" },
+      { max: 10, validator: validateLength, trigger: "change" },
+    ],
+    jobLevel: [
+      { required: true, message: "请输入职务级别", trigger: "change" },
+      { max: 10, validator: validateLength, trigger: "change" },
+    ],
     orderly: [
       { required: true, message: "请选择是否是公务员", trigger: "change" },
     ],
     post: [
-      { required: true, message: "请输入从事或担任的工作", trigger: "blur" },
+      { required: true, message: "请输入从事或担任的工作", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
     ],
+    remarks: [{ max: 60, validator: validateLength, trigger: "change" }],
   },
   table3: {
     familyName: [
       { required: true, message: "请输入成员姓名", trigger: "blur" },
+      { max: 20, validator: validateLength, trigger: "change" },
     ],
     relationship: [
       { required: true, message: "请选择关系", trigger: "change" },
@@ -713,7 +758,10 @@ const rules = {
     birthday: [
       { required: true, message: "请选择出生日期", trigger: "change" },
     ],
-    nation: [{ required: true, message: "请输入民族", trigger: "blur" }],
+    nation: [
+      { required: true, message: "请输入民族", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
   },
 };
 
@@ -727,16 +775,16 @@ export default {
   },
   props: {
     policeId: String,
-    organId : String,
-    fileList: Array
+    organId: String,
+    fileList: Array,
   },
   data() {
     return {
       record: {},
       fromTitle,
       rules,
-      option:{},
-      tableName:"",
+      option: {},
+      tableName: "",
       teamSpinning: true,
       tagInputVisible: false,
 
@@ -760,18 +808,19 @@ export default {
         birthday: "",
         sex: "",
         age: "",
-        isMajor:2,
-        major:{ 
-        qualification:"",//资格
-        approvalUnit:"",//单位
-        acquire_date:"",//时间
+        isMajor: 2,
+        major: {
+          qualification: "", //资格
+          approvalUnit: "", //单位
+          acquire_date: "", //时间
+        },
       },
-      },
-       
+
       baseMessTitle: [
         {
           title: "number",
           label: "辅警编号",
+          max: 20,
           type: "input",
           placeholder: "请输入辅警编号",
           disabled: false,
@@ -779,6 +828,7 @@ export default {
         {
           title: "name",
           label: "姓名",
+          max: 20,
           type: "input",
           placeholder: "请输入辅警姓名",
           disabled: false,
@@ -824,6 +874,7 @@ export default {
         {
           title: "nation",
           label: "民族",
+          max: 20,
           type: "input",
           placeholder: "请输入民族",
           disabled: false,
@@ -834,7 +885,7 @@ export default {
           type: "select",
           placeholder: "请选择学历",
           select: [
-            { name: '小学' },
+            { name: "小学" },
             { name: "初中" },
             { name: "高中" },
             { name: "大专" },
@@ -845,6 +896,7 @@ export default {
         {
           title: "nativePlace",
           label: "籍贯",
+          max: 20,
           type: "input",
           placeholder: "请输入籍贯",
           disabled: false,
@@ -852,6 +904,7 @@ export default {
         {
           title: "height",
           label: "身高(cm)",
+          max: 3,
           type: "number",
           placeholder: "请输入身高",
           disabled: false,
@@ -888,8 +941,8 @@ export default {
           placeholder: "请输入性别",
           disabled: true,
           select: [
-            { id:1,name: "男" },
-            { id:2,name: "女" },
+            { id: 1, name: "男" },
+            { id: 2, name: "女" },
           ],
         }, //
         {
@@ -952,10 +1005,9 @@ export default {
     },
   },
   created() {
-    console.log(this.organId)
-    this.form.organizationId=this.organId || this.user.organizationId
+    this.form.organizationId = this.organId || this.user.organizationId;
     this.queryPa.id = this.policeId || "";
-    this.form.organizationName= this.user.organizationName
+    this.form.organizationName = this.user.organizationName;
     this.$api.auxiliaryPoliceService
       .getAuxiliaryPoliceData({ policeId: this.policeId || "undefined" })
       .then((res) => {
@@ -970,7 +1022,7 @@ export default {
     //     });
     //   });
     this.$api.rankPostService
-      .getPostList({ organizationId: this.user.organizationId,state:1 })
+      .getPostList({ organizationId: this.user.organizationId, state: 1 })
       .then((res) => {
         this.baseMessTitle.find((i) => {
           if (i.title === "postId")
@@ -994,19 +1046,25 @@ export default {
         if (
           item.title == "number" ||
           item.title == "name" ||
-          item.title == "nation" 
+          item.title == "nation"
         ) {
           myrules[item.title] = [
-            { required: true, message: "请输入必填项", trigger: "blur" },
+            { required: true, message: "请输入必填项", trigger: "change" },
+            {
+              required: true,
+              max: item.max,
+              validator: validateLength,
+              trigger: "change",
+            },
           ];
         } else if (item.title == "idCard") {
           myrules[item.title] = [
-            { required: true, message: "请输入必填项", trigger: "blur" },
+            { required: true, message: "请输入必填项", trigger: "change" },
             { validator: validateIdNo, trigger: "blur" },
           ];
         } else if (item.title == "phone") {
           myrules[item.title] = [
-            { required: true, message: "请输入必填项", trigger: "blur" },
+            { required: true, message: "请输入必填项", trigger: "change" },
             { validator: validatePhone, trigger: "blur" },
           ];
         } else if (
@@ -1019,20 +1077,26 @@ export default {
           myrules[item.title] = [
             { required: true, message: "请选择必填项", trigger: "change" },
           ];
+        } else if (item.title == "height" || item.title == "nativePlace") {
+          myrules[item.title] = [
+            { max: item.max, validator: validateLength, trigger: "change" },
+          ];
         } else if (item.title == "entryTime") {
           myrules[item.title] = [
             { required: true, message: "请选择日期", trigger: "change" },
           ];
         }
-        myrules['major.qualification'] = [
-           { required: true, message: "请输入必填项", trigger: "blur" }
-        ],
-        myrules['major.approvalUnit'] = [
-           { required: true, message: "请输入必填项", trigger: "blur" }
-        ],
-        myrules['major.acquireDate'] = [
-          { required: true, message: "请选择日期", trigger: "change" },
-        ]
+        (myrules["major.qualification"] = [
+          { required: true, message: "请输入必填项", trigger: "change" },
+          { max: 20, validator: validateLength, trigger: "change" },
+        ]),
+          (myrules["major.approvalUnit"] = [
+            { required: true, message: "请输入必填项", trigger: "change" },
+            { max: 20, validator: validateLength, trigger: "change" },
+          ]),
+          (myrules["major.acquireDate"] = [
+            { required: true, message: "请选择日期", trigger: "change" },
+          ]);
       });
       this.baseRules = myrules;
     },
@@ -1050,16 +1114,21 @@ export default {
     },
     // 编辑
     editRecord(key, index) {
-      this.record = key
-      this.tableName = index
+      this.record = key;
+      this.tableName = index;
       this.option = {
-          title: index === 'table1' ? "新增学习经历" : (index === 'table2' ? '新增工作经历' : '新增家庭及社会关系'),
-          width: 500,
-          centered: true,
-          maskClosable: false,
-          okText: "确认",
+        title:
+          index === "table1"
+            ? "新增学习经历"
+            : index === "table2"
+            ? "新增工作经历"
+            : "新增家庭及社会关系",
+        width: 500,
+        centered: true,
+        maskClosable: false,
+        okText: "确认",
       };
-      this.$refs.studyData.visible = true
+      this.$refs.studyData.visible = true;
     },
     modal(obj, option, callback) {
       const defaultProps = {
@@ -1067,10 +1136,8 @@ export default {
           ok() {
             callback();
           },
-          cancel() {
-          },
-          close() {
-          },
+          cancel() {},
+          close() {},
         },
       };
       let formProps = Object.assign(obj, defaultProps);
@@ -1094,11 +1161,11 @@ export default {
           j.key = k;
         });
       });
-      tdata[2].map(i=>{
-        const mes = this.IdCard(i.idCard)
-        i.sex = mes.sex
-        i.birthday = mes.birth
-      })
+      tdata[2].map((i) => {
+        const mes = this.IdCard(i.idCard);
+        i.sex = mes.sex;
+        i.birthday = mes.birth;
+      });
       this.$refs.table1.changeDataForImport(tdata[0]);
       this.$refs.table2.changeDataForImport(tdata[1]);
       this.$refs.table3.changeDataForImport(tdata[2]);
@@ -1114,40 +1181,53 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-          _this.$refs[index].localDataSource.splice(_this.$refs[index].localDataSource.findIndex(i=>i.key === key.key),1)
+          _this.$refs[index].localDataSource.splice(
+            _this.$refs[index].localDataSource.findIndex(
+              (i) => i.key === key.key
+            ),
+            1
+          );
         },
         onCancel() {},
       });
     },
-    changeRadio(){
-    },
+    changeRadio() {},
     // 添加记录
     addStudyData(index) {
-      this.tableName = index
+      this.tableName = index;
       this.option = {
-          title: index === 'table1' ? "新增学习经历" : (index === 'table2' ? '新增工作经历' : '新增家庭及社会关系'),
-          width: 500,
-          centered: true,
-          maskClosable: false,
-          okText: "确认",
+        title:
+          index === "table1"
+            ? "新增学习经历"
+            : index === "table2"
+            ? "新增工作经历"
+            : "新增家庭及社会关系",
+        width: 500,
+        centered: true,
+        maskClosable: false,
+        okText: "确认",
       };
-      this.$refs.studyData.visible = true
+      this.$refs.studyData.visible = true;
     },
-    handleOk(form){
-      if(form.idCard){
-        const mess = this.IdCard(form.idCard)
+    handleOk(form) {
+      if (form.idCard) {
+        const mess = this.IdCard(form.idCard);
         form.birthday = mess.birth;
         form.sex = mess.sex;
       }
-      if(!form.key){
-
-        let arr =[]
-        arr.push(form)
+      if (!form.key) {
+        let arr = [];
+        arr.push(form);
         this.$refs[this.tableName].changeDataForImport(arr);
-      }else{
-        this.$refs[this.tableName].localDataSource.splice(this.$refs[this.tableName].localDataSource.findIndex(i=>i.key === form.key),1,form)
+      } else {
+        this.$refs[this.tableName].localDataSource.splice(
+          this.$refs[this.tableName].localDataSource.findIndex(
+            (i) => i.key === form.key
+          ),
+          1,
+          form
+        );
       }
-      
     },
     // 点击保存按钮
     saveBtn() {
@@ -1173,14 +1253,17 @@ export default {
               });
               const param = {
                 basic: _this.form,
-                major:_this.form.isMajor === 1 && _this.major || {},
+                major: (_this.form.isMajor === 1 && _this.major) || {},
                 education: _this.$refs.table1.localDataSource,
                 work: _this.$refs.table2.localDataSource,
                 family: _this.$refs.table3.localDataSource,
               };
-               const formData = new FormData();
-              formData.append("file", _this.fileList&&_this.fileList[0]||null);
-              formData.append("requestBody ", JSON.stringify(param) )
+              const formData = new FormData();
+              formData.append(
+                "file",
+                (_this.fileList && _this.fileList[0]) || null
+              );
+              formData.append("requestBody ", JSON.stringify(param));
               _this.$api.auxiliaryPoliceService
                 .postAuxiliaryPolice(formData)
                 .then((res) => {
@@ -1199,12 +1282,12 @@ export default {
             },
             onCancel() {},
           });
-        } 
+        }
       });
     },
-    cancelBtn(){
+    cancelBtn() {
       const _this = this;
-        this.$confirm({
+      this.$confirm({
         title: "警告",
         content: `系统不会保存填写的内容，是否确认返回?`,
         okText: "确认",
@@ -1212,15 +1295,15 @@ export default {
         centered: true,
         cancelText: "取消",
         onOk() {
-         _this.$router.push("/auxMess/personList")
+          _this.$router.push("/auxMess/personList");
         },
         onCancel() {},
       });
     },
-    handleChange(item){
-      if(item.titleName){
-        const param = item.select.find(i=>i.id === this.form[item.title])
-        this.form[item.titleName] = param.name
+    handleChange(item) {
+      if (item.titleName) {
+        const param = item.select.find((i) => i.id === this.form[item.title]);
+        this.form[item.titleName] = param.name;
       }
     },
     // 获取身份证里面的信息
@@ -1241,7 +1324,6 @@ export default {
       // 获取性别
       let sex = "";
 
-      
       if (parseInt(UUserCard.substr(16, 1)) % 2 == 1) {
         //男
         sex = 1;
@@ -1272,8 +1354,8 @@ export default {
     },
     //获取入职时间，计算工龄
     getDate(date, dateString) {
-      let now = new Date()
-      this.form.seniority = daysDistance(now,dateString,'year')
+      let now = new Date();
+      this.form.seniority = daysDistance(now, dateString, "year");
     },
     compareDate(date) {
       var d1 = new Date(date);
@@ -1282,13 +1364,15 @@ export default {
       return (d2 - d1) / 1000 / 60 / 60 / 24 / 365;
     },
     // 获取修改的组织
-    handleTreeChange(data){
-      this.form.organizationId = data.val
-      this.form[data.labelName] = data.label
+    handleTreeChange(data) {
+      this.form.organizationId = data.val;
+      this.form[data.labelName] = data.label;
     },
     filterOption(input, option) {
       return (
-        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        option.componentOptions.children[0].text
+          .toLowerCase()
+          .indexOf(input.toLowerCase()) >= 0
       );
     },
     //下载批量导入模板操作
@@ -1300,15 +1384,15 @@ export default {
     this.getBaseRules();
     this.getAllTableTitle();
   },
-  filters:{
-    statusSex(sex){
+  filters: {
+    statusSex(sex) {
       const statusSex = {
-        1:'男',
-        2:'女'
-      }
-      return statusSex[sex]
-    }
-  }
+        1: "男",
+        2: "女",
+      };
+      return statusSex[sex];
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

@@ -148,7 +148,7 @@ import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import selectTree from "@/components/treeSelect/TreeSelect"
-
+import { validateLength } from "@/config/default/rules";
 
 const credTitle = [
   {
@@ -170,7 +170,8 @@ const credTitle = [
 ];
 const credRules = {
   policeName: [{ required: false, message: "请输入证件类型名称", trigger: "blur" }],
-  state:[{ required: true, message: "请选择培训情况", trigger: "change" }]
+  state:[{ required: true, message: "请选择培训情况", trigger: "change" }],
+  trainExplain:[{ max:20, validator: validateLength, trigger: "change" }]
 };
 export default {
   name: "OrganManage",

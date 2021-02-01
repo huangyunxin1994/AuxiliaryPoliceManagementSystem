@@ -96,6 +96,7 @@
     import fromModel from '@/components/formModel/formModel'
     import diaHisRank from '@/components/diaPersonnel/history'
     import moment from 'moment'
+    import { validateLength } from "@/config/default/rules";
     export default {
     name: 'OrganManage',
     components:{
@@ -252,7 +253,8 @@
           changeRankRules:{
             currentRank:[{ required: true, message: '请选择变动后岗位', trigger: 'change'}],
             organizationId:[{ required: true, message: '请选择变动后组织', trigger: 'change'}],
-            reason: [{ required: true, message: '请输入变动原因', trigger: 'blur'}],
+            reason: [{ required: true, message: '请输入变动原因', trigger: 'change'},
+            { required: true, max:60, validator: validateLength, trigger: "change" }],
             effectiveDate: [{ required: true, message: '请选择生效日期', trigger: 'change' }]
           },
           postList:[],
@@ -527,21 +529,15 @@
         const defaultProps = {
           on: {
                 ok () {
-                    // console.log('ok 回调')
                     callback()
                 },
                 cancel () {
-                    // e.handleDestroy()
-                    // console.log('cancel 回调')
                 },
                 close () {
-                    // e.handleDestroy()
-                    // console.log('modal close 回调')
                 }
             }
         }
         let formProps =  Object.assign(obj, defaultProps);
-        // console.log(formProps)
         this.$dialog(model,
           // form props 
           formProps,

@@ -122,14 +122,14 @@ export function isPassword(rule, value, callback) {
 // 纯数字验证
 export const validateNumber = (rule, value, callback) => {
     let numberReg = /^\d+$|^\d+[.]?\d+$/
-    if (value !== '') {
+    if (value !== ''||value==undefined||value==null) {
         if (!numberReg.test(value)) {
             callback(new Error('请输入数字'))
         } else {
             callback()
         }
     } else {
-        callback(new Error('请输入值'))
+        callback()
     }
 }
 
@@ -141,6 +141,20 @@ export const onePoint = (rule, value, callback) => {
       callback();
     }
 };
+
+
+//判断是否超出长度限制
+export function validateLength(rule, value,callback) {
+    if(value==''||value==undefined||value==null){
+      callback();
+    }else {
+      if (rule.max && value.replace(/[^\x00-xff]/g,'xx').length > rule.max) {
+        callback(new Error('您输入的内容已超过长度限制'));
+      } else {
+        callback();
+      }
+    }
+}
 
 
 

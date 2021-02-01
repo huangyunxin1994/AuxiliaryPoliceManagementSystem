@@ -103,7 +103,8 @@
                       :placeholder="item.placeholder"
                     />
                     <!-- 数字输入框  -->
-                    <a-input-number
+                    <a-input
+                      type="number"
                       v-model="form[item.name]"
                       :min="0"
                       v-if="item.type == 'number'"

@@ -138,6 +138,7 @@ import AntTree from "@/components/tree_/Tree";
 import fromModel from "@/components/formModel/formModel";
 import diaHisRank from "@/components/diaPersonnel/history";
 import moment from "moment";
+import { validateLength } from "@/config/default/rules";
 export default {
   name: "OrganManage",
   components: {
@@ -273,12 +274,10 @@ export default {
         this.queryParam.oid = this.user.organizationId;
         let param = Object.assign(params, this.queryParam);
         return this.$api.personAdminService.getRankList(param).then((res) => {
-          // console.log(res)
           res.data.data.list.map((i, k) => {
             i.key = k + 1;
             i.effDisabled = this.compareDate(i.effectiveDate);
           });
-          console.log(res.data);
           return res.data;
         });
       },
@@ -332,7 +331,8 @@ export default {
           { required: true, message: "请选择变动后职级", trigger: "change" },
         ],
         reason: [
-          { required: true, message: "请输入变动原因", trigger: "blur" },
+          { required: true, message: "请输入变动原因", trigger: "change" },
+          { required: true, max:60, validator: validateLength, trigger: "change" }
         ],
         effectiveDate: [
           { required: true, message: "请选择生效日期", trigger: "change" },
@@ -347,7 +347,6 @@ export default {
   methods: {
     //比较时间大小
     compareDate(date1) {
-      console.log(288);
       var effectiveDate = new Date(date1);
       var nowTime = new Date();
       if (effectiveDate.getTime() > nowTime.getTime()) {
@@ -535,16 +534,11 @@ export default {
       const defaultProps = {
         on: {
           ok() {
-            // console.log('ok 回调')
             callback();
           },
           cancel() {
-            // e.handleDestroy()
-            // console.log('cancel 回调')
           },
           close() {
-            // e.handleDestroy()
-            // console.log('modal close 回调')
           },
         },
       };

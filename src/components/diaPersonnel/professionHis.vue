@@ -24,6 +24,7 @@
 <script>
     import STable from '@/components/Table_/'
     import fromModel from '@/components/formModel/formModel'
+    import { validateLength } from "@/config/default/rules";
     export default {
         name: 'OrganManage',
         components:{
@@ -91,8 +92,10 @@
                 {label:'获得资格日期',name:'acquireDate',type:'picker',placeholder:'请选择获得资格日期'}
             ],
             addProRules:{
-                qualification:[{ required: true, message: '请输入专业技术任职资格称号', trigger: 'blur'}],
-                approvalUnit: [{ required: true, message: '请输入资格审批单位', trigger: 'blur'}],
+                qualification:[{ required: true, message: '请输入专业技术任职资格称号', trigger: 'change'},
+                { required: true, max:20, validator: validateLength, trigger: "change" }],
+                approvalUnit: [{ required: true, message: '请输入资格审批单位', trigger: 'change'},
+                { required: true, max:20, validator: validateLength, trigger: "change" }],
                 acquireDate: [{ required: true, message: '请选择获得资格日期', trigger: 'change' }]
             }
         }

@@ -134,7 +134,7 @@ import { mapState, mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import AntTree from "@/components/tree_/Tree";
 import TaskForm from "@/components/formModel/formModel";
-import { validatePhone } from "@/config/default/rules";
+import { validatePhone,validateLength  } from "@/config/default/rules";
 
 let organTitle = [
   {
@@ -162,7 +162,8 @@ const organRules = {
   ],
 };
 const tableRules = {
-  account: [{ required: true, message: "请输入账号", trigger: "change" }],
+  account: [{ required: true, message: "请输入账号", trigger: "change" },
+  { required: true, max:20, validator: validateLength, trigger: "change" }],
   organizationId: [
     {
       required: true,
@@ -178,9 +179,12 @@ const tableRules = {
       trigger: "change",
     },
   ],
-  name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-  number: [{ required: true, message: "请输入警员编号", trigger: "blur" }],
+  name: [{ required: true, message: "请输入姓名", trigger: "change" },
+  { required: true, max:20, validator: validateLength, trigger: "change" }],
+  number: [{ required: true, message: "请输入警员编号", trigger: "change" },
+  { required: true, max:20, validator: validateLength, trigger: "change" }],
   phone: [{ validator: validatePhone, trigger: "change" }],
+  postName:[{ max:20, validator: validateLength, trigger: "change" }],
 };
 export default {
   name: "OrganManage",

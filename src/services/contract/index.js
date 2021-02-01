@@ -67,7 +67,6 @@ const contractService = {
         formData.append("requestBody", JSON.stringify(para))
         return request(PODTEXTENSION, METHOD.POST, formData)
         
-        // console.log(PODTEXTENSION)
         
     },
     /**

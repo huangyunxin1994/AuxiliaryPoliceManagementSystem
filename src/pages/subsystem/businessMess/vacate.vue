@@ -60,6 +60,7 @@ import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import fromModel from "@/components/formModel/formModel";
 import moment from 'moment'
+import { validateLength } from "@/config/default/rules";
 export default {
   name: "OrganManage",
   components: {
@@ -308,13 +309,15 @@ export default {
             { required: true, message: "请选择结束时间", trigger: "change"},
           ],
           duration: [
-            { required: true, message: "请输入加班时长", trigger: "blur"},
+            { required: true, message: "请输入加班时长", trigger: "change"},
+            { required: true, max:3, validator: validateLength, trigger: "change" }
           ],
           statutoryHoliday: [
             { required: true, message: "请选择法定假日", trigger: "change"},
           ],
           reason: [
-            { required: true, message: "请输入加班原因", trigger: "blur"},
+            { required: true, message: "请输入加班原因", trigger: "change"},
+            { required: true, max:60, validator: validateLength, trigger: "change" }
           ]
         },
         vacateModel: [
@@ -396,13 +399,15 @@ export default {
             { required: true, message: "请选择结束时间", trigger: "change"},
           ],
           reason: [
-            { required: true, message: "请输入请假原因", trigger: "blur"},
+            { required: true, message: "请输入请假原因", trigger: "change"},
+            { required: true, max:60, validator: validateLength, trigger: "change" }
           ],
           holiday: [
             { required: true, message: "请选择是否法定假日", trigger: "change"},
           ],
           duration: [
-            { required: true, message: "请输入请假时长", trigger: "blur"},
+            { required: true, message: "请输入请假时长", trigger: "change"},
+            { required: true, max:4, validator: validateLength, trigger: "change" }
           ],
         }
     };
@@ -480,17 +485,11 @@ export default {
       const defaultProps = {
         on: {
           ok() {
-            // console.log('ok 回调')
-            // _this.$refs.table.refresh(true)
             callback()
           },
           cancel() {
-            // e.handleDestroy()
-            // console.log('cancel 回调')
           },
           close() {
-            // e.handleDestroy()
-            // console.log('modal close 回调')
           },
         },
       };

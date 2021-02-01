@@ -131,6 +131,7 @@ import formStep from "@/components/stepForm/StepForm";
 import TaskForm from "@/components/formModel/formModel";
 import treeSelect from "@/components/treeSelect/TreeSelect";
 import moment from 'moment'
+import { validateLength } from "@/config/default/rules";
 const formTitle = [
   {
     label1: "开始时间",
@@ -274,8 +275,10 @@ const rules = {
   endTime: [
     { required: true, message: "请选择加班结束时间", trigger: "change" },
   ],
-  reason: [{ required: true, message: "请输入加班原因", trigger: "blur" }],
-  duration:[{ required: true, message: "请输入加班时长", trigger: "blur" }],
+  reason: [{ required: true, message: "请输入加班原因", trigger: "change" },
+  { required: true, max:60, validator: validateLength, trigger: "change" }],
+  duration:[{ required: true, message: "请输入加班时长", trigger: "change" },
+  { required: true, max:3, validator: validateLength, trigger: "change" }],
  
 };
 const checkRules = {
@@ -435,9 +438,10 @@ export default {
       record.approval = this.user.name;
       record.approvalId = this.user.id;
       record.holiday = this.statusFilter(record.holiday)
-      record.approvalResults = 1
+      let params = Object.assign({},record)
+      params.approvalResults = 1
       let formProps = {
-        record: record,
+        record: params,
         formTitle: formCheckTitle,
         rules:checkRules,
         submitFun: (parameter) => {
@@ -474,7 +478,7 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            _this.$refs.table.refresh(true)
+            _this.$refs.table.refresh()
           },
           cancel() {
             

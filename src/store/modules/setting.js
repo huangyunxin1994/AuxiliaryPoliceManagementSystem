@@ -5,7 +5,6 @@ import {filterMenu} from '@/utils/authority-utils'
 import {getLocalSetting} from '@/utils/themeUtil'
 
 const localSetting = getLocalSetting(true)
-console.log(localSetting)
 export default {
   namespaced: true,
   state: {

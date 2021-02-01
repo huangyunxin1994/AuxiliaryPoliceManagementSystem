@@ -98,6 +98,7 @@ import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import selectTree from "@/components/treeSelect/TreeSelect";
 import moment from "moment";
+import { validateLength } from "@/config/default/rules";
 const formTitle = [
   {
     label: "标题",
@@ -147,9 +148,11 @@ const formTitle = [
   }
 ];
 const rules = {
-  title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+  title: [{ required: true, message: "请输入标题", trigger: "change" },
+  { required: true, max:30, validator: validateLength, trigger: "change" }],
   expireDate: [{ required: true, message: "请选择到期时间", trigger: "change" }],
-  content: [{ required: true, message: "请输入公告内容", trigger: "blur" }],
+  content: [{ required: true, message: "请输入公告内容", trigger: "change" },
+  { required: true, max:1000, validator: validateLength, trigger: "change" }],
 };
 export default {
   name: "OrganManage",

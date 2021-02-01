@@ -227,7 +227,6 @@ export default {
            arr.sort((a,b)=>{
             return new Date(b.createTime) - new Date(a.createTime)
           })
-          console.log(arr)
           this.businessList = arr
         });
     },
@@ -271,7 +270,6 @@ export default {
         .then((res) => {
           const list = res.data.data.list
           for(let i=0;i<list.length;i++){
-            console.log()
             this.barData.push({
                 x: list[i].createTime.substring(5,10),
                 y: list[i].num
@@ -283,7 +281,6 @@ export default {
       this.$api.messageService
         .getDistribute({organizationId:this.user.organizationId })
         .then((res) => {
-          console.log(res)
           const list = res.data.data.list
           for(let i=0;i<list.length;i++){
             this.sourceData.push({
@@ -299,14 +296,12 @@ export default {
               dimension: 'item',
               as: 'percent'
             })
-            console.log(dv)
             dv.rows.map(i=>i.count=i.count+'人')
             this.pieData = dv.rows
         });
     }
   },
   created() {
-    console.log(this.roles)
     setTimeout(() => this.loading = !this.loading, 1000)
   },
   async mounted(){

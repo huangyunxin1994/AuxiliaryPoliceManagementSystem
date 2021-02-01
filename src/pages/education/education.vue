@@ -115,7 +115,7 @@ import STable from "@/components/Table_/";
 import TaskForm from "@/components/TaskForm";
 import selectTree from "@/components/treeSelect/TreeSelect"
 import formStep from "@/components/stepForm/StepForm";
-
+import { validateLength } from "@/config/default/rules";
 
 const formTitle = [
   {
@@ -159,7 +159,9 @@ const formTitle = [
 const stepTitle = [{title:'选择人员'},{title:'填写培训内容'}]
 const rules = {
   className: [
-    { required: true, message: "请输入培训名称", trigger: "blur"},
+    { required: true, message: "请输入培训名称", trigger: "change"},
+    
+{ required: true, max:20, validator: validateLength, trigger: "change" }
   ],
   startTime: [
     { required: true, message: "请选择培训起始日期", trigger: "change" },
@@ -168,7 +170,10 @@ const rules = {
     { required: true, message: "请选择培训结束日期", trigger: "change" },
   ],
   learningStyle: [{ required: true, message: "请选择培训方式", trigger: "change" }],
-  classHour: [{ required: true, message: "请输入培训总学时", trigger: "blur"},],
+  classHour: [{ required: true, message: "请输入培训总学时", trigger: "blur"},
+  { required: true, max:3, validator: validateLength, trigger: "change" }
+  ],
+  learningContent:[{ max:60, validator: validateLength, trigger: "change" }],
 };
 export default {
   name: "AskForLeave",

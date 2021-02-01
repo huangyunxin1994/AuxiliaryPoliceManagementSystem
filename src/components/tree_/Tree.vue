@@ -113,7 +113,6 @@ export default {
             tree.forEach(item => {
                 item.scopedSlots = { title: "custom" }
             })
-            console.log(res.data.data.data)
             this.dataSource = this.filterArray(res.data.data.data)
             
             this.initData(this.dataSource)
@@ -150,7 +149,6 @@ export default {
             this.selectedKeys = selectedKeys
             this.selectedNode = e.node.dataRef
             let params = {}
-            console.log(this.selectedKeys)
             if(this.selectedKeys.length>0){
                 params[this.replaceFields.key] = this.selectedNode.id
                 params[this.replaceFields.title] = this.selectedNode.name

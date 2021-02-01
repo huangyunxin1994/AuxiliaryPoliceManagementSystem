@@ -99,7 +99,8 @@
                         {{ j.name }}
                       </a-select-option>
                     </a-select>
-                    <a-input-number
+                    <a-input
+                      type="number"
                       v-model="item[i.name]"
                       v-else-if="i.type === 'number'"
                       style="width: 100%"
@@ -210,7 +211,6 @@ export default {
       this.visible = true;
       this.submitData = Object.assign([], this.data);
       this.submitParam = Object.assign({}, this.importParam);
-      console.log(this.submitParam)
       this.validateData();
       // this.data[this.current].map(i=>{
 
@@ -238,7 +238,6 @@ export default {
               if (format) {
                 const matchPrein = await this.validateMatchPrein();
                 if (matchPrein) {
-                  console.log(this.submitData)
                   this.submitData[this.current].map(i=>{
                     i.organizationId = this.submitParam.organizationId
                     i.organizationName = this.submitParam.organizationName
@@ -310,7 +309,6 @@ export default {
          const formData = new FormData();
          formData.append("requestBody ", JSON.stringify(param) )
         this.$api.auxiliaryPoliceService.postAuxiliaryData(formData ).then(res=>{
-          console.log(res)
           if(res.data.code === 0){
             this.step[this.current] = "check-circle";
             this.done = true
@@ -319,7 +317,6 @@ export default {
             this.done = true
           }
         })
-        // console.log(this.submitData)
         
       }
        }, 1000);
@@ -339,7 +336,6 @@ export default {
           i.editList = [{name:"number",type:'input'}]
         })
         this.errList = [...this.errList, ...noContainArr];
-        console.log( this.errList)
         this.step[this.current] = "close-circle";
         return false
       }else{
@@ -388,7 +384,6 @@ export default {
                 }
             }
         }
-        console.log(newArr)
         if(newArr.length>0){
           newArr.map(i=>{
             i.title = "辅警编号已存在数据库";
@@ -608,7 +603,6 @@ export default {
       }
     },
     handleOk() {
-      console.log(this.submitData);
       this.validateData();
       //   this.loading = true;
       //   setTimeout(() => {
@@ -631,7 +625,6 @@ export default {
           "question-circle",
           "question-circle",
         ];
-      console.log(this.current);
       })
       
     },

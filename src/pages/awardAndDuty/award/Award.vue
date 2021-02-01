@@ -91,6 +91,8 @@ import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import formStep from "@/components/stepForm/StepForm";
 import treeSelect from "@/components/treeSelect/TreeSelect";
+import { validateLength } from "@/config/default/rules";
+
 const formTitle = [
   {
     label: "奖励原因",
@@ -131,12 +133,22 @@ const formTitle = [
 ];
 const stepTitle = [{ title: "选择人员" }, { title: "填写奖励信息" }];
 const rules = {
-  reason: [{ required: true, message: "请输入奖励原因", trigger: "blur" }],
-  approvalAuthority: [{ required: true, message: "请输入奖励批准机关", trigger: "blur" }],
-  title:[{ required: true, message: "请输入荣誉称号名称", trigger: "blur" }],
+  reason: [{ required: true, message: "请输入奖励原因", trigger: "change" },
+  { required: true, max:60, validator: validateLength, trigger: "change" }],
+  approvalAuthority: [{ required: true, message: "请输入奖励批准机关", trigger: "change" },
+  { required: true, max:20, validator: validateLength, trigger: "change" }],
+  title:[{ required: true, message: "请输入荣誉称号名称", trigger: "change" },
+  { required: true, max:20, validator: validateLength, trigger: "change" }],
   approvalDate: [
     { required: true, message: "请选择奖励授予日期", trigger: "change" },
   ],
+  company: [
+    { max:20, validator: validateLength, trigger: "change" },
+  ],
+  honoraryTitle: [
+    { max:10, validator: validateLength, trigger: "change" },
+  ],
+  
 };
 export default {
   name: "AskForLeave",

@@ -284,7 +284,7 @@ import { mapState, mapGetters } from "vuex";
 import excelBtn from "@/components/importExcel/importExcel";
 import fromModel from "@/components/formModel/formModel";
 import StandardTable from "@/components/Table_/";
-import { validatePhone } from "@/config/default/rules";
+import { validatePhone, validateLength } from "@/config/default/rules";
 import {daysDistance} from '@/utils/dateTime'
 const studyColumns = [
   {
@@ -845,6 +845,7 @@ export default {
         {
           title: "height",
           label: "身高(cm)",
+          max:3,
           type: !this.policeId ? 'text' : "input",
           placeholder: "请输入身高",
         },
@@ -976,6 +977,10 @@ export default {
             { required: true, message: "请输入必填项", trigger: "blur" },
             { validator: validatePhone, trigger: "blur" },
           ];
+        }else if (item.title == "height"&&this.policeId) {
+          myrules[item.title] = [
+            { max: item.max, validator: validateLength, trigger: "change" },
+          ];
         } 
       });
       this.baseRules = myrules;
@@ -1057,14 +1062,11 @@ export default {
       const defaultProps = {
         on: {
           ok() {
-            // console.log('ok 回调')
             callback();
           },
           cancel() {
-            // console.log('cancel 回调')
           },
           close() {
-            // console.log('modal close 回调')
           },
         },
       };
@@ -1262,7 +1264,6 @@ export default {
       });
         }
       });
-      // console.log(this.familySource)
     },
     handleChange(item){
       if(item.titleName){

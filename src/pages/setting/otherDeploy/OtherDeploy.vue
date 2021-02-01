@@ -83,7 +83,7 @@
           </div>
           <s-table
             ref="credtable"
-            :rowKey="(record)=>record.id"
+            :rowKey="(record) => record.id"
             :columns="credColumns"
             :data="loadCredData"
             :scroll="{ y: 600, x: 650 }"
@@ -122,7 +122,7 @@
           </div>
           <s-table
             ref="equptable"
-            :rowKey="(record)=>record.id"
+            :rowKey="(record) => record.id"
             :columns="equpColumns"
             :data="loadEqupData"
             :scroll="{ y: 600, x: 650 }"
@@ -147,6 +147,7 @@
 import { mapState } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
+import { validateLength } from "@/config/default/rules";
 const credTitle = [
   {
     label: "证件类型名称",
@@ -178,10 +179,18 @@ const equpTitle = [
   },
 ];
 const credRules = {
-  name: [{ required: true, message: "请输入证件类型名称", trigger: "blur" }],
+  name: [
+    { required: true, message: "请输入证件类型名称", trigger: "change" },
+    { required: true, max: 10, validator: validateLength, trigger: "change" },
+  ],
+  remake: [{ max: 20, validator: validateLength, trigger: "change" }],
 };
 const equpRules = {
-  name: [{ required: true, message: "请输入装备类型名称", trigger: "blur" }],
+  name: [
+    { required: true, message: "请输入装备类型名称", trigger: "change" },
+    { required: true, max: 10, validator: validateLength, trigger: "change" },
+  ],
+  remake: [{ max: 20, validator: validateLength, trigger: "change" }],
 };
 export default {
   name: "OrganManage",
@@ -190,15 +199,15 @@ export default {
   },
   data() {
     return {
-      salaryTime:undefined,
-      saveSalaryTime:undefined,
-      showSaveBtn:false,
-      commData:{
-        morningUppertime:"",
-        morningLowertime:"",
-        afternoonUppertime:"",
-        afternoonLowertime:"",
-        state:4
+      salaryTime: undefined,
+      saveSalaryTime: undefined,
+      showSaveBtn: false,
+      commData: {
+        morningUppertime: "",
+        morningLowertime: "",
+        afternoonUppertime: "",
+        afternoonLowertime: "",
+        state: 4,
       },
       credColumns: [
         {
@@ -256,21 +265,31 @@ export default {
       queryEParam: {},
       queryCParam: {},
       loadCredData: (parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.queryCParam)
-        return this.$api.otherItemsService.getCredDataList(requestParameters)
-          .then(res => {
-            res.data.data.list.map((i,k)=>i.key=k+1)
-            return res.data
-          })
+        const requestParameters = Object.assign(
+          {},
+          parameter,
+          this.queryCParam
+        );
+        return this.$api.otherItemsService
+          .getCredDataList(requestParameters)
+          .then((res) => {
+            res.data.data.list.map((i, k) => (i.key = k + 1));
+            return res.data;
+          });
       },
-      
+
       loadEqupData: (parameter) => {
-        const requestParameters = Object.assign({}, parameter, this.queryEParam)
-        return this.$api.otherItemsService.getEqupDataList(requestParameters)
-          .then(res => {
-            res.data.data.list.map((i,k)=>i.key=k+1)
-            return res.data
-          })
+        const requestParameters = Object.assign(
+          {},
+          parameter,
+          this.queryEParam
+        );
+        return this.$api.otherItemsService
+          .getEqupDataList(requestParameters)
+          .then((res) => {
+            res.data.data.list.map((i, k) => (i.key = k + 1));
+            return res.data;
+          });
       },
       // selectedCredRowKeys: [],
       // selectedCredRows: [],
@@ -279,21 +298,20 @@ export default {
       levelList: [],
     };
   },
-  created(){
-    this.$api.otherItemsService.getSalaryTime()
-    .then(res => {
-      if(res.data.data.configure){
-        this.saveSalaryTime = res.data.data.configure
-        this.salaryTime = res.data.data.configure
+  created() {
+    this.$api.otherItemsService.getSalaryTime().then((res) => {
+      if (res.data.data.configure) {
+        this.saveSalaryTime = res.data.data.configure;
+        this.salaryTime = res.data.data.configure;
       }
-    })
+    });
   },
   methods: {
     /**
      * 保存上下班配置方法
      */
     handleSave() {
-      const _this = this
+      const _this = this;
       this.$confirm({
         title: "提示",
         content: `确定保存吗？`,
@@ -303,24 +321,25 @@ export default {
         cancelText: "取消",
         onOk() {
           // 在这里调用删除接口
-            _this.$api.otherItemsService.postSalaryTime({date:_this.salaryTime})
-            .then(res => {
-              if(res.data.code == 0){
+          _this.$api.otherItemsService
+            .postSalaryTime({ date: _this.salaryTime })
+            .then((res) => {
+              if (res.data.code == 0) {
                 _this.$success({
                   title: "保存成功",
                   content: `工资表生成时间将于下个月开始生效`,
                 });
-                _this.saveSalaryTime = _this.salaryTime
-                _this.showSaveBtn = false
-              }else{
+                _this.saveSalaryTime = _this.salaryTime;
+                _this.showSaveBtn = false;
+              } else {
                 _this.$message.error(res.data.msg);
               }
-            }).catch(err=>{
-              _this.$message.error(err.data.msg);
             })
+            .catch((err) => {
+              _this.$message.error(err.data.msg);
+            });
         },
-        onCancel() {
-        },
+        onCancel() {},
       });
     },
     /**
@@ -328,17 +347,18 @@ export default {
      */
     handleCredAdd() {
       let formProps = {
-        record:{
-          type:1
+        record: {
+          type: 1,
         },
         formTitle: credTitle,
         rules: credRules,
 
         submitFun: (parameter) => {
-          return this.$api.otherItemsService.postCertEquip(parameter)
-            .then(res => {
-              return res.data
-            })
+          return this.$api.otherItemsService
+            .postCertEquip(parameter)
+            .then((res) => {
+              return res.data;
+            });
         },
       };
       let modalProps = {
@@ -348,8 +368,8 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps,()=>{
-        this.$refs.credtable.refresh(true)
+      this.openModal(TaskForm, formProps, modalProps, () => {
+        this.$refs.credtable.refresh(true);
       });
     },
     /**
@@ -361,10 +381,11 @@ export default {
         formTitle: credTitle,
         rules: credRules,
         submitFun: (parameter) => {
-          return this.$api.otherItemsService.putCertEquip(parameter)
-            .then(res => {
-              return res.data
-            })
+          return this.$api.otherItemsService
+            .putCertEquip(parameter)
+            .then((res) => {
+              return res.data;
+            });
         },
       };
       let modalProps = {
@@ -374,15 +395,15 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps,()=>{
-        this.$refs.credtable.refresh(true)
+      this.openModal(TaskForm, formProps, modalProps, () => {
+        this.$refs.credtable.refresh(true);
       });
     },
     /**
      * 删除证件方法
      */
-    handleCredDel(param){
-      const _this = this
+    handleCredDel(param) {
+      const _this = this;
       this.$confirm({
         title: "警告",
         content: `是否确认删除证件类型 ${param.name} ?`,
@@ -396,7 +417,7 @@ export default {
             .then((res) => {
               if (res.data.code == 0) {
                 _this.$message.success(res.data.msg);
-                _this.$refs.credtable.refresh(true)
+                _this.$refs.credtable.refresh(true);
               } else {
                 _this.$message.error(res.data.msg);
               }
@@ -413,17 +434,18 @@ export default {
      */
     handleEqupAdd() {
       let formProps = {
-        record:{
-          type:2
+        record: {
+          type: 2,
         },
         formTitle: equpTitle,
         rules: equpRules,
 
         submitFun: (parameter) => {
-          return this.$api.otherItemsService.postCertEquip(parameter)
-            .then(res => {
-              return res.data
-            })
+          return this.$api.otherItemsService
+            .postCertEquip(parameter)
+            .then((res) => {
+              return res.data;
+            });
         },
       };
       let modalProps = {
@@ -433,8 +455,8 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps,()=>{
-        this.$refs.equptable.refresh(true)
+      this.openModal(TaskForm, formProps, modalProps, () => {
+        this.$refs.equptable.refresh(true);
       });
     },
     /**
@@ -446,10 +468,11 @@ export default {
         formTitle: equpTitle,
         rules: equpRules,
         submitFun: (parameter) => {
-          return this.$api.otherItemsService.putCertEquip(parameter)
-            .then(res => {
-              return res.data
-            })
+          return this.$api.otherItemsService
+            .putCertEquip(parameter)
+            .then((res) => {
+              return res.data;
+            });
         },
       };
       let modalProps = {
@@ -459,15 +482,15 @@ export default {
         maskClosable: false,
         okText: "提交",
       };
-      this.openModal(TaskForm, formProps, modalProps,()=>{
-        this.$refs.equptable.refresh(true)
+      this.openModal(TaskForm, formProps, modalProps, () => {
+        this.$refs.equptable.refresh(true);
       });
     },
     /**
      * 删除装备方法
      */
-    handleEqupDel(param){
-      const _this = this
+    handleEqupDel(param) {
+      const _this = this;
       this.$confirm({
         title: "警告",
         content: `是否确认删除装备类型 ${param.name} ?`,
@@ -481,7 +504,7 @@ export default {
             .then((res) => {
               if (res.data.code == 0) {
                 _this.$message.success(res.data.msg);
-                _this.$refs.equptable.refresh(true)
+                _this.$refs.equptable.refresh(true);
               } else {
                 _this.$message.error(res.data.msg);
               }
@@ -499,17 +522,14 @@ export default {
      * @param formProps form配置项 Object
      * @param modalProps 弹窗配置项 Object
      */
-    openModal(form, formProps, modalProps,fn) {
+    openModal(form, formProps, modalProps, fn) {
       const defaultModalProps = {
         on: {
           ok() {
-            
-            fn()
+            fn();
           },
-          cancel() {
-          },
-          close() {
-          },
+          cancel() {},
+          close() {},
         },
       };
       formProps = Object.assign(formProps, defaultModalProps);
@@ -529,46 +549,46 @@ export default {
       this.selectedEqupRowKeys = selectedRowKeys;
       this.selectedEqupRows = selectedRows;
     },
-    changeCommMorn(){
-      switch(this.commData.state){
-        case 1 : {
+    changeCommMorn() {
+      switch (this.commData.state) {
+        case 1: {
           this.commData.state = 4;
           break;
         }
-        case 2 : {
+        case 2: {
           this.commData.state = 3;
           break;
         }
-        case 3 : {
+        case 3: {
           this.commData.state = 2;
           break;
         }
-        case 4 : {
+        case 4: {
           this.commData.state = 1;
           break;
         }
       }
     },
-    changeCommAfter(){
-      switch(this.commData.state){
-        case 1 : {
+    changeCommAfter() {
+      switch (this.commData.state) {
+        case 1: {
           this.commData.state = 3;
           break;
         }
-        case 2 : {
+        case 2: {
           this.commData.state = 4;
           break;
         }
-        case 3 : {
+        case 3: {
           this.commData.state = 1;
           break;
         }
-        case 4 : {
+        case 4: {
           this.commData.state = 2;
           break;
         }
       }
-    }
+    },
   },
   filters: {
     statusFilter(status) {
@@ -579,13 +599,11 @@ export default {
       return statusMap[status];
     },
   },
-  watch:{
-    salaryTime(newVal){
-      if(newVal !== this.saveSalaryTime)
-        this.showSaveBtn = true
-      else
-        this.showSaveBtn = false
-    }
+  watch: {
+    salaryTime(newVal) {
+      if (newVal !== this.saveSalaryTime) this.showSaveBtn = true;
+      else this.showSaveBtn = false;
+    },
   },
   computed: {
     ...mapState("setting", ["theme", "pageMinHeight"]),

@@ -126,6 +126,7 @@ import { mapState } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import moment from "moment";
+import { validateLength } from "@/config/default/rules";
 const wageTitle = [
   {
     label: "工资项目名称",
@@ -140,7 +141,11 @@ const wageTitle = [
 ];
 const wageRules = {
   itemName: [
-    { required: true, message: "请输入工资项目名称", trigger: "blur" },
+    { required: true, message: "请输入工资项目名称", trigger: "change" },
+    { required: true, max:10, validator: validateLength, trigger: "change" }
+  ],
+  itemExplain: [
+    { max:20, validator: validateLength, trigger: "change" }
   ],
 };
 export default {
@@ -370,7 +375,6 @@ export default {
         i.content = JSON.stringify(content);
         delete i.state;
       });
-      console.log(submitData);
       this.$confirm({
         title: "提示",
         content: `更改内容将于下月1日生效，是否确认发布？`,
@@ -498,7 +502,6 @@ export default {
               (i) => i.id === row.id
             );
             const rowData = _this.initData.find((i) => i.id === row.id);
-            console.log(rowData);
             _this.$refs.table.localDataSource.splice(index, 1, rowData);
           }
           const state = _this.$refs.table.localDataSource.some((i) => i.state);
@@ -529,7 +532,6 @@ export default {
             .postSalaryTime({ date: _this.salaryTime })
             .then((res) => {
               if (res.data.code == 0) {
-                console.log(res.data.code)
                 _this.$success({
                   title: "保存成功",
                   content: `工资表生成时间将于下个月${_this.salaryTime}日0点开始生效`,
@@ -541,7 +543,6 @@ export default {
               }
             })
             .catch((err) => {
-              console.log(err)
               _this.$message.error(err.data.msg);
             });
         },

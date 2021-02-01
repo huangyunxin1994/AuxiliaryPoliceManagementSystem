@@ -68,6 +68,7 @@ import { mapState,mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import selectTree from "@/components/treeSelect/TreeSelect";
+import { validateLength } from "@/config/default/rules";
 const formTitle = [
   
   {
@@ -101,7 +102,8 @@ const formTitle = [
   }
 ];
 const rules = {
-  remake: [{ required: true, message: "请输入内容说明", trigger: "blur" }]
+  remake: [{ required: true, message: "请输入内容说明", trigger: "change" },
+{ required: true, max:60, validator: validateLength, trigger: "change" }]
   
 };
 export default {

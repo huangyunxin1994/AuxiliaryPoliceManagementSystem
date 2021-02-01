@@ -154,6 +154,7 @@ import TaskForm from "@/components/formModel/formModel";
 import formStep from "@/components/stepForm/StepForm";
 import treeSelect from "@/components/treeSelect/TreeSelect";
 import moment from 'moment'
+import { validateLength } from "@/config/default/rules";
 const formTitle = [
   {
     label: "请假类型",
@@ -423,15 +424,19 @@ const rules = {
   endTime: [
     { required: true, message: "请选择请假结束时间", trigger: "change" },
   ],
-  reason: [{ required: true, message: "请输入请假原因", trigger: "blur" }],
-  duration:[{ required: true, message: "请输入请假时长", trigger: "blur" }],
+  reason: [{ required: true, message: "请输入请假原因", trigger: "change" },
+  { required: true, max:20, validator: validateLength, trigger: "change" }],
+  duration:[{ required: true, message: "请输入请假时长", trigger: "change" },
+  { required: true, max:3, validator: validateLength, trigger: "change" }],
 };
 const checkRules = {
   endTime: [
     { required: true, message: "请选择请假结束时间", trigger: "change" },
   ],
   approvalRemake: [{ required: true, message: "请输入审批备注", trigger: "blur" }],
-  duration:[{ required: true, message: "请输入请假时长", trigger: "blur" }],
+  duration:[{ required: true, message: "请输入请假时长", trigger: "blur" },
+  { required: true, max:4, validator: validateLength, trigger: "change" }
+  ],
   approvalResults:[
     { required: true, message: "请选择是否通过", trigger: "change" },
   ],
@@ -578,7 +583,6 @@ export default {
       .getOverTimeLeaveOrgan({organizationId:this.user.organizationId,state:2})
       .then((res) => {
              this.treeData=res.data.data.list
-             console.log(this.treeData)
       });
   },
   methods: {
@@ -589,9 +593,10 @@ export default {
     handleCheck(record) {
       record.approval = this.user.name;
       record.approvalId = this.user.id;
-      record.approvalResults = 1
+      let params = Object.assign({},record)
+      params.approvalResults = 1
       let formProps = {
-        record: record,
+        record: params,
         formTitle: formCheckTitle,
         rules:checkRules,
         submitFun: (parameter) => {
@@ -684,7 +689,7 @@ export default {
       const defaultModalProps = {
         on: {
           ok() {
-            _this.$refs.table.refresh(true);
+            _this.$refs.table.refresh();
           },
           cancel() {
           },

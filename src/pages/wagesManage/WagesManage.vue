@@ -381,24 +381,18 @@ export default {
           });
           if (res.data.data.list.length > 0) {
             const result = res.data.data.list.find((i) => i.title);
-            console.log(result)
             if (result) {
               const salaryTitle = Object.assign(
                 [],
                 JSON.parse(result.title)
               );
-              console.log(salaryTitle)
-              console.log(this.scheduleColumns)
               this.scheduleColumns.map(
                 (j) =>{
-                  console.log(j.title)
                   const index = salaryTitle.findIndex(i=>i === j.title)
-                  console.log(index)
                   if(index>-1)
                   salaryTitle.splice(index,1)
                 } 
               );
-              console.log(salaryTitle)
               res.data.data.list.map((i) => {
                 const salaryVal =
                   (i.salaryContent && JSON.parse(i.salaryContent)) || {};
@@ -528,7 +522,6 @@ export default {
     //   }
     //   let result = moment(value).format("YYYY-MM");
     //   let params = this.recordMonth.find((i) => i.recordMonth === result);
-    //   console.log(params);
     //   if (params) {
     //     return <a-icon type="check-circle" style="color:#87d068" />;
     //   } else {
@@ -675,7 +668,6 @@ export default {
                 //   (item) =>
                 //     !this.disableTree.some((ele) => ele === item.organizationId)
                 // );
-                // console.log(uploadTree);
                 // const result =
                 //   uploadTree.length === this.form.organizationId.length &&
                 //   uploadTree.every((a) =>
@@ -684,7 +676,6 @@ export default {
                 //   this.form.organizationId.every((_b) =>
                 //     uploadTree.some((_a) => _a.organizationId === _b)
                 //   );
-                // console.log(result);
                 // if (result) {
                 //   this.$api.organizationService
                 //     .getOrganization({
@@ -823,7 +814,6 @@ export default {
     },
     //数据转换树数据，并且禁用符合条件数据
     treeFilter(data) {
-      console.log(this.disableTree)
       data.forEach((item) => {
         delete item.children;
         this.disableTree.forEach((i) => {
@@ -832,7 +822,6 @@ export default {
           }
         });
       });
-      console.log(data)
       // var map = {};
       // data.forEach(function (item) {
       //   map[item.organizationId] = item;

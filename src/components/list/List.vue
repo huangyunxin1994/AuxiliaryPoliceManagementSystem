@@ -25,7 +25,7 @@
         </a-col>
       </a-row>
       <a-divider />
-      <div v-html="text2" style="text-indent:2em;"></div>
+      <div v-html="text2"></div>
       <!-- <pre>
         {{itemData.contentA}}
       </pre> -->
@@ -113,7 +113,6 @@ export default {
     handleClick(item) {
       if(item.type == 2){
         //待办
-        console.log(this.routerObj[item.state])
         this.$router.push({
             path:this.routerObj[item.state]
           });

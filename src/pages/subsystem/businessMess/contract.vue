@@ -90,12 +90,6 @@ export default {
         value: "key",
       },
       wageColumns: [
-        {
-          title: "序号",
-          dataIndex: "key",
-          key: "key",
-          width: 60,
-        },
       ],
       salaryParam: {
         id: "",

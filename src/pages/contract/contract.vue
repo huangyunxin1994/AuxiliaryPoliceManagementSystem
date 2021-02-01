@@ -138,6 +138,7 @@ import fromModel from "@/components/formModel/formModel";
 import diaHisContract from "@/components/diaHisContract/diaHisContract";
 // import diaNewContract from "@/components/diaNewContract/diaNewContract"
 import formStep from "@/components/stepForm/StepForm";
+import { validateLength } from "@/config/default/rules";
 
 const formTitle = [
   {
@@ -192,8 +193,9 @@ const rules = {
     { required: true, message: "请选择合同起始日期", trigger: "change" },
   ],
   contractPeriod: [
-    { required: true, message: "请输入合同期限", trigger: "blur" },
+    { required: true, message: "请输入合同期限", trigger: "change" },
     { required: true, validator: validatePeriod, trigger: 'change' },
+    { required: true, max:3, validator: validateLength, trigger: 'change' },
   ],
 };
 export default {
@@ -324,7 +326,8 @@ export default {
       extensionRules: {
         contractPeriod: [
           { required: true, validator: validatePeriod, trigger: 'change' },
-          { required: true, message: "请输入合同期限", trigger: "blur" },
+          { required: true, message: "请输入合同期限", trigger: "change" },
+          { required: true, max:3, validator: validateLength, trigger: 'change' },
         ],
       },
       // 模糊搜索关键字
@@ -546,16 +549,11 @@ export default {
       const defaultProps = {
         on: {
           ok() {
-            // console.log('ok 回调')
             _this.$refs.table.refresh(true)
           },
           cancel() {
-            // e.handleDestroy()
-            // console.log('cancel 回调')
           },
           close() {
-            // e.handleDestroy()
-            // console.log('modal close 回调')
           },
         },
       };

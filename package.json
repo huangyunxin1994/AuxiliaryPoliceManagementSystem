@@ -72,7 +72,8 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "vue/no-unused-components": 0
+      "vue/no-unused-components": 0,
+      "no-control-regex": 0
     }
   },
   "browserslist": [

@@ -103,6 +103,7 @@ import STable from "@/components/Table_/";
 // import newDimission from '@/components/diaPersonnel/newDimissionStep/StepForm'
 import formStep from "@/components/stepForm/StepForm";
 import moment from 'moment'
+import { validateLength } from "@/config/default/rules";
 export default {
   name: "OrganManage",
   components: {
@@ -242,7 +243,9 @@ export default {
           { required: true, message: "请选择离职生效日期", trigger: "change" },
         ],
         reason: [
-          { required: true, message: "请输入离职原因", trigger: "blur" },
+          { required: true, message: "请输入离职原因", trigger: "change" },
+          { required: true, max:60, validator: validateLength, trigger: 'change' },
+          
         ],
       },
 
@@ -281,15 +284,10 @@ export default {
       const defaultProps = {
         on: {
           ok() {
-            // console.log('ok 回调')
           },
           cancel() {
-            // e.handleDestroy()
-            // console.log('cancel 回调')
           },
           close() {
-            // e.handleDestroy()
-            // console.log('modal close 回调')
           },
         },
       };

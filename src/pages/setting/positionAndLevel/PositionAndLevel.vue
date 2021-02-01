@@ -25,11 +25,12 @@
       </a-row>
       <a-row :gutter="24">
         <a-col
-          :lg="4"
-          :md="6"
+          :xl="4"
+          :lg="6"
+          :md="8"
           :xs="12"
           style="margin-bottom: 24px"
-          v-for="item in rankList"
+          v-for="(item,index) in rankList"
           :key="item.id"
         >
           <a-card size="small" :title="'#' + item.level">
@@ -57,7 +58,7 @@
               slot="extra"
               size="small"
               v-show="item.edit"
-              @click="handSaveRank(item)"
+              @click="handSaveRank(item,index)"
               >保存</a-button
             >
             <div
@@ -66,12 +67,15 @@
             >
               {{ item.name }}
             </div>
-            <a-input
-              v-show="item.edit"
-              v-model="item.name"
-              placeholder="请输入职级名称"
-              :allowClear="true"
-            />
+            <a-form-model v-show="item.edit" ref="ruleform" :model="item" :rules="rankRules">
+              <a-form-model-item  prop="name">
+                <a-input
+                  v-model="item.name"
+                  placeholder="请输入职级名称"
+                  :allowClear="true"
+                />
+              </a-form-model-item>
+            </a-form-model>
           </a-card>
         </a-col>
       </a-row>
@@ -162,6 +166,7 @@
 import { mapState } from "vuex";
 import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
+import { validateLength } from "@/config/default/rules";
 const postTitle = [
   {
     label: "岗位名称",
@@ -184,7 +189,13 @@ const postTitle = [
   },
 ];
 const postRules = {
-  name: [{ required: true, message: "请输入岗位名称", trigger: "blur" }],
+  name: [{ required: true, message: "请输入岗位名称", trigger: "blur" },
+  { required: true, max:20, validator: validateLength, trigger: "change" }],
+  describes:[{ max:60, validator: validateLength, trigger: "change" }],
+};
+const rankRules = {
+  name: [{ required: true, message: "请输入职级名称", trigger: "change" },
+  { required: true, max:20, validator: validateLength, trigger: "change" }]
 };
 export default {
   name: "OrganManage",
@@ -193,6 +204,7 @@ export default {
   },
   data() {
     return {
+      rankRules:rankRules,
       scheduleColumns: [
         {
           title: "序号",
@@ -277,7 +289,10 @@ export default {
     handEditRank(id) {
       this.submitType = "update";
       this.rankList.find((i) => {
-        if (i.id == id) i.edit = !i.edit;
+        if (i.id == id) {
+          i.oldName = i.name
+          i.edit = !i.edit;
+        }
       });
     },
     handDelRank() {
@@ -318,49 +333,61 @@ export default {
       this.submitType = null;
       if (item.id) {
         this.rankList.find((i) => {
-          if (i.id == item.id) i.edit = !i.edit;
+          if (i.id == item.id){
+            i.name = i.oldName
+            delete i.oldName
+            i.edit = !i.edit;
+          } 
         });
       } else {
         this.rankList.pop();
       }
     },
 
-    handSaveRank(item) {
+    handSaveRank(item,index) {
       /** 调用保存方法,根据 submitType 判断新增或编辑
        * 保存完成 submitType 置 null
        * 调用职级查询方法重新查询职级
        */
-      if (this.submitType === "insert") {
-        this.$api.rankPostService
-          .postRank(item)
-          .then((res) => {
-            if (res.data.code == 0) {
-              this.submitType = null;
-              this.$message.success("保存成功");
-              this.loadRankData();
-            } else {
-              this.$message.error("保存失败," + res.data.msg);
-            }
-          })
-          .catch((err) => {
-            this.$message.error(err.msg);
-          });
-      } else {
-        this.$api.rankPostService
-          .putRank(item)
-          .then((res) => {
-            if (res.data.code == 0) {
-              this.submitType = null;
-              this.$message.success("修改成功");
-              this.loadRankData();
-            } else {
-              this.$message.error("修改失败" + res.data.msg);
-            }
-          })
-          .catch((err) => {
-            this.$message.error(err.data.msg);
-          });
-      }
+      this.$refs.ruleform[index].validate(valid => {
+        if (valid) {
+          if (this.submitType === "insert") {
+            this.$api.rankPostService
+              .postRank(item)
+              .then((res) => {
+                if (res.data.code == 0) {
+                  this.submitType = null;
+                  this.$message.success("保存成功");
+                  this.loadRankData();
+                } else {
+                  this.$message.error("保存失败," + res.data.msg);
+                }
+              })
+              .catch((err) => {
+                this.$message.error(err.msg);
+              });
+          } else {
+            this.$api.rankPostService
+              .putRank(item)
+              .then((res) => {
+                if (res.data.code == 0) {
+                  this.submitType = null;
+                  this.$message.success("修改成功");
+                  this.loadRankData();
+                } else {
+                  this.$message.error("修改失败" + res.data.msg);
+                }
+              })
+              .catch((err) => {
+                this.$message.error(err.data.msg);
+              });
+          }
+        } else {
+          this.$message.success("请正确输入职级再保存");
+          return false;
+        }
+      });
+      
     },
     //岗位新增
     handleAdd() {

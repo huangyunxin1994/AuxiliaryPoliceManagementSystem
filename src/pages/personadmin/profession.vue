@@ -106,6 +106,7 @@ import AntTree from "@/components/tree_/Tree";
 // import fromModel from '@/components/formModel/formModel'
 import diaHisFro from "@/components/diaPersonnel/professionHis";
 import formStep from "@/components/stepForm/StepForm";
+import { validateLength } from "@/config/default/rules";
 export default {
   name: "OrganManage",
   components: {
@@ -212,13 +213,15 @@ export default {
       ],
       rules: {
         qualification: [
-          { required: true, message: "请输入名字", trigger: "blur" },
+          { required: true, message: "请输入名字", trigger: "change" },
+          { required: true, max:20, validator: validateLength, trigger: "change" }
         ],
         acquireDate: [
           { required: true, message: "请选择获得资格日期", trigger: "change" },
         ],
         approvalUnit: [
-          { required: true, message: "请输入资格审批单位", trigger: "blur" },
+          { required: true, message: "请输入资格审批单位", trigger: "change" },
+          { required: true, max:20, validator: validateLength, trigger: "change" }
         ],
       },
 
@@ -295,15 +298,11 @@ export default {
       const defaultProps = {
         on: {
           ok() {
-            // console.log('ok 回调')
           },
           cancel() {
-            // e.handleDestroy()
             _this.$refs.table.refresh(false);
           },
           close() {
-            // e.handleDestroy()
-            // console.log('modal close 回调')
             
           },
         },

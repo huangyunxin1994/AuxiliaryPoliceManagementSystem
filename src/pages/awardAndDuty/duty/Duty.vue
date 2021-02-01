@@ -95,6 +95,7 @@ import STable from "@/components/Table_/";
 import TaskForm from "@/components/formModel/formModel";
 import formStep from "@/components/stepForm/StepForm";
 import treeSelect from "@/components/treeSelect/TreeSelect"
+import { validateLength } from "@/config/default/rules";
 const formTitle = [
   {
     label: "原因",
@@ -116,9 +117,11 @@ const formTitle = [
 ];
 const stepTitle = [{ title: "选择人员" }, { title: "填写责任信息" }];
 const rules = {
-  reason: [{ required: true, message: "请输入原因", trigger: "blur" }],
+  reason: [{ required: true, message: "请输入原因", trigger: "change" },
+  { required: true, max:60, validator: validateLength, trigger: "change" }],
   approvalAuthority: [
-    { required: true, message: "请输入批准机关", trigger: "blur" },
+    { required: true, message: "请输入批准机关", trigger: "change" },
+    { required: true, max:20, validator: validateLength, trigger: "change" }
   ],
   approvalDate: [{ required: true, message: "请选择批准日期", trigger: "change" }],
 };

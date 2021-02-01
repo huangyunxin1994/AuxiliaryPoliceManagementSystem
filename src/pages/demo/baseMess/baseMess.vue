@@ -512,13 +512,11 @@ export default {
     
     loadTreeNode(data){
       this.queryParam.organizationId = data.id
-      console.log(data)
       this.$refs.table.refresh(true)
       this.importParam={
         organizationId:data.id||this.user.organizationId,
         organizationName:data.name||this.user.organizationName
       }
-      console.log(this.importParam)
     },
     //编辑树节点
     editTreeNode() {
@@ -564,15 +562,10 @@ export default {
       const defaultProps = {
         on: {
           ok() {
-            // console.log('ok 回调')
           },
           cancel() {
-            // e.handleDestroy()
-            // console.log('cancel 回调')
           },
           close() {
-            // e.handleDestroy()
-            // console.log('modal close 回调')
           },
         },
       };
@@ -650,7 +643,6 @@ export default {
     },
     //树选择回调
     handleTreeChange(obj) {
-      console.log(obj)
       this.importParam.organizationId = obj.val;
       this.importParam.organizationName = obj.label
     },
