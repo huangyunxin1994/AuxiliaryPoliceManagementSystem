@@ -152,6 +152,10 @@ export default {
     filter:{
       type:Object,
       default:undefined
+    },
+    query: {
+      type:Object,
+      default:undefined
     }
   },
   data() {
@@ -159,11 +163,11 @@ export default {
       leftColumns: leftTableColumns,
       queryParams:{
         search:"",
-        organizationId:'',
-        quit:1//筛选还没生效的离职人员
+        organizationId:''
+        // quit:1//筛选还没生效的离职人员
       },
       leftColumnsData: params => {
-        let param = Object.assign(params,this.queryParams)
+        let param = Object.assign(params,this.queryParams,this.query)
         if(this.filter){
           Object.keys(this.filter).map(i => {
             param[i] = this.filter[i]
@@ -223,10 +227,8 @@ export default {
           this.$refs.table.refresh(true)
       },
       reloadData(){
-        this.queryParams={
-          search:"",
-          organizationId:''
-        }
+        this.queryParams.search="";
+        this.queryParams.organizationId='';
         this.$refs.table.refresh(true)
       },
     onSelectChange(selectedRowKeys, selectedRows) {

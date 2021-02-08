@@ -382,7 +382,8 @@ export default {
         rankName:'',
         education:'',
         isMajor:'',
-        organizationId:''
+        organizationId:'',
+        organizationName:''
       },
       importParam:{
         organizationId:"",
@@ -512,6 +513,7 @@ export default {
     
     loadTreeNode(data){
       this.queryParam.organizationId = data.id
+      this.queryParam.organizationName = data.name
       this.$refs.table.refresh(true)
       this.importParam={
         organizationId:data.id||this.user.organizationId,
@@ -614,7 +616,8 @@ export default {
       this.$router.push({
         path:"/baseMessA",
         query:{
-          oId:this.queryParam.organizationId
+          oId:this.queryParam.organizationId,
+          oName:this.queryParam.organizationName
         }
       });
     },

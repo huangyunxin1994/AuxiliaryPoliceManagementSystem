@@ -425,18 +425,26 @@ const rules = {
     { required: true, message: "请选择请假结束时间", trigger: "change" },
   ],
   reason: [{ required: true, message: "请输入请假原因", trigger: "change" },
-  { required: true, max:20, validator: validateLength, trigger: "change" }],
+  { required: true, max:60, validator: validateLength, trigger: "change" }],
   duration:[{ required: true, message: "请输入请假时长", trigger: "change" },
-  { required: true, max:3, validator: validateLength, trigger: "change" }],
+  { required: true, max:4, validator: validateLength, trigger: "change" }],
 };
-const checkRules = {
+const editRules = {
   endTime: [
     { required: true, message: "请选择请假结束时间", trigger: "change" },
   ],
-  approvalRemake: [{ required: true, message: "请输入审批备注", trigger: "blur" }],
-  duration:[{ required: true, message: "请输入请假时长", trigger: "blur" },
+  approvalRemake: [{ required: true, message: "请输入审批备注", trigger: "change" },
+  { required: true, max:60, validator: validateLength, trigger: "change" }],
+  duration:[{ required: true, message: "请输入请假时长", trigger: "change" },
   { required: true, max:4, validator: validateLength, trigger: "change" }
   ],
+  approvalResults:[
+    { required: true, message: "请选择是否通过", trigger: "change" },
+  ],
+};
+const checkRules = {
+  approvalRemake: [{ required: true, message: "请输入审批备注", trigger: "change" },
+  { required: true, max:60, validator: validateLength, trigger: "change" }],
   approvalResults:[
     { required: true, message: "请选择是否通过", trigger: "change" },
   ],
@@ -591,6 +599,7 @@ export default {
     },
     //请假审批
     handleCheck(record) {
+      console.log(record)
       record.approval = this.user.name;
       record.approvalId = this.user.id;
       let params = Object.assign({},record)
@@ -623,7 +632,7 @@ export default {
       let formProps = {
         record: record,
         formTitle: formEditTitle,
-        rules:checkRules,
+        rules:editRules,
         submitFun: (parameter) => {
           return this.$api.overTimeService
             .putLeave(parameter)
@@ -692,6 +701,7 @@ export default {
             _this.$refs.table.refresh();
           },
           cancel() {
+            console.log(697)
           },
           close() {
           },

@@ -22,13 +22,13 @@
                 ></select-tree>
               </a-form-item>
             </a-col>
-            <template v-if="advanced">
+            <!-- <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="配发日期" >
                   <a-date-picker @change="allotmentDate"  style="width: 100%" :value-format="dateFormat" v-model="queryParam.allotmentDate"/>
                 </a-form-item>
               </a-col>
-            </template>
+            </template> -->
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <!-- <a-form-item label="到期日期" v-model="queryParam.termValidity">
@@ -234,7 +234,7 @@ export default {
       queryParam: {
         organizationId: "",
         describes: "",//描述
-        allotmentDate: "",//配发日期
+        // allotmentDate: "",//配发日期
         termValidity: "",//有效期限
         state:4,//1:发放 2：回收 3:逾期未回收
         type: 2,//1:证件 2：装备
@@ -269,7 +269,7 @@ export default {
   },
   created() {
     //获取装备类型
-    this.$api.certEquipService.getCertEqupType({ type: 2, state : 1 }).then((res) => {
+    this.$api.certEquipService.getCertEqupType({ type: 2, state : 1, oid : this.user.organizationId }).then((res) => {
         this.eqName = res.data.data.list
     });
     this.$api.otherItemsService.getEqupDataList().then((res) => {
@@ -369,6 +369,9 @@ export default {
                 _this.selectedRowKeys = [];
                 _this.selectedRows = [];
                 _this.$refs.table.refresh();
+                _this.$api.certEquipService.getCertEqupType({ type: 2, state : 1, oid : _this.user.organizationId }).then((res) => {
+                    _this.eqName = res.data.data.list
+                });
               } else {
                 _this.$message.error(res.data.msg);
               }
@@ -387,6 +390,9 @@ export default {
       this.queryParam.termValidity = "";
       this.queryParam.certificatesEquipmentHistory = "";
       this.$refs.table.refresh(true);
+      this.$api.certEquipService.getCertEqupType({ type: 2, state : 1, oid : this.user.organizationId }).then((res) => {
+        this.eqName = res.data.data.list
+      });
     },
     resetParam(){
       this.queryParam = {

@@ -710,7 +710,6 @@ const rules = {
     ],
     education: [{ required: false, message: "请选择学历", trigger: "change" }],
     academic: [
-      { required: true, message: "请输入学位", trigger: "change" },
       { max: 20, validator: validateLength, trigger: "change" },
     ],
     academicTime: [
@@ -753,14 +752,16 @@ const rules = {
     relationship: [
       { required: true, message: "请选择关系", trigger: "change" },
     ],
-    idCard: [{ required: true, message: "请输入身份证", trigger: "blur" }],
+    idCard: [{ required: true, message: "请输入身份证", trigger: "blur" },
+    { required: true, validator: validateIdNo, trigger: "change" },
+    ],
     sex: [{ required: true, message: "请选择性别", trigger: "change" }],
     birthday: [
       { required: true, message: "请选择出生日期", trigger: "change" },
     ],
     nation: [
       { required: true, message: "请输入民族", trigger: "change" },
-      { max: 20, validator: validateLength, trigger: "change" },
+      { max: 10, validator: validateLength, trigger: "change" },
     ],
   },
 };
@@ -776,6 +777,7 @@ export default {
   props: {
     policeId: String,
     organId: String,
+    organName: String,
     fileList: Array,
   },
   data() {
@@ -874,7 +876,7 @@ export default {
         {
           title: "nation",
           label: "民族",
-          max: 20,
+          max: 10,
           type: "input",
           placeholder: "请输入民族",
           disabled: false,
@@ -1007,7 +1009,7 @@ export default {
   created() {
     this.form.organizationId = this.organId || this.user.organizationId;
     this.queryPa.id = this.policeId || "";
-    this.form.organizationName = this.user.organizationName;
+    this.form.organizationName = this.organName || this.user.organizationName;
     this.$api.auxiliaryPoliceService
       .getAuxiliaryPoliceData({ policeId: this.policeId || "undefined" })
       .then((res) => {
@@ -1253,7 +1255,7 @@ export default {
               });
               const param = {
                 basic: _this.form,
-                major: (_this.form.isMajor === 1 && _this.major) || {},
+                major: (_this.form.isMajor === 1 && _this.form.major) || {},
                 education: _this.$refs.table1.localDataSource,
                 work: _this.$refs.table2.localDataSource,
                 family: _this.$refs.table3.localDataSource,

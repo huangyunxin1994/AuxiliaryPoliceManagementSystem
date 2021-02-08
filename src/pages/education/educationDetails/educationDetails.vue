@@ -171,7 +171,7 @@ const credTitle = [
 const credRules = {
   policeName: [{ required: false, message: "请输入证件类型名称", trigger: "blur" }],
   state:[{ required: true, message: "请选择培训情况", trigger: "change" }],
-  trainExplain:[{ max:20, validator: validateLength, trigger: "change" }]
+  trainExplain:[{ max:60, validator: validateLength, trigger: "change" }]
 };
 export default {
   name: "OrganManage",

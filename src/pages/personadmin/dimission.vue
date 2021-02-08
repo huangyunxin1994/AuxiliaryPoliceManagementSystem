@@ -91,6 +91,7 @@
       formTitleName="name"
       :formTitle="formTitle"
       :rules="rules"
+      :query="{quit:1}"
       :stepTitle="stepTitle"
       :submitFun="submitFun"
     ></form-step>

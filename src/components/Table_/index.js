@@ -163,6 +163,7 @@ export default {
           this.localPagination = this.showPagination && Object.assign({}, this.localPagination, {
             current: r.data.currentPage, // 返回结果中的当前分页数
             total: r.data.count, // 返回结果中的总记录数
+            showTotal: total => `共 ${total} 条数据`,
             showSizeChanger: this.showSizeChanger,
             pageSize: (pagination && pagination.pageSize) ||
               this.localPagination.pageSize
@@ -178,7 +179,7 @@ export default {
           // 当情况满足时，表示数据不满足分页大小，关闭 table 分页功能
           try {
             if ((['auto', true].includes(this.showPagination) && r.data.count <= (r.data.currentPage * this.localPagination.pageSize))) {
-              this.localPagination.hideOnSinglePage = true
+              this.localPagination.hideOnSinglePage = false
             }
           } catch (e) {
             this.localPagination = false
@@ -313,7 +314,7 @@ export default {
       return props[k]
     })
     const table = (
-      <a-table {...{ props, scopedSlots: { ...this.$scopedSlots } }} onChange={this.loadData} onExpand={ (expanded, record) => { this.$emit('expand', expanded, record) } }>
+      <a-table {...{ props, scopedSlots: { ...this.$scopedSlots } }} onChange={this.loadData} onExpand={ (expanded, record) => { this.$emit('expand', expanded, record) } } >
         { Object.keys(this.$slots).map(name => (<template slot={name}>{this.$slots[name]}</template>)) }
       </a-table>
     )

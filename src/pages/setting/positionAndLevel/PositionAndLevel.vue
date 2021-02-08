@@ -190,12 +190,12 @@ const postTitle = [
 ];
 const postRules = {
   name: [{ required: true, message: "请输入岗位名称", trigger: "blur" },
-  { required: true, max:20, validator: validateLength, trigger: "change" }],
+  { required: true, max:10, validator: validateLength, trigger: "change" }],
   describes:[{ max:60, validator: validateLength, trigger: "change" }],
 };
 const rankRules = {
   name: [{ required: true, message: "请输入职级名称", trigger: "change" },
-  { required: true, max:20, validator: validateLength, trigger: "change" }]
+  { required: true, max:10, validator: validateLength, trigger: "change" }]
 };
 export default {
   name: "OrganManage",

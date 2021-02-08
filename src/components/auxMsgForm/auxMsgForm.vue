@@ -284,7 +284,7 @@ import { mapState, mapGetters } from "vuex";
 import excelBtn from "@/components/importExcel/importExcel";
 import fromModel from "@/components/formModel/formModel";
 import StandardTable from "@/components/Table_/";
-import { validatePhone, validateLength } from "@/config/default/rules";
+import { validatePhone, validateLength, validateIdNo } from "@/config/default/rules";
 import {daysDistance} from '@/utils/dateTime'
 const studyColumns = [
   {
@@ -670,9 +670,15 @@ const fromTitle = {
 };
 
 const rules = {
-  table1: {
-    school: [{ required: true, message: "请输入学院姓名", trigger: "blur" }],
-    courtyard: [{ required: false, message: "请输入所在院系", trigger: "blur" }],
+   table1: {
+    school: [
+      { required: true, message: "请输入学院名称", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
+    courtyard: [
+      { required: false, message: "请输入所在院系", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
     learningForm: [
       { required: false, message: "请输入学习形式", trigger: "blur" },
     ],
@@ -683,11 +689,17 @@ const rules = {
       { required: true, message: "请选择入学时间", trigger: "change" },
     ],
     endDate: [{ required: true, message: "请选择毕业时间", trigger: "change" }],
-    major: [{ required: false, message: "请输入专业", trigger: "blur" }],
+    major: [
+      { required: false, message: "请输入专业", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
     education: [{ required: false, message: "请选择学历", trigger: "change" }],
-    academic: [{ required: false, message: "请选择学位", trigger: "change" }],
+    academic: [
+      { required: true, message: "请输入学位", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
     academicTime: [
-      { required: false, message: "请选择学位授予日期", trigger: "change" },  
+      { required: false, message: "请选择学位授予日期", trigger: "change" },
     ],
   },
   table2: {
@@ -697,30 +709,47 @@ const rules = {
     endData: [
       { required: true, message: "请选择工作结束日期", trigger: "change" },
     ],
-    company: [{ required: true, message: "请输入所在单位", trigger: "blur" }],
-    unitType: [{ required: true, message: "请输入单位类型", trigger: "blur" }],
-    jobLevel: [{ required: true, message: "请输入职务级别", trigger: "blur" }],
+    company: [
+      { required: true, message: "请输入所在单位", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
+    unitType: [
+      { required: true, message: "请输入单位类型", trigger: "change" },
+      { max: 10, validator: validateLength, trigger: "change" },
+    ],
+    jobLevel: [
+      { required: true, message: "请输入职务级别", trigger: "change" },
+      { max: 10, validator: validateLength, trigger: "change" },
+    ],
     orderly: [
       { required: true, message: "请选择是否是公务员", trigger: "change" },
     ],
     post: [
-      { required: true, message: "请输入从事或担任的工作", trigger: "blur" },
-    ]
+      { required: true, message: "请输入从事或担任的工作", trigger: "change" },
+      { max: 20, validator: validateLength, trigger: "change" },
+    ],
+    remarks: [{ max: 60, validator: validateLength, trigger: "change" }],
   },
   table3: {
     familyName: [
       { required: true, message: "请输入成员姓名", trigger: "blur" },
+      { max: 20, validator: validateLength, trigger: "change" },
     ],
     relationship: [
       { required: true, message: "请选择关系", trigger: "change" },
     ],
-    idCard: [{ required: true, message: "请输入身份证", trigger: "blur" }],
+    idCard: [{ required: true, message: "请输入身份证", trigger: "blur" },
+    
+    { required: true, validator: validateIdNo, trigger: "change" },],
     sex: [{ required: true, message: "请选择性别", trigger: "change" }],
     birthday: [
       { required: true, message: "请选择出生日期", trigger: "change" },
     ],
-    nation: [{ required: true, message: "请输入民族", trigger: "blur" }],
-  },
+    nation: [
+      { required: true, message: "请输入民族", trigger: "change" },
+      { max: 10, validator: validateLength, trigger: "change" },
+    ],
+  }
 };
 
 export default {

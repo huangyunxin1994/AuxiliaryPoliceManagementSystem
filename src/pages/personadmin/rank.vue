@@ -177,23 +177,23 @@ export default {
           width: 250,
         },
         {
-          title: "变动前职级",
-          dataIndex: "beforeRank",
-          key: "beforeRank",
-          width: 120,
+          title: "当前职级",
+          dataIndex: "currentRank",
+          key: "currentRank",
+          width: 100,
         },
+        // {
+        //   title: "变动前职级",
+        //   dataIndex: "beforeRank",
+        //   key: "beforeRank",
+        //   width: 120,
+        // },
         {
           title: "变动类型",
           dataIndex: "state",
           key: "state",
           width: 150,
           scopedSlots: { customRender: "state" },
-        },
-        {
-          title: "当前职级",
-          dataIndex: "currentRank",
-          key: "currentRank",
-          width: 100,
         },
         {
           title: "变动原因",
@@ -321,6 +321,7 @@ export default {
           refName: "date",
           placeholder: "请选择生效时间",
           disabledDate: true,
+          notice:'注：调动将于当日0:00生效',
           disabledDateFun: function (current) {
             return current && current < moment(new Date()).startOf("day");
           },

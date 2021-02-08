@@ -221,7 +221,7 @@
                 {label:'姓名',name:'policeName',type:'text',placeholder:'请输入姓名'},
                 {label:'原组织',name:'beforeOrg',type:'text',placeholder:'请输入变动前职级'},
                 {label:'原岗位',name:'beforePost',type:'text',placeholder:'请输入变动前职级'},
-                {label:'生效日期',name:'effectiveDate',type:'picker',placeholder:'请选择生效日期',disabledDate:true,disabledDateFun: function(current) {
+                {label:'生效日期',name:'effectiveDate',type:'picker',placeholder:'请选择生效日期',notice:'注：调动将于当日0:00生效',disabledDate:true,disabledDateFun: function(current) {
                   return (
                     current &&
                     current <

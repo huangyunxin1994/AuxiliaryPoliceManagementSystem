@@ -154,13 +154,14 @@
               v-model="form[item.name]"
               :disabled="item.disabled"
               @change="change"
+              :default-value="item.defaultVal"
               v-else-if="item.type == 'checkboxgroup'"
               :style="item.showBgc ? 'background:rgba(0,0,0,.02);' : ''"
               style="padding: 10px"
             >
               <a-row>
                 <a-col :span="12" v-for="(i, j) in item.select" :key="j">
-                  <a-checkbox :value="i.id || i.name">
+                  <a-checkbox :value="i.id || i.name" :disabled="i.disabled">
                     {{ i.name }}
                   </a-checkbox>
                 </a-col>

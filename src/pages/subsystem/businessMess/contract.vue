@@ -26,7 +26,7 @@
       </div>
       <s-table
         ref="wageTable"
-        rowKey="key"
+        :rowKey="record=>record.id"
         :columns="wageColumns"
         :data="wageData"
         :scroll="{ y: 600, x: 650 }"
@@ -44,7 +44,7 @@
 
       <s-table
         ref="table"
-        rowKey="key"
+        rowKey="record=>record.id"
         :columns="credColumns"
         :data="loadCredData"
         :scroll="{ y: 600, x: 650 }"
@@ -89,8 +89,7 @@ export default {
         key: "key",
         value: "key",
       },
-      wageColumns: [
-      ],
+      wageColumns: [],
       salaryParam: {
         id: "",
         month: moment(
@@ -103,27 +102,34 @@ export default {
           res.data.data.currentPage = 1;
           res.data.data.count = 1;
           if (res.data.data.list.length > 0) {
-            const salaryTitle = Object.assign(
-              {},
-              JSON.parse(res.data.data.list[0].salaryContent)
-            );
-            this.wageColumns.map(
-              (j) => salaryTitle[j.title] && delete salaryTitle[j.title]
-            );
-            res.data.data.list.map((i, k) => {
-              i.key = k + 1;
-              const salaryVal = JSON.parse(i.salaryContent);
-              i = Object.assign(i, salaryVal);
-            });
-            Object.keys(salaryTitle)
-              .reverse()
-              .map((i) => {
-                let params = {};
-                params.title = i;
-                params.dataIndex = i;
-                params.key = i;
-                this.wageColumns.splice(1, 0, params);
+            const result = res.data.data.list.find((i) => i.title);
+            if (result) {
+              const salaryTitle = Object.assign([], JSON.parse(result.title));
+              this.wageColumns.map(
+                (j) => {
+                  const index = salaryTitle.findIndex(i=>i === j.title)
+                  if(index>-1)
+                  salaryTitle.splice(index,1)
+                }
+              );
+              console.log(salaryTitle)
+              res.data.data.list.map((i) => {
+                const salaryVal =
+                  (i.salaryContent && JSON.parse(i.salaryContent)) || {};
+                i = Object.assign(i, salaryVal);
               });
+              console.log(res.data.data.list)
+              console.log(salaryTitle)
+              salaryTitle
+                .map((i) => {
+                  let params = {};
+                  params.title = i;
+                  params.dataIndex = i;
+                  params.key = i;
+                  this.wageColumns.push(params);
+                });
+              console.log(this.wageColumns)
+            }
           }
 
           return res.data;
@@ -204,13 +210,13 @@ export default {
       },
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
-      BASE_URL:"",
+      BASE_URL: "",
     };
   },
   created() {
     this.queryParam.id = this.policeId || this.user.id;
     this.salaryParam.number = this.policeNumber || this.user.number;
-    this.BASE_URL = process.env.VUE_APP_API_BASE_URL
+    this.BASE_URL = process.env.VUE_APP_API_BASE_URL;
   },
   methods: {
     disabledDate(current) {

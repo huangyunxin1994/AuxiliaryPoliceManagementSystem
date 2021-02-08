@@ -33,7 +33,7 @@
                     <template slot="title">
                     查看全部
                     </template>
-                    <a class="btnReload" @click.stop="reload" v-if="allowReload&&item.id=='1'"><a-icon type="reload" /></a>
+                    <a class="btnReload" @click.stop="reload" v-if="allowReload&&item.id==dataSource[0].id"><a-icon type="reload" /></a>
                 </a-tooltip>
                 </div>
             </template>
@@ -114,7 +114,7 @@ export default {
                 item.scopedSlots = { title: "custom" }
             })
             this.dataSource = this.filterArray(res.data.data.data)
-            
+            console.log(this.dataSource)
             this.initData(this.dataSource)
             this.dataList.map(i=>this.expandedKeys.push(i.key))
             

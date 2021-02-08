@@ -94,6 +94,7 @@
         <aux-msg-form-a
           :policeId="policeId"
           :organId="organId"
+          :organName="organName"
           :fileList="fileList"
         ></aux-msg-form-a>
       </a-col>
@@ -118,6 +119,7 @@ export default {
       policeId: undefined,
       policeName: undefined,
       organId:undefined,
+      organName:undefined,
       teams: [
         {
           avatar:
@@ -177,6 +179,7 @@ export default {
   },
   created() {
     this.organId = this.$route.query.oId;
+    this.organName = this.$route.query.oName
   },
   methods: {
     handleChange({ fileList }) {

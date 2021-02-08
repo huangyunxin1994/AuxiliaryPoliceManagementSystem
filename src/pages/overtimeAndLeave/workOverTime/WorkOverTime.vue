@@ -282,7 +282,8 @@ const rules = {
  
 };
 const checkRules = {
-  approvalRemake: [{ required: true, message: "请输入审批备注", trigger: "blur" }],
+  approvalRemake: [{ required: true, message: "请输入审批备注", trigger: "change" },
+  { required: true, max:60, validator: validateLength, trigger: "change" }],
   approvalResults:[
     { required: true, message: "请选择是否通过", trigger: "blur" },
   ],

@@ -198,6 +198,7 @@ export default {
       advanced: true,
       tableTitle: [],
       roleList:[],
+      defaultVal:undefined,
       replaceFields: {
         children: "children",
         title: "name",
@@ -303,7 +304,8 @@ export default {
       let formProps = {
         record: {
           organizationId: this.queryParam.organizationId,
-          isEnable:1
+          isEnable:1,
+          role:[this.defaultVal]
         },
         formTitle: this.tableTitle,
         rules: tableRules,
@@ -516,7 +518,9 @@ export default {
             return a.number-b.number;
         })
         list.splice(list.findIndex(i=>i.code==='xtgl'),1)
+        this.defaultVal = list.find(i=>i.code==='jczl').id
         this.roleList = Object.assign([],list)
+        list.find(i=>i.code==='jczl').disabled=true
           this.tableTitle = [
           {
             label: "账号",

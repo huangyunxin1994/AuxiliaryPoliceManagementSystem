@@ -14,13 +14,13 @@
                 <select-tree ref="selectTree" :value="queryParam.organizationId" style="width: 100%" @handleTreeChange="handleTreeChange"></select-tree>
               </a-form-item>
             </a-col>
-            <template v-if="advanced">
+            <!-- <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="配发日期">
                   <a-date-picker @change="allotmentDate" style="width: 100%" :value-format="dateFormat" v-model="queryParam.allotmentDate"/>
                 </a-form-item>
               </a-col>
-            </template>
+            </template> -->
             <template v-if="advanced">
               <a-col :md="8" :sm="24">
                 <a-form-item label="到期日期">
@@ -214,7 +214,7 @@ export default {
       queryParam: {
         organizationId: "",
         describes: "",
-        allotmentDate: "",
+        // allotmentDate: "",
         termValidity: "",
         state:4,
         type: 1,
@@ -248,7 +248,7 @@ export default {
     };
   },
   created() {
-    this.$api.certEquipService.getCertEqupType({ type: 1, state : 1 }).then((res) => {
+    this.$api.certEquipService.getCertEqupType({ type: 1, state : 1, oid : this.user.organizationId }).then((res) => {
         this.certList = res.data.data.list
     })
     this.$api.otherItemsService.getCredDataList().then((res) => {
@@ -347,6 +347,9 @@ export default {
                 _this.selectedRowKeys = []
                 _this.selectedRows = []
                 _this.$refs.table.refresh();
+                _this.$api.certEquipService.getCertEqupType({ type: 1, state : 1, oid : _this.user.organizationId }).then((res) => {
+                    _this.certList = res.data.data.list
+                })
               } else {
                 _this.$message.error(res.data.msg);
               }
@@ -365,6 +368,9 @@ export default {
       this.queryParam.termValidity=""
       this.queryParam.certificatesEquipmentHistory=""
       this.$refs.table.refresh(true);
+      this.$api.certEquipService.getCertEqupType({ type: 1, state : 1, oid : this.user.organizationId }).then((res) => {
+        this.certList = res.data.data.list
+      })
     },
     //重置
     resetParam(){

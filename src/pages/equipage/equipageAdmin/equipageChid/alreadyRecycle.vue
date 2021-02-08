@@ -197,7 +197,7 @@ export default {
   },
   created() {
     //获取装备类型
-    this.$api.certEquipService.getCertEqupType({ type: 2, state : 2}).then((res) => {
+    this.$api.certEquipService.getCertEqupType({ type: 2, state : 2, oid : this.user.organizationId}).then((res) => {
         this.eqName = res.data.data.list
     });
     this.queryParam.oid = this.user.organizationId;

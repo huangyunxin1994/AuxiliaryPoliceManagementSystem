@@ -54,6 +54,13 @@ export default {
           width: 60,
         },
         {
+          title: "培训名称",
+          dataIndex: "className",
+          key: "className",
+          ellipsis: true,
+          width: 150
+        },
+        {
           title: "开始时间",
           dataIndex: "startTime",
           key: "startTime",
