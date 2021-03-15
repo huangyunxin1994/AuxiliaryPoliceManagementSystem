@@ -8,7 +8,7 @@ module.exports = {
     error: '#f5222d'
   },
   multiPage: true,
-  hideSetting: true,
+  hideSetting: false,
   animate: {                            
     disabled: true,
   },

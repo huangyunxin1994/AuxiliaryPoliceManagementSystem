@@ -145,12 +145,15 @@ export const onePoint = (rule, value, callback) => {
 
 //判断是否超出长度限制
 export function validateLength(rule, value,callback) {
+  console.log(value)
     if(value==''||value==undefined||value==null){
       callback();
     }else {
+      console.log(value)
       if (rule.max && value.replace(/[^\x00-xff]/g,'xx').length > rule.max) {
         callback(new Error('您输入的内容已超过长度限制'));
       } else {
+        console.log(value)
         callback();
       }
     }

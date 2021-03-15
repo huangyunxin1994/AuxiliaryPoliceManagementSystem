@@ -128,9 +128,9 @@
         </template>
         <span slot="action" slot-scope="text, record">
           <a @click="handleCheck(record)" v-if="record.approvalResults===0">审批</a>
-          <a @click="handleEdit(record)"  v-else :disabled="record.approvalUpdate===1||record.approvalResults===2">修改</a>
-          <a-divider type="vertical" v-if="record.approvalUpdate!==1&&record.approvalResults!==2"/>
-          <a @click="handelDel(record)" v-if="record.approvalUpdate!==1&&record.approvalResults!==2">撤销</a>
+          <!-- <a @click="handleEdit(record)"  v-else :disabled="record.approvalUpdate===1||record.approvalResults===2">修改</a>
+          <a-divider type="vertical" v-if="record.approvalUpdate!==1&&record.approvalResults!==2"/> -->
+          <a @click="handelDel(record)" v-if="record.approvalUpdate!==1&&record.approvalResults===1">撤销</a>
         </span>
       </s-table>
     </a-card>
@@ -309,112 +309,6 @@ const formCheckTitle = [
     name: "approvalId",
   },
 ];
-const formEditTitle = [
-  {
-    label: "姓名",
-    name: "policeName",
-    type: "text",
-    smCol: { span: 12 },
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 14 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 10 },
-    },
-  },
-
-  {
-    label: "警员编号",
-    name: "number",
-    type: "text",
-    smCol: { span: 12 },
-  },
-  {
-    label: "开始时间",
-    name: "startTime",
-    type: "text",
-    smCol: { span: 12 },
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 14 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 10 },
-    },
-  },
-  {
-    label: "结束时间",
-    name: "endTime",
-    type: "picker",
-    validate:"endTime",
-    compare:'startTime',
-    required:true,
-    showTime: { format: 'HH:mm',minuteStep:10,defaultValue:moment(new Date().setMinutes(0)) },
-    valueFormat:'YYYY-MM-DD HH:mm',
-    smCol: { span: 12 },
-  },
-  {
-    label: "时长(小时)",
-    name: "duration",
-    type: "number",
-    smCol: { span: 12 },
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 14 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 10 },
-    },
-  },
-  {
-    label: "请假类型",
-    name: "state",
-    type: "text",
-    smCol: { span: 12 },
-    filter: {
-        1: "年假 ",
-        2: "产假 ",
-        3: "陪产假",
-        4: "婚假",
-        5: "例假",
-        6: "丧假",
-        7: "哺乳假",
-        8: "事假",
-        9: "调休",
-        10: "病假",
-        11: "其他",
-      }
-  },
-  {
-    label: "请假原因",
-    name: "reason",
-    type: "text",
-  },
-  {
-    label: "是否通过",
-    name: "approvalResults",
-    type: "radio",
-    select: [
-      { name: "是", value: 1 },
-      { name: "否", value: 2 },
-    ],
-  },
-  {
-    label: "审批备注",
-    name: "approvalRemake",
-    type: "textarea",
-  },
-  {
-    name: "approval",
-  },
-  {
-    name: "approvalId",
-  },
-];
 const stepTitle = [{ title: "选择人员" }, { title: "填写请假信息" }];
 const rules = {
   state: [{ required: true, message: "请选择请假类型", trigger: "change" }],
@@ -428,19 +322,6 @@ const rules = {
   { required: true, max:60, validator: validateLength, trigger: "change" }],
   duration:[{ required: true, message: "请输入请假时长", trigger: "change" },
   { required: true, max:4, validator: validateLength, trigger: "change" }],
-};
-const editRules = {
-  endTime: [
-    { required: true, message: "请选择请假结束时间", trigger: "change" },
-  ],
-  approvalRemake: [{ required: true, message: "请输入审批备注", trigger: "change" },
-  { required: true, max:60, validator: validateLength, trigger: "change" }],
-  duration:[{ required: true, message: "请输入请假时长", trigger: "change" },
-  { required: true, max:4, validator: validateLength, trigger: "change" }
-  ],
-  approvalResults:[
-    { required: true, message: "请选择是否通过", trigger: "change" },
-  ],
 };
 const checkRules = {
   approvalRemake: [{ required: true, message: "请输入审批备注", trigger: "change" },
@@ -604,6 +485,7 @@ export default {
       record.approvalId = this.user.id;
       let params = Object.assign({},record)
       params.approvalResults = 1
+      
       let formProps = {
         record: params,
         formTitle: formCheckTitle,
@@ -626,30 +508,31 @@ export default {
       this.openModal(TaskForm, formProps, modalProps);
     },
     //请假修改
-    handleEdit(record) {
-      record.approval = this.user.name;
-      record.approvalId = this.user.id;
-      let formProps = {
-        record: record,
-        formTitle: formEditTitle,
-        rules:editRules,
-        submitFun: (parameter) => {
-          return this.$api.overTimeService
-            .putLeave(parameter)
-            .then((res) => {
-              return res.data;
-            });
-        },
-      };
-      let modalProps = {
-        title: "编辑请假记录",
-        width: 700,
-        centered: true,
-        maskClosable: false,
-        okText: "提交",
-      };
-      this.openModal(TaskForm, formProps, modalProps);
-    },
+    // handleEdit(record) {
+    //   record.approval = this.user.name;
+    //   record.approvalId = this.user.id;
+    //   record.duration=""+record.duration
+    //   let formProps = {
+    //     record: record,
+    //     formTitle: formEditTitle,
+    //     rules:editRules,
+    //     submitFun: (parameter) => {
+    //       return this.$api.overTimeService
+    //         .putLeave(parameter)
+    //         .then((res) => {
+    //           return res.data;
+    //         });
+    //     },
+    //   };
+    //   let modalProps = {
+    //     title: "编辑请假记录",
+    //     width: 700,
+    //     centered: true,
+    //     maskClosable: false,
+    //     okText: "提交",
+    //   };
+    //   this.openModal(TaskForm, formProps, modalProps);
+    // },
     //删除树节点
     handelDel(params) {
      const _this = this

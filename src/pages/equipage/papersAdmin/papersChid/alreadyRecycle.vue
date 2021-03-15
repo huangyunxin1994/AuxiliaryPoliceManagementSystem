@@ -14,17 +14,17 @@
                     <select-tree ref="selectTree" :value="queryParam.organizationId" style="width: 100%" @handleTreeChange="handleTreeChange"></select-tree>
                   </a-form-item>
                 </a-col>
-                <template v-if="advanced">
+                <!-- <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="配发日期">
                       <a-date-picker @change="allotmentDate" style="width: 100%" :value-format="dateFormat" v-model="queryParam.allotmentDate" />
                     </a-form-item>
                   </a-col>
-                </template>
+                </template> -->
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
-                    <a-form-item label="有效日期">
-                      <a-date-picker @change="validity" style="width: 100%" :value-format="dateFormat" v-model="queryParam.termValidity" />
+                    <a-form-item label="回收日期">
+                      <a-date-picker style="width: 100%" :value-format="dateFormat" v-model="queryParam.recoveryDate" />
                     </a-form-item>
                   </a-col>
                 </template>
@@ -155,8 +155,8 @@ export default {
           queryParam:{
             organizationId: "",
             describes:"",
-            allotmentDate: "",
-            termValidity: "",
+            // allotmentDate: "",
+            recoveryDate: "",
             type:1,
             state:2,
             oid:"",
@@ -201,14 +201,6 @@ export default {
         onChange(){
 
         },
-        // 配发日期
-        allotmentDate(date, dateString) {
-          this.queryParam.allotmentDate = dateString
-        },
-        //有效日期
-        validity(date, dateString) {
-          this.queryParam.termValidity = dateString
-        },
         toggleAdvanced(){
           this.advanced = !this.advanced;
         },
@@ -219,8 +211,7 @@ export default {
     reloadData(){
       this.queryParam.organizationId=""
       this.queryParam.describes=""
-      this.queryParam.allotmentDate=""
-      this.queryParam.termValidity=""
+      this.queryParam.recoveryDate=""
       this.queryParam.cqName=""
       this.$refs.table.refresh(true)
     }

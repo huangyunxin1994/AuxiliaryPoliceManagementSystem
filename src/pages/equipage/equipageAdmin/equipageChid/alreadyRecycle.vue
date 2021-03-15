@@ -22,17 +22,17 @@
                 ></select-tree>
               </a-form-item>
             </a-col>
-            <template v-if="advanced">
+            <!-- <template v-if="advanced">
                   <a-col :md="8" :sm="24">
                     <a-form-item label="配发日期">
                       <a-date-picker @change="allotmentDate" style="width: 100%" :value-format="dateFormat" v-model="queryParam.allotmentDate" />
                     </a-form-item>
                   </a-col>
-                </template>
+                </template> -->
                 <template v-if="advanced">
                   <a-col :md="8" :sm="24">
-                    <a-form-item label="有效日期">
-                      <a-date-picker @change="validity" style="width: 100%" :value-format="dateFormat" v-model="queryParam.termValidity" />
+                    <a-form-item label="回收日期">
+                      <a-date-picker style="width: 100%" :value-format="dateFormat" v-model="queryParam.recoveryDate" />
                     </a-form-item>
                   </a-col>
                 </template>
@@ -90,7 +90,6 @@
 import { mapState, mapGetters } from "vuex";
 import STable from "@/components/Table_/";
 import selectTree from "@/components/treeSelect/TreeSelect";
-import moment from "moment";
 export default {
   components: {
     STable,
@@ -145,8 +144,7 @@ export default {
           title: "回收日期",
           dataIndex: "recoveryDate",
           key: "recoveryDate",
-          width: 100,
-          sorter: (a, b) => moment(a.recoveryDate) - moment(b.recoveryDate),
+          width: 100
         },
         {
           title: "装备类型",
@@ -164,8 +162,8 @@ export default {
       queryParam: {
         organizationId: "",
         describes: "",
-        allotmentDate: "",
-        termValidity: "",
+        // allotmentDate: "",
+        recoveryDate: "",
         type: 2,
         state: 2,
         oid: "",
@@ -213,8 +211,7 @@ export default {
     reloadData() {
       this.queryParam.organizationId = "";
       this.queryParam.describes = "";
-      this.queryParam.allotmentDate=""
-      this.queryParam.termValidity=""
+      this.queryParam.recoveryDate=""
       this.queryParam.cqName = ""
       this.$refs.table.refresh(true);
     },

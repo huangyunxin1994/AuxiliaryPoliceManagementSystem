@@ -1269,6 +1269,7 @@ export default {
     // 点击保存按钮
     saveBtn() {
       const _this = this;
+      _this.form.height=""+_this.form.height
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.$confirm({

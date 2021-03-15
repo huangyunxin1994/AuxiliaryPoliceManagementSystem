@@ -542,6 +542,7 @@ export default {
       this.queryParam.rankName = ''
       this.queryParam.education = ''
       this.queryParam.isMajor = ''
+      this.queryParam.time = ''
       this.$refs.table.refresh(true)
     },
     // 职级变更
